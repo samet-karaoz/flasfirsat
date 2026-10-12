@@ -173,48 +173,59 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
             position: relative;
             overflow: hidden;
+            border-top-left-radius: 19px;
+            border-top-right-radius: 19px;
         }
 
         .card-img {
-            max-height: 220px;
+            max-height: 210px;
             width: auto;
             max-width: 100%;
             object-fit: contain;
-            transition: transform 0.3s ease;
+            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            z-index: 1;
         }
 
         .deal-card:hover .card-img {
-            transform: scale(1.05);
+            transform: scale(1.06);
         }
 
         .badge-discount {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #E11D48;
+            top: 14px;
+            right: 14px;
+            background: linear-gradient(135deg, #FF1744, #D50000);
             color: #ffffff;
             font-weight: 800;
             font-size: 0.85rem;
             padding: 6px 12px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
+            box-shadow: 0 4px 12px rgba(213, 0, 0, 0.35);
+            z-index: 10;
+            pointer-events: none;
+            letter-spacing: 0.5px;
         }
 
         .badge-store {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(15, 23, 42, 0.85);
+            top: 14px;
+            left: 14px;
+            background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(8px);
             color: #F8FAFC;
             font-weight: 700;
-            font-size: 0.75rem;
-            padding: 5px 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.78rem;
+            padding: 6px 12px;
+            border-radius: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            pointer-events: none;
+            letter-spacing: 0.3px;
         }
 
         .card-content {
@@ -327,9 +338,9 @@
 
             <div class="deal-card" data-title="steelseries qck+ large espor gaming mousepad">
                 <div class="card-img-wrap">
+                    <img src="assets/products/steelseries_qck.jpg" alt="SteelSeries Qck+ Large Espor Gaming Mousepad" class="card-img" loading="lazy">
                     <span class="badge-store">Amazon TR</span>
                     <span class="badge-discount">-32%</span>
-                    <img src="assets/products/steelseries_qck.jpg" alt="SteelSeries Qck+ Large Espor Gaming Mousepad" class="card-img" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">SteelSeries Qck+ Large Espor Gaming Mousepad</h3>
@@ -345,9 +356,9 @@
 
             <div class="deal-card" data-title="razer viper v3 pro ultralight kablosuz espor faresi">
                 <div class="card-img-wrap">
+                    <img src="assets/products/razer_viper_v3_pro.jpg" alt="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" class="card-img" loading="lazy">
                     <span class="badge-store">Amazon TR</span>
                     <span class="badge-discount">-31%</span>
-                    <img src="assets/products/razer_viper_v3_pro.jpg" alt="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" class="card-img" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi</h3>
@@ -363,9 +374,9 @@
 
             <div class="deal-card" data-title="logitech g305 lightspeed 12.000 dpi kablosuz gaming mouse">
                 <div class="card-img-wrap">
+                    <img src="assets/products/logitech_g305.jpg" alt="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" class="card-img" loading="lazy">
                     <span class="badge-store">Amazon TR</span>
                     <span class="badge-discount">-44%</span>
-                    <img src="assets/products/logitech_g305.jpg" alt="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" class="card-img" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse</h3>

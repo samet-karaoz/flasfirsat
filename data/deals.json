@@ -1,35 +1,35 @@
 [
   {
-    "id": "deal_1791817086_2",
-    "title": "SteelSeries Qck+ Mousepad",
-    "old_price": "1.799,00 TL",
-    "new_price": "1.219,00 TL",
+    "id": "deal_steelseries_qck",
+    "title": "SteelSeries Qck+ Large Espor Gaming Mousepad",
+    "old_price": "1.799 TL",
+    "new_price": "1.219 TL",
     "discount_pct": "-32%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B000UVRU6G?tag=flasfirsat04-21",
-    "image_url": "assets/products/amz_prod_2.jpg",
+    "image_url": "assets/products/steelseries_qck.jpg",
     "date_added": "12.10.2026 17:58"
   },
   {
-    "id": "deal_1791816511_1",
+    "id": "deal_razer_viper_v3",
     "title": "Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi",
     "old_price": "6.999 TL",
     "new_price": "4.857 TL",
     "discount_pct": "-31%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21",
-    "image_url": "assets/products/amz_prod_2.jpg",
+    "image_url": "assets/products/razer_viper_v3_pro.jpg",
     "date_added": "12.10.2026 17:48"
   },
   {
-    "id": "deal_1791810777_0",
+    "id": "deal_logitech_g305",
     "title": "Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse",
     "old_price": "1.599 TL",
     "new_price": "899 TL",
     "discount_pct": "-44%",
     "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat-21",
-    "image_url": "assets/products/logo.jpg",
+    "store_url": "https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat04-21",
+    "image_url": "assets/products/logitech_g305.jpg",
     "date_added": "12.10.2026 16:12"
   }
 ]

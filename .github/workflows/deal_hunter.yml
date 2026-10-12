@@ -13,11 +13,11 @@ on:
       platform:
         description: 'Taranacak Mağaza'
         required: true
-        default: 'all'
+        default: 'amazon'
         type: choice
         options:
-          - all
           - amazon
+          - all
           - trendyol
           - hepsiburada
       count:
@@ -68,7 +68,7 @@ jobs:
           HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
         run: |
           PLATFORM="${{ inputs.platform }}"
-          [ -z "$PLATFORM" ] && PLATFORM="all"
+          [ -z "$PLATFORM" ] && PLATFORM="amazon"
           COUNT="${{ inputs.count }}"
           [ -z "$COUNT" ] && COUNT="1"
           echo "🚀 Çalıştırılıyor: Platform=$PLATFORM, Adet=$COUNT"

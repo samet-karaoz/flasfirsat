@@ -1,4 +1,6 @@
 import os
+import re
+import requests
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 from dotenv import load_dotenv
 
@@ -17,14 +19,28 @@ def get_affiliate_url(url: str, store_name: str = "") -> str:
 
     # 1. Amazon Türkiye
     amazon_tag = os.getenv("AMAZON_AFFILIATE_TAG", "").strip() or "flasfirsat04-21"
-    if "amazon.com.tr" in url_str or "amzn." in url_str:
+    if "amazon.com.tr" in url_str or "amzn." in url_str or "fenom.io" in url_str:
+        # Kısaltılmış yönlendirmeleri (amzn.to, fenom.io vb.) genişlet
+        if "amzn.to" in url_str or "fenom.io" in url_str or "t.me" in url_str:
+            try:
+                import requests
+                res = requests.head(url_str, allow_redirects=True, timeout=5, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+                if res.url:
+                    url_str = res.url
+            except Exception:
+                pass
+
+        # Temiz /dp/ASIN linki oluştur
+        asin_match = re.search(r"/dp/([A-Z0-9]{10})", url_str, re.IGNORECASE)
+        if asin_match:
+            asin = asin_match.group(1).upper()
+            return f"https://www.amazon.com.tr/dp/{asin}?tag={amazon_tag}"
+
         try:
             parsed = urlparse(url_str)
             qs = parse_qs(parsed.query)
-            # Eski veya yabancı tag'leri temizle, bizimkini ekle
             qs["tag"] = [amazon_tag]
-            # Gereksiz şişkin parametreleri temizle
-            for junk in ["ref", "ref_", "crid", "sprefix", "keywords"]:
+            for junk in ["ref", "ref_", "crid", "sprefix", "keywords", "th", "psc"]:
                 qs.pop(junk, None)
             new_query = urlencode(qs, doseq=True)
             return urlunparse((parsed.scheme, parsed.netloc, parsed.path, parsed.params, new_query, parsed.fragment))

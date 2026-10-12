@@ -21,31 +21,41 @@ DEFAULT_CHANNELS = [
 ]
 
 BORING_REGEX = re.compile(
-    r"(şarj\s*aleti|şarj\s*cihazı|şarj\s*kablosu|şarj\s*kiti|şarj\s*istasyonu|\bşarj\b|\bkablo(su)?\b(?!lu)|\badaptör\b|\bkılıf\b|\bekran\s*koruyucu|\bkoruyucu\s*cam|\btemizleme|\btemizleyici|\bçorap|\baskı\b|\btutucu\b|\bstandı\b|\bçevirici\b|\bdönüştürücü\b|\bdeterjan\b|\bbez\b|\bhavlu\b|\bbulaşık\b|\byumuşatıcı\b|\bşampuan\b|\bdiş\s*fırçası\b|\bmendil\b|\bpijama\b|\bçanta(sı)?\b|\bbebek\b|\btencere\b|\btava\b|\byastık\b|\bçarşaf\b|\bnevresim\b|\bayakkabı\b|\bterlik\b|\bbot\b|\bparfüm\b|\bkolonya\b|\bgüneş\s*kremi\b|\bserum\b|\bmakyaj\b|\btişört\b|\bpantolon\b|\bgömlek\b|\bkahve\b)",
+    r"(şarj\s*aleti|şarj\s*cihazı|şarj\s*kablosu|şarj\s*kiti|şarj\s*istasyonu|\bşarj\b|\bkablo(su)?\b(?!lu)|"
+    r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı|tutucu|stand[ıi]?|"
+    r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık|yumuşatıcı|şampuan|diş\s*fırçası|mendil|pijama|çanta(sı)?|"
+    r"bebek|tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
+    r"tişört|pantolon|gömlek|kahve|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|flash\s*bellek|"
+    r"kartuş|toner|koli|kutu|folyo|termal\s*macun|vida|aparat[ıi]?)",
     re.IGNORECASE
 )
 
 HIGH_DEMAND_KEYWORDS = [
+    # Konsol & Gaming Donanım
     "playstation", "ps5", "ps4", "xbox", "nintendo", "switch",
-    "kolu", "oyun kolu", "gamepad", "dualsense", "controller",
-    "kulaklık", "kulaklığı", "headset", "airpods", "buds", "earbuds",
-    "mouse", "oyuncu faresi", "faresi", "klavye", "keyboard",
-    "monitör", "monitor", "laptop", "bilgisayar", "direksiyon",
-    "gaming", "espor", "oyuncu", "bluetooth", "hoparlör", "speaker",
-    "akıllı saat", "watch", "apple", "razer", "logitech", "steelseries",
-    "hyperx", "asus", "msi", "sony"
+    "dualsense", "controller", "oyun kolu", "gamepad", "direksiyon", "g29", "g923",
+    # Ses & Kulaklıklar
+    "kulaklık", "headset", "airpods", "buds", "earbuds", "soundcore", "anc", "bluetooth kulaklık", "hoparlör",
+    # Oyuncu Çevre Birimleri
+    "mouse", "oyuncu faresi", "klavye", "keyboard", "mekanik klavye", "mousepad",
+    # Bilgisayar & Ekran
+    "monitör", "monitor", "curved", "gaming laptop", "laptop", "bilgisayar", "ssd", "nvme",
+    # Güçlü Markalar
+    "apple", "razer", "logitech", "steelseries", "hyperx", "asus", "rog", "msi", "sony", "samsung", "jbl", "corsair", "anker"
 ]
+
+MIN_PRODUCT_PRICE_TL = 350  # 350 TL altındaki küçük kırtasiye/ıvır zıvır ürünleri ele
 
 def detect_store(url: str, text: str = "") -> str:
     """Ürün linkinden veya metninden mağazayı (Trendyol, Hepsiburada, Amazon TR) tespit eder."""
     url_low = (url or "").lower()
     text_low = (text or "").lower()
-    if "trendyol.com" in url_low or "ty.gl" in url_low or "trendyol" in text_low:
+    if "amazon.com.tr" in url_low or "amzn.to" in url_low or "amzn.eu" in url_low or "fenom.io" in url_low or "amazon" in text_low:
+        return "Amazon TR"
+    elif "trendyol.com" in url_low or "ty.gl" in url_low or "trendyol" in text_low:
         return "Trendyol"
     elif "hepsiburada.com" in url_low or "app.hb.biz" in url_low or "hepsiburada" in text_low:
         return "Hepsiburada"
-    elif "amazon.com.tr" in url_low or "amzn.to" in url_low or "amzn.eu" in url_low or "amazon" in text_low:
-        return "Amazon TR"
     return "Fırsat Ürünü"
 
 def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> dict:
@@ -98,113 +108,131 @@ def download_file(url: str, output_path: str) -> bool:
 def hunt_amazon_deals(limit: int = 3, category: str = "gaming", exclude_urls: set = None) -> list:
     """
     Doğrudan amazon.com.tr üzerinden yüksek talep gören viral Gaming, Konsol ve Teknoloji ürünlerini çeker.
-    Sıkıcı aksesuarları (kablo, kılıf, koruyucu vb.) filtreler.
+    Sıkıcı aksesuarları (pil, kablo, adaptör, kılıf vb.) ve 350 TL altı ürünleri otomatik filtreler.
+    İhtiyaç halinde birden fazla kategoriyi (videogames, computers, electronics) sırayla tarar.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
-    url_map = {
-        "gaming": "https://www.amazon.com.tr/gp/bestsellers/videogames",
-        "videogames": "https://www.amazon.com.tr/gp/bestsellers/videogames",
-        "computers": "https://www.amazon.com.tr/gp/bestsellers/computers",
-        "electronics": "https://www.amazon.com.tr/gp/bestsellers/electronics",
-        "all": "https://www.amazon.com.tr/gp/bestsellers"
-    }
-    target_url = url_map.get(category, url_map["gaming"])
-    print(f"[Deal Hunter] Doğrudan Amazon TR ({category.upper()}) taranıyor: {target_url}...")
-
-    cmd = get_curl_cmd([
-        "--compressed", "-s", "-L",
-        "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "-H", "Accept-Language: tr-TR,tr;q=0.9", target_url
-    ])
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-    if res.returncode != 0:
-        return []
-
-    soup = BeautifulSoup(res.stdout, "html.parser")
-    items = soup.find_all("div", class_="p13n-sc-uncoverable-faceout")
-
-    # Sıkıcı, ucuz veya ilgi çekmeyen aksesuarları filtrele (kablolu kulaklıkları elemez!)
-    BORING_REGEX = re.compile(
-        r"(şarj\s*aleti|şarj\s*cihazı|şarj\s*kablosu|şarj\s*kiti|şarj\s*istasyonu|\bşarj\b|\bkablo(su)?\b(?!lu)|\badaptör\b|\bkılıf\b|\bekran\s*koruyucu|\bkoruyucu\s*cam|\btemizleme|\btemizleyici|\bçorap|\baskı\b|\btutucu\b|\bstandı\b|\bçevirici\b|\bdönüştürücü\b|\bdeterjan\b|\bbez\b|\bhavlu\b|\bbulaşık\b|\byumuşatıcı\b|\bşampuan\b|\bdiş\s*fırçası\b|\bmendil\b)",
-        re.IGNORECASE
-    )
+    
+    url_categories = []
+    if category in ("gaming", "videogames"):
+        url_categories = [
+            ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
+            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
+            ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")
+        ]
+    elif category == "computers":
+        url_categories = [("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers")]
+    elif category == "electronics":
+        url_categories = [("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")]
+    else:
+        url_categories = [
+            ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
+            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
+            ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")
+        ]
 
     deals = []
-    for it in items:
+
+    for cat_name, target_url in url_categories:
         if len(deals) >= limit:
             break
 
-        title_el = it.find("div", class_=lambda c: c and "line-clamp" in c) or it.find("span")
-        price_el = it.find("span", class_=lambda c: c and "price" in c)
-        img_el = it.find("img")
-        link_el = it.find("a", href=re.compile(r"/dp/"))
-
-        if not (title_el and price_el and img_el and link_el):
+        print(f"[Deal Hunter] Doğrudan Amazon TR ({cat_name}) taranıyor: {target_url}...")
+        cmd = get_curl_cmd([
+            "--compressed", "-s", "-L",
+            "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "-H", "Accept-Language: tr-TR,tr;q=0.9", target_url
+        ])
+        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        if res.returncode != 0:
             continue
 
-        raw_title = title_el.text.strip()
-        raw_price = price_el.text.strip()
+        soup = BeautifulSoup(res.stdout, "html.parser")
+        items = soup.find_all("div", class_="p13n-sc-uncoverable-faceout")
 
-        # Düşük ilgi gören veya sıkıcı ürünleri ele
-        if BORING_REGEX.search(raw_title):
-            continue
+        for it in items:
+            if len(deals) >= limit:
+                break
 
-        # Temiz ve doğrudan tıklanabilir Amazon linki (/dp/ASIN)
-        href = link_el.get("href", "")
-        asin_match = re.search(r"/dp/([A-Z0-9]+)", href)
-        if asin_match:
-            prod_url = f"https://www.amazon.com.tr/dp/{asin_match.group(1)}"
-        else:
-            prod_url = "https://www.amazon.com.tr" + href.split("?")[0]
+            title_el = it.find("div", class_=lambda c: c and "line-clamp" in c) or it.find("span")
+            price_el = it.find("span", class_=lambda c: c and "price" in c)
+            img_el = it.find("img")
+            link_el = it.find("a", href=re.compile(r"/dp/"))
 
-        # Daha önce üretilmişse pas geç
-        if exclude_urls and any(prod_url in ex or (asin_match and asin_match.group(1) in ex) for ex in exclude_urls):
-            continue
+            if not (title_el and price_el and img_el and link_el):
+                continue
 
-        raw_img = img_el.get("src", "")
-        big_img = re.sub(r'\._AC_.*?_\.', '._AC_SL1000_.', raw_img)
+            raw_title = title_el.text.strip()
+            raw_price = price_el.text.strip()
 
-        if len(raw_title) < 8 or "TL" not in raw_price:
-            continue
+            # 1. Sıkıcı veya düşük ilgi gören aksesuarları ele
+            if BORING_REGEX.search(raw_title):
+                continue
 
-        print(f"[Deal Hunter] Seçilen Yüksek Talep Ürün: {raw_title[:45]} | {raw_price}")
+            # 2. Minimum Fiyat Kontrolü (350 TL altındaki küçük ıvır zıvırları atla)
+            try:
+                price_clean = re.sub(r"[^\d]", "", raw_price.split(",")[0])
+                if price_clean and int(price_clean) < MIN_PRODUCT_PRICE_TL:
+                    continue
+            except Exception:
+                pass
 
-        prompt = f"""Şu yüksek talep gören Amazon Türkiye ürününden indirim ve video bilgilerini çıkar:
+            # 3. Temiz ve doğrudan tıklanabilir Amazon linki (/dp/ASIN)
+            href = link_el.get("href", "")
+            asin_match = re.search(r"/dp/([A-Z0-9]{10})", href, re.IGNORECASE)
+            if asin_match:
+                prod_url = f"https://www.amazon.com.tr/dp/{asin_match.group(1).upper()}"
+            else:
+                prod_url = "https://www.amazon.com.tr" + href.split("?")[0]
+
+            # Daha önce üretilmişse pas geç
+            if exclude_urls and any(prod_url in ex or (asin_match and asin_match.group(1) in ex) for ex in exclude_urls):
+                continue
+
+            raw_img = img_el.get("src", "")
+            big_img = re.sub(r'\._AC_.*?_\.', '._AC_SL1000_.', raw_img)
+
+            if len(raw_title) < 6 or "TL" not in raw_price:
+                continue
+
+            print(f"[Deal Hunter] Seçilen Yüksek Talep Ürün: {raw_title[:45]} | {raw_price}")
+
+            prompt = f"""Şu yüksek talep gören Amazon Türkiye ürününden indirim ve video bilgilerini çıkar:
 Ürün: {raw_title}
 Amazon Fiyatı: {raw_price}
 
 Şu JSON formatında döndür:
 {{
-  "title": "Ürünün kısa, vurucu ve net adı (maksimum 32 karakter, örn: Razer BlackShark V2 X Kulaklık, Sony PS5 DualSense Kol vb.)",
+  "title": "Ürünün kısa, vurucu ve net adı (maksimum 30 karakter, örn: Razer BlackShark V2 X, Sony PS5 DualSense Kol vb.)",
   "old_price": "Piyasa veya normal liste fiyatı (örn: {raw_price} fiyatından yaklaşık %25-35 daha yüksek gerçekçi bir eski fiyat yaz)",
   "new_price": "{raw_price}",
   "discount_pct": "İndirim yüzdesi (örn: -28% veya -35%)",
-  "badge": "GAMING FIRSATI veya DEV İNDİRİM veya ÇÖKÜŞ FİYAT",
+  "badge": "AMAZON FIRSATI veya DEV İNDİRİM veya ÇÖKÜŞ FİYAT",
   "hook": "Oyuncuların veya kullanıcıların neden bu ürüne akın ettiğini anlatan tek cümle"
 }}
 """
-        deal_data = call_gemini(prompt, json_mode=True)
-        if not deal_data or not deal_data.get("title"):
-            continue
-
-        prod_id = asin_match.group(1) if asin_match else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
-        img_path = os.path.join(TEMP_DIR, f"amz_{prod_id}.jpg")
-        if not download_file(big_img, img_path):
-            if not download_file(raw_img, img_path):
+            deal_data = call_gemini(prompt, json_mode=True)
+            if not deal_data or not deal_data.get("title"):
                 continue
 
-        from campaign_calculator import calculate_campaign_and_net_cost
-        camp = calculate_campaign_and_net_cost(deal_data.get("new_price", ""), "Amazon TR")
-        deal_data["bank_campaign"] = camp["bank_campaign"]
-        deal_data["net_cost"] = camp["net_cost"]
-        deal_data["installment"] = camp["installment"]
+            prod_id = asin_match.group(1) if asin_match else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
+            img_path = os.path.join(TEMP_DIR, f"amz_{prod_id}.jpg")
+            if not download_file(big_img, img_path):
+                if not download_file(raw_img, img_path):
+                    continue
 
-        deal_data["image_path"] = img_path
-        deal_data["source_channel"] = "Amazon TR"
-        deal_data["store_name"] = "Amazon TR"
-        deal_data["store_url"] = prod_url
-        deals.append(deal_data)
-        print(f"[Deal Hunter] ✅ Hazırlandı: {deal_data['title']} | {deal_data['new_price']} (Net: {camp['net_cost']}) | Link: {prod_url}")
+            from campaign_calculator import calculate_campaign_and_net_cost
+            camp = calculate_campaign_and_net_cost(deal_data.get("new_price", ""), "Amazon TR")
+            deal_data["bank_campaign"] = camp["bank_campaign"]
+            deal_data["net_cost"] = camp["net_cost"]
+            deal_data["installment"] = camp["installment"]
+
+            deal_data["image_path"] = img_path
+            deal_data["source_channel"] = f"Amazon TR ({cat_name})"
+            deal_data["store_name"] = "Amazon TR"
+            deal_data["store_url"] = prod_url
+            deals.append(deal_data)
+            print(f"[Deal Hunter] ✅ Hazırlandı: {deal_data['title']} | {deal_data['new_price']} (Net: {camp['net_cost']}) | Link: {prod_url}")
 
     return deals
 
@@ -234,8 +262,8 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
         soup = BeautifulSoup(res.stdout, "html.parser")
         msgs = soup.select("div.tgme_widget_message_wrap")
 
-        # En yeni mesajlardan geriye doğru tara (en taze 8 mesaj)
-        for m in list(reversed(msgs))[:8]:
+        # En yeni mesajlardan geriye doğru tara (en taze 12 mesaj)
+        for m in list(reversed(msgs))[:12]:
             if len(collected_deals) >= limit:
                 break
 
@@ -246,11 +274,11 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
                 continue
 
             raw_text = text_el.text.strip()
-            # Sıkıcı, deterjan, çorap, kılıf veya şarj aksesuarlarını ele
+            # Sıkıcı ürünleri ele
             if BORING_REGEX.search(raw_text):
                 continue
 
-            # Fiyat içeren veya 'TL' geçen mesajları seç
+            # Fiyat içeren mesajları seç
             if "TL" not in raw_text and "tl" not in raw_text and "%" not in raw_text:
                 continue
 
@@ -261,14 +289,20 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
                 continue
             photo_url = photo_match.group(1)
 
-            # Link çıkar
+            # Link çıkar: Hem metinden hem de mesaj altındaki buton linklerinden topla
+            all_links = [a.get("href") for a in m.select("a") if a.get("href") and "t.me" not in a.get("href")]
             link_match = re.search(r"(https?://\S+)", raw_text)
-            store_url = link_match.group(1) if link_match else ""
+            if link_match and link_match.group(1) not in all_links:
+                all_links.append(link_match.group(1))
 
-            if exclude_urls and store_url and any(store_url in ex for ex in exclude_urls):
+            store_url = all_links[0] if all_links else ""
+            if not store_url:
                 continue
 
-            # Mağaza tespit et (Trendyol, Hepsiburada, Amazon TR)
+            if exclude_urls and any(store_url in ex for ex in exclude_urls):
+                continue
+
+            # Mağaza tespit et (Amazon TR, Trendyol, Hepsiburada)
             store_name = detect_store(store_url, raw_text)
 
             # AI ile analiz et
@@ -277,7 +311,7 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
 
 Şu JSON formatında döndür:
 {{
-  "title": "Ürünün kısa ve net adı (maksimum 32 karakter)",
+  "title": "Ürünün kısa ve net adı (maksimum 30 karakter)",
   "old_price": "Varsa eski fiyat, yoksa piyasa fiyatı (örn: 499 TL)",
   "new_price": "İndirimli satış fiyatı (örn: 199 TL)",
   "discount_pct": "İndirim yüzdesi (örn: -40%)",
@@ -290,6 +324,14 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
                 deal_data = deal_data[0]
             if not isinstance(deal_data, dict) or not deal_data.get("title") or not deal_data.get("new_price"):
                 continue
+
+            # Minimum fiyat kontrolü (350 TL altı ürünleri ele)
+            try:
+                p_digits = re.sub(r"[^\d]", "", deal_data.get("new_price", "").split(",")[0])
+                if p_digits and int(p_digits) < MIN_PRODUCT_PRICE_TL:
+                    continue
+            except Exception:
+                pass
 
             # Görseli indir
             img_filename = f"hunt_prod_{len(collected_deals) + 1}.jpg"
@@ -315,27 +357,29 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
 
     return collected_deals
 
-def hunt_best_deals(limit: int = 3, platform: str = "all", category: str = "gaming", exclude_urls: set = None) -> list:
+def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "gaming", exclude_urls: set = None) -> list:
     """
-    Amazon TR, Hepsiburada ve Trendyol üzerindeki en sıcak indirimleri tarar,
-    fırsatları karşılaştırır ve en yüksek talep gören fırsatları seçer.
-    platform: 'all', 'amazon', 'trendyol', 'hepsiburada'
+    Amazon TR, Hepsiburada ve Trendyol üzerindeki en sıcak indirimleri tarar.
+    Kullanıcının affiliate anlaşması olan Amazon TR mağazasına mutlak öncelik verir.
+    platform: 'amazon' (varsayılan), 'all', 'trendyol', 'hepsiburada'
     """
     candidates = []
-    print(f"\n[Deal Hunter] 🔍 Çoklu Platform İndirim Avı Başlatıldı (Platform: {platform.upper()}, Kategori: {category.upper()})...")
+    print(f"\n[Deal Hunter] 🔍 İndirim Avı Başlatıldı (Öncelikli Mağaza: AMAZON TR, Mod: {platform.upper()}, Kategori: {category.upper()})...")
 
-    # 1. Amazon TR'den çek
+    # 1. Mutlak Öncelik: Doğrudan Amazon TR'den çek (Videogames + Computers + Electronics)
     if platform in ("all", "amazon"):
-        amz_deals = hunt_amazon_deals(limit=limit + 1, category=category, exclude_urls=exclude_urls)
+        amz_deals = hunt_amazon_deals(limit=limit + 2, category=category, exclude_urls=exclude_urls)
         for d in amz_deals:
             d["store_name"] = "Amazon TR"
             candidates.append(d)
 
-    # 2. Hepsiburada, Trendyol ve sıcak fırsat kanallarından tara
-    if platform in ("all", "trendyol", "hepsiburada"):
-        online_deals = hunt_online_deals(limit=limit + 2, exclude_urls=exclude_urls)
+    # 2. Eğer yeterli Amazon fırsatı yoksa veya platform genel moddaysa sıcak fırsat kanallarını tara
+    if len(candidates) < limit or platform != "amazon":
+        online_deals = hunt_online_deals(limit=limit + 3, exclude_urls=exclude_urls)
         for d in online_deals:
             st = d.get("store_name", "Fırsat")
+            if platform == "amazon" and st != "Amazon TR":
+                continue
             if platform == "trendyol" and st != "Trendyol":
                 continue
             if platform == "hepsiburada" and st != "Hepsiburada":
@@ -345,18 +389,26 @@ def hunt_best_deals(limit: int = 3, platform: str = "all", category: str = "gami
     if not candidates:
         return []
 
-    # 3. Akıllı Puanlama: Yüksek talep gören ürünleri ve yüksek indirim oranlarını öne çıkar
+    # 3. Akıllı Puanlama: Amazon TR ürünlerine +100 dev öncelik puanı ver!
     def score_deal(deal):
         title = deal.get("title", "").lower()
         score = 0
+        
+        # Amazon TR Bonusu (+100 puan ile listenin en tepesine yerleşir)
+        if deal.get("store_name") == "Amazon TR":
+            score += 100
+
+        # Yüksek Talep Gören Kategori ve Marka Bonusu
         for kw in HIGH_DEMAND_KEYWORDS:
             if kw in title:
-                score += 15
+                score += 20
+
         # İndirim yüzdesi bonusu
         pct = str(deal.get("discount_pct") or "0")
         nums = re.findall(r"\d+", pct)
         if nums:
             score += int(nums[0])
+            
         return score
 
     candidates.sort(key=score_deal, reverse=True)

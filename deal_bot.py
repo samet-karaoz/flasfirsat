@@ -190,7 +190,7 @@ Kullanım Şekilleri:
     )
 
     parser.add_argument("--auto", action="store_true", help="Otomatik mod: En iyi fırsatları avla (Amazon, Trendyol, Hepsiburada)")
-    parser.add_argument("--platform", type=str, default="all", choices=["all", "amazon", "trendyol", "hepsiburada"], help="Taranacak e-ticaret platformu (Varsayılan: all)")
+    parser.add_argument("--platform", type=str, default="amazon", choices=["amazon", "all", "trendyol", "hepsiburada"], help="Taranacak e-ticaret platformu (Varsayılan: amazon)")
     parser.add_argument("--amazon", action="store_true", help="Sadece amazon.com.tr fırsat ve çok satanlar ürünlerini çek")
     parser.add_argument("--category", type=str, default="gaming", choices=["gaming", "computers", "electronics", "all"], help="Ürün kategorisi (Varsayılan: gaming)")
     parser.add_argument("--watch", action="store_true", help="Nöbetçi mod: Arka planda sürekli çalışır, yeni indirim düştükçe video üretir")

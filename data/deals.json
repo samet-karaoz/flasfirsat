@@ -8,7 +8,12 @@
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B000UVRU6G?tag=flasfirsat04-21",
     "image_url": "assets/products/steelseries_qck.jpg",
-    "date_added": "12.10.2026 17:58"
+    "date_added": "12.10.2026 17:58",
+    "bank_campaign": "Nays ile 122 TL Nakit İade",
+    "net_cost": "1.097 TL",
+    "benefit_text": "💳 Net Maliyet: 1.097 TL (Nays ile 122 TL Nakit İade)",
+    "savings": "122 TL",
+    "installment": "3 Taksit x 406 TL"
   },
   {
     "id": "deal_razer_viper_v3",
@@ -19,7 +24,12 @@
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21",
     "image_url": "assets/products/razer_viper_v3_pro.jpg",
-    "date_added": "12.10.2026 17:48"
+    "date_added": "12.10.2026 17:48",
+    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
+    "net_cost": "4.607 TL",
+    "benefit_text": "💳 Net Maliyet: 4.607 TL (Nays ile 250 TL İade + Prime Kargo)",
+    "savings": "250 TL",
+    "installment": "3 Taksit x 1.619 TL"
   },
   {
     "id": "deal_logitech_g305",
@@ -30,6 +40,11 @@
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat04-21",
     "image_url": "assets/products/logitech_g305.jpg",
-    "date_added": "12.10.2026 16:12"
+    "date_added": "12.10.2026 16:12",
+    "bank_campaign": "Nays ile %10 İade (90 TL)",
+    "net_cost": "809 TL",
+    "benefit_text": "💳 Net Maliyet: 809 TL (Nays ile %10 İade (90 TL))",
+    "savings": "90 TL",
+    "installment": "Peşin Fiyatına 3 Taksit"
   }
 ]

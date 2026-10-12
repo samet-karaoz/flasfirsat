@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flaş Fırsat ⚡ | Amazon, Trendyol & Hepsiburada Dip Fiyat Radarı</title>
+    <meta name="description" content="Piyasa altı flaş indirimler, yapay zeka destekli dip fiyat takibi ve en sıcak fırsatlar!">
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0B0D12;
+            --bg-surface: #141721;
+            --bg-card: #1A1E2B;
+            --border: rgba(255, 255, 255, 0.08);
+            --primary-orange: #FF5722;
+            --primary-yellow: #FFC107;
+            --accent-green: #10B981;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Header / Brand */
+        header {
+            text-align: center;
+            padding: 40px 20px 24px;
+            background: radial-gradient(circle at top, rgba(255, 87, 34, 0.12) 0%, transparent 70%);
+        }
+
+        .logo-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .logo-img {
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-orange);
+            box-shadow: 0 0 25px rgba(255, 87, 34, 0.35);
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFC107, #FF5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-desc {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            max-width: 500px;
+            margin: 0 auto 20px;
+            line-height: 1.5;
+        }
+
+        /* Social Quick Links */
+        .social-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 99px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .social-btn:hover {
+            background: var(--primary-orange);
+            border-color: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Search & Filter Bar */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 260px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 20px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-orange);
+        }
+
+        /* Product Cards Grid */
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .deal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 87, 34, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-img-wrap {
+            height: 260px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img {
+            max-height: 220px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .deal-card:hover .card-img {
+            transform: scale(1.05);
+        }
+
+        .badge-discount {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #E11D48;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
+        }
+
+        .badge-store {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            color: #F8FAFC;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8em;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 20px;
+            margin-top: auto;
+        }
+
+        .old-price {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-size: 0.95rem;
+        }
+
+        .new-price {
+            color: var(--accent-green);
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .buy-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary-orange), #FF3D00);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.25);
+        }
+
+        .buy-btn:hover {
+            background: linear-gradient(135deg, #FF6E40, #FF5722);
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-wrap">
+            <img src="assets/logo.jpg" alt="Flaş Fırsat Logo" class="logo-img">
+        </div>
+        <h1 class="brand-title">FLAŞ FIRSAT ⚡</h1>
+        <p class="brand-desc">Amazon, Trendyol ve Hepsiburada'daki piyasa altı en sıcak teknoloji fırsatlarını anlık yakalıyoruz!</p>
+
+        <div class="social-bar">
+            <a href="https://t.me/flasfirsat" target="_blank" class="social-btn">
+                <span>✈️</span> Telegram Kanalı
+            </a>
+            <a href="https://instagram.com/flasfirsat" target="_blank" class="social-btn">
+                <span>📸</span> Instagram
+            </a>
+            <a href="https://www.tiktok.com/@flasfirsat" target="_blank" class="social-btn">
+                <span>🎵</span> TikTok
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="controls-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün ara (kulaklık, mouse, monitör...)" onkeyup="filterDeals()">
+            </div>
+        </div>
+
+        <div class="deals-grid" id="dealsGrid">
+
+            <div class="deal-card" data-title="razer viper v3 pro ultralight kablosuz espor faresi">
+                <div class="card-img-wrap">
+                    <span class="badge-store">Amazon TR</span>
+                    <span class="badge-discount">-31%</span>
+                    <img src="assets/products/amz_prod_2.jpg" alt="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" class="card-img" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi</h3>
+                    <div class="price-section">
+                        <span class="old-price">6.999 TL</span>
+                        <span class="new-price">4.857 TL</span>
+                    </div>
+                    <a href="https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn">
+                        🔥 Fırsata Git & Satın Al
+                    </a>
+                </div>
+            </div>
+
+            <div class="deal-card" data-title="logitech g305 lightspeed 12.000 dpi kablosuz gaming mouse">
+                <div class="card-img-wrap">
+                    <span class="badge-store">Amazon TR</span>
+                    <span class="badge-discount">-44%</span>
+                    <img src="assets/products/logo.jpg" alt="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" class="card-img" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse</h3>
+                    <div class="price-section">
+                        <span class="old-price">1.599 TL</span>
+                        <span class="new-price">899 TL</span>
+                    </div>
+                    <a href="https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn">
+                        🔥 Fırsata Git & Satın Al
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Flaş Fırsat • Fiyatlar anlık olarak değişebilir. Fırsatları kaçırmamak için Telegram'ı takip edin.</p>
+    </footer>
+
+    <script>
+        function filterDeals() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.deal-card');
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                if (title.includes(input)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

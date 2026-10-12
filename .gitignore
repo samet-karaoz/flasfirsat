@@ -1,0 +1,26 @@
+# Gizli Anahtarlar ve Çevre Değişkenleri
+.env
+.env.*
+!.env.example
+
+# Geçici ve Çıktı Dosyaları
+temp/
+output/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Büyük Model Dosyaları
+*.onnx
+*.onnx.json
+
+# Test ve geçici ses dosyaları
+test.mp3
+*.wav
+
+# IDE ve İşletim Sistemi
+web/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,295 @@
+import os
+import sys
+import time
+import json
+import argparse
+import random
+import datetime
+from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, parse_deal_from_image, parse_deal_from_url
+from split_composer import create_product_banner, build_split_screen_video, AVAILABLE_MEMES, AVAILABLE_AUDIOS
+from caption_generator import generate_viral_caption
+from telegram_notifier import send_telegram_deal
+from affiliate import get_affiliate_url
+from web_showcase import add_deal_to_web
+from config import BASE_DIR, OUTPUT_DIR, TEMP_DIR
+
+HISTORY_FILE = os.path.join(BASE_DIR, "history_deals.json")
+
+def load_history() -> set:
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                return set(json.load(f))
+        except Exception:
+            return set()
+    return set()
+
+def save_history(history: set):
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(list(history), f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[Uyarı] Geçmiş kaydedilemedi: {e}")
+
+def get_deal_sig(deal: dict) -> str:
+    return deal.get("store_url") or deal.get("title", "")
+
+def clean_filename(s: str) -> str:
+    """Türkçe karakterleri ve geçersiz dosya adı karakterlerini temizler."""
+    tr_map = {
+        'ı': 'i', 'I': 'I', 'İ': 'I', 'ğ': 'g', 'Ğ': 'G',
+        'ü': 'u', 'Ü': 'U', 'ş': 's', 'Ş': 'S',
+        'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C'
+    }
+    for tr, en in tr_map.items():
+        s = s.replace(tr, en)
+    s = "".join([c if c.isalnum() or c in (' ', '_', '-') else '' for c in s])
+    return "_".join(s.split())[:30].lower()
+
+def process_deal_to_reel(
+    deal: dict,
+    meme_choice: str = None,
+    audio_choice: str = None,
+    output_prefix: str = None
+) -> dict:
+    """
+    Tek bir fırsat nesnesinden (deal dict):
+    1. 1080x960 Üst Banner üretir (büyük ürün görseli ve çarpıcı tipografi).
+    2. Viral meme ve phonk müzikle 1080x1920 MP4 Video derler.
+    3. Gemini ile viral açıklama metni ve hashtag'leri üretir.
+    4. Dosyaları output/ klasörüne kaydeder.
+    """
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(TEMP_DIR, exist_ok=True)
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    slug = clean_filename(deal.get("title", "firsat"))
+    base_name = f"{timestamp}_{slug}" if not output_prefix else f"{output_prefix}_{slug}"
+
+    print(f"\n=======================================================")
+    print(f"🎬 [İŞLENİYOR] {deal.get('title')}")
+    print(f"💰 Fiyat: {deal.get('old_price')} -> {deal.get('new_price')} ({deal.get('discount_pct')})")
+    print(f"=======================================================")
+
+    # Banka Kampanyası ve Net Maliyet Hesapla
+    from campaign_calculator import calculate_campaign_and_net_cost
+    camp_info = calculate_campaign_and_net_cost(deal.get("new_price", ""), deal.get("store_name", "Amazon TR"))
+    deal["bank_campaign"] = deal.get("bank_campaign") or camp_info["bank_campaign"]
+    deal["net_cost"] = deal.get("net_cost") or camp_info["net_cost"]
+    deal["installment"] = deal.get("installment") or camp_info.get("installment", "")
+
+    print(f"💳 Banka/Nays Avantajı: {deal['bank_campaign']} -> Net: {deal['net_cost']}")
+
+    # 1. Ürün Banner'ı Üret (Daha Büyük, Ferah ve Net Maliyet Rozetli)
+    banner_temp = os.path.join(TEMP_DIR, f"banner_{base_name}.png")
+    print("[1/3] 🎨 Üst banner (1080x960) tasarlanıyor...")
+    create_product_banner(
+        product_image_path=deal.get("image_path"),
+        title=deal.get("title", "Günün Fırsatı"),
+        old_price=deal.get("old_price", "Piyasa Fiyatı"),
+        new_price=deal.get("new_price", "İndirimde"),
+        discount_pct=deal.get("discount_pct", "-40%"),
+        badge_text=deal.get("badge", "FLAŞ FIRSAT"),
+        store_name=deal.get("store_name", "Amazon TR"),
+        bank_campaign=deal.get("bank_campaign", ""),
+        net_cost=deal.get("net_cost", ""),
+        installment=deal.get("installment", ""),
+        output_path=banner_temp
+    )
+
+    # 2. Viral Split-Screen Video Derle (Akıllı Meme Eşleştirme)
+    video_filename = f"{base_name}.mp4"
+    print(f"[2/3] 🎥 Video derleniyor (Split Screen 1080x1920)...")
+    video_path = build_split_screen_video(
+        top_source=banner_temp,
+        meme_name=meme_choice,
+        audio_name=audio_choice,
+        output_filename=video_filename,
+        discount_pct=deal.get("discount_pct", ""),
+        product_title=deal.get("title", "")
+    )
+
+    # Affiliate Link Dönüşümü
+    raw_url = deal.get("store_url", "")
+    aff_url = get_affiliate_url(raw_url, deal.get("store_name", ""))
+    deal["store_url"] = aff_url
+    deal["affiliate_url"] = aff_url
+
+    # 3. Viral Açıklama Metni (Caption) ve Hashtag'ler
+    print("[3/3] ✍️ Gemini ile viral açıklama metni ve hashtag'ler yazılıyor...")
+    caption_text = generate_viral_caption(
+        product_title=deal.get("title", "Fırsat Ürünü"),
+        old_price=deal.get("old_price", ""),
+        new_price=deal.get("new_price", ""),
+        discount_pct=deal.get("discount_pct", ""),
+        deal_details=deal.get("hook", ""),
+        store_url=aff_url,
+        bank_campaign=deal.get("bank_campaign", ""),
+        net_cost=deal.get("net_cost", "")
+    )
+
+    caption_filename = f"{base_name}_aciklama.txt"
+    caption_path = os.path.join(OUTPUT_DIR, caption_filename)
+    with open(caption_path, "w", encoding="utf-8") as f:
+        f.write(caption_text)
+
+    # Geçmişe kaydet
+    sig = get_deal_sig(deal)
+    if sig:
+        history = load_history()
+        history.add(sig)
+        save_history(history)
+
+    # 4. Telegram Bildirimi (Telefona Video + Açıklama + Ürün Linki Gönder)
+    send_telegram_deal(video_path, caption_text, product_url=aff_url)
+
+    # 5. Web Vitrini Güncelle (Otomatik Web Sayfasına Ekle)
+    try:
+        add_deal_to_web(deal)
+    except Exception as e:
+        print(f"[Web] Vitrine ekleme uyarısı: {e}")
+
+    print("\n✅ [TAMAMLANDI!] Fırsat Paylaşıma Hazır!")
+    print(f"📁 Video:    {video_path}")
+    print(f"📁 Açıklama: {caption_path}")
+    if deal.get("store_url"):
+        print(f"🔗 Ürün Linki: {deal.get('store_url')}")
+    print("-------------------------------------------------------")
+    print(caption_text)
+    print("-------------------------------------------------------\n")
+
+    return {
+        "video_path": video_path,
+        "caption_path": caption_path,
+        "caption_text": caption_text,
+        "deal": deal
+    }
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Viral İndirim / Fırsat Video ve İçerik Otomasyonu (Amazon + Trendyol + Hepsiburada)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Kullanım Şekilleri:
+  1. En İyi Fırsatı Avla (Amazon, Trendyol, Hepsiburada arasından en iyisini seçer):
+     python deal_bot.py --auto
+     python deal_bot.py --auto --platform all --count 3
+
+  2. Belirli Bir Platform Seç:
+     python deal_bot.py --platform trendyol
+     python deal_bot.py --platform hepsiburada
+     python deal_bot.py --platform amazon
+
+  3. Full Aktif / Nöbetçi Modu:
+     python deal_bot.py --watch --interval 30
+
+  4. Kendi Görsel veya Linkinle:
+     python deal_bot.py --image "screenshot.png"
+     python deal_bot.py --url "https://www.trendyol.com/..."
+        """
+    )
+
+    parser.add_argument("--auto", action="store_true", help="Otomatik mod: En iyi fırsatları avla (Amazon, Trendyol, Hepsiburada)")
+    parser.add_argument("--platform", type=str, default="all", choices=["all", "amazon", "trendyol", "hepsiburada"], help="Taranacak e-ticaret platformu (Varsayılan: all)")
+    parser.add_argument("--amazon", action="store_true", help="Sadece amazon.com.tr fırsat ve çok satanlar ürünlerini çek")
+    parser.add_argument("--category", type=str, default="gaming", choices=["gaming", "computers", "electronics", "all"], help="Ürün kategorisi (Varsayılan: gaming)")
+    parser.add_argument("--watch", action="store_true", help="Nöbetçi mod: Arka planda sürekli çalışır, yeni indirim düştükçe video üretir")
+    parser.add_argument("--interval", type=int, default=30, help="Nöbetçi modda kontrol aralığı (dakika, Varsayılan: 30)")
+    parser.add_argument("--count", type=int, default=1, help="Üretilecek video sayısı (Varsayılan: 1)")
+    parser.add_argument("--image", type=str, help="Kendi ürün fotoğrafın veya ekran görüntün (Gemini Vision ile okunur)")
+    parser.add_argument("--url", type=str, help="İndirimli ürün web linki")
+    parser.add_argument("--manual", action="store_true", help="Manuel bilgi girişi modu")
+    parser.add_argument("--title", type=str, help="Ürün başlığı")
+    parser.add_argument("--old", type=str, help="Eski fiyat (örn: 1.999 TL)")
+    parser.add_argument("--new", type=str, help="Yeni indirimli fiyat (örn: 999 TL)")
+    parser.add_argument("--discount", type=str, default="-40%", help="İndirim yüzdesi (örn: -50%%)")
+    parser.add_argument("--badge", type=str, default="GÜNÜN FIRSATI", help="Rozet metni (örn: GÜNÜN FIRSATI, ÇÖKÜŞ FİYAT)")
+    parser.add_argument("--hook", type=str, default="", help="Neden kaçırılmayacak fırsat olduğunu anlatan detay")
+    parser.add_argument("--meme", type=str, choices=[m.replace(".mp4", "") for m in AVAILABLE_MEMES], help="Kullanılacak özel meme videosu")
+    parser.add_argument("--audio", type=str, help="Kullanılacak özel müzik dosyası")
+
+    args = parser.parse_args()
+
+    platform = "amazon" if args.amazon else args.platform
+
+    # Nöbetçi Modu (Full Aktif / Arka Plan)
+    if args.watch:
+        print(f"👀 [NÖBETÇİ MODU AKTİF]")
+        print(f"Bot arka planda sürekli çalışacak ve her {args.interval} dakikada bir Amazon, Trendyol ve Hepsiburada'yı tarayacak.")
+        print("Durdurmak için Ctrl+C basabilirsiniz.\n")
+        history = load_history()
+        while True:
+            now_str = datetime.datetime.now().strftime("%H:%M:%S")
+            print(f"[{now_str}] 🔍 İndirimler taranıyor (Platform: {platform.upper()})...")
+            deals = hunt_best_deals(limit=5, platform=platform, category=args.category, exclude_urls=history)
+            new_deals = [d for d in deals if get_deal_sig(d) not in history]
+            if new_deals:
+                print(f"🔔 {len(new_deals)} adet YENİ sıcak indirim yakalandı! Videolar hazırlanıyor...")
+                for deal in new_deals[:2]:
+                    process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+                    history.add(get_deal_sig(deal))
+            else:
+                print("💤 Henüz yeni bir fırsat düşmedi. Bir sonraki kontrole kadar bekleniyor...")
+
+            time.sleep(args.interval * 60)
+
+    # Otomatik veya Çoklu Platform Modu
+    elif args.auto or args.amazon or args.platform != "all":
+        print(f"🚀 [MOD: ÇOKLU PLATFORM İNDİRİM AVI - Platform: {platform.upper()}]")
+        history = load_history()
+        fresh_deals = hunt_best_deals(limit=args.count, platform=platform, category=args.category, exclude_urls=history)
+        if not fresh_deals:
+            fresh_deals = hunt_best_deals(limit=args.count, platform=platform, category=args.category)
+
+        if not fresh_deals:
+            print("❌ Yeni indirim bulunamadı.")
+            sys.exit(1)
+
+        print(f"\n🎯 Toplam {len(fresh_deals)} adet en iyi fırsat seçildi! Videolar üretiliyor...\n")
+        results = []
+        for i, deal in enumerate(fresh_deals):
+            print(f">>> Fırsat {i+1}/{len(fresh_deals)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
+            res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+            results.append(res)
+
+        print(f"\n🎉 Tüm işlem tamamlandı! Toplam {len(results)} video 'output/' klasöründe paylaşıma hazır.")
+
+    elif args.image and not args.manual:
+        print(f"📸 [MOD: GÖRSEL ANALİZİ İLE ÜRETİM]")
+        deal = parse_deal_from_image(args.image)
+        if args.title: deal["title"] = args.title
+        if args.old: deal["old_price"] = args.old
+        if args.new: deal["new_price"] = args.new
+        if args.discount != "-40%": deal["discount_pct"] = args.discount
+        if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
+        if args.hook: deal["hook"] = args.hook
+
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+
+    elif args.url:
+        print(f"🔗 [MOD: WEB URL ANALİZİ İLE ÜRETİM]")
+        deal = parse_deal_from_url(args.url)
+        if args.title: deal["title"] = args.title
+        if args.old: deal["old_price"] = args.old
+        if args.new: deal["new_price"] = args.new
+        if args.discount != "-40%": deal["discount_pct"] = args.discount
+        if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
+        if args.hook: deal["hook"] = args.hook
+
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+
+    elif args.manual or args.title:
+        print("✍️ [MOD: MANUEL GİRİŞ İLE ÜRETİM]")
+        deal = {
+            "title": args.title or "Günün Özel Fırsat Ürünü",
+            "old_price": args.old or "1.999 TL",
+            "new_price": args.new or "999 TL",
+            "discount_pct": args.discount,
+            "badge": args.badge,
+            "hook": args.hook or "Piyasanın çok altında, kaçırılmayacak fırsat!",
+            "image_path": args.image or os.path.join(TEMP_DIR, "hunt_prod_1.jpg")
+        }
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,81 @@
+name: ⚡ Flaş Fırsat Otomasyonu (24/7 Bulut Radarı)
+
+on:
+  schedule:
+    # Türkiye Saatiyle günde 4 kez (09:00, 13:00, 17:00, 21:00) UTC: 06:00, 10:00, 14:00, 18:00
+    - cron: '0 6,10,14,18 * * *'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Taranacak Mağaza'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - amazon
+          - trendyol
+          - hepsiburada
+      count:
+        description: 'Üretilecek Fırsat/Video Sayısı'
+        required: true
+        default: '1'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  hunt-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: 📥 Depoyu Klonla (Checkout)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Python 3.11 Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Bağımlılıkları Yükle
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🎬 FFmpeg Doğrula
+        run: |
+          ffmpeg -version | head -n 1
+
+      - name: 🚀 Fırsat Radarı & Video Motorunu Çalıştır
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
+          TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
+          HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
+        run: |
+          PLATFORM="${{ inputs.platform }}"
+          [ -z "$PLATFORM" ] && PLATFORM="all"
+          COUNT="${{ inputs.count }}"
+          [ -z "$COUNT" ] && COUNT="1"
+          echo "🚀 Çalıştırılıyor: Platform=$PLATFORM, Adet=$COUNT"
+          python deal_bot.py --auto --platform "$PLATFORM" --count "$COUNT"
+
+      - name: 🌐 Canlı Web Vitrinini Otomatik Commit & Push Et
+        run: |
+          git config --global user.name "flasfirsat-bot[bot]"
+          git config --global user.email "bot@flasfirsat.com"
+          git add index.html data/ assets/products/ history_deals.json || true
+          if git diff --staged --quiet; then
+            echo "Değişiklik yok, commit atlanıyor."
+          else
+            git commit -m "⚡ Otomatik Flaş Fırsat & Canlı Vitrin Güncellemesi [skip ci]"
+            git push
+          fi

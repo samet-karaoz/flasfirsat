@@ -89,30 +89,30 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
     pct_val = int(pct_match.group(1)) if pct_match else 30
     title_low = (title or "").lower()
 
-    # 1. Dev Çöküş İndirimleri (%40 ve üzeri)
+    # 1. Dev Çöküş İndirimleri (%40 ve üzeri) - Şok ve Zenginlik Memeleri
     if pct_val >= 40:
         candidates = ["vince_mcmahon.mp4", "walter_white.mp4", "the_rock.mp4", "homelander_stare.mp4"]
         valid = [c for c in candidates if c in available]
         if valid:
             return random.choice(valid)
 
-    # 2. Gaming, Espor ve Donanım Ürünleri
+    # 2. Gaming, Espor ve Donanım Ürünleri - Karizmatik Sigma / Oyuncu Tepkileri
     gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "espor", "oyuncu", "monitor", "ekran kartı"]
     if any(k in title_low for k in gaming_kw):
-        candidates = ["bateman_walk.mp4", "knight_cat.mp4", "bale_nod.mp4", "ryan_gosling.mp4"]
+        candidates = ["bateman_walk.mp4", "bale_nod.mp4", "ryan_gosling.mp4", "bully_maguire.mp4", "the_rock.mp4"]
         valid = [c for c in candidates if c in available]
         if valid:
             return random.choice(valid)
 
-    # 3. Yüksek Fırsat / Viral Hit (%25 - %39)
+    # 3. Yüksek Fırsat / Viral Hit (%25 - %39) - Zafer ve Kutlama
     if pct_val >= 25:
-        candidates = ["knight_cat.mp4", "dicaprio_cheers.mp4", "bully_maguire.mp4", "cat_vibing.mp4"]
+        candidates = ["dicaprio_cheers.mp4", "mcconaughey_chest.mp4", "bully_maguire.mp4", "bale_nod.mp4", "bateman_walk.mp4"]
         valid = [c for c in candidates if c in available]
         if valid:
             return random.choice(valid)
 
-    # 4. Genel / Lüks Ürünler
-    candidates = ["knight_cat.mp4", "mcconaughey_chest.mp4", "the_weeknd_lost.mp4", "kanye_stare.mp4"]
+    # 4. Genel Ürünler
+    candidates = ["the_weeknd_lost.mp4", "kanye_stare.mp4", "the_rock.mp4", "dicaprio_cheers.mp4", "walter_white.mp4"]
     valid = [c for c in candidates if c in available]
     return random.choice(valid) if valid else random.choice(available)
 

@@ -228,6 +228,16 @@
             letter-spacing: 0.3px;
         }
 
+        .badge-store.store-trendyol {
+            background: rgba(242, 122, 26, 0.92);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .badge-store.store-hepsiburada {
+            background: rgba(255, 96, 0, 0.92);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
         .card-content {
             padding: 20px;
             display: flex;
@@ -239,7 +249,7 @@
             font-size: 1.05rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -252,7 +262,7 @@
             display: flex;
             align-items: baseline;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
             margin-top: auto;
         }
 
@@ -263,9 +273,83 @@
         }
 
         .new-price {
-            color: var(--accent-green);
-            font-size: 1.6rem;
+            color: var(--text-main);
+            font-size: 1.55rem;
             font-weight: 800;
+        }
+
+        /* Banka & Net Maliyet Hesaplayıcı Kutusu */
+        .campaign-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.04) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .campaign-box:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%);
+            border-color: rgba(16, 185, 129, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .campaign-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+        }
+
+        .campaign-tag {
+            background: #10B981;
+            color: #064E3B;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            letter-spacing: 0.3px;
+        }
+
+        .campaign-name {
+            color: #A7F3D0;
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .net-cost-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-top: 2px;
+        }
+
+        .net-cost-lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .net-cost-val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #34D399;
+            text-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
+        }
+
+        .installment-row {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-top: 6px;
+            margin-top: 2px;
+        }
+
+        .installment-txt {
+            color: #CBD5E1;
         }
 
         .buy-btn {
@@ -339,7 +423,7 @@
             <div class="deal-card" data-title="steelseries qck+ large espor gaming mousepad">
                 <div class="card-img-wrap">
                     <img src="assets/products/steelseries_qck.jpg" alt="SteelSeries Qck+ Large Espor Gaming Mousepad" class="card-img" loading="lazy">
-                    <span class="badge-store">Amazon TR</span>
+                    <span class="badge-store store-amazon">Amazon TR</span>
                     <span class="badge-discount">-32%</span>
                 </div>
                 <div class="card-content">
@@ -348,6 +432,21 @@
                         <span class="old-price">1.799 TL</span>
                         <span class="new-price">1.219 TL</span>
                     </div>
+
+                    <div class="campaign-box">
+                        <div class="campaign-header">
+                            <span class="campaign-tag">💳 EK AVANTAJ</span>
+                            <span class="campaign-name">Nays ile 122 TL Nakit İade</span>
+                        </div>
+                        <div class="net-cost-row">
+                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
+                            <span class="net-cost-val">1.097 TL</span>
+                        </div>
+                        <div class="installment-row">
+                            <span class="installment-txt">⚡ 3 Taksit x 406 TL</span>
+                        </div>
+                    </div>
+
                     <a href="https://www.amazon.com.tr/dp/B000UVRU6G?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn">
                         🔥 Fırsata Git & Satın Al
                     </a>
@@ -357,7 +456,7 @@
             <div class="deal-card" data-title="razer viper v3 pro ultralight kablosuz espor faresi">
                 <div class="card-img-wrap">
                     <img src="assets/products/razer_viper_v3_pro.jpg" alt="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" class="card-img" loading="lazy">
-                    <span class="badge-store">Amazon TR</span>
+                    <span class="badge-store store-amazon">Amazon TR</span>
                     <span class="badge-discount">-31%</span>
                 </div>
                 <div class="card-content">
@@ -366,6 +465,21 @@
                         <span class="old-price">6.999 TL</span>
                         <span class="new-price">4.857 TL</span>
                     </div>
+
+                    <div class="campaign-box">
+                        <div class="campaign-header">
+                            <span class="campaign-tag">💳 EK AVANTAJ</span>
+                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        </div>
+                        <div class="net-cost-row">
+                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
+                            <span class="net-cost-val">4.607 TL</span>
+                        </div>
+                        <div class="installment-row">
+                            <span class="installment-txt">⚡ 3 Taksit x 1.619 TL</span>
+                        </div>
+                    </div>
+
                     <a href="https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn">
                         🔥 Fırsata Git & Satın Al
                     </a>
@@ -375,7 +489,7 @@
             <div class="deal-card" data-title="logitech g305 lightspeed 12.000 dpi kablosuz gaming mouse">
                 <div class="card-img-wrap">
                     <img src="assets/products/logitech_g305.jpg" alt="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" class="card-img" loading="lazy">
-                    <span class="badge-store">Amazon TR</span>
+                    <span class="badge-store store-amazon">Amazon TR</span>
                     <span class="badge-discount">-44%</span>
                 </div>
                 <div class="card-content">
@@ -384,6 +498,21 @@
                         <span class="old-price">1.599 TL</span>
                         <span class="new-price">899 TL</span>
                     </div>
+
+                    <div class="campaign-box">
+                        <div class="campaign-header">
+                            <span class="campaign-tag">💳 EK AVANTAJ</span>
+                            <span class="campaign-name">Nays ile %10 İade (90 TL)</span>
+                        </div>
+                        <div class="net-cost-row">
+                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
+                            <span class="net-cost-val">809 TL</span>
+                        </div>
+                        <div class="installment-row">
+                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        </div>
+                    </div>
+
                     <a href="https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn">
                         🔥 Fırsata Git & Satın Al
                     </a>

@@ -73,10 +73,30 @@ def wrap_text(text: str, max_chars_per_line: int = 32) -> list:
         lines.append(" ".join(current_line))
     return lines[:2] # Maksimum 2 satır, görsel alanını ferah tutmak için
 
+LAST_MEME_FILE = os.path.join(TEMP_DIR, "last_meme.txt")
+
+def get_last_meme() -> str:
+    try:
+        if os.path.exists(LAST_MEME_FILE):
+            with open(LAST_MEME_FILE, "r", encoding="utf-8") as f:
+                return f.read().strip()
+    except Exception:
+        pass
+    return ""
+
+def set_last_meme(meme_name: str):
+    try:
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        with open(LAST_MEME_FILE, "w", encoding="utf-8") as f:
+            f.write(meme_name)
+    except Exception:
+        pass
+
 def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "") -> str:
     """
     İndirim oranına, ürün kategorisine ve başlığına göre en yüksek viral potansiyele sahip
     meme videosunu kütüphaneden akıllıca seçer.
+    Aynı videonun üst üste iki kez seçilmesini otomatik olarak engeller.
     """
     available = [m for m in AVAILABLE_MEMES if os.path.exists(os.path.join(MEMES_DIR, m))]
     if not available:
@@ -84,37 +104,38 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
     if not available:
         return "knight_cat.mp4"
 
+    last_used = get_last_meme()
+
+    def pick_without_repeat(candidates_list: list) -> str:
+        valid = [c for c in candidates_list if c in available]
+        if not valid:
+            valid = available
+        # Eğer 1'den fazla aday varsa, son kullanılanı bu seferlik hariç tut
+        pool = [c for c in valid if c != last_used] if len(valid) > 1 else valid
+        chosen = random.choice(pool)
+        set_last_meme(chosen)
+        return chosen
+
     # İndirim yüzdesini sayıya çevir
     pct_match = re.search(r'(\d+)', str(discount_pct))
     pct_val = int(pct_match.group(1)) if pct_match else 30
     title_low = (title or "").lower()
 
-    # 1. Dev Çöküş İndirimleri (%40 ve üzeri) - Şok ve Zenginlik Memeleri
+    # 1. Dev Çöküş İndirimleri (%40 ve üzeri) - Şok ve Para Memeleri
     if pct_val >= 40:
-        candidates = ["vince_mcmahon.mp4", "walter_white.mp4", "the_rock.mp4", "homelander_stare.mp4"]
-        valid = [c for c in candidates if c in available]
-        if valid:
-            return random.choice(valid)
+        return pick_without_repeat(["vince_mcmahon.mp4", "walter_white.mp4", "knight_cat.mp4", "the_rock.mp4", "homelander_stare.mp4"])
 
-    # 2. Gaming, Espor ve Donanım Ürünleri - Karizmatik Sigma / Oyuncu Tepkileri
+    # 2. Gaming, Espor ve Donanım Ürünleri - Karizmatik Tepkiler & Zırhlı Kedi
     gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "espor", "oyuncu", "monitor", "ekran kartı"]
     if any(k in title_low for k in gaming_kw):
-        candidates = ["bateman_walk.mp4", "bale_nod.mp4", "ryan_gosling.mp4", "bully_maguire.mp4", "the_rock.mp4"]
-        valid = [c for c in candidates if c in available]
-        if valid:
-            return random.choice(valid)
+        return pick_without_repeat(["knight_cat.mp4", "bateman_walk.mp4", "bale_nod.mp4", "cat_vibing.mp4", "ryan_gosling.mp4", "bully_maguire.mp4"])
 
-    # 3. Yüksek Fırsat / Viral Hit (%25 - %39) - Zafer ve Kutlama
+    # 3. Yüksek Fırsat / Viral Hit (%25 - %39) - Zafer, Kadeh Kaldırma & Vibing Kedi
     if pct_val >= 25:
-        candidates = ["dicaprio_cheers.mp4", "mcconaughey_chest.mp4", "bully_maguire.mp4", "bale_nod.mp4", "bateman_walk.mp4"]
-        valid = [c for c in candidates if c in available]
-        if valid:
-            return random.choice(valid)
+        return pick_without_repeat(["cat_vibing.mp4", "knight_cat.mp4", "dicaprio_cheers.mp4", "mcconaughey_chest.mp4", "bully_maguire.mp4", "bale_nod.mp4"])
 
     # 4. Genel Ürünler
-    candidates = ["the_weeknd_lost.mp4", "kanye_stare.mp4", "the_rock.mp4", "dicaprio_cheers.mp4", "walter_white.mp4"]
-    valid = [c for c in candidates if c in available]
-    return random.choice(valid) if valid else random.choice(available)
+    return pick_without_repeat(["knight_cat.mp4", "cat_vibing.mp4", "the_weeknd_lost.mp4", "the_rock.mp4", "dicaprio_cheers.mp4", "kanye_stare.mp4"])
 
 def create_product_banner(
     product_image_path: str,

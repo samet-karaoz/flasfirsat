@@ -27,7 +27,7 @@ Açıklama Kuralları:
 3. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
 4. Yoruma teşvik: Tartışma yaratacak bir soru sor ("Sizce bu fiyata değer mi, yoksa çöp mü?", "Bu paraya daha iyisi var mı?").
 5. Eylem Çağrısı (CTA): Biyografideki linke veya Telegram'a yönlendir ("Satın alma linki profilimizdeki sitede ve Telegram kanalımızda!").
-6. Hashtag'ler: En çok izlenen 6-8 Türkçe ve global hashtag ekle (#indirim #fırsat #teknoloji #kampanya #keşfet #reels).
+6. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #gaming #keşfet).
 
 Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
@@ -43,6 +43,18 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
     with open(req_file, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False)
 
+    def sanitize_max_hashtags(text: str) -> str:
+        """Metindeki hashtag sayısını kesinlikle maksimum 5 ile sınırlar."""
+        import re
+        tags = re.findall(r"(#[^\s#]+)", text)
+        if len(tags) > 5:
+            extra_tags = tags[5:]
+            for t in extra_tags:
+                text = re.sub(re.escape(t) + r"\b", "", text)
+            # Fazla boşlukları temizle
+            text = re.sub(r"[ \t]+", " ", text).strip()
+        return text
+
     for model in MODEL_CANDIDATES:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
         cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
@@ -52,13 +64,13 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
             data = json.loads(res.stdout)
             if "candidates" in data and len(data["candidates"]) > 0:
                 caption = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                return caption
+                return sanitize_max_hashtags(caption)
         except Exception:
             continue
 
-    # Fallback Caption if all API models fail
+    # Fallback Caption if all API models fail (Tam 5 etiket)
     net_line = f"💳 {bank_campaign} ile Net Maliyet: {net_cost}\n" if net_cost else ""
-    return (
+    fallback = (
         f"🔥 {product_title} fiyatı çöktü!\n\n"
         f"❌ Eski Fiyat: {old_price}\n"
         f"✅ Yeni Fiyat: {new_price} ({discount_pct} İndirim)\n"
@@ -66,8 +78,9 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"{deal_details}\n\n"
         f"Sizce bu fiyata akar mı? Alacak arkadaşına hemen gönder 👇\n"
         f"🔗 Satın alma linki hikayede ve profildeki linkte!\n\n"
-        f"#indirim #fırsat #kampanya #teknoloji #keşfet #fırsatürünleri"
+        f"#indirim #fırsat #teknoloji #kampanya #keşfet"
     )
+    return sanitize_max_hashtags(fallback)
 
 if __name__ == "__main__":
     c = generate_viral_caption(

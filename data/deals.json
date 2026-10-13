@@ -1,5 +1,19 @@
 [
   {
+    "id": "deal_1791923021_8",
+    "title": "JBL C100SI Kulaklık",
+    "old_price": "749,00 TL",
+    "new_price": "499,00 TL",
+    "discount_pct": "-33%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B01DEWVZ2C?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile %10 İade (50 TL)",
+    "net_cost": "449 TL",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "image_url": "assets/products/jbl_c100si_kulakl_k_1e3b79e4.jpg",
+    "date_added": "13.10.2026 20:23"
+  },
+  {
     "id": "deal_1791918693_7",
     "title": "SteelSeries Rival 3 Wireless Gen 2 Mouse",
     "old_price": "2.999,00 TL",

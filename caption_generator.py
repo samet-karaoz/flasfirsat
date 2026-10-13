@@ -22,14 +22,17 @@ def generate_viral_caption(product_title: str, old_price: str, new_price: str, d
 Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yoruma ve paylaşıma koşacağı bir Reel/TikTok açıklaması yazmak.
 
 Açıklama Kuralları:
-1. İlk satır: Dikkat çekici bir soru veya iddialı bir hook (Örn: "DDR5 sistem bedavaya mı geliyor?!", "Bu fiyata alan yaşadı!").
+1. İlk satır: Dikkat çekici bir soru veya iddialı bir hook (Örn: "DDR5 sistem bedavaya mı geliyor?!", "Bu fiyata alan yaşadı!", "🚨 FİYAT HATASI MI?!").
 2. Fiyat avantajını açıkça göster (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve İndirim Oranı).
 3. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
-4. Yoruma teşvik: Tartışma yaratacak bir soru sor ("Sizce bu fiyata değer mi, yoksa çöp mü?", "Bu paraya daha iyisi var mı?").
-5. Eylem Çağrısı (CTA): Biyografideki linke veya Telegram'a yönlendir ("Satın alma linki profilimizdeki sitede ve Telegram kanalımızda!").
-6. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #gaming #keşfet).
+4. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
+5. Yoruma teşvik ve OTOMATİK DM ÇAĞRISI (En Önemli Kural): Yorum sayısını patlatmak için izleyiciyi yoruma "LİNK" yazmaya çağır:
+   "👉 Yoruma 'LİNK' yaz, satın alma linkini saniyeler içinde doğrudan DM kutuna gönderelim! 📩"
+   (Ayrıca: "🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!").
+6. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #kampanya #keşfet).
 
 Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
+
 
     extra_info = f"\nBanka Kampanyası: {bank_campaign}\nNet Maliyet: {net_cost}" if net_cost else ""
     user_prompt = f"Ürün: {product_title}\nEski Fiyat: {old_price}\nYeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÜrün Linki: {store_url}"
@@ -70,17 +73,23 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
     # Fallback Caption if all API models fail (Tam 5 etiket)
     net_line = f"💳 {bank_campaign} ile Net Maliyet: {net_cost}\n" if net_cost else ""
+    pct_m = re.search(r'(\d+)', str(discount_pct))
+    is_huge = int(pct_m.group(1)) >= 35 if pct_m else False
+    urgency_line = "🚨 DİKKAT: Fiyat hatası olabilir veya her an stok bitebilir!\n" if is_huge else ""
+
     fallback = (
         f"🔥 {product_title} fiyatı çöktü!\n\n"
         f"❌ Eski Fiyat: {old_price}\n"
         f"✅ Yeni Fiyat: {new_price} ({discount_pct} İndirim)\n"
-        f"{net_line}\n"
+        f"{net_line}"
+        f"{urgency_line}\n"
         f"{deal_details}\n\n"
-        f"Sizce bu fiyata akar mı? Alacak arkadaşına hemen gönder 👇\n"
-        f"🔗 Satın alma linki hikayede ve profildeki linkte!\n\n"
+        f"👉 Yoruma 'LİNK' yaz, satın alma linkini anında DM kutuna yollayalım! 📩\n"
+        f"🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!\n\n"
         f"#indirim #fırsat #teknoloji #kampanya #keşfet"
     )
     return sanitize_max_hashtags(fallback)
+
 
 if __name__ == "__main__":
     c = generate_viral_caption(

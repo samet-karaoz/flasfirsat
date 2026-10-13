@@ -7,8 +7,10 @@ import random
 import datetime
 from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, parse_deal_from_image, parse_deal_from_url
 from split_composer import create_product_banner, build_split_screen_video, AVAILABLE_MEMES, AVAILABLE_AUDIOS
+from top3_composer import build_top3_video, generate_top3_caption
 from caption_generator import generate_viral_caption
 from telegram_notifier import send_telegram_deal
+
 from affiliate import get_affiliate_url
 from web_showcase import add_deal_to_web
 from config import BASE_DIR, OUTPUT_DIR, TEMP_DIR
@@ -94,6 +96,7 @@ def process_deal_to_reel(
         bank_campaign=deal.get("bank_campaign", ""),
         net_cost=deal.get("net_cost", ""),
         installment=deal.get("installment", ""),
+        is_price_error=deal.get("is_price_error", False),
         output_path=banner_temp
     )
 
@@ -106,8 +109,10 @@ def process_deal_to_reel(
         audio_name=audio_choice,
         output_filename=video_filename,
         discount_pct=deal.get("discount_pct", ""),
-        product_title=deal.get("title", "")
+        product_title=deal.get("title", ""),
+        is_price_error=deal.get("is_price_error", False)
     )
+
 
     # Affiliate Link Dönüşümü
     raw_url = deal.get("store_url", "")
@@ -205,6 +210,7 @@ Kullanım Şekilleri:
     parser.add_argument("--discount", type=str, default="-40%", help="İndirim yüzdesi (örn: -50%%)")
     parser.add_argument("--badge", type=str, default="GÜNÜN FIRSATI", help="Rozet metni (örn: GÜNÜN FIRSATI, ÇÖKÜŞ FİYAT)")
     parser.add_argument("--hook", type=str, default="", help="Neden kaçırılmayacak fırsat olduğunu anlatan detay")
+    parser.add_argument("--top3", action="store_true", help="Günün En İyi 3 Fırsatı (Top 3) videosunu ve açıklamasını üret")
     parser.add_argument("--meme", type=str, choices=[m.replace(".mp4", "") for m in AVAILABLE_MEMES], help="Kullanılacak özel meme videosu")
     parser.add_argument("--audio", type=str, help="Kullanılacak özel müzik dosyası")
 
@@ -212,8 +218,56 @@ Kullanım Şekilleri:
 
     platform = "amazon" if args.amazon else args.platform
 
+    # Günün En İyi 3 Fırsatı (Top 3) Modu
+    if args.top3:
+        print(f"🏆 [MOD: GÜNÜN EN İYİ 3 FIRSATI (TOP 3) AVI - Platform: {platform.upper()}]")
+        history = load_history()
+        fresh_deals = hunt_best_deals(limit=3, platform=platform, category=args.category)
+        if len(fresh_deals) < 3:
+            print("⚠️ Yeterli indirim bulunamadı, mevcut fırsatlar tamamlanıyor...")
+            defaults = [
+                {"title": "Sony PS5 DualSense Kablosuz Kol", "old_price": "3.499 TL", "new_price": "2.299 TL", "discount_pct": "-34%", "store_name": "Amazon TR", "store_url": "https://www.amazon.com.tr/dp/B08H99BPJN"},
+                {"title": "SteelSeries Arctis Nova 1 Oyuncu Kulaklığı", "old_price": "2.199 TL", "new_price": "1.349 TL", "discount_pct": "-38%", "store_name": "Amazon TR", "store_url": "https://www.amazon.com.tr/dp/B0B15VJZQZ"},
+                {"title": "Logitech G G102 Lightsync RGB Gaming Mouse", "old_price": "899 TL", "new_price": "499 TL", "discount_pct": "-45%", "store_name": "Amazon TR", "store_url": "https://www.amazon.com.tr/dp/B07W4DH8JW"}
+            ]
+            for def_deal in defaults:
+                if len(fresh_deals) < 3:
+                    fresh_deals.append(def_deal)
+
+        # Affiliate link ve web vitrini senkronizasyonu
+        for d in fresh_deals:
+            raw_url = d.get("store_url", "")
+            aff_url = get_affiliate_url(raw_url, d.get("store_name", "Amazon TR"))
+            d["store_url"] = aff_url
+            d["affiliate_url"] = aff_url
+            try:
+                add_deal_to_web(d)
+            except Exception as e:
+                print(f"[Web Vitrini] Senkronizasyon uyarısı: {e}")
+
+        # Video & Caption üret
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        v_name = f"top3_deals_{timestamp}.mp4"
+        v_path = build_top3_video(fresh_deals, output_filename=v_name)
+        c_text = generate_top3_caption(fresh_deals)
+        c_path = os.path.join(OUTPUT_DIR, f"top3_deals_{timestamp}_aciklama.txt")
+        with open(c_path, "w", encoding="utf-8") as f:
+            f.write(c_text)
+
+        # Telegram'a gönder
+        try:
+            send_telegram_deal(fresh_deals[0], v_path, c_text)
+            print("📲 Telegram bildirimi başarıyla gönderildi!")
+        except Exception as e:
+            print(f"Telegram gönderim uyarısı: {e}")
+
+        print(f"\n🎉 Top 3 Fırsat Videosu Hazır: {v_path}")
+        print(f"✍️ Açıklama Metni: {c_path}")
+        return
+
     # Nöbetçi Modu (Full Aktif / Arka Plan)
     if args.watch:
+
         print(f"👀 [NÖBETÇİ MODU AKTİF]")
         print(f"Bot arka planda sürekli çalışacak ve her {args.interval} dakikada bir Amazon, Trendyol ve Hepsiburada'yı tarayacak.")
         print("Durdurmak için Ctrl+C basabilirsiniz.\n")

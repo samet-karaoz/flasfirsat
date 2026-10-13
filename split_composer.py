@@ -166,6 +166,7 @@ def create_product_banner(
     bank_campaign: str = "",
     net_cost: str = "",
     installment: str = "",
+    is_price_error: bool = False,
     output_path: str = None
 ) -> str:
     """
@@ -173,6 +174,7 @@ def create_product_banner(
     profesyonel e-ticaret sayfaları kalitesinde, etiketli ve dinamik afiş üretir.
     Amazon TR, Trendyol ve Hepsiburada marka renklerini yansıtır.
     Taksit avantajı ve net maliyeti öne çıkarır.
+    Fiyat hatası (%40+ indirim) durumunda acil durum kırmızı alarm rozeti basar.
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "product_top.png")
@@ -196,14 +198,27 @@ def create_product_banner(
     f_net = get_font("segoeuib", 21)
     f_pct = get_font("segoeuib", 28)
 
-    # 1. Sol Üst Rozet (Badge) - FLAŞ FIRSAT
-    clean_badge = badge_text.strip()
+    pct_m = re.search(r'(\d+)', str(discount_pct))
+    pct_val = int(pct_m.group(1)) if pct_m else 0
+    price_error_active = is_price_error or pct_val >= 40
+
+    # 1. Sol Üst Rozet (Badge) - FLAŞ FIRSAT veya FİYAT HATASI
+    if price_error_active:
+        clean_badge = "🚨 FİYAT HATASI MI?!"
+        badge_fill = (220, 38, 38) # Acil Durum Kırmızısı
+        badge_border = (254, 240, 138) # Sarı Uyarı Kenarlığı
+    else:
+        clean_badge = badge_text.strip()
+        badge_fill = (255, 87, 34) # Alev Turuncusu
+        badge_border = None
+
     b_w = draw.textlength(clean_badge, font=f_badge)
-    draw.rounded_rectangle((40, 24, 40 + b_w + 58, 76), radius=14, fill=(255, 87, 34)) # Alev Turuncusu #FF5722
+    draw.rounded_rectangle((40, 24, 40 + b_w + 58, 76), radius=14, fill=badge_fill, outline=badge_border, width=2 if badge_border else 0)
     # Altın Sarısı Vektör Şimşek İkonu (#FFCC00)
     bolt_icon = [(63, 33), (51, 50), (60, 50), (54, 67), (71, 48), (62, 48)]
     draw.polygon(bolt_icon, fill=(255, 204, 0))
     draw.text((78, 36), clean_badge, font=f_badge, fill=(255, 255, 255))
+
 
     # 2. Sağ Üst İndirim Rozeti
     clean_pct = discount_pct.strip()
@@ -326,12 +341,14 @@ def build_split_screen_video(
     audio_name: str = None,
     output_filename: str = "deal_reel.mp4",
     discount_pct: str = "",
-    product_title: str = ""
+    product_title: str = "",
+    is_price_error: bool = False
 ) -> str:
     """
     Üst yarıda ürün banner'ı (1080x960),
     Alt yarıda viral meme videosu (1080x960),
     Arka planda viral phonk müziği veya meme'in orijinal sesi ile 1080x1920 MP4 video üretir.
+    Fiyat hatası (%40+) durumunda ilk 1.5 saniyeye dikkat çekici dijital alarm efekti miksler.
     """
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(TEMP_DIR, exist_ok=True)
@@ -379,86 +396,76 @@ def build_split_screen_video(
     if use_external_audio:
         print(f"[Montaj] Seçilen Harici Ses: {os.path.basename(audio_path)}")
 
+    # Fiyat hatası alarm kontrolü
+    pct_m = re.search(r'(\d+)', str(discount_pct))
+    pct_val = int(pct_m.group(1)) if pct_m else 0
+    price_error_active = is_price_error or pct_val >= 40
+    alarm_wav = os.path.join(AUDIO_DIR, "alarm.wav")
+    has_alarm = price_error_active and os.path.exists(alarm_wav)
+    if has_alarm:
+        print("[Montaj] 🚨 FİYAT HATASI ACİLİYET ALARMI VİDEOYA EKLENİYOR!")
+
     is_image = top_source.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
 
-    if not use_external_audio:
-        # Meme'in kendi sesini doğrudan kullan
-        if is_image:
-            filter_complex = (
-                f"[0:v]scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA[top];"
-                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-                f"[top][bottom]vstack=inputs=2[v];"
-                f"[1:a]volume=1.0[a]"
-            )
-            cmd = [
-                "ffmpeg", "-y",
-                "-loop", "1", "-i", top_source,
-                "-i", bottom_meme_path,
-                "-filter_complex", filter_complex,
-                "-map", "[v]", "-map", "[a]",
-                "-t", str(duration),
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-                "-c:a", "aac", "-b:a", "192k",
-                output_path
-            ]
-        else:
-            filter_complex = (
-                f"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[top];"
-                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-                f"[top][bottom]vstack=inputs=2[v];"
-                f"[1:a]volume=1.0[a]"
-            )
-            cmd = [
-                "ffmpeg", "-y",
-                "-i", top_source,
-                "-i", bottom_meme_path,
-                "-filter_complex", filter_complex,
-                "-map", "[v]", "-map", "[a]",
-                "-t", str(duration),
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-                "-c:a", "aac", "-b:a", "192k",
-                output_path
-            ]
+    scale_top = f"scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA" if is_image else f"scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
+
+    cmd = ["ffmpeg", "-y"]
+    if is_image:
+        cmd += ["-loop", "1", "-i", top_source]
     else:
-        # Harici ses dosyasıyla birleştir
-        if is_image:
+        cmd += ["-i", top_source]
+
+    cmd += ["-i", bottom_meme_path]
+
+    if not use_external_audio:
+        # Meme sesi
+        if has_alarm:
+            cmd += ["-i", alarm_wav]
             filter_complex = (
-                f"[0:v]scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA[top];"
+                f"[0:v]{scale_top}[top];"
                 f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
                 f"[top][bottom]vstack=inputs=2[v];"
-                f"[2:a]volume=1.0[a]"
+                f"[1:a]volume=1.0[mus];"
+                f"[2:a]volume=0.85[alr];"
+                f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
             )
-            cmd = [
-                "ffmpeg", "-y",
-                "-loop", "1", "-i", top_source,
-                "-i", bottom_meme_path,
-                "-i", audio_path,
-                "-filter_complex", filter_complex,
-                "-map", "[v]", "-map", "[a]",
-                "-t", str(duration),
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-                "-c:a", "aac", "-b:a", "192k",
-                output_path
-            ]
         else:
             filter_complex = (
-                f"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[top];"
+                f"[0:v]{scale_top}[top];"
+                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
+                f"[top][bottom]vstack=inputs=2[v];"
+                f"[1:a]volume=1.0[a]"
+            )
+    else:
+        # Harici ses
+        cmd += ["-i", audio_path]
+        if has_alarm:
+            cmd += ["-i", alarm_wav]
+            filter_complex = (
+                f"[0:v]{scale_top}[top];"
+                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
+                f"[top][bottom]vstack=inputs=2[v];"
+                f"[2:a]volume=1.0[mus];"
+                f"[3:a]volume=0.85[alr];"
+                f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
+            )
+        else:
+            filter_complex = (
+                f"[0:v]{scale_top}[top];"
                 f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
                 f"[top][bottom]vstack=inputs=2[v];"
                 f"[2:a]volume=1.0[a]"
             )
-            cmd = [
-                "ffmpeg", "-y",
-                "-i", top_source,
-                "-i", bottom_meme_path,
-                "-i", audio_path,
-                "-filter_complex", filter_complex,
-                "-map", "[v]", "-map", "[a]",
-                "-t", str(duration),
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-                "-c:a", "aac", "-b:a", "192k",
-                output_path
-            ]
+
+    cmd += [
+        "-filter_complex", filter_complex,
+        "-map", "[v]", "-map", "[a]",
+        "-t", str(duration),
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "192k",
+        output_path
+    ]
+
 
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):

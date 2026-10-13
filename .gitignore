@@ -17,6 +17,7 @@ __pycache__/
 # Test ve geçici ses dosyaları
 test.mp3
 *.wav
+!assets/audio/*.wav
 
 # IDE ve İşletim Sistemi
 web/

@@ -1,5 +1,19 @@
 [
   {
+    "id": "deal_1791929364_9",
+    "title": "Philips Sessiz Kablosuz Mouse",
+    "old_price": "799,00 TL",
+    "new_price": "549,00 TL",
+    "discount_pct": "-31%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FBGV2H7P?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile %10 İade (55 TL)",
+    "net_cost": "494 TL",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "image_url": "assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg",
+    "date_added": "13.10.2026 22:09"
+  },
+  {
     "id": "deal_1791923021_8",
     "title": "JBL C100SI Kulaklık",
     "old_price": "749,00 TL",

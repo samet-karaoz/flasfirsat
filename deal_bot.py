@@ -16,8 +16,27 @@ from web_showcase import add_deal_to_web
 from config import BASE_DIR, OUTPUT_DIR, TEMP_DIR
 
 HISTORY_FILE = os.path.join(BASE_DIR, "history_deals.json")
+LAST_PRODUCT_FILE = os.path.join(TEMP_DIR, "last_product.txt")
+
+def get_last_product() -> str:
+    try:
+        if os.path.exists(LAST_PRODUCT_FILE):
+            with open(LAST_PRODUCT_FILE, "r", encoding="utf-8") as f:
+                return f.read().strip()
+    except Exception:
+        pass
+    return ""
+
+def set_last_product(prod_name: str):
+    try:
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        with open(LAST_PRODUCT_FILE, "w", encoding="utf-8") as f:
+            f.write(prod_name)
+    except Exception:
+        pass
 
 def load_history() -> set:
+
     if os.path.exists(HISTORY_FILE):
         try:
             with open(HISTORY_FILE, "r", encoding="utf-8") as f:
@@ -82,7 +101,7 @@ def process_deal_to_reel(
 
     print(f"💳 Banka/Nays Avantajı: {deal['bank_campaign']} -> Net: {deal['net_cost']}")
 
-    # 1. Ürün Banner'ı Üret (Daha Büyük, Ferah ve Net Maliyet Rozetli)
+    # 1. Ürün Banner'ı Üret (DEV İNDİRİM Sabit Şablon)
     banner_temp = os.path.join(TEMP_DIR, f"banner_{base_name}.png")
     print("[1/3] 🎨 Üst banner (1080x960) tasarlanıyor...")
     create_product_banner(
@@ -91,16 +110,15 @@ def process_deal_to_reel(
         old_price=deal.get("old_price", "Piyasa Fiyatı"),
         new_price=deal.get("new_price", "İndirimde"),
         discount_pct=deal.get("discount_pct", "-40%"),
-        badge_text=deal.get("badge", "FLAŞ FIRSAT"),
+        badge_text="DEV İNDİRİM",
         store_name=deal.get("store_name", "Amazon TR"),
         bank_campaign=deal.get("bank_campaign", ""),
         net_cost=deal.get("net_cost", ""),
         installment=deal.get("installment", ""),
-        is_price_error=deal.get("is_price_error", False),
         output_path=banner_temp
     )
 
-    # 2. Viral Split-Screen Video Derle (Akıllı Meme Eşleştirme)
+    # 2. Viral Split-Screen Video Derle (Akıllı Meme Eşleştirme - Ard arda aynı meme gelmez)
     video_filename = f"{base_name}.mp4"
     print(f"[2/3] 🎥 Video derleniyor (Split Screen 1080x1920)...")
     video_path = build_split_screen_video(
@@ -109,9 +127,9 @@ def process_deal_to_reel(
         audio_name=audio_choice,
         output_filename=video_filename,
         discount_pct=deal.get("discount_pct", ""),
-        product_title=deal.get("title", ""),
-        is_price_error=deal.get("is_price_error", False)
+        product_title=deal.get("title", "")
     )
+
 
 
     # Affiliate Link Dönüşümü
@@ -144,9 +162,11 @@ def process_deal_to_reel(
         history = load_history()
         history.add(sig)
         save_history(history)
+    set_last_product(deal.get("title", ""))
 
     # 4. Telegram Bildirimi (Telefona Video + Açıklama + Ürün Linki Gönder)
     send_telegram_deal(video_path, caption_text, product_url=aff_url)
+
 
     # 5. Web Vitrini Güncelle (Otomatik Web Sayfasına Ekle)
     try:
@@ -290,24 +310,31 @@ Kullanım Şekilleri:
 
     # Otomatik veya Çoklu Platform Modu
     elif args.auto or args.amazon or args.platform != "all":
-        print(f"🚀 [MOD: ÇOKLU PLATFORM İNDİRİM AVI - Platform: {platform.upper()}]")
+        print(f"🚀 [MOD: EN İYİ İNDİRİM AVI - Platform: {platform.upper()}]")
         history = load_history()
-        fresh_deals = hunt_best_deals(limit=args.count, platform=platform, category=args.category, exclude_urls=history)
+        last_prod = get_last_product()
+        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history)
         if not fresh_deals:
-            fresh_deals = hunt_best_deals(limit=args.count, platform=platform, category=args.category)
+            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category)
 
-        if not fresh_deals:
+        # Son işlenen ürünle aynı olanları filtrele (ard arda tekrar etmez)
+        valid_deals = [d for d in fresh_deals if d.get("title") != last_prod and get_deal_sig(d) != last_prod]
+        chosen_deals = valid_deals if valid_deals else fresh_deals
+
+        if not chosen_deals:
             print("❌ Yeni indirim bulunamadı.")
             sys.exit(1)
 
-        print(f"\n🎯 Toplam {len(fresh_deals)} adet en iyi fırsat seçildi! Videolar üretiliyor...\n")
+        deals_to_process = chosen_deals[:args.count]
+        print(f"\n🎯 Toplam {len(deals_to_process)} adet en iyi fırsat seçildi (Ard arda tekrar engellendi)! Video üretiliyor...\n")
         results = []
-        for i, deal in enumerate(fresh_deals):
-            print(f">>> Fırsat {i+1}/{len(fresh_deals)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
+        for i, deal in enumerate(deals_to_process):
+            print(f">>> Fırsat {i+1}/{len(deals_to_process)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
             res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
             results.append(res)
 
-        print(f"\n🎉 Tüm işlem tamamlandı! Toplam {len(results)} video 'output/' klasöründe paylaşıma hazır.")
+        print(f"\n🎉 Tüm işlem tamamlandı! Toplam {len(results)} video 'output/' klasöründe ve Telegram'da paylaşıma hazır.")
+
 
     elif args.image and not args.manual:
         print(f"📸 [MOD: GÖRSEL ANALİZİ İLE ÜRETİM]")

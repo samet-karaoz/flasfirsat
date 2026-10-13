@@ -161,12 +161,11 @@ def create_product_banner(
     old_price: str,
     new_price: str,
     discount_pct: str = "-35%",
-    badge_text: str = "FLAŞ FIRSAT",
+    badge_text: str = "DEV İNDİRİM",
     store_name: str = "Amazon TR",
     bank_campaign: str = "",
     net_cost: str = "",
     installment: str = "",
-    is_price_error: bool = False,
     output_path: str = None
 ) -> str:
     """
@@ -174,7 +173,7 @@ def create_product_banner(
     profesyonel e-ticaret sayfaları kalitesinde, etiketli ve dinamik afiş üretir.
     Amazon TR, Trendyol ve Hepsiburada marka renklerini yansıtır.
     Taksit avantajı ve net maliyeti öne çıkarır.
-    Fiyat hatası (%40+ indirim) durumunda acil durum kırmızı alarm rozeti basar.
+    Şablon kullanıcının onayladığı orijinal sabit tasarımdır (⚡ DEV İNDİRİM).
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "product_top.png")
@@ -198,26 +197,17 @@ def create_product_banner(
     f_net = get_font("segoeuib", 21)
     f_pct = get_font("segoeuib", 28)
 
-    pct_m = re.search(r'(\d+)', str(discount_pct))
-    pct_val = int(pct_m.group(1)) if pct_m else 0
-    price_error_active = is_price_error or pct_val >= 40
-
-    # 1. Sol Üst Rozet (Badge) - FLAŞ FIRSAT veya FİYAT HATASI
-    if price_error_active:
-        clean_badge = "🚨 FİYAT HATASI MI?!"
-        badge_fill = (220, 38, 38) # Acil Durum Kırmızısı
-        badge_border = (254, 240, 138) # Sarı Uyarı Kenarlığı
-    else:
-        clean_badge = badge_text.strip()
-        badge_fill = (255, 87, 34) # Alev Turuncusu
-        badge_border = None
+    # 1. Sol Üst Rozet (Badge) - Sabit Orijinal: ⚡ DEV İNDİRİM
+    clean_badge = badge_text.strip() if badge_text else "DEV İNDİRİM"
+    badge_fill = (255, 87, 34) # Alev Turuncusu (#FF5722)
 
     b_w = draw.textlength(clean_badge, font=f_badge)
-    draw.rounded_rectangle((40, 24, 40 + b_w + 58, 76), radius=14, fill=badge_fill, outline=badge_border, width=2 if badge_border else 0)
+    draw.rounded_rectangle((40, 24, 40 + b_w + 58, 76), radius=14, fill=badge_fill)
     # Altın Sarısı Vektör Şimşek İkonu (#FFCC00)
     bolt_icon = [(63, 33), (51, 50), (60, 50), (54, 67), (71, 48), (62, 48)]
     draw.polygon(bolt_icon, fill=(255, 204, 0))
     draw.text((78, 36), clean_badge, font=f_badge, fill=(255, 255, 255))
+
 
 
     # 2. Sağ Üst İndirim Rozeti

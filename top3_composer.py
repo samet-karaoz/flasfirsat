@@ -32,21 +32,22 @@ def create_top3_card(
     f_new_price = get_font("segoeuib", 66)
     f_pct = get_font("segoeuib", 28)
 
-    # Sıralama teması
+    # Sıralama teması (Hatasız ve net tipografi)
     if rank == 1:
-        rank_text = "🥇 #1 GÜNÜN BOMBASI"
+        rank_text = "1. GÜNÜN BOMBASI"
         badge_fill = (220, 38, 38) # Kırmızı
     elif rank == 2:
-        rank_text = "🥈 #2 GÜNÜN FIRSATI"
+        rank_text = "2. GÜNÜN FIRSATI"
         badge_fill = (234, 88, 12) # Turuncu
     else:
-        rank_text = "🥉 #3 GÜNÜN FIRSATI"
+        rank_text = "3. GÜNÜN FIRSATI"
         badge_fill = (13, 148, 136) # Teal / Zümrüt
 
     # Sol Üst Sıralama Rozeti
     rw = draw.textlength(rank_text, font=f_badge)
     draw.rounded_rectangle((40, 24, 40 + rw + 40, 76), radius=14, fill=badge_fill)
     draw.text((60, 35), rank_text, font=f_badge, fill=(255, 255, 255))
+
 
     # Sağ Üst İndirim Rozeti
     clean_pct = discount_pct.strip()
@@ -99,20 +100,25 @@ def create_top3_card(
 
     # CTA Alt Şerit
     cta_font = get_font("segoeuib", 23)
-    cta_text = "👉 Yoruma 'LİNK' yaz, 3 fırsatın da linkini anında yollayalım! 📩"
+    cta_text = "Yoruma 'LİNK' yaz, 3 fırsatın da linkini anında yollayalım!"
     cw = draw.textlength(cta_text, font=cta_font)
     draw.text(((W - cw) // 2, 902), cta_text, font=cta_font, fill=(100, 116, 139))
+
 
     img.save(output_path, "PNG")
     return output_path
 
 def build_top3_video(
     deals: list,
+    meme_name: str = None,
     output_filename: str = "top3_deals.mp4"
 ) -> str:
     """
-    3 üründen oluşan, 15 saniyelik (3. fırsat -> 2. fırsat -> 1. fırsat)
-    arka plan phonk müziği ve ses efektli viral video üretir.
+    Kullanıcı İsteklerine Özel Tasarım:
+    - Üst Yarı (1080x960): 3 fırsatın görselleri ve indirim kartları sırayla geçer (1 -> 2 -> 3).
+    - Alt Yarı (1080x960): TEK BİR viral meme videosu baştan sona kesintisiz oynar.
+    - Ses: Phonk müzik yerine meme'in kendi ikonik orijinal müziği/sesi kullanılır.
+    - Kedi videoları kesinlikle hariç tutulmuştur (Limon Davulcu, Çiftetelli, CJ vb. kullanılır).
     """
     if len(deals) < 3:
         raise ValueError("Top 3 videosu için en az 3 fırsat gereklidir!")
@@ -120,125 +126,103 @@ def build_top3_video(
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(TEMP_DIR, exist_ok=True)
 
-    # Sıralamayı ayarla: 3 -> 2 -> 1 (Merak ve retention'ı tavan yaptırmak için)
-    # deals listesinin ilk 3 elemanı: deals[0]=#1, deals[1]=#2, deals[2]=#3
-    sequence = [
-        (3, deals[2]),
-        (2, deals[1]),
-        (1, deals[0])
-    ]
-
-    # Her segment için meme seç
-    meme_pool = [
-        "cat_vibing.mp4",
-        "bicerdover_ciftetelli.mp4",
+    # 1. Kedi olmayan, orijinal müzikli Türk viral meme havuzu
+    valid_memes = [
         "limon_davulcu.mp4",
-        "knight_cat.mp4",
-        "angaraya_mi_geldin.mp4"
+        "bicerdover_ciftetelli.mp4",
+        "degirmenci_dayi_cj.mp4",
+        "angaraya_mi_geldin.mp4",
+        "limon_halay.mp4"
     ]
-    random.shuffle(meme_pool)
+    # Kütüphanedeki mevcut olanları filtrele
+    existing_memes = [m for m in valid_memes if os.path.exists(os.path.join(MEMES_DIR, m))]
+    if not existing_memes:
+        # Fallback: Kedi olmayan herhangi bir mp4
+        existing_memes = [f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4") and "cat" not in f.lower()]
 
-    segment_files = []
-    for idx, (rank, deal) in enumerate(sequence):
-        seg_card = os.path.join(TEMP_DIR, f"top3_card_{rank}.png")
+    if meme_name and os.path.exists(os.path.join(MEMES_DIR, meme_name)):
+        chosen_meme = meme_name
+    elif existing_memes:
+        chosen_meme = random.choice(existing_memes)
+    else:
+        chosen_meme = "limon_davulcu.mp4"
+
+    bottom_meme_path = os.path.join(MEMES_DIR, chosen_meme)
+    print(f"[Top3] 🎬 Seçilen Tek Kesintisiz Meme: {chosen_meme}")
+
+    # 2. Meme süresini ve ses durumunu al
+    p = subprocess.run(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
+    m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", p.stderr)
+    duration = float(m.group(3)) + int(m.group(2))*60 if m else 11.50
+    has_audio = "Audio:" in p.stderr
+    print(f"[Top3] ⏱️ Toplam Video Süresi: {duration:.2f}s (Orijinal Ses: {has_audio})")
+
+    slide_dur = duration / 3.0
+    d1 = round(slide_dur, 2)
+    d2 = round(slide_dur, 2)
+    d3 = round(duration - (d1 + d2), 2)
+
+    # 3. Üst kartları üret (1. Fırsat, 2. Fırsat, 3. Fırsat)
+    card_files = []
+    for rank in [1, 2, 3]:
+        deal = deals[rank - 1]
+        card_out = os.path.join(TEMP_DIR, f"top3_single_card_{rank}.png")
         create_top3_card(
             rank=rank,
-            product_image_path=deal.get("image_path") or deal.get("local_img"),
+            product_image_path=deal.get("image_path") or deal.get("local_img") or deal.get("image_url"),
             title=deal.get("title", f"Fırsat Ürünü #{rank}"),
             old_price=deal.get("old_price", "0 TL"),
             new_price=deal.get("new_price", "0 TL"),
             discount_pct=deal.get("discount_pct", "-30%"),
-            output_path=seg_card
+            output_path=card_out
         )
+        card_files.append(card_out)
 
-        meme_name = meme_pool[idx % len(meme_pool)]
-        meme_path = os.path.join(MEMES_DIR, meme_name)
-        if not os.path.exists(meme_path):
-            meme_path = os.path.join(MEMES_DIR, "knight_cat.mp4")
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-        seg_output = os.path.join(TEMP_DIR, f"seg_{rank}.mp4")
-        
-        # 5 saniyelik dikey montaj (Üst meme, Alt kart)
-        filter_str = (
-            f"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[top];"
-            f"[1:v]scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA[bottom];"
-            f"[top][bottom]vstack=inputs=2[v]"
-        )
+    # 4. FFmpeg Montajı:
+    # [0:v], [1:v], [2:v] -> 3 slayt üstte sırayla (1080x960)
+    # [3:v] -> Tek meme altta (1080x960)
+    # Ses -> [3:a] meme'in kendi orijinal sesi
+    filter_complex = (
+        f"[0:v]scale=1080:960[c1];"
+        f"[1:v]scale=1080:960[c2];"
+        f"[2:v]scale=1080:960[c3];"
+        f"[c1][c2][c3]concat=n=3:v=1:a=0[top];"
+        f"[3:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
+        f"[top][bottom]vstack=inputs=2[v]"
+    )
 
-        cmd = [
-            "ffmpeg", "-y",
-            "-stream_loop", "-1", "-i", meme_path,
-            "-loop", "1", "-i", seg_card,
-            "-filter_complex", filter_str,
-            "-map", "[v]",
-            "-t", "5.0",
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-            seg_output
-        ]
-        subprocess.run(cmd, check=True, capture_output=True)
-        segment_files.append(seg_output)
-
-    # 3 segmenti birleştir
-    concat_list_file = os.path.join(TEMP_DIR, "top3_concat.txt")
-    with open(concat_list_file, "w", encoding="utf-8") as f:
-        for sf in segment_files:
-            # ffmpeg concat dosya yolları
-            escaped_path = sf.replace("\\", "/")
-            f.write(f"file '{escaped_path}'\n")
-
-    merged_video_temp = os.path.join(TEMP_DIR, "top3_video_no_audio.mp4")
-    cmd_concat = [
+    cmd = [
         "ffmpeg", "-y",
-        "-f", "concat", "-safe", "0", "-i", concat_list_file,
-        "-c", "copy",
-        merged_video_temp
+        "-loop", "1", "-t", str(d1), "-i", card_files[0],
+        "-loop", "1", "-t", str(d2), "-i", card_files[1],
+        "-loop", "1", "-t", str(d3), "-i", card_files[2],
+        "-i", bottom_meme_path,
+        "-filter_complex", filter_complex,
+        "-map", "[v]"
     ]
-    subprocess.run(cmd_concat, check=True, capture_output=True)
 
-    # Ses miksajı: 15s Phonk + 5. ve 10. saniyelerde Whoosh geçiş sesi
-    bg_music = os.path.join(AUDIO_DIR, "brazilian_phonk.m4a")
-    if not os.path.exists(bg_music):
-        bg_music = os.path.join(AUDIO_DIR, "phonk_meme.m4a")
-
-    whoosh_sfx = os.path.join(AUDIO_DIR, "whoosh.wav")
-    final_output = os.path.join(OUTPUT_DIR, output_filename)
-
-    if os.path.exists(whoosh_sfx):
-        # Müziğe geçiş efektlerini ekle
-        audio_filter = (
-            f"[1:a]volume=0.9[music];"
-            f"[2:a]adelay=4900|4900,volume=0.8[w1];"
-            f"[3:a]adelay=9900|9900,volume=0.8[w2];"
-            f"[music][w1][w2]amix=inputs=3:duration=first:dropout_transition=2[a]"
-        )
-        cmd_final = [
-            "ffmpeg", "-y",
-            "-i", merged_video_temp,
-            "-stream_loop", "-1", "-i", bg_music,
-            "-i", whoosh_sfx,
-            "-i", whoosh_sfx,
-            "-filter_complex", audio_filter,
-            "-map", "0:v", "-map", "[a]",
-            "-t", "15.0",
-            "-c:v", "copy",
-            "-c:a", "aac", "-b:a", "192k",
-            final_output
-        ]
+    if has_audio:
+        cmd += ["-map", "3:a", "-c:a", "aac", "-b:a", "192k"]
     else:
-        cmd_final = [
-            "ffmpeg", "-y",
-            "-i", merged_video_temp,
-            "-stream_loop", "-1", "-i", bg_music,
-            "-map", "0:v", "-map", "1:a",
-            "-t", "15.0",
-            "-c:v", "copy",
-            "-c:a", "aac", "-b:a", "192k",
-            final_output
-        ]
+        # Eğer meme'de ses yoksa alternatif Türk müziği
+        pass
 
-    subprocess.run(cmd_final, check=True, capture_output=True)
-    print(f"[Top3] 🎬 Video başarıyla üretildi: {final_output}")
-    return final_output
+    cmd += [
+        "-t", str(duration),
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        output_path
+    ]
+
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode == 0 and os.path.exists(output_path):
+        print(f"[Top3] 🎬 Video başarıyla üretildi: {output_path}")
+        return output_path
+    else:
+        print("[Top3] FFmpeg hatası:", res.stderr)
+        raise RuntimeError(f"Video derlenemedi: {res.stderr}")
+
 
 def generate_top3_caption(deals: list) -> str:
     """Top 3 videosu için DM teşvikli viral açıklama metni üretir."""

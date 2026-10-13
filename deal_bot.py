@@ -256,10 +256,11 @@ Kullanım Şekilleri:
 
         # Telegram'a gönder
         try:
-            send_telegram_deal(fresh_deals[0], v_path, c_text)
+            send_telegram_deal(v_path, c_text, product_url=fresh_deals[0].get("store_url"))
             print("📲 Telegram bildirimi başarıyla gönderildi!")
         except Exception as e:
             print(f"Telegram gönderim uyarısı: {e}")
+
 
         print(f"\n🎉 Top 3 Fırsat Videosu Hazır: {v_path}")
         print(f"✍️ Açıklama Metni: {c_path}")

@@ -1,5 +1,19 @@
 [
   {
+    "id": "deal_1791910189_6",
+    "title": "Razer BlackShark V2 X",
+    "old_price": "2.699,00 TL",
+    "new_price": "1.799,00 TL",
+    "discount_pct": "-33%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B09BD75Y21?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile 180 TL Nakit İade",
+    "net_cost": "1.619 TL",
+    "installment": "3 Taksit x 600 TL",
+    "image_url": "assets/products/razer_blackshark_v2_x_25493bcb.jpg",
+    "date_added": "13.10.2026 19:49"
+  },
+  {
     "id": "deal_1791910186_6",
     "title": "Sony PS5 DualSense Kol",
     "old_price": "6.899,00 TL",

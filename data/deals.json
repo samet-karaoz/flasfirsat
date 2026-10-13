@@ -1,5 +1,19 @@
 [
   {
+    "id": "deal_1791918693_7",
+    "title": "SteelSeries Rival 3 Wireless Gen 2 Mouse",
+    "old_price": "2.999,00 TL",
+    "new_price": "1.949,00 TL",
+    "discount_pct": "-35%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0F5QF2JQQ?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile 195 TL Nakit İade",
+    "net_cost": "1.754 TL",
+    "installment": "3 Taksit x 650 TL",
+    "image_url": "assets/products/steelseries_rival_3_wirel_6f1c7c69.jpg",
+    "date_added": "13.10.2026 22:11"
+  },
+  {
     "id": "deal_1791917454_7",
     "title": "Sony PS5 DualSense v2 Kol",
     "old_price": "6.799,00 TL",
@@ -26,7 +40,6 @@
     "installment": "3 Taksit x 600 TL",
     "image_url": "assets/products/razer_blackshark_v2_x_25493bcb.jpg",
     "date_added": "13.10.2026 19:49"
-
   },
   {
     "id": "deal_1791840416_4",

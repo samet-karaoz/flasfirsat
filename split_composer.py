@@ -23,7 +23,13 @@ AVAILABLE_MEMES = [
     "kanye_stare.mp4",
     "vince_mcmahon.mp4",
     "cat_vibing.mp4",
-    "shark_nemo.mp4"
+    "shark_nemo.mp4",
+    # Yeni Eklenen Türk Kültürü & Viral Instagram Memeleri
+    "limon_davulcu.mp4",
+    "angaraya_mi_geldin.mp4",
+    "degirmenci_dayi_cj.mp4",
+    "bicerdover_ciftetelli.mp4",
+    "limon_halay.mp4"
 ]
 
 AVAILABLE_AUDIOS = [
@@ -121,21 +127,33 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
     pct_val = int(pct_match.group(1)) if pct_match else 30
     title_low = (title or "").lower()
 
-    # 1. Dev Çöküş İndirimleri (%40 ve üzeri) - Şok ve Para Memeleri
+    # 1. Dev Çöküş İndirimleri (%40 ve üzeri) - Şok, Para & Çılgın Kutlama
     if pct_val >= 40:
-        return pick_without_repeat(["vince_mcmahon.mp4", "walter_white.mp4", "knight_cat.mp4", "the_rock.mp4", "homelander_stare.mp4"])
+        return pick_without_repeat([
+            "limon_davulcu.mp4", "bicerdover_ciftetelli.mp4", "limon_halay.mp4",
+            "vince_mcmahon.mp4", "walter_white.mp4", "knight_cat.mp4", "the_rock.mp4"
+        ])
 
-    # 2. Gaming, Espor ve Donanım Ürünleri - Karizmatik Tepkiler & Zırhlı Kedi
+    # 2. Gaming, Espor ve Donanım Ürünleri - GTA CJ, ETS2 Tır & Sigma/Kedi Tepkileri
     gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "espor", "oyuncu", "monitor", "ekran kartı"]
     if any(k in title_low for k in gaming_kw):
-        return pick_without_repeat(["knight_cat.mp4", "bateman_walk.mp4", "bale_nod.mp4", "cat_vibing.mp4", "ryan_gosling.mp4", "bully_maguire.mp4"])
+        return pick_without_repeat([
+            "degirmenci_dayi_cj.mp4", "angaraya_mi_geldin.mp4", "knight_cat.mp4",
+            "bateman_walk.mp4", "bale_nod.mp4", "cat_vibing.mp4", "ryan_gosling.mp4"
+        ])
 
-    # 3. Yüksek Fırsat / Viral Hit (%25 - %39) - Zafer, Kadeh Kaldırma & Vibing Kedi
+    # 3. Yüksek Fırsat / Viral Hit (%25 - %39) - Halay, Çiftetelli & Zafer
     if pct_val >= 25:
-        return pick_without_repeat(["cat_vibing.mp4", "knight_cat.mp4", "dicaprio_cheers.mp4", "mcconaughey_chest.mp4", "bully_maguire.mp4", "bale_nod.mp4"])
+        return pick_without_repeat([
+            "limon_halay.mp4", "bicerdover_ciftetelli.mp4", "angaraya_mi_geldin.mp4",
+            "dicaprio_cheers.mp4", "knight_cat.mp4", "cat_vibing.mp4", "bully_maguire.mp4"
+        ])
 
     # 4. Genel Ürünler
-    return pick_without_repeat(["knight_cat.mp4", "cat_vibing.mp4", "the_weeknd_lost.mp4", "the_rock.mp4", "dicaprio_cheers.mp4", "kanye_stare.mp4"])
+    return pick_without_repeat([
+        "limon_davulcu.mp4", "bicerdover_ciftetelli.mp4", "knight_cat.mp4",
+        "cat_vibing.mp4", "the_weeknd_lost.mp4", "the_rock.mp4", "dicaprio_cheers.mp4"
+    ])
 
 def create_product_banner(
     product_image_path: str,

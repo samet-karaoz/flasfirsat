@@ -92,7 +92,8 @@ def process_deal_to_reel(
     deal: dict,
     meme_choice: str = None,
     audio_choice: str = None,
-    output_prefix: str = None
+    output_prefix: str = None,
+    upload: bool = True
 ) -> dict:
     """
     Tek bir fırsat nesnesinden (deal dict):
@@ -151,8 +152,6 @@ def process_deal_to_reel(
         product_title=deal.get("title", "")
     )
 
-
-
     # Affiliate Link Dönüşümü
     raw_url = deal.get("store_url", "")
     aff_url = get_affiliate_url(raw_url, deal.get("store_name", ""))
@@ -188,14 +187,19 @@ def process_deal_to_reel(
     set_last_subtype(sub)
 
     # 4. Telegram Bildirimi (Telefona Video + Açıklama + Ürün Linki Gönder)
-    send_telegram_deal(video_path, caption_text, product_url=aff_url)
-
+    if upload:
+        send_telegram_deal(video_path, caption_text, product_url=aff_url)
+    else:
+        print("\n[Telegram] ⏸️ Yükleme atlandı (--no-upload aktif). Video ve açıklama sadece yerel olarak hazırlandı.")
 
     # 5. Web Vitrini Güncelle (Otomatik Web Sayfasına Ekle)
-    try:
-        add_deal_to_web(deal)
-    except Exception as e:
-        print(f"[Web] Vitrine ekleme uyarısı: {e}")
+    if upload:
+        try:
+            add_deal_to_web(deal)
+        except Exception as e:
+            print(f"[Web] Vitrine ekleme uyarısı: {e}")
+    else:
+        print("[Web] ⏸️ Web vitrinine ekleme atlandı (--no-upload aktif).")
 
     print("\n✅ [TAMAMLANDI!] Fırsat Paylaşıma Hazır!")
     print(f"📁 Video:    {video_path}")
@@ -256,6 +260,7 @@ Kullanım Şekilleri:
     parser.add_argument("--top3", action="store_true", help="Günün En İyi 3 Fırsatı (Top 3) videosunu ve açıklamasını üret")
     parser.add_argument("--meme", type=str, choices=[m.replace(".mp4", "") for m in AVAILABLE_MEMES], help="Kullanılacak özel meme videosu")
     parser.add_argument("--audio", type=str, help="Kullanılacak özel müzik dosyası")
+    parser.add_argument("--no-upload", action="store_true", help="Videoyu ve metni hazırla ancak Telegram'a ve web vitrinine yükleme yapma")
 
     args = parser.parse_args()
 
@@ -324,7 +329,7 @@ Kullanım Şekilleri:
             if new_deals:
                 print(f"🔔 {len(new_deals)} adet YENİ sıcak indirim yakalandı! Videolar hazırlanıyor...")
                 for deal in new_deals[:2]:
-                    process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+                    process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
                     history.add(get_deal_sig(deal))
             else:
                 print("💤 Henüz yeni bir fırsat düşmedi. Bir sonraki kontrole kadar bekleniyor...")
@@ -369,10 +374,10 @@ Kullanım Şekilleri:
         results = []
         for i, deal in enumerate(deals_to_process):
             print(f">>> Fırsat {i+1}/{len(deals_to_process)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
-            res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+            res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
             results.append(res)
 
-        print(f"\n🎉 Tüm işlem tamamlandı! Toplam {len(results)} video 'output/' klasöründe ve Telegram'da paylaşıma hazır.")
+        print(f"\n🎉 Tüm işlem tamamlandı! Toplam {len(results)} video 'output/' klasöründe paylaşıma hazır.")
 
 
     elif args.image and not args.manual:
@@ -385,7 +390,7 @@ Kullanım Şekilleri:
         if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
         if args.hook: deal["hook"] = args.hook
 
-        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
 
     elif args.url:
         print(f"🔗 [MOD: WEB URL ANALİZİ İLE ÜRETİM]")
@@ -397,7 +402,7 @@ Kullanım Şekilleri:
         if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
         if args.hook: deal["hook"] = args.hook
 
-        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
 
     elif args.manual or args.title:
         print("✍️ [MOD: MANUEL GİRİŞ İLE ÜRETİM]")

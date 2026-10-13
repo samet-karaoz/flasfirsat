@@ -22,11 +22,12 @@ DEFAULT_CHANNELS = [
 
 BORING_REGEX = re.compile(
     r"(şarj\s*aleti|şarj\s*cihazı|şarj\s*kablosu|şarj\s*kiti|şarj\s*istasyonu|\bşarj\b|\bkablo(su)?\b(?!lu)|"
-    r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı|tutucu|stand[ıi]?|"
+    r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı|tutucu|"
+    r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık|yumuşatıcı|şampuan|diş\s*fırçası|mendil|pijama|çanta(sı)?|"
     r"bebek|tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
-    r"tişört|pantolon|gömlek|kahve|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|flash\s*bellek|"
-    r"kartuş|toner|koli|kutu|folyo|termal\s*macun|vida|aparat[ıi]?)",
+    r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|flash\s*bellek|usb\s*bellek|"
+    r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|aparat[ıi]?)",
     re.IGNORECASE
 )
 
@@ -40,9 +41,39 @@ HIGH_DEMAND_KEYWORDS = [
     "mouse", "oyuncu faresi", "klavye", "keyboard", "mekanik klavye", "mousepad",
     # Bilgisayar & Ekran
     "monitör", "monitor", "curved", "gaming laptop", "laptop", "bilgisayar", "ssd", "nvme",
+    # Yaşam, Mutfak & Trend Teknolojiler
+    "stanley", "termos", "airfryer", "kahve makinesi", "oneblade", "tıraş",
     # Güçlü Markalar
-    "apple", "razer", "logitech", "steelseries", "hyperx", "asus", "rog", "msi", "sony", "samsung", "jbl", "corsair", "anker"
+    "apple", "razer", "logitech", "steelseries", "hyperx", "asus", "rog", "msi", "sony", "samsung", "jbl", "corsair", "anker", "philips"
 ]
+
+def get_product_subtype(title: str) -> str:
+    """
+    Ürünün alt kategorisini tespit eder.
+    Aynı alt kategorinin (örneğin arka arkaya kol/gamepad veya fare) tekrarlanmasını engeller.
+    """
+    t = (title or "").lower()
+    if any(k in t for k in ["gamepad", "controller", "dualsense", "joycon", "oyun kolu"]) or re.search(r"\bkol(u)?\b", t):
+        return "gamepad"
+    if any(k in t for k in ["kulaklık", "headset", "earbuds", "airpods", "buds"]):
+        return "headset"
+    if any(k in t for k in ["mousepad", "mouse pad"]):
+        return "mousepad"
+    if any(k in t for k in ["mouse", "fare"]):
+        return "mouse"
+    if any(k in t for k in ["klavye", "keyboard"]):
+        return "keyboard"
+    if any(k in t for k in ["monitör", "monitor", "ekran"]):
+        return "monitor"
+    if any(k in t for k in ["hoparlör", "speaker", "soundbar"]):
+        return "speaker"
+    if any(k in t for k in ["termos", "airfryer", "fritöz", "kahve makinesi"]):
+        return "lifestyle"
+    if any(k in t for k in ["tıraş", "oneblade", "epilasyon"]):
+        return "grooming"
+    if any(k in t for k in ["ssd", "nvme", "disk"]):
+        return "storage"
+    return "general"
 
 MIN_PRODUCT_PRICE_TL = 350  # 350 TL altındaki küçük kırtasiye/ıvır zıvır ürünleri ele
 
@@ -105,33 +136,58 @@ def download_file(url: str, output_path: str) -> bool:
     res = subprocess.run(cmd)
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
-def hunt_amazon_deals(limit: int = 3, category: str = "gaming", exclude_urls: set = None) -> list:
+AMAZON_CATALOG_SOURCES = [
+    ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
+    ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
+    ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
+    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen"),
+    ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames")
+]
+
+CAT_ROTATION_FILE = os.path.join(TEMP_DIR, "amazon_cat_rot.txt")
+
+def get_rotated_amazon_catalogs():
+    idx = 0
+    try:
+        if os.path.exists(CAT_ROTATION_FILE):
+            with open(CAT_ROTATION_FILE, "r") as f:
+                idx = int(f.read().strip())
+    except Exception:
+        idx = 0
+    
+    rotated = AMAZON_CATALOG_SOURCES[idx:] + AMAZON_CATALOG_SOURCES[:idx]
+    next_idx = (idx + 1) % len(AMAZON_CATALOG_SOURCES)
+    try:
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        with open(CAT_ROTATION_FILE, "w") as f:
+            f.write(str(next_idx))
+    except Exception:
+        pass
+    return rotated
+
+def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None) -> list:
     """
-    Doğrudan amazon.com.tr üzerinden yüksek talep gören viral Gaming, Konsol ve Teknoloji ürünlerini çeker.
-    Sıkıcı aksesuarları (pil, kablo, adaptör, kılıf vb.) ve 350 TL altı ürünleri otomatik filtreler.
-    İhtiyaç halinde birden fazla kategoriyi (videogames, computers, electronics) sırayla tarar.
+    Doğrudan amazon.com.tr üzerinden yüksek talep gören viral Gaming, PC, Donanım, Ses ve Trend Yaşam ürünlerini çeker.
+    Sıkıcı aksesuarları (pil, kablo, adaptör vb.) filtreler.
+    Kategoriler arasında otomatik rotasyon yaparak ve alt tip koruması uygulayarak ürün çeşitliliğini garanti eder.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
     
-    url_categories = []
-    if category in ("gaming", "videogames"):
-        url_categories = [
-            ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
-            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
-            ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")
-        ]
+    if category in ("all", "gaming", "auto"):
+        url_categories = get_rotated_amazon_catalogs()
     elif category == "computers":
         url_categories = [("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers")]
+    elif category == "monitors":
+        url_categories = [("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031")]
     elif category == "electronics":
         url_categories = [("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")]
+    elif category == "kitchen":
+        url_categories = [("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")]
     else:
-        url_categories = [
-            ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
-            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
-            ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")
-        ]
+        url_categories = get_rotated_amazon_catalogs()
 
     deals = []
+    seen_subtypes = set(exclude_subtypes) if exclude_subtypes else set()
 
     for cat_name, target_url in url_categories:
         if len(deals) >= limit:
@@ -169,7 +225,13 @@ def hunt_amazon_deals(limit: int = 3, category: str = "gaming", exclude_urls: se
             if BORING_REGEX.search(raw_title):
                 continue
 
-            # 2. Minimum Fiyat Kontrolü (350 TL altındaki küçük ıvır zıvırları atla)
+            # 2. Alt tip anti-tekrar koruması (örn: peş peşe 2 kol/gamepad veya 2 fare gelmez)
+            raw_subtype = get_product_subtype(raw_title)
+            if raw_subtype != "general" and raw_subtype in seen_subtypes:
+                print(f"[Deal Hunter] ⏭️ Çeşitlilik Koruması ({raw_subtype} zaten var/yasaklı): {raw_title[:38]}")
+                continue
+
+            # 3. Minimum Fiyat Kontrolü (350 TL altındaki küçük ıvır zıvırları atla)
             try:
                 price_clean = re.sub(r"[^\d]", "", raw_price.split(",")[0])
                 if price_clean and int(price_clean) < MIN_PRODUCT_PRICE_TL:
@@ -177,7 +239,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "gaming", exclude_urls: se
             except Exception:
                 pass
 
-            # 3. Temiz ve doğrudan tıklanabilir Amazon linki (/dp/ASIN)
+            # 4. Temiz ve doğrudan tıklanabilir Amazon linki (/dp/ASIN)
             href = link_el.get("href", "")
             asin_match = re.search(r"/dp/([A-Z0-9]{10})", href, re.IGNORECASE)
             if asin_match:
@@ -195,7 +257,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "gaming", exclude_urls: se
             if len(raw_title) < 6 or "TL" not in raw_price:
                 continue
 
-            print(f"[Deal Hunter] Seçilen Yüksek Talep Ürün: {raw_title[:45]} | {raw_price}")
+            print(f"[Deal Hunter] Seçilen Yüksek Talep Ürün ({cat_name}): {raw_title[:45]} | {raw_price}")
 
             prompt = f"""Şu yüksek talep gören Amazon Türkiye ürününden indirim ve video bilgilerini çıkar:
 Ürün: {raw_title}
@@ -203,7 +265,7 @@ Amazon Fiyatı: {raw_price}
 
 Şu JSON formatında döndür:
 {{
-  "title": "Ürünün kısa, vurucu ve net adı (maksimum 30 karakter, örn: Razer BlackShark V2 X, Sony PS5 DualSense Kol vb.)",
+  "title": "Ürünün kısa, vurucu ve net adı (maksimum 30 karakter, örn: Asus TUF Monitör, Stanley Termos, Razer Basilisk Mouse vb.)",
   "old_price": "Piyasa veya normal liste fiyatı (örn: {raw_price} fiyatından yaklaşık %25-35 daha yüksek gerçekçi bir eski fiyat yaz)",
   "new_price": "{raw_price}",
   "discount_pct": "İndirim yüzdesi (örn: -28% veya -35%)",
@@ -215,9 +277,15 @@ Amazon Fiyatı: {raw_price}
             if not deal_data or not deal_data.get("title"):
                 continue
 
+            final_subtype = get_product_subtype(deal_data.get("title", raw_title))
+            if final_subtype != "general":
+                seen_subtypes.add(final_subtype)
+
             prod_id = asin_match.group(1) if asin_match else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
             img_path = os.path.join(TEMP_DIR, f"amz_{prod_id}.jpg")
             if not download_file(big_img, img_path):
+                if not download_file(raw_img, img_path):
+                    continue
                 if not download_file(raw_img, img_path):
                     continue
 
@@ -357,18 +425,19 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
 
     return collected_deals
 
-def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "gaming", exclude_urls: set = None) -> list:
+def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None) -> list:
     """
     Amazon TR, Hepsiburada ve Trendyol üzerindeki en sıcak indirimleri tarar.
     Kullanıcının affiliate anlaşması olan Amazon TR mağazasına mutlak öncelik verir.
+    Alt tip koruması (exclude_subtypes) ile aynı tip ürünlerin peş peşe seçilmesini önler.
     platform: 'amazon' (varsayılan), 'all', 'trendyol', 'hepsiburada'
     """
     candidates = []
     print(f"\n[Deal Hunter] 🔍 İndirim Avı Başlatıldı (Öncelikli Mağaza: AMAZON TR, Mod: {platform.upper()}, Kategori: {category.upper()})...")
 
-    # 1. Mutlak Öncelik: Doğrudan Amazon TR'den çek (Videogames + Computers + Electronics)
+    # 1. Mutlak Öncelik: Doğrudan Amazon TR'den çek (Kategoriler arası rotasyonlu)
     if platform in ("all", "amazon"):
-        amz_deals = hunt_amazon_deals(limit=limit + 2, category=category, exclude_urls=exclude_urls)
+        amz_deals = hunt_amazon_deals(limit=limit + 3, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes)
         for d in amz_deals:
             d["store_name"] = "Amazon TR"
             candidates.append(d)
@@ -383,6 +452,9 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "g
             if platform == "trendyol" and st != "Trendyol":
                 continue
             if platform == "hepsiburada" and st != "Hepsiburada":
+                continue
+            sub = get_product_subtype(d.get("title", ""))
+            if exclude_subtypes and sub in exclude_subtypes and sub != "general":
                 continue
             candidates.append(d)
 
@@ -412,7 +484,27 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "g
         return score
 
     candidates.sort(key=score_deal, reverse=True)
-    best_deals = candidates[:limit]
+
+    # Çeşitlilik süzgeci: Tek bir listede aynı ürün tipinden birden fazla olmasın
+    best_deals = []
+    seen_types = set(exclude_subtypes) if exclude_subtypes else set()
+    for d in candidates:
+        if len(best_deals) >= limit:
+            break
+        st = get_product_subtype(d.get("title", ""))
+        if st != "general" and st in seen_types:
+            continue
+        best_deals.append(d)
+        if st != "general":
+            seen_types.add(st)
+
+    # Eğer çeşitlilik kuralı nedeniyle limit dolmadıysa kalan adaylardan tamamla
+    if len(best_deals) < limit:
+        for d in candidates:
+            if len(best_deals) >= limit:
+                break
+            if d not in best_deals:
+                best_deals.append(d)
 
     print(f"[Deal Hunter] 🏆 En İyi {len(best_deals)} Fırsat Seçildi:")
     for i, d in enumerate(best_deals, 1):

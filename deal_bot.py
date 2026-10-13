@@ -5,7 +5,7 @@ import json
 import argparse
 import random
 import datetime
-from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, parse_deal_from_image, parse_deal_from_url
+from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, parse_deal_from_image, parse_deal_from_url, get_product_subtype
 from split_composer import create_product_banner, build_split_screen_video, AVAILABLE_MEMES, AVAILABLE_AUDIOS
 from top3_composer import build_top3_video, generate_top3_caption
 from caption_generator import generate_viral_caption
@@ -17,6 +17,7 @@ from config import BASE_DIR, OUTPUT_DIR, TEMP_DIR
 
 HISTORY_FILE = os.path.join(BASE_DIR, "history_deals.json")
 LAST_PRODUCT_FILE = os.path.join(TEMP_DIR, "last_product.txt")
+LAST_SUBTYPE_FILE = os.path.join(TEMP_DIR, "last_subtype.txt")
 
 def get_last_product() -> str:
     try:
@@ -32,6 +33,26 @@ def set_last_product(prod_name: str):
         os.makedirs(TEMP_DIR, exist_ok=True)
         with open(LAST_PRODUCT_FILE, "w", encoding="utf-8") as f:
             f.write(prod_name)
+    except Exception:
+        pass
+
+def get_last_subtype() -> str:
+    try:
+        if os.path.exists(LAST_SUBTYPE_FILE):
+            with open(LAST_SUBTYPE_FILE, "r", encoding="utf-8") as f:
+                val = f.read().strip()
+                if val:
+                    return val
+    except Exception:
+        pass
+    last_p = get_last_product()
+    return get_product_subtype(last_p)
+
+def set_last_subtype(subtype: str):
+    try:
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        with open(LAST_SUBTYPE_FILE, "w", encoding="utf-8") as f:
+            f.write(subtype)
     except Exception:
         pass
 
@@ -163,6 +184,8 @@ def process_deal_to_reel(
         history.add(sig)
         save_history(history)
     set_last_product(deal.get("title", ""))
+    sub = get_product_subtype(deal.get("title", ""))
+    set_last_subtype(sub)
 
     # 4. Telegram Bildirimi (Telefona Video + Açıklama + Ürün Linki Gönder)
     send_telegram_deal(video_path, caption_text, product_url=aff_url)
@@ -217,7 +240,7 @@ Kullanım Şekilleri:
     parser.add_argument("--auto", action="store_true", help="Otomatik mod: En iyi fırsatları avla (Amazon, Trendyol, Hepsiburada)")
     parser.add_argument("--platform", type=str, default="amazon", choices=["amazon", "all", "trendyol", "hepsiburada"], help="Taranacak e-ticaret platformu (Varsayılan: amazon)")
     parser.add_argument("--amazon", action="store_true", help="Sadece amazon.com.tr fırsat ve çok satanlar ürünlerini çek")
-    parser.add_argument("--category", type=str, default="gaming", choices=["gaming", "computers", "electronics", "all"], help="Ürün kategorisi (Varsayılan: gaming)")
+    parser.add_argument("--category", type=str, default="all", choices=["all", "gaming", "computers", "monitors", "electronics", "kitchen"], help="Ürün kategorisi (Varsayılan: all - otomatik rotasyon)")
     parser.add_argument("--watch", action="store_true", help="Nöbetçi mod: Arka planda sürekli çalışır, yeni indirim düştükçe video üretir")
     parser.add_argument("--interval", type=int, default=30, help="Nöbetçi modda kontrol aralığı (dakika, Varsayılan: 30)")
     parser.add_argument("--count", type=int, default=1, help="Üretilecek video sayısı (Varsayılan: 1)")
@@ -313,12 +336,28 @@ Kullanım Şekilleri:
         print(f"🚀 [MOD: EN İYİ İNDİRİM AVI - Platform: {platform.upper()}]")
         history = load_history()
         last_prod = get_last_product()
-        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history)
+        last_sub = get_last_subtype()
+        exclude_subtypes = {last_sub} if last_sub and last_sub != "general" else set()
+        if exclude_subtypes:
+            print(f"[Deal Bot] 🛡️ Çeşitlilik Koruması Aktif (Son ürün: '{last_prod}' | Engellenen Alt Kategori: {list(exclude_subtypes)})")
+
+        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes)
+        if not fresh_deals:
+            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_subtypes=exclude_subtypes)
         if not fresh_deals:
             fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category)
 
-        # Son işlenen ürünle aynı olanları filtrele (ard arda tekrar etmez)
-        valid_deals = [d for d in fresh_deals if d.get("title") != last_prod and get_deal_sig(d) != last_prod]
+        # Son işlenen ürünle veya alt kategorisiyle aynı olanları filtrele (ard arda tekrar etmez)
+        valid_deals = []
+        for d in fresh_deals:
+            t = d.get("title", "")
+            d_sub = get_product_subtype(t)
+            if t == last_prod or get_deal_sig(d) == last_prod:
+                continue
+            if last_sub and d_sub == last_sub and d_sub != "general":
+                continue
+            valid_deals.append(d)
+
         chosen_deals = valid_deals if valid_deals else fresh_deals
 
         if not chosen_deals:

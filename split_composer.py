@@ -744,10 +744,12 @@ def build_split_screen_video(
     # Input 2: Reaction hook overlay (transparent PNG loop)
     cmd += ["-loop", "1", "-i", reaction_overlay_path]
 
-    # Dynamic Progress Bar Filter
+    # Dynamic Progress Bar (Süreye göre kusursuz animasyonlu neon ilerleme çubuğu)
     progress_bar_filter = (
-        f"drawbox=x=0:y=1908:w=1080:h=12:color=0x0F172A@0.6:t=fill,"
-        f"drawbox=x=0:y=1908:w='1080*t/{duration:.2f}':h=12:color=0xEA580C:t=fill"
+        f"color=c=0x0F172A@0.8:s=1080x14:d={duration:.2f}[pbg];"
+        f"color=c=0xFF5722:s=1080x14:d={duration:.2f}[pfill];"
+        f"[stacked][pbg]overlay=0:1906[with_pbg];"
+        f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1906[v]"
     )
 
     if not use_external_audio:
@@ -759,7 +761,7 @@ def build_split_screen_video(
                 f"[1:v]{scale_bottom}[bottom_raw];"
                 f"[bottom_raw][2:v]overlay=0:0[bottom];"
                 f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
+                f"{progress_bar_filter};"
                 f"[1:a]volume=0.35[bg];"
                 f"[3:a]volume=1.4[voice];"
                 f"[bg][voice]amix=inputs=2:duration=first:dropout_transition=2[a]"
@@ -770,7 +772,7 @@ def build_split_screen_video(
                 f"[1:v]{scale_bottom}[bottom_raw];"
                 f"[bottom_raw][2:v]overlay=0:0[bottom];"
                 f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
+                f"{progress_bar_filter};"
                 f"[1:a]volume=1.0[a]"
             )
     else:
@@ -783,7 +785,7 @@ def build_split_screen_video(
                 f"[1:v]{scale_bottom}[bottom_raw];"
                 f"[bottom_raw][2:v]overlay=0:0[bottom];"
                 f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
+                f"{progress_bar_filter};"
                 f"[3:a]volume=0.35[bg];"
                 f"[4:a]volume=1.4[voice];"
                 f"[bg][voice]amix=inputs=2:duration=first:dropout_transition=2[a]"
@@ -794,7 +796,7 @@ def build_split_screen_video(
                 f"[1:v]{scale_bottom}[bottom_raw];"
                 f"[bottom_raw][2:v]overlay=0:0[bottom];"
                 f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
+                f"{progress_bar_filter};"
                 f"[3:a]volume=1.0[a]"
             )
 

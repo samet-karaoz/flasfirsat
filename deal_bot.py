@@ -475,6 +475,7 @@ Kullanım Şekilleri:
         if args.discount != "-40%": deal["discount_pct"] = args.discount
         if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
         if args.hook: deal["hook"] = args.hook
+        if args.image: deal["image_path"] = args.image
 
         process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
 

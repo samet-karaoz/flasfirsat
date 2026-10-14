@@ -117,9 +117,13 @@ def publish_shorts_to_youtube(
     else:
         clean_title = clean_title[:100]
 
-    # Açıklama metnini düzenle (#reklam ve #Shorts zorunlu)
+    # Açıklama metnini düzenle (#reklam, web vitrin linki ve #Shorts zorunlu)
     clean_desc = description.strip()
-    if "#Shorts" not in clean_desc:
+    from config import SITE_URL
+    web_link = f"{SITE_URL}?utm_source=youtube&utm_medium=shorts"
+    if SITE_URL not in clean_desc:
+        clean_desc = f"{clean_desc}\n\n⚡ Tüm Dip Fiyatlar & İndirim Radarı:\n🔗 {web_link}"
+    if "#Shorts" not in clean_desc and "#shorts" not in clean_desc:
         clean_desc = f"{clean_desc}\n\n#Shorts #indirim #fırsat #reklam #işbirliği"
 
     default_tags = ["shorts", "indirim", "fırsat", "kampanya", "alışveriş", "sıcakfırsat", "teknoloji"]

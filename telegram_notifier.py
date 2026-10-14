@@ -99,10 +99,12 @@ def send_telegram_deal_for_approval(
             {"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}
         ]
     ]
+    btn_row = []
     if product_url:
-        inline_keyboard.append([
-            {"text": "🛒 Ürün Sayfasını Aç", "url": product_url}
-        ])
+        btn_row.append({"text": "🛒 Ürün Sayfasını Aç", "url": product_url})
+    from config import SITE_URL
+    btn_row.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=telegram&utm_medium=channel"})
+    inline_keyboard.append(btn_row)
 
     reply_markup = {"inline_keyboard": inline_keyboard}
 
@@ -208,11 +210,16 @@ def send_telegram_deal(video_path: str, caption_text: str, product_url: str = No
     if not targets or not os.path.exists(video_path):
         return False
 
-    short_caption = caption_text[:1000] if len(caption_text) > 1000 else caption_text
+    short_caption = caption_text[:850] if len(caption_text) > 850 else caption_text
+    from config import SITE_URL
+    site_link = f"{SITE_URL}?utm_source=telegram&utm_medium=channel"
+    extras = []
     if product_url:
-        caption_with_url = f"{short_caption}\n\n🛒 Doğrudan Satın Al: {product_url}"
-        if len(caption_with_url) <= 1024:
-            short_caption = caption_with_url
+        extras.append(f"🛒 Doğrudan Satın Al: {product_url}")
+    extras.append(f"🌐 Tüm Fırsatlar & Radar: {site_link}")
+    caption_with_url = f"{short_caption}\n\n" + "\n".join(extras)
+    if len(caption_with_url) <= 1024:
+        short_caption = caption_with_url
 
     url = f"https://api.telegram.org/bot{token}/sendVideo"
     overall_ok = True

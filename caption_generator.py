@@ -1,7 +1,7 @@
 import os
 import json
 import subprocess
-from config import GEMINI_API_KEY, TEMP_DIR, get_curl_cmd
+from config import GEMINI_API_KEY, TEMP_DIR, get_curl_cmd, SITE_URL
 
 MODEL_CANDIDATES = [
     "gemini-flash-lite-latest",
@@ -87,8 +87,9 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"{net_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
         f"👉 Yoruma 'LİNK' yaz, satın alma linkini anında DM kutuna yollayalım! 📩\n"
-        f"🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!\n\n"
-        f"#işbirliği #reklam #indirim #fırsat #teknoloji #kampanya"
+        f"🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!\n"
+        f"🌐 Web: {SITE_URL}?utm_source=instagram&utm_medium=reels\n\n"
+        f"#işbirliği #reklam #indirim #fırsat #teknoloji"
     )
     return sanitize_caption(fallback)
 

@@ -118,16 +118,19 @@ def handle_callback_query(cq: dict):
                 f"🆔 <b>Medya ID:</b> {media_id}\n\n"
                 f"Diğer kanallara da göndermek ister misiniz?"
             )
-            markup = {
-                "inline_keyboard": [
-                    [
-                        {"text": "📢 Kanala da At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
-                        {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
-                    ]
+            from config import SITE_URL
+            markup_buttons = [
+                [
+                    {"text": "📢 Kanala da At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
+                    {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
                 ]
-            }
+            ]
+            row_links = []
             if product_url:
-                markup["inline_keyboard"].append([{"text": "🛒 Ürün Sayfası", "url": product_url}])
+                row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
+            row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=instagram&utm_medium=reels"})
+            markup_buttons.append(row_links)
+            markup = {"inline_keyboard": markup_buttons}
             edit_telegram_message_caption(chat_id, msg_id, new_caption, reply_markup=markup)
         else:
             err = res_ig.get("error", "Bilinmeyen hata")
@@ -150,9 +153,14 @@ def handle_callback_query(cq: dict):
     elif action == "approve_ch":
         answer_telegram_callback_query(cq_id, text="📢 Kanala paylaşılıyor...")
         target_ch = TELEGRAM_CHANNEL_ID
-        ch_caption = caption_text[:1000] if len(caption_text) > 1000 else caption_text
+        ch_caption = caption_text[:850] if len(caption_text) > 850 else caption_text
+        from config import SITE_URL
+        site_link = f"{SITE_URL}?utm_source=telegram&utm_medium=channel"
+        extras = []
         if product_url:
-            ch_caption += f"\n\n🛒 Doğrudan Satın Al: {product_url}"
+            extras.append(f"🛒 Satın Al: {product_url}")
+        extras.append(f"🌐 Tüm Fırsatlar: {site_link}")
+        ch_caption += "\n\n" + "\n".join(extras)
 
         # Telegram sendVideo to channel
         ch_ok = False
@@ -185,8 +193,11 @@ def handle_callback_query(cq: dict):
                     ]
                 ]
             }
+            row_links = []
             if product_url:
-                markup["inline_keyboard"].append([{"text": "🛒 Ürün Sayfası", "url": product_url}])
+                row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
+            row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=telegram&utm_medium=channel"})
+            markup["inline_keyboard"].append(row_links)
             edit_telegram_message_caption(chat_id, msg_id, updated_caption, reply_markup=markup)
         else:
             answer_telegram_callback_query(cq_id, text="❌ Kanala gönderilirken hata oluştu!", show_alert=True)
@@ -218,8 +229,12 @@ def handle_callback_query(cq: dict):
                     ]
                 ]
             }
+            from config import SITE_URL
+            row_links = []
             if yt_url:
-                markup["inline_keyboard"].append([{"text": "📺 Shorts Videosunu Aç", "url": yt_url}])
+                row_links.append({"text": "📺 Shorts Videosunu Aç", "url": yt_url})
+            row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=youtube&utm_medium=shorts"})
+            markup["inline_keyboard"].append(row_links)
             edit_telegram_message_caption(chat_id, msg_id, updated_caption, reply_markup=markup)
         else:
             err = yt_res.get("error", "Bilinmeyen hata")
@@ -273,6 +288,7 @@ def handle_user_message(msg: dict):
             "💡 <b>Komutlar:</b>\n"
             "• <code>/takip [link]</code> - Ürünü fiyat takibine alır\n"
             "• <code>/listem</code> - Takip ettiğin ürünleri listeler\n"
+            "• <code>/stats</code> - Web vitrini ve etkileşim analizlerini gösterir\n"
             "• <code>/yardim</code> - Kullanım rehberi"
         )
         send_telegram_text(chat_id, welcome)
@@ -285,7 +301,8 @@ def handle_user_message(msg: dict):
             "1️⃣ Takip etmek istediğin ürünün web sayfa linkini kopyala.\n"
             "2️⃣ Bana doğrudan mesaj olarak yapıştır veya <code>/takip https://...</code> şeklinde yaz.\n"
             "3️⃣ Botumuz ürünün anlık fiyatını kaydeder.\n"
-            "4️⃣ Ürünün fiyatı düştüğünde sana doğrudan indirimli satın alma linkiyle mesaj gelir! 🚀"
+            "4️⃣ Ürünün fiyatı düştüğünde sana doğrudan indirimli satın alma linkiyle mesaj gelir! 🚀\n\n"
+            "📊 <i>Web vitrini ve etkileşim verileri için: <code>/stats</code></i>"
         )
         send_telegram_text(chat_id, help_text)
         return
@@ -304,6 +321,45 @@ def handle_user_message(msg: dict):
             resp += f"   💰 Başlangıç Fiyatı: <b>{a.get('initial_price_str', 'Bilinmiyor')}</b> ({a.get('store_name')})\n"
             resp += f"   ❌ Takibi Bırak: <code>/sil {a.get('alarm_id')}</code>\n\n"
         send_telegram_text(chat_id, resp)
+        return
+
+    # 3.5 /stats veya /web Komutu
+    if text.startswith("/stats") or text.startswith("/web"):
+        from web_showcase import load_deals
+        from config import SITE_URL, GA_MEASUREMENT_ID
+        deals = load_deals()
+        amazon_cnt = sum(1 for d in deals if "amazon" in d.get("store_name", "").lower())
+        trendyol_cnt = sum(1 for d in deals if "trendyol" in d.get("store_name", "").lower())
+        hb_cnt = sum(1 for d in deals if "hepsi" in d.get("store_name", "").lower())
+        other_cnt = len(deals) - (amazon_cnt + trendyol_cnt + hb_cnt)
+
+        ga_status = f"🟢 Aktif (<code>{GA_MEASUREMENT_ID}</code>)" if GA_MEASUREMENT_ID else "🟡 Yerel Telemetri (Tarayıcı İçi)"
+
+        stats_msg = (
+            f"📊 <b>FLAŞ FIRSAT WEB & ANALİTİK PANELİ</b> ⚡\n\n"
+            f"🌐 <b>Web Vitrini:</b> {SITE_URL}\n"
+            f"📦 <b>Yayındaki Aktif Fırsat:</b> {len(deals)} adet\n\n"
+            f"🏪 <b>Mağaza Dağılımı:</b>\n"
+            f" • Amazon TR: <b>{amazon_cnt}</b>\n"
+            f" • Trendyol: <b>{trendyol_cnt}</b>\n"
+            f" • Hepsiburada: <b>{hb_cnt}</b>\n"
+        )
+        if other_cnt > 0:
+            stats_msg += f" • Diğer: <b>{other_cnt}</b>\n"
+        stats_msg += (
+            f"\n📈 <b>Google Analytics 4:</b> {ga_status}\n\n"
+            f"🔗 <b>Sosyal Medya UTM Linkleri:</b>\n"
+            f" • Instagram: <code>{SITE_URL}?utm_source=instagram</code>\n"
+            f" • YouTube: <code>{SITE_URL}?utm_source=youtube</code>\n"
+            f" • Telegram: <code>{SITE_URL}?utm_source=telegram</code>\n\n"
+            f"👇 <i>Canlı ziyaretçi, tıklama ve cihaz grafiklerini görmek için butona tıklayın:</i>"
+        )
+        markup = {
+            "inline_keyboard": [
+                [{"text": "📊 Canlı Web Panelini Aç (Tarayıcı)", "url": f"{SITE_URL}#stats"}]
+            ]
+        }
+        send_telegram_text(chat_id, stats_msg, reply_markup=markup)
         return
 
     # 4. /sil <alarm_id>

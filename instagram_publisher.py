@@ -1,101 +1,179 @@
 import os
 import time
-import requests
+import json
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+SESSION_FILE = os.path.join(DATA_DIR, "instagram_session.json")
+
+# instagrapi Giriş Bilgileri (.env)
+INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME", "").strip()
+INSTAGRAM_PASSWORD = os.getenv("INSTAGRAM_PASSWORD", "").strip()
+
+# Meta Graph API Bilgileri (Alternatif)
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "").strip()
 INSTAGRAM_USER_ID = os.getenv("INSTAGRAM_USER_ID", "").strip()
 
 def check_instagram_credentials() -> dict:
-    """Instagram Graph API erişim anahtarı ve kullanıcı kimliğini test eder."""
-    if not INSTAGRAM_ACCESS_TOKEN or not INSTAGRAM_USER_ID:
+    """Instagram oturum veya API kimlik durumunu kontrol eder."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+    # 1. instagrapi Bilgileri Kontrolü (Öncelikli)
+    if INSTAGRAM_USERNAME and INSTAGRAM_PASSWORD:
+        has_session = os.path.exists(SESSION_FILE)
         return {
-            "configured": False,
-            "error": "INSTAGRAM_ACCESS_TOKEN veya INSTAGRAM_USER_ID ayarlanmamış (.env dosyasına ekleyin)."
+            "configured": True,
+            "mode": "instagrapi",
+            "username": INSTAGRAM_USERNAME,
+            "session_saved": has_session,
+            "message": f"instagrapi hazır (Kullanıcı: @{INSTAGRAM_USERNAME})"
         }
 
-    url = f"https://graph.facebook.com/v20.0/{INSTAGRAM_USER_ID}"
-    params = {
-        "fields": "id,username,name",
-        "access_token": INSTAGRAM_ACCESS_TOKEN
-    }
-    try:
-        res = requests.get(url, params=params, timeout=10)
-        data = res.json()
-        if "error" in data:
-            return {"configured": False, "error": data["error"].get("message", "Bilinmeyen API hatası")}
-        return {"configured": True, "user": data}
-    except Exception as e:
-        return {"configured": False, "error": str(e)}
+    # 2. Meta Graph API Bilgileri Kontrolü
+    if INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID:
+        return {
+            "configured": True,
+            "mode": "graph_api",
+            "message": "Meta Graph API hazır"
+        }
 
-def publish_reel_to_instagram(video_public_url: str, caption: str, share_to_feed: bool = True) -> dict:
-    """
-    Instagram Graph API üzerinden video URL'sini Reels olarak otomatik paylaşır.
-    Not: Meta Graph API, doğrudan yüklenecek videonun herkese açık bir HTTP/HTTPS URL'sinde olmasını şart koşar.
-    """
-    cred = check_instagram_credentials()
-    if not cred["configured"]:
-        print(f"[Instagram Publisher] ⚠️ {cred['error']}")
-        return {"success": False, "error": cred["error"]}
-
-    print(f"[Instagram Publisher] 🚀 Instagram Reels yayınlama başlatıldı: @{cred['user'].get('username')}...")
-
-    # 1. Medya Konteyneri Oluştur (Create Container)
-    create_url = f"https://graph.facebook.com/v20.0/{INSTAGRAM_USER_ID}/media"
-    payload = {
-        "media_type": "REELS",
-        "video_url": video_public_url,
-        "caption": caption,
-        "share_to_feed": str(share_to_feed).lower(),
-        "access_token": INSTAGRAM_ACCESS_TOKEN
+    return {
+        "configured": False,
+        "mode": "none",
+        "error": "Instagram bilgileri eksik. Lütfen .env dosyasına INSTAGRAM_USERNAME ve INSTAGRAM_PASSWORD ekleyin."
     }
 
+def get_instagrapi_client():
+    """Oturum açılmış ve yapılandırılmış instagrapi Client nesnesi döner."""
+    from instagrapi import Client
+    from instagrapi.exceptions import (
+        BadPassword,
+        TwoFactorRequired,
+        ChallengeRequired,
+        FeedbackRequired
+    )
+
+    os.makedirs(DATA_DIR, exist_ok=True)
+    cl = Client()
+    cl.delay_range = [2, 5]
+
+    # Türkiye lokasyon ve cihaz ayarları
+    cl.set_locale("tr_TR")
+    cl.set_country(90)
+    cl.set_timezone_offset(3 * 3600)
+
+    # Kayıtlı oturum varsa yükle
+    if os.path.exists(SESSION_FILE):
+        try:
+            print("[Instagram Publisher] 🔑 Kayıtlı oturum yükleniyor...")
+            cl.load_settings(SESSION_FILE)
+            cl.login(INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
+            # Oturum canlı mı test et
+            cl.get_timeline_feed()
+            print("✅ [Instagram Publisher] Kayıtlı oturum doğrulandı!")
+            return cl
+        except Exception as e:
+            print(f"[Instagram Publisher] ⚠️ Kayıtlı oturum yenileniyor ({e})...")
+
+    # Sıfırdan giriş yap
+    print(f"[Instagram Publisher] 🚀 Instagram'a giriş yapılıyor: @{INSTAGRAM_USERNAME}...")
     try:
-        res = requests.post(create_url, data=payload, timeout=20)
-        c_data = res.json()
-        if "id" not in c_data:
-            err_msg = c_data.get("error", {}).get("message", str(c_data))
-            print(f"[Instagram Publisher] ❌ Konteyner oluşturulamadı: {err_msg}")
-            return {"success": False, "error": err_msg}
+        cl.login(INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
+        cl.dump_settings(SESSION_FILE)
+        print("✅ [Instagram Publisher] Giriş başarılı! Oturum anahtarı kaydedildi.")
+        return cl
+    except TwoFactorRequired:
+        raise RuntimeError("Instagram hesabınızda İki Adımlı Doğrulama (2FA) açık. Lütfen geçici olarak SMS kodunu girin.")
+    except BadPassword:
+        raise ValueError("Instagram şifresi hatalı! Lütfen .env dosyasını kontrol edin.")
+    except ChallengeRequired:
+        raise RuntimeError("Instagram güvenlik doğrulaması (Challenge/E-posta onayı) istedi. Lütfen Instagram uygulamasından giriş yapıp onaylayın.")
+    except Exception as ex:
+        raise RuntimeError(f"Instagram giriş hatası: {ex}")
 
-        creation_id = c_data["id"]
-        print(f"[Instagram Publisher] 📦 Konteyner oluşturuldu (ID: {creation_id}). Meta sunucularında işlenmesi bekleniyor...")
+def publish_reel_via_instagrapi(video_path: str, caption: str) -> dict:
+    """
+    Yerel MP4 videosunu instagrapi üzerinden doğrudan Instagram Reels olarak yükler.
+    Herhangi bir genel internet URL'si veya Facebook sayfası gerektirmez.
+    """
+    if not os.path.exists(video_path):
+        return {"success": False, "error": f"Video dosyası bulunamadı: {video_path}"}
 
-        # 2. İşlenme Durumunu Bekle (Polling status)
-        status_url = f"https://graph.facebook.com/v20.0/{creation_id}"
-        max_attempts = 30
-        for attempt in range(max_attempts):
-            time.sleep(5)
-            s_res = requests.get(status_url, params={"fields": "status_code", "access_token": INSTAGRAM_ACCESS_TOKEN}, timeout=10)
-            s_data = s_res.json()
-            code = s_data.get("status_code")
-            print(f"[Instagram Publisher] Durum ({attempt+1}/{max_attempts}): {code}")
+    try:
+        cl = get_instagrapi_client()
+        print(f"\n[Instagram Publisher] 📤 Reels yükleniyor: {os.path.basename(video_path)}...")
+        print(f"✍️ Açıklama: {caption[:80]}...")
 
-            if code == "FINISHED":
-                break
-            elif code == "ERROR":
-                return {"success": False, "error": "Meta video işleme hatası verdi"}
-        else:
-            return {"success": False, "error": "Zaman aşımı (Video işlenemedi)"}
+        # Reels yükleme (clip_upload)
+        media = cl.clip_upload(
+            Path(video_path),
+            caption=caption
+        )
 
-        # 3. Yayınla (Publish Container)
-        pub_url = f"https://graph.facebook.com/v20.0/{INSTAGRAM_USER_ID}/media_publish"
-        pub_res = requests.post(pub_url, data={"creation_id": creation_id, "access_token": INSTAGRAM_ACCESS_TOKEN}, timeout=20)
-        pub_data = pub_res.json()
+        media_pk = getattr(media, "pk", "")
+        media_code = getattr(media, "code", "")
+        reel_url = f"https://www.instagram.com/reel/{media_code}/" if media_code else ""
 
-        if "id" in pub_data:
-            print(f"🎉 [Instagram Publisher] Reels başarıyla yayınlandı! (Medya ID: {pub_data['id']})")
-            return {"success": True, "media_id": pub_data["id"]}
-        else:
-            return {"success": False, "error": str(pub_data)}
+        print(f"\n🎉 [Instagram Publisher] Reels başarıyla yayınlandı!")
+        print(f"🔗 Instagram Reels Linki: {reel_url}")
+
+        return {
+            "success": True,
+            "media_id": str(media_pk),
+            "code": media_code,
+            "url": reel_url
+        }
 
     except Exception as e:
-        print(f"[Instagram Publisher] İstek hatası: {e}")
+        print(f"[Instagram Publisher] ❌ Reels yükleme hatası: {e}")
         return {"success": False, "error": str(e)}
 
-if __name__ == "__main__":
+def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bool = True) -> dict:
+    """
+    Instagram'da Reels paylaşımı için ana fonksiyon.
+    .env'de INSTAGRAM_USERNAME ve INSTAGRAM_PASSWORD varsa instagrapi ile doğrudan yükler.
+    """
     status = check_instagram_credentials()
-    print("--- INSTAGRAM GRAPH API BAĞLANTI DURUMU ---")
-    print(status)
+
+    if status.get("mode") == "instagrapi":
+        # Yerel dosya yolu gereklidir
+        if os.path.exists(video_source):
+            return publish_reel_via_instagrapi(video_source, caption)
+        else:
+            return {"success": False, "error": f"Yerel video dosyası bulunamadı: {video_source}"}
+
+    elif status.get("mode") == "graph_api":
+        # Meta Graph API fallback
+        from media_uploader import upload_video_to_public_url
+        import requests
+        video_url = video_source
+        if not video_source.startswith("http") and os.path.exists(video_source):
+            video_url = upload_video_to_public_url(video_source)
+
+        create_url = f"https://graph.facebook.com/v20.0/{INSTAGRAM_USER_ID}/media"
+        payload = {
+            "media_type": "REELS",
+            "video_url": video_url,
+            "caption": caption,
+            "share_to_feed": str(share_to_feed).lower(),
+            "access_token": INSTAGRAM_ACCESS_TOKEN
+        }
+        res = requests.post(create_url, data=payload, timeout=20).json()
+        if "id" not in res:
+            return {"success": False, "error": str(res)}
+        c_id = res["id"]
+        time.sleep(15)
+        pub_url = f"https://graph.facebook.com/v20.0/{INSTAGRAM_USER_ID}/media_publish"
+        p_res = requests.post(pub_url, data={"creation_id": c_id, "access_token": INSTAGRAM_ACCESS_TOKEN}).json()
+        return {"success": "id" in p_res, "media_id": p_res.get("id")}
+
+    return {"success": False, "error": status.get("error", "Instagram ayarları yapılmamış")}
+
+if __name__ == "__main__":
+    print("--- INSTAGRAM PUBLISHER DURUMU ---")
+    st = check_instagram_credentials()
+    print(json.dumps(st, ensure_ascii=False, indent=2))

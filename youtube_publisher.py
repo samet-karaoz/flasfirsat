@@ -1,21 +1,12 @@
 import os
+import sys
 import time
 import json
+import subprocess
+import urllib.parse
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# Google / YouTube API Imports
-try:
-    from googleapiclient.discovery import build
-    from googleapiclient.http import MediaFileUpload
-    from googleapiclient.errors import HttpError
-    from google_auth_oauthlib.flow import InstalledAppFlow
-    from google.auth.transport.requests import Request
-    from google.oauth2.credentials import Credentials
-    GOOGLE_API_AVAILABLE = True
-except ImportError:
-    GOOGLE_API_AVAILABLE = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -23,84 +14,73 @@ TOKEN_PATH = os.path.join(DATA_DIR, "youtube_token.json")
 CLIENT_SECRETS_PATH = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", os.path.join(BASE_DIR, "client_secrets.json"))
 YOUTUBE_PRIVACY_STATUS = os.getenv("YOUTUBE_PRIVACY_STATUS", "public").strip().lower()
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
-
 def check_youtube_credentials() -> dict:
     """YouTube API kimlik ve yetkilendirme durumunu kontrol eder."""
-    if not GOOGLE_API_AVAILABLE:
-        return {
-            "configured": False,
-            "error": "Google API kütüphaneleri eksik. 'pip install google-api-python-client google-auth-oauthlib' çalıştırın."
-        }
-
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    # 1. Mevcut Token Kontrolü
-    if os.path.exists(TOKEN_PATH):
-        try:
-            creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
-            if creds and creds.valid:
-                return {"configured": True, "token_ready": True, "message": "YouTube oturumu hazır."}
-            if creds and creds.expired and creds.refresh_token:
-                try:
-                    creds.refresh(Request())
-                    with open(TOKEN_PATH, "w", encoding="utf-8") as f:
-                        f.write(creds.to_json())
-                    return {"configured": True, "token_ready": True, "message": "YouTube oturumu yenilendi."}
-                except Exception as ref_err:
-                    pass
-        except Exception:
-            pass
-
-    # 2. client_secrets.json Kontrolü
     if not os.path.exists(CLIENT_SECRETS_PATH):
         return {
             "configured": False,
             "token_ready": False,
-            "error": (
-                f"YouTube OAuth dosya bulunamadı: '{CLIENT_SECRETS_PATH}'.\n"
-                "Google Cloud Console'dan Masaüstü Uygulaması (Desktop App) OAuth 2.0 istemcisi oluşturup "
-                "'client_secrets.json' adıyla proje klasörüne kaydedin. Rehber: docs/youtube_setup.md"
-            )
+            "error": "client_secrets.json bulunamadı. Lütfen Google Cloud'dan indirip proje klasörüne koyun."
         }
 
-    return {
-        "configured": True,
-        "token_ready": False,
-        "message": "client_secrets.json mevcut ancak ilk oturum açma (OAuth onayı) bekleniyor."
+    if not os.path.exists(TOKEN_PATH):
+        return {
+            "configured": True,
+            "token_ready": False,
+            "message": "client_secrets.json mevcut ancak oturum açma (youtube_auth.py) bekleniyor."
+        }
+
+    try:
+        with open(TOKEN_PATH, "r", encoding="utf-8") as f:
+            t_data = json.load(f)
+            if t_data.get("refresh_token") or t_data.get("token"):
+                return {"configured": True, "token_ready": True, "message": "YouTube oturumu hazır."}
+    except Exception:
+        pass
+
+    return {"configured": True, "token_ready": False, "message": "Token geçersiz, yeniden yetkilendirme gerekli."}
+
+def get_valid_access_token() -> str:
+    """Aktif access_token döner; süresi dolduysa curl ile yeniler."""
+    if not os.path.exists(TOKEN_PATH):
+        raise FileNotFoundError("data/youtube_token.json bulunamadı. Lütfen önce 'python youtube_auth.py' çalıştırın.")
+
+    with open(TOKEN_PATH, "r", encoding="utf-8") as f:
+        t_data = json.load(f)
+
+    refresh_token = t_data.get("refresh_token")
+    client_id = t_data.get("client_id")
+    client_secret = t_data.get("client_secret")
+
+    # Access token'ı curl ile doğrudan yenile (OpenSSL bug'ına takılmaz)
+    refresh_payload = {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token,
+        "grant_type": "refresh_token"
     }
 
-def get_authenticated_service():
-    """OAuth 2.0 ile YouTube servisine bağlanır ve yetkilendirilmiş istemci döner."""
-    os.makedirs(DATA_DIR, exist_ok=True)
-    creds = None
+    cmd = [
+        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-X", "POST",
+        "https://oauth2.googleapis.com/token",
+        "-H", "Content-Type: application/x-www-form-urlencoded",
+        "-d", urllib.parse.urlencode(refresh_payload)
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    try:
+        ref_json = json.loads(res.stdout)
+        if "access_token" in ref_json:
+            t_data["token"] = ref_json["access_token"]
+            with open(TOKEN_PATH, "w", encoding="utf-8") as f:
+                json.dump(t_data, f, ensure_ascii=False, indent=2)
+            return ref_json["access_token"]
+    except Exception as e:
+        print(f"[YouTube Publisher] Token yenileme uyarısı: {e}")
 
-    if os.path.exists(TOKEN_PATH):
-        try:
-            creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
-        except Exception:
-            creds = None
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            try:
-                creds.refresh(Request())
-            except Exception:
-                creds = None
-
-        if not creds:
-            if not os.path.exists(CLIENT_SECRETS_PATH):
-                raise FileNotFoundError(
-                    f"client_secrets.json bulunamadı. Lütfen Google Cloud Console'dan indirip {CLIENT_SECRETS_PATH} konumuna koyun."
-                )
-            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_PATH, SCOPES)
-            # Tarayıcıda bir defaya mahsus giriş sayfası açar
-            creds = flow.run_local_server(port=0)
-
-        with open(TOKEN_PATH, "w", encoding="utf-8") as f:
-            f.write(creds.to_json())
-
-    return build("youtube", "v3", credentials=creds)
+    # Mevcut token'ı döndür
+    return t_data.get("token", "")
 
 def publish_shorts_to_youtube(
     video_path: str,
@@ -114,22 +94,21 @@ def publish_shorts_to_youtube(
     
     Özellikler:
     - 9:16 format ve #Shorts etiketiyle otomatik YouTube Shorts sınıflandırması.
-    - Sınırsız / kesintisiz resumable upload (parçalı yükleme).
-    - Resmi Google YouTube Data API v3 uyumluluğu.
+    - Windows Python 3.14 SSL bug'ından etkilenmeyen yüksek hızlı curl.exe Resumable Upload mimarisi.
+    - 1080x1920 dikey video desteği.
     """
     if not os.path.exists(video_path):
         return {"success": False, "error": f"Video dosyası bulunamadı: {video_path}"}
 
     cred_info = check_youtube_credentials()
-    if not cred_info["configured"]:
-        print(f"[YouTube Publisher] ⚠️ {cred_info['error']}")
-        return {"success": False, "error": cred_info["error"]}
+    if not cred_info.get("token_ready"):
+        print(f"[YouTube Publisher] ⚠️ {cred_info.get('message', 'Yetkilendirme eksik')}")
+        return {"success": False, "error": cred_info.get("message", "Yetkilendirme eksik")}
 
     try:
-        youtube = get_authenticated_service()
+        access_token = get_valid_access_token()
     except Exception as e:
-        print(f"[YouTube Publisher] ❌ Yetkilendirme hatası: {e}")
-        return {"success": False, "error": str(e)}
+        return {"success": False, "error": f"Yetkilendirme anahtarı alınamadı: {e}"}
 
     # Başlığı Shorts standartlarına uyarla (Maks 100 karakter, #Shorts ekle)
     clean_title = title.strip()
@@ -149,12 +128,12 @@ def publish_shorts_to_youtube(
 
     privacy = privacy_status or YOUTUBE_PRIVACY_STATUS or "public"
 
-    body = {
+    metadata = {
         "snippet": {
             "title": clean_title,
             "description": clean_desc,
             "tags": default_tags[:15],
-            "categoryId": "28"  # 28: Science & Technology (veya 22: People & Blogs)
+            "categoryId": "28"  # 28: Science & Technology
         },
         "status": {
             "privacyStatus": privacy,
@@ -162,49 +141,67 @@ def publish_shorts_to_youtube(
         }
     }
 
+    file_size = os.path.getsize(video_path)
     print(f"\n[YouTube Publisher] 🚀 YouTube Shorts yüklemesi başlatılıyor...")
-    print(f"📌 Başlık:  {clean_title}")
-    print(f"🔒 Gizlilik: {privacy.upper()}")
+    print(f"📌 Başlık:   {clean_title}")
+    print(f"🔒 Gizlilik:  {privacy.upper()}")
+    print(f"📦 Dosya:     {os.path.basename(video_path)} ({int(file_size / (1024*1024))} MB)")
 
+    # 1. Resumable Upload Başlat (Start session)
+    meta_json = json.dumps(metadata)
+    init_cmd = [
+        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-i", "-X", "POST",
+        "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
+        "-H", f"Authorization: Bearer {access_token}",
+        "-H", "Content-Type: application/json; charset=UTF-8",
+        "-H", "X-Upload-Content-Type: video/mp4",
+        "-H", f"X-Upload-Content-Length: {file_size}",
+        "-d", meta_json
+    ]
+
+    init_res = subprocess.run(init_cmd, capture_output=True, text=True, encoding="utf-8")
+    headers = init_res.stdout
+
+    upload_url = None
+    for line in headers.splitlines():
+        if line.lower().startswith("location:"):
+            upload_url = line.split(":", 1)[1].strip()
+            break
+
+    if not upload_url:
+        print(f"[YouTube Publisher] ❌ Resumable oturum açılamadı:\n{headers}")
+        return {"success": False, "error": f"Oturum açılamadı: {headers[:200]}"}
+
+    # 2. Video Dosyasını Yükle (PUT binary video)
+    print("[YouTube Publisher] ⏳ Video Google sunucularına aktarılıyor...")
+    put_cmd = [
+        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-X", "PUT",
+        upload_url,
+        "-H", "Content-Type: video/mp4",
+        "-H", f"Content-Length: {file_size}",
+        "--upload-file", video_path
+    ]
+
+    put_res = subprocess.run(put_cmd, capture_output=True, text=True, encoding="utf-8")
     try:
-        media = MediaFileUpload(
-            video_path,
-            mimetype="video/mp4",
-            resumable=True,
-            chunksize=1024 * 1024 * 2  # 2MB parçalar halinde
-        )
-
-        request = youtube.videos().insert(
-            part="snippet,status",
-            body=body,
-            media_body=media
-        )
-
-        response = None
-        while response is None:
-            status, response = request.next_chunk()
-            if status:
-                print(f"[YouTube Publisher] ⏳ Yükleniyor: %{int(status.progress() * 100)}")
-
-        video_id = response.get("id")
-        shorts_url = f"https://www.youtube.com/shorts/{video_id}"
-        print(f"🎉 [YouTube Publisher] Video başarıyla yüklendi!")
-        print(f"🔗 Shorts Linki: {shorts_url}")
-
-        return {
-            "success": True,
-            "video_id": video_id,
-            "url": shorts_url,
-            "privacy": privacy
-        }
-
-    except HttpError as he:
-        err_msg = f"YouTube HTTP Hatası ({he.resp.status}): {he.content.decode('utf-8', errors='ignore')}"
-        print(f"[YouTube Publisher] ❌ {err_msg}")
-        return {"success": False, "error": err_msg}
-    except Exception as ex:
-        print(f"[YouTube Publisher] ❌ Beklenmeyen hata: {ex}")
-        return {"success": False, "error": str(ex)}
+        resp_json = json.loads(put_res.stdout)
+        video_id = resp_json.get("id")
+        if video_id:
+            shorts_url = f"https://www.youtube.com/shorts/{video_id}"
+            print(f"🎉 [YouTube Publisher] Video başarıyla yüklendi!")
+            print(f"🔗 Shorts Linki: {shorts_url}")
+            return {
+                "success": True,
+                "video_id": video_id,
+                "url": shorts_url,
+                "privacy": privacy
+            }
+        else:
+            print(f"[YouTube Publisher] ❌ Yükleme yanıt hatası: {put_res.stdout}")
+            return {"success": False, "error": put_res.stdout}
+    except Exception as e:
+        print(f"[YouTube Publisher] ❌ Ayrıştırma hatası: {e} | Çıktı: {put_res.stdout}")
+        return {"success": False, "error": str(e)}
 
 if __name__ == "__main__":
     print("--- YOUTUBE SHORTS PUBLISHER DURUMU ---")

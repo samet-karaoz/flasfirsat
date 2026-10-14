@@ -380,9 +380,9 @@ def create_product_banner(
     f_feature = get_font("segoeuib", 20)
     f_old_lbl = get_font("segoeuib", 17)
     f_old_price = get_font("segoeuib", 28)  # Küçük ve kibar: 28px
-    f_new_label = get_font("segoeuib", 21)
-    f_new_price = get_font("segoeuib", 66)  # Hero boyut: 66px devasa ve baskın
-    f_net = get_font("segoeuib", 21)
+    f_new_label = get_font("segoeuib", 20)
+    f_new_price = get_font("segoeuib", 60)  # 60px: dengeli ve ferah
+    f_net = get_font("segoeuib", 19)
     f_pct = get_font("segoeuib", 28)
     f_savings = get_font("segoeuib", 22)
     f_cta = get_font("segoeuib", 24)
@@ -534,22 +534,18 @@ def create_product_banner(
     draw.line((cx + 4, cy, cx - 4, cy + 8), fill=(234, 88, 12), width=3)
 
     # Sağ Kart: HERO FIRSAT FİYATI (642px Genişlik, 3D Drop Shadow & Baskın Görünüm)
-    new_box = (398, 752, W - 40, 892)
+    new_box = (398, 750, W - 40, 892)
     # 3D Emerald Drop Shadow
     draw.rounded_rectangle((new_box[0]+4, new_box[1]+5, new_box[2]+4, new_box[3]+5), radius=18, fill=(185, 235, 210))
     draw.rounded_rectangle((new_box[0]+2, new_box[1]+2, new_box[2]+2, new_box[3]+2), radius=18, fill=(210, 245, 225))
     # Ana Zümrüt Kart
     draw.rounded_rectangle(new_box, radius=18, fill=(236, 253, 245), outline=(16, 185, 129), width=3)
     
-    # Başlık
-    draw.ellipse((new_box[0] + 24, 774, new_box[0] + 32, 782), fill=(5, 150, 105))
-    draw.text((new_box[0] + 40, 765), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
+    # 1. Başlık: y=762 (Ferah yukarı boşluk)
+    draw.ellipse((new_box[0] + 24, 769, new_box[0] + 32, 777), fill=(5, 150, 105))
+    draw.text((new_box[0] + 40, 762), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
 
-    # Devasa Baskın Fiyat (66px)
-    new_str = new_price if new_price else "Fırsat Fiyatı"
-    draw.text((new_box[0] + 24, 788), new_str, font=f_new_price, fill=(5, 150, 105))
-
-    # Net / Taksit / Kampanya alt satırı
+    # Net / Taksit / Kampanya alt satırı hazırlanışı
     sub_parts = []
     if net_cost:
         clean_net = re.sub(r'[^\w\s.,xX+\-/%]', '', net_cost).strip()
@@ -557,9 +553,16 @@ def create_product_banner(
     if installment:
         clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
         sub_parts.append(clean_inst)
-    if sub_parts:
-        sub_str = "  •  ".join(sub_parts)
-        draw.text((new_box[0] + 24, 858), sub_str, font=f_net, fill=(4, 120, 87))
+    sub_str = "  •  ".join(sub_parts) if sub_parts else ""
+
+    # 2. Devasa Fiyat: y=778 (Çok az yukarı alınarak tam ortalandı, alt satırla araya ferah nefes payı bırakıldı)
+    new_str = new_price if new_price else "Fırsat Fiyatı"
+    price_y = 778 if sub_str else 792
+    draw.text((new_box[0] + 24, price_y), new_str, font=f_new_price, fill=(5, 150, 105))
+
+    # 3. Alt satır: y=860 (Geniş nefes payıyla yerleştirildi)
+    if sub_str:
+        draw.text((new_box[0] + 24, 860), sub_str, font=f_net, fill=(4, 120, 87))
 
     # 7. GELİŞTİRME 3: ManyChat CTA Bandı + Parıltı Efekti (✨ "LİNK" ✨)
     cta_box = (0, 898, W, 960)

@@ -356,7 +356,7 @@ def handle_user_message(msg: dict):
         )
         markup = {
             "inline_keyboard": [
-                [{"text": "📊 Canlı Web Panelini Aç (Tarayıcı)", "url": f"{SITE_URL}#stats"}]
+                [{"text": "📊 Canlı Web Panelini Aç (Yönetici)", "url": f"{SITE_URL}?admin=flas"}]
             ]
         }
         send_telegram_text(chat_id, stats_msg, reply_markup=markup)

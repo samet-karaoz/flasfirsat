@@ -792,10 +792,10 @@
             background: rgba(239, 68, 68, 0.25);
         }
 
-        /* Footer Trigger Link */
+        /* Footer Trigger Link (Sadece Yönetici için Gizli) */
         .footer-stats-trigger {
+            display: none;
             margin-top: 16px;
-            display: flex;
             flex-direction: column;
             align-items: center;
             gap: 6px;
@@ -1212,11 +1212,10 @@
 
     <footer>
         <p>© 2026 Flaş Fırsat • Fiyatlar anlık olarak değişebilir. Fırsatları kaçırmamak için Telegram'ı takip edin.</p>
-        <div class="footer-stats-trigger">
+        <div id="footerStatsTrigger" class="footer-stats-trigger">
             <button class="footer-stats-btn" onclick="openStatsModal()">
-                📊 Canlı İstatistikler & Ziyaretçi Paneli
+                🔒 Yönetici Paneli
             </button>
-            <span class="footer-hint">veya klavyeden <code>Shift + S</code> tuşuna basın</span>
         </div>
     </footer>
 
@@ -1590,17 +1589,22 @@
             });
         }
 
-        // Kısayol: Shift + S veya #stats URL hash
+        // Yönetici Erişimi: Yalnızca ?admin=flas veya #admin ile girildiğinde paneli aç ve butonu göster
+        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'flas' || 
+                        window.location.hash === '#admin';
+        if (isAdmin) {
+            const trg = document.getElementById('footerStatsTrigger');
+            if (trg) trg.style.display = 'flex';
+            setTimeout(openStatsModal, 300);
+        }
+
+        // Kısayol: Shift + S (Yalnızca sizin klavyenizden gizlice açabilmeniz için)
         document.addEventListener('keydown', function(e) {
             if (e.shiftKey && (e.key === 'S' || e.key === 's')) {
                 e.preventDefault();
                 openStatsModal();
             }
         });
-
-        if (window.location.hash === '#stats' || new URLSearchParams(window.location.search).has('stats')) {
-            setTimeout(openStatsModal, 300);
-        }
 
         function exportStatsJSON() {
             const stats = getStoredStats();

@@ -1447,7 +1447,7 @@ def render_web_html(deals: list = None):
             return {
                 totalVisits: 0,
                 totalClicks: 0,
-                sourceVisits: { instagram: 0, youtube: 0, telegram: 0, tiktok: 0, direct: 0 },
+                sourceVisits: { instagram: 0, youtube: 0, telegram: 0, tiktok: 0, whatsapp: 0, direct: 0 },
                 storeClicks: { 'Amazon TR': 0, 'Trendyol': 0, 'Hepsiburada': 0, 'Diğer': 0 },
                 dealClicks: {},
                 recentClicks: []
@@ -1475,6 +1475,7 @@ def render_web_html(deals: list = None):
             if (ref.includes('instagram.com')) return 'instagram';
             if (ref.includes('youtube.com') || ref.includes('youtu.be')) return 'youtube';
             if (ref.includes('t.me') || ref.includes('telegram')) return 'telegram';
+            if (ref.includes('whatsapp.com') || ref.includes('wa.me')) return 'whatsapp';
             if (ref.includes('tiktok.com')) return 'tiktok';
             return 'direct';
         }
@@ -1513,6 +1514,10 @@ def render_web_html(deals: list = None):
             } else if (currentSource === 'telegram') {
                 icon.textContent = '✈️';
                 text.innerHTML = '<strong>Telegram</strong> ailemiz hoş geldin! Radarımıza takılan en sıcak fırsatlar listelendi ⚡';
+                banner.style.display = 'block';
+            } else if (currentSource === 'whatsapp') {
+                icon.textContent = '🟢';
+                text.innerHTML = '<strong>WhatsApp</strong> kanalımızdan gelen fırsat avcısı hoş geldin! Sıcak fırsatlar aşağıda listelendi ⚡';
                 banner.style.display = 'block';
             } else if (currentSource === 'tiktok') {
                 icon.textContent = '🎵';

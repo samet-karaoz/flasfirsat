@@ -77,6 +77,54 @@ def send_telegram_deal_for_approval(
     net_cost = deal.get("net_cost", "")
     bank_camp = deal.get("bank_campaign", "")
 
+def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
+    """WhatsApp kanalı veya gruplarında tek tıkla paylaşım için optimize edilmiş URL döner."""
+    import urllib.parse
+    from config import SITE_URL
+
+    title = deal.get("title", "Flaş Fırsat")
+    old_p = deal.get("old_price", "")
+    new_p = deal.get("new_price", "")
+    disc = deal.get("discount_pct", "")
+    store = deal.get("store_name", "Amazon TR")
+    seller_badge = deal.get("seller_badge", "")
+    net_cost = deal.get("net_cost", "")
+    bank_camp = deal.get("bank_campaign", "")
+    p_url = product_url or deal.get("affiliate_url") or deal.get("store_url", "")
+    site_link = f"{SITE_URL}?utm_source=whatsapp&utm_medium=channel"
+
+    msg_lines = [
+        f"🔥 *{title.upper()}*",
+        ""
+    ]
+    if old_p and new_p:
+        msg_lines.append(f"❌ Eski Fiyat: ~{old_p}~")
+        msg_lines.append(f"✅ İndirimli Fiyat: *{new_p}* ({disc})")
+    elif new_p:
+        msg_lines.append(f"✅ Fırsat Fiyatı: *{new_p}*")
+
+    if net_cost:
+        msg_lines.append(f"💳 {bank_camp} ➔ *Net: {net_cost}*")
+
+    if seller_badge:
+        msg_lines.append(f"🏢 Satıcı: {seller_badge}")
+    else:
+        msg_lines.append(f"🏪 Mağaza: {store}")
+
+    msg_lines.append("")
+    if p_url:
+        msg_lines.append("🛒 *İndirimli Satın Alma Linki:*")
+        msg_lines.append(p_url)
+        msg_lines.append("")
+
+    msg_lines.append("🌐 *Tüm Canlı Fırsatlar & İndirim Radarı:*")
+    msg_lines.append(site_link)
+    msg_lines.append("")
+    msg_lines.append("#işbirliği #reklam")
+
+    full_text = "\n".join(msg_lines)
+    return f"https://api.whatsapp.com/send?text={urllib.parse.quote(full_text)}"
+
     # Yönetici Önizleme Mesajı
     approval_caption = (
         f"🎬 <b>YENİ FIRSAT ONAY BEKLİYOR!</b>\n\n"
@@ -88,6 +136,8 @@ def send_telegram_deal_for_approval(
     approval_caption += f"🏪 <b>Mağaza:</b> {store}\n\n"
     approval_caption += "👇 <i>Yayınlamak istediğiniz platformu seçin:</i>"
 
+    wp_share_url = generate_whatsapp_share_url(deal, product_url)
+
     # Butonlar
     inline_keyboard = [
         [
@@ -96,6 +146,9 @@ def send_telegram_deal_for_approval(
         ],
         [
             {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"},
+            {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_share_url}
+        ],
+        [
             {"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}
         ]
     ]
@@ -143,6 +196,7 @@ def send_telegram_deal_for_approval(
             "video_path": video_path,
             "caption_text": caption_text,
             "product_url": product_url,
+            "whatsapp_share_url": wp_share_url,
             "file_id": file_id,
             "status": "pending",
             "created_at": time.strftime("%Y-%m-%d %H:%M:%S")

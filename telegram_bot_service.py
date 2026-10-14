@@ -12,7 +12,8 @@ from telegram_notifier import (
     load_pending_deals,
     save_pending_deals,
     edit_telegram_message_caption,
-    answer_telegram_callback_query
+    answer_telegram_callback_query,
+    generate_whatsapp_share_url
 )
 
 load_dotenv()
@@ -122,10 +123,14 @@ def handle_callback_query(cq: dict):
                 f"Diğer kanallara da göndermek ister misiniz?"
             )
             from config import SITE_URL
+            wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
             markup_buttons = [
                 [
                     {"text": "📢 Kanala da At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
                     {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
+                ],
+                [
+                    {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
                 ]
             ]
             row_links = []
@@ -188,11 +193,15 @@ def handle_callback_query(cq: dict):
                 f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
                 f"Diğer platformlar:"
             )
+            wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
             markup = {
                 "inline_keyboard": [
                     [
                         {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
                         {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
+                    ],
+                    [
+                        {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
                     ]
                 ]
             }
@@ -231,11 +240,15 @@ def handle_callback_query(cq: dict):
                 f"🔗 <b>Shorts Linki:</b> {yt_url}\n\n"
                 f"Diğer platformlar:"
             )
+            wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
             markup = {
                 "inline_keyboard": [
                     [
                         {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
                         {"text": "📢 Kanala At", "callback_data": f"approve_ch:{deal_id}"}
+                    ],
+                    [
+                        {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
                     ]
                 ]
             }

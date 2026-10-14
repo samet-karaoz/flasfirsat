@@ -131,7 +131,7 @@ def send_telegram_deal_for_approval(
         file_id = data["result"].get("video", {}).get("file_id", "")
         public_url = get_telegram_file_url(file_id, token) if file_id else ""
 
-        # Bekleyen fırsatlara kaydet
+        # Bekleyen fırsatlara kaydet (Token içeren URL diske yazılmaz, sadece file_id saklanır)
         pending = load_pending_deals()
         pending[deal_id] = {
             "deal_id": deal_id,
@@ -142,7 +142,6 @@ def send_telegram_deal_for_approval(
             "caption_text": caption_text,
             "product_url": product_url,
             "file_id": file_id,
-            "public_video_url": public_url,
             "status": "pending",
             "created_at": time.strftime("%Y-%m-%d %H:%M:%S")
         }

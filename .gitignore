@@ -2,6 +2,11 @@
 .env
 .env.*
 !.env.example
+client_secrets.json
+
+# Veritabanı, Oturum ve Çalışma Zamanı Verileri
+data/
+*.db
 
 # Geçici ve Çıktı Dosyaları
 temp/
@@ -9,7 +14,6 @@ output/
 __pycache__/
 *.py[cod]
 *$py.class
-*.db
 
 # Büyük Model Dosyaları
 *.onnx

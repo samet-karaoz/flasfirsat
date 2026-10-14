@@ -146,9 +146,10 @@ def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
         ],
         [
             {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"},
-            {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_share_url}
+            {"text": "🟢 WhatsApp Kanalına At (Oto)", "callback_data": f"approve_wp:{deal_id}"}
         ],
         [
+            {"text": "📲 WhatsApp Paylaş (Mobil)", "url": wp_share_url},
             {"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}
         ]
     ]

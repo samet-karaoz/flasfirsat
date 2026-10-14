@@ -276,7 +276,76 @@ def handle_callback_query(cq: dict):
             }
             edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
 
-    # D) İptal Et
+    # D) WhatsApp Kanalında Otomatik Paylaş
+    elif action == "approve_wp":
+        answer_telegram_callback_query(cq_id, text="🟢 WhatsApp Kanalı yüklemesi başlatılıyor...")
+        edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>WhatsApp Kanalına Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
+
+        from whatsapp_publisher import publish_deal_to_whatsapp_channel, check_whatsapp_ready
+        chk = check_whatsapp_ready()
+        if not chk.get("ready"):
+            fail_caption = (
+                f"❌ <b>WHATSAPP WEB OTURUMU GEREKLİ!</b>\n\n"
+                f"Otomatik paylaşım için bilgisayarınızda bir defaya mahsus:\n"
+                f"<code>python whatsapp_auth.py</code>\n"
+                f"çalıştırıp QR kodu telefonunuzdan okutun.\n\n"
+                f"<i>(Dilerseniz alttaki butondan mobilde tek tıkla hemen paylaşabilirsiniz)</i>"
+            )
+            markup = {
+                "inline_keyboard": [
+                    [{"text": "📲 WhatsApp Paylaş (Mobil)", "url": item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)}],
+                    [{"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}]
+                ]
+            }
+            edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
+        else:
+            wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path") or item.get("image_path"))
+            if wp_res.get("success"):
+                item["status"] = "published_whatsapp"
+                save_pending_deals(pending)
+
+                updated_caption = (
+                    f"✅ <b>WHATSAPP KANALINDA YAYINLANDI! 🎉</b>\n\n"
+                    f"📦 <b>Ürün:</b> {title}\n"
+                    f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
+                    f"Diğer platformlar:"
+                )
+                markup = {
+                    "inline_keyboard": [
+                        [
+                            {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
+                            {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
+                        ],
+                        [
+                            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"}
+                        ]
+                    ]
+                }
+                from config import SITE_URL
+                row_links = []
+                if product_url:
+                    row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
+                row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=whatsapp&utm_medium=channel"})
+                markup["inline_keyboard"].append(row_links)
+                edit_telegram_message_caption(chat_id, msg_id, updated_caption, reply_markup=markup)
+            else:
+                err = wp_res.get("error", "Bilinmeyen hata")
+                fail_caption = (
+                    f"❌ <b>WHATSAPP YÜKLEME HATASI:</b>\n{err}\n\n"
+                    f"📦 <b>Ürün:</b> {title}\nMobilden tek tıkla gönderebilirsiniz:"
+                )
+                markup = {
+                    "inline_keyboard": [
+                        [
+                            {"text": "🔄 Tekrar Dene (Oto)", "callback_data": f"approve_wp:{deal_id}"},
+                            {"text": "📲 Mobil WhatsApp", "url": item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)}
+                        ],
+                        [{"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}]
+                    ]
+                }
+                edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
+
+    # E) İptal Et
     elif action == "reject":
         answer_telegram_callback_query(cq_id, text="❌ Fırsat iptal edildi.")
         item["status"] = "rejected"

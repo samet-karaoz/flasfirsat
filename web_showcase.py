@@ -107,6 +107,24 @@ def add_deal_to_web(deal: dict):
     print(f"[Web] 🌐 Web vitrini güncellendi: {deal_item['title']}")
     push_to_github()
 
+def remove_deal_from_web(identifier: str) -> bool:
+    """
+    id veya başlık içeren ürünü web vitrininden siler, HTML'i yeniden oluşturur ve GitHub'a pushlar.
+    """
+    ensure_web_setup()
+    deals = load_deals()
+    new_deals = [
+        d for d in deals
+        if d.get("id") != identifier and identifier.lower() not in d.get("title", "").lower()
+    ]
+    if len(new_deals) != len(deals):
+        save_deals(new_deals)
+        render_web_html(new_deals)
+        push_to_github()
+        print(f"[Web] 🗑️ Ürün vitrinden silindi: {identifier}")
+        return True
+    return False
+
 def push_to_github():
     try:
         import subprocess

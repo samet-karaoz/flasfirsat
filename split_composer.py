@@ -655,7 +655,7 @@ def build_split_screen_video(
     new_price: str = "",
     is_price_error: bool = False,
     reaction_text: str = None,
-    enable_voiceover: bool = True
+    enable_voiceover: bool = False
 ) -> str:
     """
     Üst yarıda ürün banner'ı (1080x960),

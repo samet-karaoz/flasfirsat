@@ -178,7 +178,8 @@ def process_deal_to_reel(
         output_filename=video_filename,
         discount_pct=deal.get("discount_pct", ""),
         product_title=deal.get("title", ""),
-        new_price=deal.get("new_price", "")
+        new_price=deal.get("new_price", ""),
+        enable_voiceover=False
     )
 
     # Affiliate Link Dönüşümü

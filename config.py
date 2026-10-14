@@ -15,7 +15,7 @@ VIDEO_HEIGHT = 1920
 FPS = 30
 
 # Voice settings (edge-tts)
-# AhmetNeural: Tok, etkileyici ve karizmatik erkek sesi
+ENABLE_VOICEOVER = os.getenv("ENABLE_VOICEOVER", "false").strip().lower() in ("true", "1", "yes")
 VOICE_NAME = "tr-TR-AhmetNeural"
 VOICE_RATE = "+0%"   # Hızlandırma/yavaşlatma örn: "+5%", "-5%"
 VOICE_PITCH = "-3Hz" # Hafif daha kalın ve tok bir etki

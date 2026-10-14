@@ -1320,11 +1320,11 @@ def render_web_html(deals: list = None):
         </div>
 
         <div class="filter-tabs-wrapper">
-            <button class="filter-tab active" data-filter="active" onclick="setStatusFilter('active', this)">
-                ⚡ Devam Eden Fırsatlar <span class="tab-badge" id="activeBadge">0</span>
-            </button>
-            <button class="filter-tab" data-filter="all" onclick="setStatusFilter('all', this)">
+            <button class="filter-tab active" data-filter="all" onclick="setStatusFilter('all', this)">
                 📦 Tüm Fırsatlar <span class="tab-badge" id="allBadge">0</span>
+            </button>
+            <button class="filter-tab" data-filter="active" onclick="setStatusFilter('active', this)">
+                ⚡ Devam Eden Fırsatlar <span class="tab-badge" id="activeBadge">0</span>
             </button>
             <button class="filter-tab" data-filter="expired" onclick="setStatusFilter('expired', this)">
                 ⌛ Biten İndirimler <span class="tab-badge" id="expiredBadge">0</span>
@@ -1368,7 +1368,7 @@ def render_web_html(deals: list = None):
 
     <script>
         // --- 1. ARAMA VE KATEGORİ FİLTRELEME MOTORU (Aktif / Bitenler) ---
-        let currentStatusFilter = 'active';
+        let currentStatusFilter = 'all';
 
         function setStatusFilter(status, btn) {
             currentStatusFilter = status;

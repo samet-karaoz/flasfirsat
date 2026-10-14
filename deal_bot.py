@@ -179,6 +179,7 @@ def process_deal_to_reel(
         discount_pct=deal.get("discount_pct", ""),
         product_title=deal.get("title", ""),
         new_price=deal.get("new_price", ""),
+        reaction_text=deal.get("reaction_text"),
         enable_voiceover=False
     )
 

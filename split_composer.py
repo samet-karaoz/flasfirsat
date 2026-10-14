@@ -2,7 +2,7 @@ import os
 import subprocess
 import random
 import re
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR
 from deal_hunter import parse_price_to_float
 
@@ -182,6 +182,26 @@ def draw_vector_shield_check(draw: ImageDraw.Draw, cx: int, cy: int, color=(16, 
     chk = [(cx - 4, cy), (cx - 1, cy + 3), (cx + 5, cy - 3)]
     draw.line(chk, fill=(255, 255, 255), width=2)
 
+def draw_vector_trend_down(draw: ImageDraw.Draw, cx: int, cy: int, color=(225, 29, 72)):
+    points = [(cx - 9, cy - 5), (cx - 3, cy - 1), (cx + 2, cy - 6), (cx + 8, cy + 4)]
+    draw.line(points, fill=color, width=2)
+    draw.polygon([(cx + 8, cy + 4), (cx + 3, cy + 4), (cx + 8, cy - 1)], fill=color)
+
+def draw_vector_sparkle(draw: ImageDraw.Draw, cx: int, cy: int, size: int = 8, color=(251, 191, 36)):
+    s = size
+    k = s * 0.3
+    points = [
+        (cx, cy - s),
+        (cx + k, cy - k),
+        (cx + s, cy),
+        (cx + k, cy + k),
+        (cx, cy + s),
+        (cx - k, cy + k),
+        (cx - s, cy),
+        (cx - k, cy - k)
+    ]
+    draw.polygon(points, fill=color)
+
 def draw_vector_coin(draw: ImageDraw.Draw, cx: int, cy: int, color=(255, 204, 0)):
     draw.ellipse((cx - 11, cy - 11, cx + 11, cy + 11), fill=color, outline=(245, 158, 11), width=2)
     draw.ellipse((cx - 7, cy - 7, cx + 7, cy + 7), outline=(254, 240, 138), width=1)
@@ -203,6 +223,32 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
         (cx + 7, cy + 9)
     ]
     draw.polygon(plane, fill=color)
+
+# ==========================================
+# AKILLI ÜRÜN ÖZELLİĞİ YAKALAYICI (FEATURE PILL)
+# ==========================================
+
+def extract_smart_feature(title: str, category: str = "") -> str:
+    t = (title or "").lower()
+    if any(k in t for k in ["termos", "quencher", "mug", "tumbler"]):
+        return "Çift Duvar Vakum Yalıtımı • 11s Soğuk Tutma"
+    if any(k in t for k in ["priz", "akım", "koruyucu"]):
+        return "13.500A Aşırı Gerilim & Yıldırım Koruması"
+    if any(k in t for k in ["kulaklık", "headset", "kraken"]):
+        return "7.1 Çevresel Ses • Ultra Hafif Gövde"
+    if any(k in t for k in ["mouse", "fare", "rival", "deathadder"]):
+        return "Optik Espor Sensörü • Ultra Hızlı Tepki"
+    if any(k in t for k in ["ütü", "buharlı"]):
+        return "Sürekli Yüksek Buhar Gücü • Çizilmez Taban"
+    if any(k in t for k in ["kahve", "espresso", "lattego"]):
+        return "15 Bar Yüksek Basınç • Otomatik Süt Köpürtücü"
+    if any(k in t for k in ["monitör", "kolu", "stand"]):
+        return "Amortisörlü Gazlı Yay Sistemi • 360° Dönebilir"
+    if any(k in t for k in ["filtre", "brita"]):
+        return "MicroFlow Kireç & Klor Filtreleme Teknolojisi"
+    if any(k in t for k in ["tost", "ızgara"]):
+        return "Yapışmaz Döküm Plaka • Hızlı Isınma"
+    return "Orijinal Faturalı & 2 Yıl Resmi Türkiye Garantili"
 
 # ==========================================
 # VIRAL MEME REAKSİYON METİNLERİ (REACTION HOOKS)
@@ -263,12 +309,12 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    f_hook = get_font("segoeuib", 32)  # Büyütüldü: 32px
+    f_hook = get_font("segoeuib", 32)  # 32px Büyütülmüş font
     clean_text = reaction_text.strip()
     text_w = draw.textlength(clean_text, font=f_hook)
 
     box_w = min(W - 40, text_w + 64)
-    box_h = 68  # Büyütüldü: 68px
+    box_h = 68  # 68px Konforlu kapsül yüksekliği
     box_x = (W - box_w) // 2
     box_y = 22  # Meme videosunun tam üst kenarında
 
@@ -291,7 +337,7 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     return output_path
 
 # ==========================================
-# ANA ÜRÜN AFİŞİ (1080x960 - V2 ENHANCED)
+# ANA ÜRÜN AFİŞİ (1080x960 - V3 ENHANCED)
 # ==========================================
 
 def create_product_banner(
@@ -309,12 +355,13 @@ def create_product_banner(
 ) -> str:
     """
     Ürün görseli ve fiyat bilgilerinden 1080x960 ebatlarında
-    5 Temel İyileştirme içeren premium e-ticaret afişi üretir:
-    1. Net Tasarruf Rozeti (💰 X TL NET TASARRUF)
-    2. ManyChat CTA Bandı (💬 Satın alma linki için yoruma "LİNK" yaz)
-    3. Soft 3D Drop Shadow & Derinlik
-    4. Doğrulanmış Güven Rozeti (🛡️ %100 Orijinal • Doğrulanmış)
-    5. Çift Fiyat & Net Maliyet Karşılaştırma Kartı (Baskın İndirim Fiyatı & Ortalanmış Üstü Çizili Eski Fiyat)
+    Top-tier ajans kalitesinde afiş üretir:
+    1. Ürün arkasında soft spotlight / ışıma efekti
+    2. "Son 30 Günün En Düşüğü" geçmiş fiyat rozeti
+    3. Can alıcı teknik özellik hap rozeti (Feature Pill)
+    4. Kompakt Piyasa Fiyatı & Devasa Öne Çıkarılmış Fırsat Fiyatı (Hero Opportunity Box)
+    5. ManyChat CTA Bandında Parıltı Efekti (✨ "LİNK" ✨)
+    6. Floating Net Tasarruf Rozeti (💰 X TL NET TASARRUF)
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "product_top.png")
@@ -328,12 +375,14 @@ def create_product_banner(
     draw = ImageDraw.Draw(img)
 
     f_badge = get_font("segoeuib", 26)
-    f_label = get_font("segoeuib", 21)
+    f_label = get_font("segoeuib", 20)
     f_trust = get_font("segoeuib", 19)
-    f_old_price = get_font("segoeuib", 30)  # Piyasa fiyatı daha kibar ve küçük: 30px
+    f_feature = get_font("segoeuib", 20)
+    f_old_lbl = get_font("segoeuib", 17)
+    f_old_price = get_font("segoeuib", 28)  # Küçük ve kibar: 28px
     f_new_label = get_font("segoeuib", 21)
-    f_new_price = get_font("segoeuib", 62)  # İndirimli fiyat son derece baskın: 62px
-    f_net = get_font("segoeuib", 20)
+    f_new_price = get_font("segoeuib", 66)  # Hero boyut: 66px devasa ve baskın
+    f_net = get_font("segoeuib", 21)
     f_pct = get_font("segoeuib", 28)
     f_savings = get_font("segoeuib", 22)
     f_cta = get_font("segoeuib", 24)
@@ -372,25 +421,53 @@ def create_product_banner(
         draw.rounded_rectangle((card_box[0]+offset, card_box[1]+offset, card_box[2]+offset, card_box[3]+offset), radius=22, fill=col)
     draw.rounded_rectangle(card_box, radius=22, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
 
-    # Güven Rozeti (Kart İçi Sol Üst - Vector Shield & Checkmark)
+    # 🌟 GELİŞTİRME 1: Ürün Arkasına Soft Spotlight (Işıma) Efekti
+    cw = card_box[2] - card_box[0]
+    ch = card_box[3] - card_box[1]
+    glow_layer = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
+    glow_draw = ImageDraw.Draw(glow_layer)
+    gcx = cw // 2
+    gcy = ch // 2 + 10
+    glow_draw.ellipse((gcx - 170, gcy - 170, gcx + 170, gcy + 170), fill=(255, 237, 213, 110))
+    glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=50))
+    img.paste(glow_layer, (card_box[0], card_box[1]), glow_layer)
+
+    # 🛡️ Kart İçi Sol Üst: Güven Rozeti (Vector Shield & Checkmark)
     trust_text = "ORİJİNAL ÜRÜN • DOĞRULANMIŞ"
     tr_w = draw.textlength(trust_text, font=f_trust)
     draw.rounded_rectangle((card_box[0] + 16, card_box[1] + 16, card_box[0] + 58 + tr_w, card_box[1] + 48), radius=8, fill=(241, 245, 249))
     draw_vector_shield_check(draw, card_box[0] + 32, card_box[1] + 32, (16, 185, 129))
     draw.text((card_box[0] + 48, card_box[1] + 21), trust_text, font=f_trust, fill=(71, 85, 105))
 
+    # 🏷️ GELİŞTİRME 2: Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" Fiyat Geçmişi Etiketi
+    lowest_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ"
+    low_w = draw.textlength(lowest_text, font=f_trust)
+    draw.rounded_rectangle((card_box[2] - low_w - 58, card_box[1] + 16, card_box[2] - 16, card_box[1] + 48), radius=8, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
+    draw_vector_trend_down(draw, card_box[2] - low_w - 38, card_box[1] + 32, (225, 29, 72))
+    draw.text((card_box[2] - low_w - 24, card_box[1] + 21), lowest_text, font=f_trust, fill=(225, 29, 72))
+
     # Ürün Görselini Kart İçine Ekle
     if product_image_path and os.path.exists(product_image_path):
         try:
             p_img = Image.open(product_image_path).convert("RGBA")
             max_img_w = card_box[2] - card_box[0] - 60
-            max_img_h = card_box[3] - card_box[1] - 70
+            max_img_h = card_box[3] - card_box[1] - 120
             p_img.thumbnail((max_img_w, max_img_h), Image.Resampling.LANCZOS)
             px = card_box[0] + (card_box[2] - card_box[0] - p_img.width) // 2
-            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2 + 10
+            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2 - 5
             img.paste(p_img, (px, py), p_img)
         except Exception as e:
             print(f"[Banner] Görsel yükleme uyarısı: {e}")
+
+    # 📦 GELİŞTİRME 4: Ürünün Can Alıcı Özellik Rozeti (Feature Pill)
+    feature_text = extract_smart_feature(title)
+    feat_w = draw.textlength(feature_text, font=f_feature)
+    feat_box_w = feat_w + 48
+    feat_x = (W - feat_box_w) // 2
+    feat_y = card_box[3] - 88
+    draw.rounded_rectangle((feat_x, feat_y, feat_x + feat_box_w, feat_y + 34), radius=17, fill=(241, 245, 249), outline=(203, 213, 225), width=1)
+    draw_vector_bolt(draw, feat_x + 18, feat_y + 17, (234, 88, 12))
+    draw.text((feat_x + 32, feat_y + 6), feature_text, font=f_feature, fill=(51, 65, 85))
 
     # Kart İçi Dinamik Mağaza Rozeti (Sağ Alt Köşe)
     store_styles = {
@@ -402,17 +479,15 @@ def create_product_banner(
     st_info = store_styles.get(store_name, {"name": store_name.upper(), "bg": (15, 23, 42), "fg": (255, 255, 255)})
     tag_text = f"{st_info['name']}  •  @flasfirsat"
     t_w = draw.textlength(tag_text, font=f_label)
-    draw.rounded_rectangle((card_box[2] - t_w - 36, card_box[3] - 46, card_box[2] - 16, card_box[3] - 14), radius=8, fill=st_info["bg"])
-    draw.text((card_box[2] - t_w - 26, card_box[3] - 42), tag_text, font=f_label, fill=st_info["fg"])
+    draw.rounded_rectangle((card_box[2] - t_w - 36, card_box[3] - 44, card_box[2] - 16, card_box[3] - 14), radius=8, fill=st_info["bg"])
+    draw.text((card_box[2] - t_w - 26, card_box[3] - 40), tag_text, font=f_label, fill=st_info["fg"])
 
     # Kart İçi Dinamik Taksit Rozeti (Sol Alt Köşe)
-    if installment:
-        clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
-        inst_label = f"Taksit: {clean_inst}" if "taksit" not in clean_inst.lower() else clean_inst
-        it_w = draw.textlength(inst_label, font=f_label)
-        draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 46, card_box[0] + 16 + it_w + 24, card_box[3] - 14), radius=8, fill=(236, 253, 245), outline=(16, 185, 129), width=1)
-        draw.ellipse((card_box[0] + 24, card_box[3] - 33, card_box[0] + 32, card_box[3] - 25), fill=(5, 150, 105))
-        draw.text((card_box[0] + 38, card_box[3] - 42), inst_label, font=f_label, fill=(4, 120, 87))
+    clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip() if installment else "Peşin Fiyatına 3 Taksit"
+    it_w = draw.textlength(clean_inst, font=f_label)
+    draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 44, card_box[0] + 16 + it_w + 24, card_box[3] - 14), radius=8, fill=(236, 253, 245), outline=(16, 185, 129), width=1)
+    draw.ellipse((card_box[0] + 24, card_box[3] - 31, card_box[0] + 32, card_box[3] - 23), fill=(5, 150, 105))
+    draw.text((card_box[0] + 38, card_box[3] - 40), clean_inst, font=f_label, fill=(4, 120, 87))
 
     # 5. Net Tasarruf Rozeti (Floating Savings Pill)
     old_val = parse_price_to_float(old_price)
@@ -434,37 +509,45 @@ def create_product_banner(
     draw_vector_coin(draw, pill_x + 24, 733, (255, 204, 0))
     draw.text((pill_x + 44, 722), sav_text, font=f_savings, fill=(255, 255, 255))
 
-    # 6. Fiyat Kartları: Çift Kartlı Premium Tasarım
-    # Sol Kart: Piyasa Fiyatı (Daha kibar, üstü tam ortadan çizili)
-    old_box = (40, 758, 420, 888)
-    draw.rounded_rectangle(old_box, radius=16, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
-    draw.text((old_box[0] + 20, 770), "PİYASA FİYATI", font=f_label, fill=(148, 163, 184))
+    # 6. FİYAT KARTLARI (ÖZEL HİYERARŞİ: Kompakt Piyasa Fiyatı & Devasa Fırsat Fiyatı)
+    # Sol Kart: Piyasa Fiyatı (Kompakt 280px genişlik, soluk ve kibar)
+    old_box = (40, 762, 320, 884)
+    draw.rounded_rectangle(old_box, radius=14, fill=(255, 255, 255), outline=(226, 232, 240), width=1)
+    draw.text((old_box[0] + (old_box[2] - old_box[0] - draw.textlength("PİYASA FİYATI", font=f_old_lbl)) // 2, 778), "PİYASA FİYATI", font=f_old_lbl, fill=(148, 163, 184))
+    
     old_str = old_price if old_price else "Piyasa Fiyatı"
     op_w = draw.textlength(old_str, font=f_old_price)
     op_x = old_box[0] + (old_box[2] - old_box[0] - op_w) // 2
-    op_y = 814
+    op_y = 818
     draw.text((op_x, op_y), old_str, font=f_old_price, fill=(148, 163, 184))
     
-    # Tam merkezden geçen kırmızı çizgi (textbbox ile tam ortalanır)
+    # Tam merkezden geçen kırmızı üstü çizili çizgi
     tbbox = draw.textbbox((op_x, op_y), old_str, font=f_old_price)
     strike_y = (tbbox[1] + tbbox[3]) // 2
-    draw.line((op_x - 8, strike_y, op_x + op_w + 8, strike_y), fill=(239, 68, 68), width=3)
+    draw.line((op_x - 6, strike_y, op_x + op_w + 6, strike_y), fill=(239, 68, 68), width=3)
 
     # Orta Geçiş İkonu (Chevron >)
-    arrow_box = (436, 800, 484, 846)
-    draw.rounded_rectangle(arrow_box, radius=10, fill=(255, 255, 255), outline=(203, 213, 225), width=2)
-    cx, cy = 460, 823
+    arrow_box = (338, 804, 380, 846)
+    draw.rounded_rectangle(arrow_box, radius=10, fill=(255, 255, 255), outline=(203, 213, 225), width=1)
+    cx, cy = 359, 825
     draw.line((cx - 4, cy - 8, cx + 4, cy), fill=(234, 88, 12), width=3)
     draw.line((cx + 4, cy, cx - 4, cy + 8), fill=(234, 88, 12), width=3)
 
-    # Sağ Kart: İndirimli Yeni Fiyat (Baskın Zümrüt Yeşili 62px)
-    new_box = (500, 758, W - 40, 888)
-    draw.rounded_rectangle(new_box, radius=16, fill=(236, 253, 245), outline=(16, 185, 129), width=2)
-    draw.ellipse((new_box[0] + 20, 776, new_box[0] + 28, 784), fill=(5, 150, 105))
-    draw.text((new_box[0] + 34, 767), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
+    # Sağ Kart: HERO FIRSAT FİYATI (642px Genişlik, 3D Drop Shadow & Baskın Görünüm)
+    new_box = (398, 752, W - 40, 892)
+    # 3D Emerald Drop Shadow
+    draw.rounded_rectangle((new_box[0]+4, new_box[1]+5, new_box[2]+4, new_box[3]+5), radius=18, fill=(185, 235, 210))
+    draw.rounded_rectangle((new_box[0]+2, new_box[1]+2, new_box[2]+2, new_box[3]+2), radius=18, fill=(210, 245, 225))
+    # Ana Zümrüt Kart
+    draw.rounded_rectangle(new_box, radius=18, fill=(236, 253, 245), outline=(16, 185, 129), width=3)
+    
+    # Başlık
+    draw.ellipse((new_box[0] + 24, 774, new_box[0] + 32, 782), fill=(5, 150, 105))
+    draw.text((new_box[0] + 40, 765), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
 
+    # Devasa Baskın Fiyat (66px)
     new_str = new_price if new_price else "Fırsat Fiyatı"
-    draw.text((new_box[0] + 20, 792), new_str, font=f_new_price, fill=(5, 150, 105))
+    draw.text((new_box[0] + 24, 788), new_str, font=f_new_price, fill=(5, 150, 105))
 
     # Net / Taksit / Kampanya alt satırı
     sub_parts = []
@@ -476,9 +559,9 @@ def create_product_banner(
         sub_parts.append(clean_inst)
     if sub_parts:
         sub_str = "  •  ".join(sub_parts)
-        draw.text((new_box[0] + 20, 858), sub_str, font=f_net, fill=(4, 120, 87))
+        draw.text((new_box[0] + 24, 858), sub_str, font=f_net, fill=(4, 120, 87))
 
-    # 7. ManyChat CTA Bandı (Alt Şerit 1080x62)
+    # 7. GELİŞTİRME 3: ManyChat CTA Bandı + Parıltı Efekti (✨ "LİNK" ✨)
     cta_box = (0, 898, W, 960)
     draw.rectangle(cta_box, fill=(15, 23, 42))
     draw.line((0, 898, W, 898), fill=(245, 158, 11), width=3)
@@ -490,17 +573,32 @@ def create_product_banner(
     p_w = draw.textlength(cta_prefix, font=f_cta)
     h_w = draw.textlength(cta_highlight, font=f_cta)
     s_w = draw.textlength(cta_suffix, font=f_cta)
-    total_cta_w = 32 + 10 + p_w + h_w + s_w + 10 + 26
+    total_cta_w = 34 + p_w + 22 + h_w + 22 + s_w + 34
     start_x = (W - total_cta_w) // 2
 
+    # Vector chat bubble
     draw_vector_chat_bubble(draw, start_x + 14, 929, (251, 191, 36))
     text_x = start_x + 36
     draw.text((text_x, 916), cta_prefix, font=f_cta, fill=(241, 245, 249))
-    text_x += p_w
+    text_x += p_w + 6
+
+    # Sol Parıltı (Sparkle)
+    draw_vector_sparkle(draw, text_x + 6, 929, size=8, color=(251, 191, 36))
+    text_x += 18
+
+    # Vurgulu "LİNK"
     draw.text((text_x, 916), cta_highlight, font=f_cta, fill=(251, 191, 36))
-    text_x += h_w
+    text_x += h_w + 6
+
+    # Sağ Parıltı (Sparkle)
+    draw_vector_sparkle(draw, text_x + 6, 929, size=8, color=(251, 191, 36))
+    text_x += 18
+
+    # Suffix
     draw.text((text_x, 916), cta_suffix, font=f_cta, fill=(241, 245, 249))
     text_x += s_w + 14
+
+    # Vector DM plane
     draw_vector_dm_plane(draw, text_x, 929, (251, 191, 36))
 
     img.save(output_path, "PNG")
@@ -524,6 +622,7 @@ def build_split_screen_video(
     Üst yarıda ürün banner'ı (1080x960),
     Alt yarıda viral meme videosu (1080x960),
     Meme üzerinde akıllı reaksiyon kancası (Reaction Hook - 32px),
+    İlk 1 saniyede dinamik mikro punch-in zoom efekti,
     En altta dinamik neon ilerleme çubuğu (Animated Progress Bar),
     Arka planda meme'in orijinal sesi veya phonk müzik ile 1080x1920 MP4 video üretir.
     (Alarm sesi tamamen kaldırılmıştır).
@@ -544,7 +643,7 @@ def build_split_screen_video(
     if not os.path.exists(bottom_meme_path):
         raise FileNotFoundError(f"Meme videosu bulunamadı: {bottom_meme_path}")
 
-    # 2. Akıllı Reaksiyon Kancası (Reaction Hook) Overlay Üret (Büyük ve Okunaklı)
+    # 2. Akıllı Reaksiyon Kancası (Reaction Hook) Overlay Üret (Büyük ve Okunaklı 32px)
     if not reaction_text:
         reaction_text = select_smart_reaction_hook(discount_pct, product_title, is_price_error)
     print(f"[Montaj] 🎯 Reaksiyon Başlığı (Hook): {reaction_text}")
@@ -583,7 +682,9 @@ def build_split_screen_video(
 
     is_image = top_source.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
     scale_top = "scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA" if is_image else "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
-    scale_bottom = "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
+
+    # 🌟 GELİŞTİRME 5: İlk 1 Saniyede Dinamik Mikro Punch-in Zoom (Retention Kancası)
+    scale_bottom = "scale=w='1080*(1+0.05*max(0,1-t))':h='960*(1+0.05*max(0,1-t))':eval=frame,crop=1080:960"
 
     cmd = ["ffmpeg", "-y"]
     if is_image:

@@ -261,6 +261,7 @@ Kullanım Şekilleri:
     parser.add_argument("--meme", type=str, choices=[m.replace(".mp4", "") for m in AVAILABLE_MEMES], help="Kullanılacak özel meme videosu")
     parser.add_argument("--audio", type=str, help="Kullanılacak özel müzik dosyası")
     parser.add_argument("--no-upload", action="store_true", help="Videoyu ve metni hazırla ancak Telegram'a ve web vitrinine yükleme yapma")
+    parser.add_argument("--min-discount", type=int, default=25, help="Minimum indirim yüzdesi eşiği (Varsayılan: 25)")
 
     args = parser.parse_args()
 
@@ -270,7 +271,7 @@ Kullanım Şekilleri:
     if args.top3:
         print(f"🏆 [MOD: GÜNÜN EN İYİ 3 FIRSATI (TOP 3) AVI - Platform: {platform.upper()}]")
         history = load_history()
-        fresh_deals = hunt_best_deals(limit=3, platform=platform, category=args.category)
+        fresh_deals = hunt_best_deals(limit=3, platform=platform, category=args.category, min_discount=args.min_discount)
         if len(fresh_deals) < 3:
             print("⚠️ Yeterli indirim bulunamadı, mevcut fırsatlar tamamlanıyor...")
             defaults = [
@@ -324,7 +325,7 @@ Kullanım Şekilleri:
         while True:
             now_str = datetime.datetime.now().strftime("%H:%M:%S")
             print(f"[{now_str}] 🔍 İndirimler taranıyor (Platform: {platform.upper()})...")
-            deals = hunt_best_deals(limit=5, platform=platform, category=args.category, exclude_urls=history)
+            deals = hunt_best_deals(limit=5, platform=platform, category=args.category, exclude_urls=history, min_discount=args.min_discount)
             new_deals = [d for d in deals if get_deal_sig(d) not in history]
             if new_deals:
                 print(f"🔔 {len(new_deals)} adet YENİ sıcak indirim yakalandı! Videolar hazırlanıyor...")
@@ -346,11 +347,11 @@ Kullanım Şekilleri:
         if exclude_subtypes:
             print(f"[Deal Bot] 🛡️ Çeşitlilik Koruması Aktif (Son ürün: '{last_prod}' | Engellenen Alt Kategori: {list(exclude_subtypes)})")
 
-        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes)
+        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
         if not fresh_deals:
-            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_subtypes=exclude_subtypes)
+            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
         if not fresh_deals:
-            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category)
+            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, min_discount=15)
 
         # Son işlenen ürünle veya alt kategorisiyle aynı olanları filtrele (ard arda tekrar etmez)
         valid_deals = []

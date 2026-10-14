@@ -25,7 +25,10 @@ BORING_REGEX = re.compile(
     r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı|tutucu|"
     r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık|yumuşatıcı|şampuan|diş\s*fırçası|mendil|pijama|çanta(sı)?|"
-    r"bebek|tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
+    r"bebek|mama(sı)?|süt[üu]?|devam\s*sütü|vitamin|omega|balık\s*yağı|takviye|"
+    r"bisküvi|kek|gofret|çikolata|cips|makarna|salça|bakliyat|kuruyemiş|çekirdek|ton\s*balığı|baharat|"
+    r"motosiklet|lastik|kask(ı)?|disk\s*kilidi|saç\s*toniği|sabun|"
+    r"tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
     r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|flash\s*bellek|usb\s*bellek|"
     r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|aparat[ıi]?)",
     re.IGNORECASE
@@ -74,6 +77,49 @@ def get_product_subtype(title: str) -> str:
     if any(k in t for k in ["ssd", "nvme", "disk"]):
         return "storage"
     return "general"
+
+def parse_price_to_float(price_str: str) -> float:
+    """Türkçe para birimi metinlerini ('1.949,00 TL' vb.) floata dönüştürür."""
+    if not price_str:
+        return 0.0
+    cleaned = re.sub(r"[^\d,.]", "", str(price_str)).strip()
+    if not cleaned:
+        return 0.0
+    if "," in cleaned and "." in cleaned:
+        cleaned = cleaned.replace(".", "").replace(",", ".")
+    elif "," in cleaned:
+        cleaned = cleaned.replace(",", ".")
+    elif "." in cleaned:
+        parts = cleaned.split(".")
+        if len(parts) > 1 and len(parts[-1]) == 3:
+            cleaned = cleaned.replace(".", "")
+    try:
+        return float(cleaned)
+    except Exception:
+        return 0.0
+
+def get_deal_discount_pct(deal: dict) -> int:
+    """Fırsatın gerçek indirim oranını (%) hesaplar veya ayıklar."""
+    raw_pct = str(deal.get("discount_pct") or "")
+    m = re.search(r"(\d+)", raw_pct)
+    if m:
+        pct = int(m.group(1))
+        if 5 <= pct <= 95:
+            return pct
+            
+    old_p = parse_price_to_float(deal.get("old_price", ""))
+    new_p = parse_price_to_float(deal.get("new_price", ""))
+    if old_p > 0 and new_p > 0 and old_p > new_p:
+        calc_pct = round(((old_p - new_p) / old_p) * 100)
+        if 5 <= calc_pct <= 95:
+            return calc_pct
+    return 0
+
+def get_deal_savings_tl(deal: dict) -> float:
+    """Eski fiyat ile yeni fiyat arasındaki TL cinsinden net tasarrufu hesaplar."""
+    old_p = parse_price_to_float(deal.get("old_price", ""))
+    new_p = parse_price_to_float(deal.get("new_price", ""))
+    return max(0.0, old_p - new_p)
 
 MIN_PRODUCT_PRICE_TL = 350  # 350 TL altındaki küçük kırtasiye/ıvır zıvır ürünleri ele
 
@@ -165,11 +211,11 @@ def get_rotated_amazon_catalogs():
         pass
     return rotated
 
-def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None) -> list:
+def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, min_discount: int = 25) -> list:
     """
     Doğrudan amazon.com.tr üzerinden yüksek talep gören viral Gaming, PC, Donanım, Ses ve Trend Yaşam ürünlerini çeker.
-    Sıkıcı aksesuarları (pil, kablo, adaptör vb.) filtreler.
-    Kategoriler arasında otomatik rotasyon yaparak ve alt tip koruması uygulayarak ürün çeşitliliğini garanti eder.
+    Sıkıcı aksesuarları filtreler, ürünün gerçek Türkiye piyasa fiyatını ve indirimini analiz eder.
+    Sadece belirlenen minimum indirim oranını (min_discount) karşılayan ürünleri seçer.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
     
@@ -257,24 +303,36 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             if len(raw_title) < 6 or "TL" not in raw_price:
                 continue
 
-            print(f"[Deal Hunter] Seçilen Yüksek Talep Ürün ({cat_name}): {raw_title[:45]} | {raw_price}")
+            print(f"[Deal Hunter] Aday Ürün Analiz Ediliyor ({cat_name}): {raw_title[:45]} | {raw_price}")
 
-            prompt = f"""Şu yüksek talep gören Amazon Türkiye ürününden indirim ve video bilgilerini çıkar:
+            prompt = f"""Şu popüler Amazon Türkiye ürününün gerçek piyasa değerini ve indirimini analiz et:
 Ürün: {raw_title}
-Amazon Fiyatı: {raw_price}
+Amazon Satış Fiyatı: {raw_price}
+
+GÖREV:
+1. Bu ürünün Türkiye teknoloji/perakende pazarındaki gerçek piyasa / tavsiye edilen liste satış fiyatını (MSRP) belirle.
+2. Amazon fiyatı ({raw_price}) ile piyasa liste fiyatı arasındaki indirim oranını hesapla.
+3. Gerçekçi hesapla (örn: Piyasa 2.499 TL, Amazon 1.499 TL ise -%40).
 
 Şu JSON formatında döndür:
 {{
   "title": "Ürünün kısa, vurucu ve net adı (maksimum 30 karakter, örn: Asus TUF Monitör, Stanley Termos, Razer Basilisk Mouse vb.)",
-  "old_price": "Piyasa veya normal liste fiyatı (örn: {raw_price} fiyatından yaklaşık %25-35 daha yüksek gerçekçi bir eski fiyat yaz)",
+  "old_price": "Türkiye piyasa/liste fiyatı (örn: 2.499 TL)",
   "new_price": "{raw_price}",
-  "discount_pct": "İndirim yüzdesi (örn: -28% veya -35%)",
-  "badge": "AMAZON FIRSATI veya DEV İNDİRİM veya ÇÖKÜŞ FİYAT",
-  "hook": "Oyuncuların veya kullanıcıların neden bu ürüne akın ettiğini anlatan tek cümle"
+  "discount_pct": "Hesaplanan indirim yüzdesi (örn: -38% veya -45%)",
+  "badge": "İndirim %45 üzeriyse 'DİP FİYAT', %35 üzeriyse 'DEV İNDİRİM', diğerinde 'AMAZON FIRSATI'",
+  "hook": "Kullanıcıların neden bu ürüne akın ettiğini anlatan tek cümle"
 }}
 """
             deal_data = call_gemini(prompt, json_mode=True)
             if not deal_data or not deal_data.get("title"):
+                continue
+
+            # Minimum İndirim Oranı Kontrolü
+            pct_val = get_deal_discount_pct(deal_data)
+            deal_data["discount_val"] = pct_val
+            if pct_val < min_discount:
+                print(f"[Deal Hunter] ⏭️ Düşük İndirim Elendi (-%{pct_val} < -%{min_discount}): {deal_data.get('title')}")
                 continue
 
             final_subtype = get_product_subtype(deal_data.get("title", raw_title))
@@ -284,8 +342,6 @@ Amazon Fiyatı: {raw_price}
             prod_id = asin_match.group(1) if asin_match else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
             img_path = os.path.join(TEMP_DIR, f"amz_{prod_id}.jpg")
             if not download_file(big_img, img_path):
-                if not download_file(raw_img, img_path):
-                    continue
                 if not download_file(raw_img, img_path):
                     continue
 
@@ -300,14 +356,14 @@ Amazon Fiyatı: {raw_price}
             deal_data["store_name"] = "Amazon TR"
             deal_data["store_url"] = prod_url
             deals.append(deal_data)
-            print(f"[Deal Hunter] ✅ Hazırlandı: {deal_data['title']} | {deal_data['new_price']} (Net: {camp['net_cost']}) | Link: {prod_url}")
+            print(f"[Deal Hunter] 🔥 Yüksek İndirim Yakalandı: {deal_data['title']} | {deal_data['new_price']} (-%{pct_val}, Net: {camp['net_cost']}) | Link: {prod_url}")
 
     return deals
 
-def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set = None) -> list:
+def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set = None, min_discount: int = 25) -> list:
     """
     Doğrudan Amazon TR ve sıcak fırsat kanallarından gerçek zamanlı indirimleri tarar,
-    ürün görsellerini indirir ve AI ile yapılandırılmış fırsat listesi döndürür.
+    ürün görsellerini indirir ve sadece belirlenen indirim eşiğini (min_discount) geçenleri listeler.
     """
     if channels is None:
         channels = DEFAULT_CHANNELS
@@ -315,7 +371,7 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
     os.makedirs(TEMP_DIR, exist_ok=True)
     collected_deals = []
 
-    print(f"[Deal Hunter] {len(channels)} kanaldan taze indirimler taranıyor...")
+    print(f"[Deal Hunter] {len(channels)} kanaldan taze indirimler taranıyor (Min İndirim: %{min_discount})...")
 
     for ch in channels:
         if len(collected_deals) >= limit:
@@ -330,8 +386,8 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
         soup = BeautifulSoup(res.stdout, "html.parser")
         msgs = soup.select("div.tgme_widget_message_wrap")
 
-        # En yeni mesajlardan geriye doğru tara (en taze 12 mesaj)
-        for m in list(reversed(msgs))[:12]:
+        # En yeni mesajlardan geriye doğru tara (en taze 20 mesaj)
+        for m in list(reversed(msgs))[:20]:
             if len(collected_deals) >= limit:
                 break
 
@@ -380,10 +436,10 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
 Şu JSON formatında döndür:
 {{
   "title": "Ürünün kısa ve net adı (maksimum 30 karakter)",
-  "old_price": "Varsa eski fiyat, yoksa piyasa fiyatı (örn: 499 TL)",
-  "new_price": "İndirimli satış fiyatı (örn: 199 TL)",
-  "discount_pct": "İndirim yüzdesi (örn: -40%)",
-  "badge": "{store_name.upper()} FIRSATI",
+  "old_price": "Varsa eski veya normal piyasa fiyatı (örn: 1.499 TL)",
+  "new_price": "İndirimli satış fiyatı (örn: 799 TL)",
+  "discount_pct": "İndirim yüzdesi (örn: -47%)",
+  "badge": "İndirim %45 üzeriyse 'DİP FİYAT', %35 üzeriyse 'DEV İNDİRİM', diğerinde '{store_name.upper()} FIRSATI'",
   "hook": "Neden kaçırılmaması gerektiğini özetleyen tek cümlelik detay"
 }}
 """
@@ -391,6 +447,13 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
             if isinstance(deal_data, list) and len(deal_data) > 0 and isinstance(deal_data[0], dict):
                 deal_data = deal_data[0]
             if not isinstance(deal_data, dict) or not deal_data.get("title") or not deal_data.get("new_price"):
+                continue
+
+            # Minimum indirim kontrolü
+            pct_val = get_deal_discount_pct(deal_data)
+            deal_data["discount_val"] = pct_val
+            if pct_val < min_discount:
+                print(f"[Deal Hunter] ⏭️ Düşük İndirim Elendi ({store_name} -%{pct_val} < -%{min_discount}): {deal_data.get('title')}")
                 continue
 
             # Minimum fiyat kontrolü (350 TL altı ürünleri ele)
@@ -417,70 +480,93 @@ def hunt_online_deals(limit: int = 3, channels: list = None, exclude_urls: set =
             deal_data["source_channel"] = ch
             deal_data["store_url"] = store_url
             deal_data["store_name"] = store_name
-            if not deal_data.get("badge"):
+            if pct_val >= 45:
+                deal_data["badge"] = "DİP FİYAT"
+            elif pct_val >= 35:
+                deal_data["badge"] = "DEV İNDİRİM"
+            elif not deal_data.get("badge"):
                 deal_data["badge"] = f"{store_name.upper()} FIRSATI"
 
             collected_deals.append(deal_data)
-            print(f"[Deal Hunter] [{store_name}] Bulundu: {deal_data['title']} | {deal_data['new_price']} (Net: {camp['net_cost']})")
+            print(f"[Deal Hunter] 🔥 [{store_name}] Fırsat Yakalandı: {deal_data['title']} | {deal_data['new_price']} (-%{pct_val}, Net: {camp['net_cost']})")
 
     return collected_deals
 
-def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None) -> list:
+def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, min_discount: int = 25) -> list:
     """
-    Amazon TR, Hepsiburada ve Trendyol üzerindeki en sıcak indirimleri tarar.
-    Kullanıcının affiliate anlaşması olan Amazon TR mağazasına mutlak öncelik verir.
-    Alt tip koruması (exclude_subtypes) ile aynı tip ürünlerin peş peşe seçilmesini önler.
-    platform: 'amazon' (varsayılan), 'all', 'trendyol', 'hepsiburada'
+    Amazon TR, Hepsiburada ve Trendyol üzerindeki EN YÜKSEK İNDİRİMLİ fırsatları avlar.
+    Hem Amazon kataloglarını hem de Telegram sıcak fırsat kanallarını eş zamanlı tarar.
+    Tüm adayları indirim oranına ve net TL tasarrufuna göre puanlayıp en yüksek indirimi en tepeye koyar.
     """
     candidates = []
-    print(f"\n[Deal Hunter] 🔍 İndirim Avı Başlatıldı (Öncelikli Mağaza: AMAZON TR, Mod: {platform.upper()}, Kategori: {category.upper()})...")
+    print(f"\n[Deal Hunter] 🔍 En Yüksek İndirim Avı Başlatıldı (Öncelikli Mağaza: AMAZON TR, Mod: {platform.upper()}, Min İndirim: %{min_discount})...")
 
-    # 1. Mutlak Öncelik: Doğrudan Amazon TR'den çek (Kategoriler arası rotasyonlu)
+    # 1. Amazon TR Kataloglarından Çek (Kategoriler arası rotasyonlu)
     if platform in ("all", "amazon"):
-        amz_deals = hunt_amazon_deals(limit=limit + 3, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes)
+        amz_deals = hunt_amazon_deals(limit=limit + 5, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, min_discount=min_discount)
         for d in amz_deals:
             d["store_name"] = "Amazon TR"
             candidates.append(d)
 
-    # 2. Eğer yeterli Amazon fırsatı yoksa veya platform genel moddaysa sıcak fırsat kanallarını tara
-    if len(candidates) < limit or platform != "amazon":
-        online_deals = hunt_online_deals(limit=limit + 3, exclude_urls=exclude_urls)
-        for d in online_deals:
-            st = d.get("store_name", "Fırsat")
-            if platform == "amazon" and st != "Amazon TR":
-                continue
-            if platform == "trendyol" and st != "Trendyol":
-                continue
-            if platform == "hepsiburada" and st != "Hepsiburada":
-                continue
-            sub = get_product_subtype(d.get("title", ""))
-            if exclude_subtypes and sub in exclude_subtypes and sub != "general":
-                continue
-            candidates.append(d)
+    # 2. Sıcak Fırsat Kanallarından Taze Fırsatları Çek (Topluluk tarafından doğrulanmış dip fiyatlar)
+    online_deals = hunt_online_deals(limit=limit + 6, exclude_urls=exclude_urls, min_discount=min_discount)
+    for d in online_deals:
+        st = d.get("store_name", "Fırsat")
+        if platform == "amazon" and st != "Amazon TR":
+            continue
+        if platform == "trendyol" and st != "Trendyol":
+            continue
+        if platform == "hepsiburada" and st != "Hepsiburada":
+            continue
+        sub = get_product_subtype(d.get("title", ""))
+        if exclude_subtypes and sub in exclude_subtypes and sub != "general":
+            continue
+        candidates.append(d)
+
+    # Eğer belirlenen min_discount ile hiç ürün bulunamadıysa eşiği %15'e gevşet
+    if not candidates and min_discount > 15:
+        print(f"[Deal Hunter] ⚠️ %{min_discount} ve üzeri indirim bulunamadı, eşik %15'e gevşetiliyor...")
+        return hunt_best_deals(limit=limit, platform=platform, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, min_discount=15)
 
     if not candidates:
         return []
 
-    # 3. Akıllı Puanlama: Amazon TR ürünlerine +100 dev öncelik puanı ver!
+    # 3. İndirim Odaklı Puanlama Motoru (En yüksek indirimli ve karlı ürünü tepeye yerleştirir)
     def score_deal(deal):
         title = deal.get("title", "").lower()
-        score = 0
+        score = 0.0
         
-        # Amazon TR Bonusu (+100 puan ile listenin en tepesine yerleşir)
-        if deal.get("store_name") == "Amazon TR":
-            score += 100
+        # A. Birincil Kriter: İndirim Oranı (%1 indirim = +5 puan!)
+        pct_val = get_deal_discount_pct(deal)
+        score += pct_val * 5.0
 
-        # Yüksek Talep Gören Kategori ve Marka Bonusu
+        # B. Süper İndirim & Çöküş Bonusu
+        if pct_val >= 50:
+            score += 100.0  # Fiyat hatası / %50+ dev indirim
+        elif pct_val >= 40:
+            score += 50.0   # %40+ çok büyük fırsat
+        elif pct_val >= 30:
+            score += 20.0   # %30+ iyi indirim
+
+        # C. Net TL Tasarruf Miktarı
+        savings = get_deal_savings_tl(deal)
+        if savings >= 2000:
+            score += 50.0
+        elif savings >= 1000:
+            score += 30.0
+        elif savings >= 500:
+            score += 15.0
+
+        # D. Yüksek Talep Gören Marka & Donanım Bonusu
         for kw in HIGH_DEMAND_KEYWORDS:
             if kw in title:
-                score += 20
+                score += 25.0
+                break
 
-        # İndirim yüzdesi bonusu
-        pct = str(deal.get("discount_pct") or "0")
-        nums = re.findall(r"\d+", pct)
-        if nums:
-            score += int(nums[0])
-            
+        # E. Mağaza Bonusu (Affiliate için Amazon TR önceliği)
+        if deal.get("store_name") == "Amazon TR":
+            score += 35.0
+
         return score
 
     candidates.sort(key=score_deal, reverse=True)
@@ -506,9 +592,11 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
             if d not in best_deals:
                 best_deals.append(d)
 
-    print(f"[Deal Hunter] 🏆 En İyi {len(best_deals)} Fırsat Seçildi:")
+    print(f"\n[Deal Hunter] 🏆 EN YÜKSEK İNDİRİMLİ {len(best_deals)} FIRSAT SEÇİLDİ:")
     for i, d in enumerate(best_deals, 1):
-        print(f"  {i}. [{d.get('store_name', 'Fırsat')}] {d.get('title')} | {d.get('new_price')} ({d.get('discount_pct')})")
+        pct = get_deal_discount_pct(d)
+        savings = get_deal_savings_tl(d)
+        print(f"  {i}. [{d.get('store_name', 'Fırsat')}] {d.get('title')} | {d.get('new_price')} (İndirim: -%{pct} | Tasarruf: {int(savings)} TL)")
 
     return best_deals
 

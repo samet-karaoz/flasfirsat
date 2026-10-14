@@ -4,6 +4,7 @@ import random
 import re
 from PIL import Image, ImageDraw, ImageFont
 from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR
+from deal_hunter import parse_price_to_float
 
 MEMES_DIR = os.path.join(BASE_DIR, "assets", "memes")
 AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
@@ -59,7 +60,7 @@ def get_font(font_name: str, size: int):
                 pass
     return ImageFont.load_default()
 
-def wrap_text(text: str, max_chars_per_line: int = 32) -> list:
+def wrap_text(text: str, max_chars_per_line: int = 34) -> list:
     words = text.split()
     lines = []
     current_line = []
@@ -116,13 +117,11 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
         valid = [c for c in candidates_list if c in available]
         if not valid:
             valid = available
-        # Eğer 1'den fazla aday varsa, son kullanılanı bu seferlik hariç tut
         pool = [c for c in valid if c != last_used] if len(valid) > 1 else valid
         chosen = random.choice(pool)
         set_last_meme(chosen)
         return chosen
 
-    # İndirim yüzdesini sayıya çevir
     pct_match = re.search(r'(\d+)', str(discount_pct))
     pct_val = int(pct_match.group(1)) if pct_match else 30
     title_low = (title or "").lower()
@@ -155,6 +154,144 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
         "cat_vibing.mp4", "the_weeknd_lost.mp4", "the_rock.mp4", "dicaprio_cheers.mp4"
     ])
 
+# ==========================================
+# VEKTÖR İKON ÇİZİM YARDIMCILARI (Windows Emojisi Bağımsız & Keskin)
+# ==========================================
+
+def draw_vector_bolt(draw: ImageDraw.Draw, cx: int, cy: int, color=(255, 204, 0)):
+    points = [
+        (cx + 3, cy - 17),
+        (cx - 9, cy),
+        (cx, cy),
+        (cx - 6, cy + 17),
+        (cx + 11, cy - 2),
+        (cx + 2, cy - 2)
+    ]
+    draw.polygon(points, fill=color)
+
+def draw_vector_shield_check(draw: ImageDraw.Draw, cx: int, cy: int, color=(16, 185, 129)):
+    shield = [
+        (cx, cy - 11),
+        (cx + 10, cy - 7),
+        (cx + 10, cy + 3),
+        (cx, cy + 12),
+        (cx - 10, cy + 3),
+        (cx - 10, cy - 7)
+    ]
+    draw.polygon(shield, fill=color)
+    chk = [(cx - 4, cy), (cx - 1, cy + 3), (cx + 5, cy - 3)]
+    draw.line(chk, fill=(255, 255, 255), width=2)
+
+def draw_vector_coin(draw: ImageDraw.Draw, cx: int, cy: int, color=(255, 204, 0)):
+    draw.ellipse((cx - 11, cy - 11, cx + 11, cy + 11), fill=color, outline=(245, 158, 11), width=2)
+    draw.ellipse((cx - 7, cy - 7, cx + 7, cy + 7), outline=(254, 240, 138), width=1)
+    draw.line((cx - 3, cy - 5, cx + 3, cy - 5), fill=(180, 83, 9), width=2)
+    draw.line((cx - 1, cy - 5, cx - 1, cy + 5), fill=(180, 83, 9), width=2)
+    draw.line((cx - 3, cy, cx + 1, cy), fill=(180, 83, 9), width=2)
+
+def draw_vector_chat_bubble(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191, 36)):
+    draw.rounded_rectangle((cx - 12, cy - 9, cx + 12, cy + 7), radius=4, fill=color)
+    draw.polygon([(cx - 7, cy + 6), (cx - 2, cy + 6), (cx - 9, cy + 13)], fill=color)
+
+def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191, 36)):
+    plane = [
+        (cx + 12, cy - 8),
+        (cx - 10, cy + 2),
+        (cx - 3, cy + 4),
+        (cx - 3, cy + 10),
+        (cx + 2, cy + 6),
+        (cx + 7, cy + 9)
+    ]
+    draw.polygon(plane, fill=color)
+
+# ==========================================
+# VIRAL MEME REAKSİYON METİNLERİ (REACTION HOOKS)
+# ==========================================
+
+REACTION_HOOKS_PRICE_ERROR = [
+    "FİYAT HATASI MI DİYE KONTROL EDERKEN BEN:",
+    "BU FİYATA İNANAMAYIP 3 KERE SAYFAYI YENİLEYEN BEN:",
+    "FİYAT HATASINI GÖRÜP KART BİLGİSİ GİREN BEN:",
+    "BU FİYATI GÖRÜNCE SİPARİŞİ IŞIK HIZINDA VEREN BEN:"
+]
+
+REACTION_HOOKS_HIGH_DISCOUNT = [
+    "BU FİYATI GÖRÜNCE BEN VE CEBİMDEKİ PARA:",
+    "MAAŞI BU İNDİRİME GÖMME KARARI ALIRKEN BEN:",
+    "İNDİRİMİ GÖRÜP ANINDA SEPETE KOŞAN BİZİM TAYFA:",
+    "BU İNDİRİME KARTIN LİMİTİ BİLE DAYANMAZ:"
+]
+
+REACTION_HOOKS_GAMING = [
+    "EKİPMAN EKSİĞİNİ BU İNDİRİMLE KAPATAN GAMER'LAR:",
+    "BU SETUP İNDİRİMİNİ GÖRÜNCE BENİM ODAK SEVİYESİ:",
+    "KART LİMİTİNİ BU GAMING İNDİRİMİNE AYIRAN TAYFA:"
+]
+
+REACTION_HOOKS_GENERAL = [
+    "BU İNDİRİMİ KAÇIRIRSAM GECE UYUYAMAM DİYEN BEN:",
+    "İNDİRİMİ GÖRÜP ARKADAŞ GRUBUNA ATAN BEN:",
+    "CEBİMDEKİ PARAYI BU FIRSATA EMANET EDERKEN BEN:"
+]
+
+def select_smart_reaction_hook(discount_pct: str = "", product_title: str = "", is_price_error: bool = False) -> str:
+    pct_m = re.search(r'(\d+)', str(discount_pct))
+    pct_val = int(pct_m.group(1)) if pct_m else 0
+    title_low = (product_title or "").lower()
+
+    if is_price_error or pct_val >= 40:
+        return random.choice(REACTION_HOOKS_PRICE_ERROR)
+    
+    gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "oyuncu", "monitor", "ekran kartı"]
+    if any(k in title_low for k in gaming_kw):
+        return random.choice(REACTION_HOOKS_GAMING)
+
+    if pct_val >= 25:
+        return random.choice(REACTION_HOOKS_HIGH_DISCOUNT)
+
+    return random.choice(REACTION_HOOKS_GENERAL)
+
+def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) -> str:
+    """
+    Alt meme videosunun üstüne binecek şeffaf, modern glassmorphic reaksiyon başlığı üretir.
+    """
+    if not output_path:
+        output_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    W, H = 1080, 960
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    f_hook = get_font("segoeuib", 26)
+    clean_text = reaction_text.strip()
+    text_w = draw.textlength(clean_text, font=f_hook)
+
+    box_w = min(W - 60, text_w + 50)
+    box_h = 56
+    box_x = (W - box_w) // 2
+    box_y = 24  # Meme videosunun tam üst kenarından 24px aşağıda
+
+    # Koyu füme yarı saydam arka plan kapsülü
+    draw.rounded_rectangle(
+        (box_x, box_y, box_x + box_w, box_y + box_h),
+        radius=14,
+        fill=(15, 23, 42, 225),
+        outline=(255, 255, 255, 90),
+        width=2
+    )
+
+    tx = (W - text_w) // 2
+    ty = box_y + (box_h - 26) // 2 - 2
+    draw.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255, 255))
+
+    img.save(output_path, "PNG")
+    return output_path
+
+# ==========================================
+# ANA ÜRÜN AFİŞİ (1080x960 - V2 ENHANCED)
+# ==========================================
+
 def create_product_banner(
     product_image_path: str,
     title: str,
@@ -170,10 +307,12 @@ def create_product_banner(
 ) -> str:
     """
     Ürün görseli ve fiyat bilgilerinden 1080x960 ebatlarında
-    profesyonel e-ticaret sayfaları kalitesinde, etiketli ve dinamik afiş üretir.
-    Amazon TR, Trendyol ve Hepsiburada marka renklerini yansıtır.
-    Taksit avantajı ve net maliyeti öne çıkarır.
-    Şablon kullanıcının onayladığı orijinal sabit tasarımdır (⚡ DEV İNDİRİM).
+    5 Temel İyileştirme içeren premium e-ticaret afişi üretir:
+    1. Net Tasarruf Rozeti (💰 X TL NET TASARRUF)
+    2. ManyChat CTA Bandı (💬 Satın alma linki için yoruma "LİNK" yaz)
+    3. Soft 3D Drop Shadow & Derinlik
+    4. Doğrulanmış Güven Rozeti (🛡️ %100 Orijinal • Doğrulanmış)
+    5. Çift Fiyat & Net Maliyet Karşılaştırma Kartı
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "product_top.png")
@@ -186,64 +325,72 @@ def create_product_banner(
     img = Image.new("RGB", (W, H), (244, 246, 250))
     draw = ImageDraw.Draw(img)
 
-    has_extra_info = bool(net_cost or installment)
-
     f_badge = get_font("segoeuib", 26)
-    f_title = get_font("segoeuib", 40)
-    f_label = get_font("segoeuib", 22)
-    f_old_price = get_font("segoeuib", 40)
-    f_new_label = get_font("segoeuib", 22 if has_extra_info else 24)
-    f_new_price = get_font("segoeuib", 56 if has_extra_info else 68)
-    f_net = get_font("segoeuib", 21)
+    f_label = get_font("segoeuib", 21)
+    f_trust = get_font("segoeuib", 19)
+    f_old_price = get_font("segoeuib", 38)
+    f_new_label = get_font("segoeuib", 21)
+    f_new_price = get_font("segoeuib", 54)
+    f_net = get_font("segoeuib", 20)
     f_pct = get_font("segoeuib", 28)
+    f_savings = get_font("segoeuib", 22)
+    f_cta = get_font("segoeuib", 24)
 
-    # 1. Sol Üst Rozet (Badge) - Sabit Orijinal: ⚡ DEV İNDİRİM
+    # 1. Sol Üst Rozet: DEV İNDİRİM (Vector Şimşekli)
     clean_badge = badge_text.strip() if badge_text else "DEV İNDİRİM"
-    badge_fill = (255, 87, 34) # Alev Turuncusu (#FF5722)
-
     b_w = draw.textlength(clean_badge, font=f_badge)
-    draw.rounded_rectangle((40, 24, 40 + b_w + 58, 76), radius=14, fill=badge_fill)
-    # Altın Sarısı Vektör Şimşek İkonu (#FFCC00)
-    bolt_icon = [(63, 33), (51, 50), (60, 50), (54, 67), (71, 48), (62, 48)]
-    draw.polygon(bolt_icon, fill=(255, 204, 0))
-    draw.text((78, 36), clean_badge, font=f_badge, fill=(255, 255, 255))
+    badge_fill = (255, 87, 34)  # Alev Turuncusu (#FF5722)
+    draw.rounded_rectangle((40, 22, 40 + b_w + 58, 74), radius=14, fill=badge_fill)
+    draw_vector_bolt(draw, 64, 48, (255, 204, 0))
+    draw.text((82, 34), clean_badge, font=f_badge, fill=(255, 255, 255))
 
-
-
-    # 2. Sağ Üst İndirim Rozeti
+    # 2. Sağ Üst Rozet: % İNDİRİM
     clean_pct = discount_pct.strip()
     if clean_pct and not clean_pct.endswith("İNDİRİM"):
         clean_pct = f"{clean_pct} İNDİRİM"
     p_w = draw.textlength(clean_pct, font=f_pct)
-    draw.rounded_rectangle((W - 40 - p_w - 44, 24, W - 40, 76), radius=14, fill=(225, 29, 72)) # Canlı Kırmızı
-    draw.text((W - 40 - p_w - 22, 35), clean_pct, font=f_pct, fill=(255, 255, 255))
+    draw.rounded_rectangle((W - 40 - p_w - 38, 22, W - 40, 74), radius=14, fill=(225, 29, 72))  # Canlı Kırmızı
+    draw.text((W - 40 - p_w - 19, 33), clean_pct, font=f_pct, fill=(255, 255, 255))
 
-    # 3. Ürün Başlığı (1 veya 2 satır)
+    # 3. Başlık (Temiz 1 veya 2 Satır Formatı)
     title_lines = wrap_text(title, max_chars_per_line=36)
-    title_y = 94
-    for line in title_lines:
-        draw.text((40, title_y), line, font=f_title, fill=(15, 23, 42))
-        title_y += 48
+    if len(title_lines) == 1:
+        f_title = get_font("segoeuib", 38)
+        draw.text((40, 92), title_lines[0], font=f_title, fill=(15, 23, 42))
+        card_top = 146
+    else:
+        f_title = get_font("segoeuib", 32)
+        draw.text((40, 88), title_lines[0], font=f_title, fill=(15, 23, 42))
+        draw.text((40, 124), title_lines[1], font=f_title, fill=(15, 23, 42))
+        card_top = 166
 
-    # 4. Ürün Fotoğrafını Kart İçine Ekle (980px Genişlik)
-    card_top = max(156, title_y + 10)
-    card_bottom = 736
-    card_box = (40, card_top, W - 40, card_bottom)
-    draw.rounded_rectangle(card_box, radius=24, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
+    # 4. Ürün Kartı (Soft Drop Shadow ile 3D Derinlik)
+    card_box = (40, card_top, W - 40, 706)
+    for offset, col in [(5, (220, 224, 234)), (3, (228, 232, 240)), (1, (235, 238, 244))]:
+        draw.rounded_rectangle((card_box[0]+offset, card_box[1]+offset, card_box[2]+offset, card_box[3]+offset), radius=22, fill=col)
+    draw.rounded_rectangle(card_box, radius=22, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
 
+    # Güven Rozeti (Kart İçi Sol Üst - Vector Shield & Checkmark)
+    trust_text = "ORİJİNAL ÜRÜN • DOĞRULANMIŞ"
+    tr_w = draw.textlength(trust_text, font=f_trust)
+    draw.rounded_rectangle((card_box[0] + 16, card_box[1] + 16, card_box[0] + 58 + tr_w, card_box[1] + 48), radius=8, fill=(241, 245, 249))
+    draw_vector_shield_check(draw, card_box[0] + 32, card_box[1] + 32, (16, 185, 129))
+    draw.text((card_box[0] + 48, card_box[1] + 21), trust_text, font=f_trust, fill=(71, 85, 105))
+
+    # Ürün Görselini Kart İçine Ekle
     if product_image_path and os.path.exists(product_image_path):
         try:
             p_img = Image.open(product_image_path).convert("RGBA")
             max_img_w = card_box[2] - card_box[0] - 60
-            max_img_h = card_box[3] - card_box[1] - 50
+            max_img_h = card_box[3] - card_box[1] - 70
             p_img.thumbnail((max_img_w, max_img_h), Image.Resampling.LANCZOS)
             px = card_box[0] + (card_box[2] - card_box[0] - p_img.width) // 2
-            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2
+            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2 + 10
             img.paste(p_img, (px, py), p_img)
         except Exception as e:
-            print(f"[Banner] Görsel ekleme uyarısı: {e}")
+            print(f"[Banner] Görsel yükleme uyarısı: {e}")
 
-    # Kart içi dinamik mağaza güven rozeti (Sağ Alt Köşe)
+    # Kart İçi Dinamik Mağaza Rozeti (Sağ Alt Köşe)
     store_styles = {
         "Trendyol": {"name": "TRENDYOL", "bg": (242, 122, 26), "fg": (255, 255, 255)},
         "Hepsiburada": {"name": "HEPSİBURADA", "bg": (255, 96, 0), "fg": (255, 255, 255)},
@@ -256,74 +403,106 @@ def create_product_banner(
     draw.rounded_rectangle((card_box[2] - t_w - 36, card_box[3] - 46, card_box[2] - 16, card_box[3] - 14), radius=8, fill=st_info["bg"])
     draw.text((card_box[2] - t_w - 26, card_box[3] - 42), tag_text, font=f_label, fill=st_info["fg"])
 
-    # Kart içi dinamik Taksit Avantaj Rozeti (Sol Alt Köşe)
+    # Kart İçi Dinamik Taksit Rozeti (Sol Alt Köşe)
     if installment:
         clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
         inst_label = f"Taksit: {clean_inst}" if "taksit" not in clean_inst.lower() else clean_inst
         it_w = draw.textlength(inst_label, font=f_label)
         draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 46, card_box[0] + 16 + it_w + 24, card_box[3] - 14), radius=8, fill=(236, 253, 245), outline=(16, 185, 129), width=1)
-        # Yeşil onay noktası
         draw.ellipse((card_box[0] + 24, card_box[3] - 33, card_box[0] + 32, card_box[3] - 25), fill=(5, 150, 105))
         draw.text((card_box[0] + 38, card_box[3] - 42), inst_label, font=f_label, fill=(4, 120, 87))
 
-    # 5. Alt Fiyat Bölümü: Çift Kartlı Premium Tasarım
-    # Sol Kart: Piyasa / Eski Fiyat
-    old_box = (40, 756, 420, 924)
-    draw.rounded_rectangle(old_box, radius=18, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
+    # 5. Net Tasarruf Rozeti (Floating Savings Pill)
+    old_val = parse_price_to_float(old_price)
+    new_val = parse_price_to_float(new_price)
+    savings = old_val - new_val if (old_val and new_val and old_val > new_val) else 0
 
-    old_lbl = "PİYASA FİYATI"
-    ol_w = draw.textlength(old_lbl, font=f_label)
-    draw.text((old_box[0] + (old_box[2] - old_box[0] - ol_w) // 2, 780), old_lbl, font=f_label, fill=(148, 163, 184))
+    if savings > 0:
+        sav_str = f"{int(savings):,} TL".replace(',', '.')
+        sav_text = f"{sav_str} NET TASARRUF"
+    else:
+        sav_text = "KAÇIRILMAYACAK FIRSAT"
 
+    s_w = draw.textlength(sav_text, font=f_savings)
+    pill_w = s_w + 64
+    pill_x = (W - pill_w) // 2
+    # Pill drop shadow
+    draw.rounded_rectangle((pill_x + 1, 716, pill_x + pill_w + 1, 752), radius=12, fill=(200, 205, 215))
+    draw.rounded_rectangle((pill_x, 715, pill_x + pill_w, 751), radius=12, fill=(16, 185, 129))
+    draw_vector_coin(draw, pill_x + 24, 733, (255, 204, 0))
+    draw.text((pill_x + 44, 722), sav_text, font=f_savings, fill=(255, 255, 255))
+
+    # 6. Fiyat Kartları: Çift Kartlı Premium Tasarım
+    # Sol Kart: Piyasa Fiyatı
+    old_box = (40, 758, 420, 888)
+    draw.rounded_rectangle(old_box, radius=16, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
+    draw.text((old_box[0] + 20, 770), "PİYASA FİYATI", font=f_label, fill=(148, 163, 184))
     old_str = old_price if old_price else "Piyasa Fiyatı"
     op_w = draw.textlength(old_str, font=f_old_price)
     op_x = old_box[0] + (old_box[2] - old_box[0] - op_w) // 2
-    draw.text((op_x, 825), old_str, font=f_old_price, fill=(100, 116, 139))
-    # Üstü Çizili Kırmızı Çizgi
-    draw.line((op_x - 6, 850, op_x + op_w + 6, 850), fill=(239, 68, 68), width=4)
+    draw.text((op_x, 810), old_str, font=f_old_price, fill=(100, 116, 139))
+    # Üstü Çizili Kırmızı Çizgi (Tam Rakamların Ortasından Geçer)
+    draw.line((op_x - 6, 827, op_x + op_w + 6, 827), fill=(239, 68, 68), width=3)
 
     # Orta Geçiş İkonu (Chevron >)
-    arrow_box = (436, 815, 484, 865)
-    draw.rounded_rectangle(arrow_box, radius=12, fill=(255, 255, 255), outline=(203, 213, 225), width=2)
-    cx, cy = 460, 840
-    draw.line((cx - 5, cy - 10, cx + 5, cy), fill=(234, 88, 12), width=3)
-    draw.line((cx + 5, cy, cx - 5, cy + 10), fill=(234, 88, 12), width=3)
+    arrow_box = (436, 800, 484, 846)
+    draw.rounded_rectangle(arrow_box, radius=10, fill=(255, 255, 255), outline=(203, 213, 225), width=2)
+    cx, cy = 460, 823
+    draw.line((cx - 4, cy - 8, cx + 4, cy), fill=(234, 88, 12), width=3)
+    draw.line((cx + 4, cy, cx - 4, cy + 8), fill=(234, 88, 12), width=3)
 
-    # Sağ Kart: İndirimli Yeni Fiyat (Öne Çıkarılmış Zümrüt Yeşili)
-    new_box = (500, 756, W - 40, 924)
-    draw.rounded_rectangle(new_box, radius=18, fill=(236, 253, 245), outline=(16, 185, 129), width=3)
-
-    new_lbl = "İNDİRİMLİ FIRSAT FİYATI"
-    nl_w = draw.textlength(new_lbl, font=f_new_label)
-    nl_x = new_box[0] + (new_box[2] - new_box[0] - nl_w) // 2
-    draw.ellipse((nl_x - 18, 778 if has_extra_info else 788, nl_x - 8, 788 if has_extra_info else 798), fill=(5, 150, 105))
-    draw.text((nl_x, 770 if has_extra_info else 780), new_lbl, font=f_new_label, fill=(4, 120, 87))
+    # Sağ Kart: İndirimli Yeni Fiyat (Zümrüt Yeşili)
+    new_box = (500, 758, W - 40, 888)
+    draw.rounded_rectangle(new_box, radius=16, fill=(236, 253, 245), outline=(16, 185, 129), width=2)
+    draw.ellipse((new_box[0] + 20, 778, new_box[0] + 28, 786), fill=(5, 150, 105))
+    draw.text((new_box[0] + 34, 768), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
 
     new_str = new_price if new_price else "Fırsat Fiyatı"
-    np_w = draw.textlength(new_str, font=f_new_price)
-    np_x = new_box[0] + (new_box[2] - new_box[0] - np_w) // 2
-    draw.text((np_x, 802 if has_extra_info else 820), new_str, font=f_new_price, fill=(5, 150, 105))
+    draw.text((new_box[0] + 20, 796), new_str, font=f_new_price, fill=(5, 150, 105))
 
-    # Banka Kampanyası & Net Maliyet & Taksit Çizgisi
-    clean_net = re.sub(r'[^\w\s.,xX+\-/%]', '', net_cost).strip()
-    clean_camp = re.sub(r'[^\w\s.,xX+\-/%]', '', bank_campaign).strip()
-    clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
+    # Net / Taksit / Kampanya alt satırı
+    sub_parts = []
+    if net_cost:
+        clean_net = re.sub(r'[^\w\s.,xX+\-/%]', '', net_cost).strip()
+        sub_parts.append(f"Net: {clean_net}")
+    if installment:
+        clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
+        sub_parts.append(clean_inst)
+    if sub_parts:
+        sub_str = "  •  ".join(sub_parts)
+        draw.text((new_box[0] + 20, 856), sub_str, font=f_net, fill=(4, 120, 87))
 
-    net_str = ""
-    if clean_net and clean_inst:
-        net_str = f"Net: {clean_net}  •  {clean_inst}"
-    elif clean_net:
-        net_str = f"Net: {clean_net} ({clean_camp})" if clean_camp else f"Net: {clean_net}"
-    elif clean_inst:
-        net_str = clean_inst
+    # 7. ManyChat CTA Bandı (Alt Şerit 1080x62)
+    cta_box = (0, 898, W, 960)
+    draw.rectangle(cta_box, fill=(15, 23, 42))
+    draw.line((0, 898, W, 898), fill=(245, 158, 11), width=3)
 
-    if net_str:
-        net_w = draw.textlength(net_str, font=f_net)
-        net_x = new_box[0] + (new_box[2] - new_box[0] - net_w) // 2
-        draw.text((net_x, 872), net_str, font=f_net, fill=(4, 120, 87))
+    cta_prefix = "Satın alma linki için yoruma "
+    cta_highlight = '"LİNK"'
+    cta_suffix = " yaz (Anında DM)"
+
+    p_w = draw.textlength(cta_prefix, font=f_cta)
+    h_w = draw.textlength(cta_highlight, font=f_cta)
+    s_w = draw.textlength(cta_suffix, font=f_cta)
+    total_cta_w = 32 + 10 + p_w + h_w + s_w + 10 + 26
+    start_x = (W - total_cta_w) // 2
+
+    draw_vector_chat_bubble(draw, start_x + 14, 929, (251, 191, 36))
+    text_x = start_x + 36
+    draw.text((text_x, 916), cta_prefix, font=f_cta, fill=(241, 245, 249))
+    text_x += p_w
+    draw.text((text_x, 916), cta_highlight, font=f_cta, fill=(251, 191, 36))
+    text_x += h_w
+    draw.text((text_x, 916), cta_suffix, font=f_cta, fill=(241, 245, 249))
+    text_x += s_w + 14
+    draw_vector_dm_plane(draw, text_x, 929, (251, 191, 36))
 
     img.save(output_path, "PNG")
     return output_path
+
+# ==========================================
+# SPLIT-SCREEN VİDEO BİRLEŞTİRİCİ (1080x1920)
+# ==========================================
 
 def build_split_screen_video(
     top_source: str,
@@ -332,13 +511,16 @@ def build_split_screen_video(
     output_filename: str = "deal_reel.mp4",
     discount_pct: str = "",
     product_title: str = "",
-    is_price_error: bool = False
+    is_price_error: bool = False,
+    reaction_text: str = None
 ) -> str:
     """
     Üst yarıda ürün banner'ı (1080x960),
     Alt yarıda viral meme videosu (1080x960),
-    Arka planda viral phonk müziği veya meme'in orijinal sesi ile 1080x1920 MP4 video üretir.
-    Fiyat hatası (%40+) durumunda ilk 1.5 saniyeye dikkat çekici dijital alarm efekti miksler.
+    Meme üzerinde akıllı reaksiyon kancası (Reaction Hook),
+    En altta dinamik neon ilerleme çubuğu (Animated Progress Bar),
+    Arka planda meme sesi veya phonk müzik ile 1080x1920 MP4 video üretir.
+    Fiyat hatası (%40+) durumunda ilk 1.5 saniyeye dikkat çekici alarm miksler.
     """
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(TEMP_DIR, exist_ok=True)
@@ -356,7 +538,14 @@ def build_split_screen_video(
     if not os.path.exists(bottom_meme_path):
         raise FileNotFoundError(f"Meme videosu bulunamadı: {bottom_meme_path}")
 
-    # 2. Ses kaynağını belirle (Öncelik: Meme'in kendi orijinal sesi)
+    # 2. Akıllı Reaksiyon Kancası (Reaction Hook) Overlay Üret
+    if not reaction_text:
+        reaction_text = select_smart_reaction_hook(discount_pct, product_title, is_price_error)
+    print(f"[Montaj] 🎯 Reaksiyon Başlığı (Hook): {reaction_text}")
+    reaction_overlay_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
+    create_reaction_hook_overlay(reaction_text, reaction_overlay_path)
+
+    # 3. Ses kaynağını belirle (Öncelik: Meme'in kendi orijinal sesi)
     chk_a = subprocess.run(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
     has_meme_audio = "Audio:" in chk_a.stderr
 
@@ -376,7 +565,7 @@ def build_split_screen_video(
 
     output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-    # 3. Meme süresini al
+    # 4. Meme süresini al
     cmd_len = ["ffmpeg", "-i", bottom_meme_path]
     p = subprocess.run(cmd_len, capture_output=True, text=True)
     m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", p.stderr)
@@ -396,8 +585,8 @@ def build_split_screen_video(
         print("[Montaj] 🚨 FİYAT HATASI ACİLİYET ALARMI VİDEOYA EKLENİYOR!")
 
     is_image = top_source.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
-
-    scale_top = f"scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA" if is_image else f"scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
+    scale_top = "scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA" if is_image else "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
+    scale_bottom = "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
 
     cmd = ["ffmpeg", "-y"]
     if is_image:
@@ -405,46 +594,65 @@ def build_split_screen_video(
     else:
         cmd += ["-i", top_source]
 
+    # Input 1: Bottom meme video
     cmd += ["-i", bottom_meme_path]
 
+    # Input 2: Reaction hook overlay (transparent PNG loop)
+    cmd += ["-loop", "1", "-i", reaction_overlay_path]
+
+    # Dynamic Progress Bar Filter
+    # 0x0F172A@0.6 (Dark track) + 0xEA580C (Neon orange progress bar at y=1908, height=12)
+    progress_bar_filter = (
+        f"drawbox=x=0:y=1908:w=1080:h=12:color=0x0F172A@0.6:t=fill,"
+        f"drawbox=x=0:y=1908:w='1080*t/{duration:.2f}':h=12:color=0xEA580C:t=fill"
+    )
+
     if not use_external_audio:
-        # Meme sesi
+        # Meme sesi kullanılıyor
         if has_alarm:
             cmd += ["-i", alarm_wav]
             filter_complex = (
                 f"[0:v]{scale_top}[top];"
-                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-                f"[top][bottom]vstack=inputs=2[v];"
+                f"[1:v]{scale_bottom}[bottom_raw];"
+                f"[bottom_raw][2:v]overlay=0:0[bottom];"
+                f"[top][bottom]vstack=inputs=2[stacked];"
+                f"[stacked]{progress_bar_filter}[v];"
                 f"[1:a]volume=1.0[mus];"
-                f"[2:a]volume=0.85[alr];"
-                f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
-            )
-        else:
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-                f"[top][bottom]vstack=inputs=2[v];"
-                f"[1:a]volume=1.0[a]"
-            )
-    else:
-        # Harici ses
-        cmd += ["-i", audio_path]
-        if has_alarm:
-            cmd += ["-i", alarm_wav]
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-                f"[top][bottom]vstack=inputs=2[v];"
-                f"[2:a]volume=1.0[mus];"
                 f"[3:a]volume=0.85[alr];"
                 f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
             )
         else:
             filter_complex = (
                 f"[0:v]{scale_top}[top];"
-                f"[1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-                f"[top][bottom]vstack=inputs=2[v];"
-                f"[2:a]volume=1.0[a]"
+                f"[1:v]{scale_bottom}[bottom_raw];"
+                f"[bottom_raw][2:v]overlay=0:0[bottom];"
+                f"[top][bottom]vstack=inputs=2[stacked];"
+                f"[stacked]{progress_bar_filter}[v];"
+                f"[1:a]volume=1.0[a]"
+            )
+    else:
+        # Harici ses kullanılıyor
+        cmd += ["-i", audio_path]
+        if has_alarm:
+            cmd += ["-i", alarm_wav]
+            filter_complex = (
+                f"[0:v]{scale_top}[top];"
+                f"[1:v]{scale_bottom}[bottom_raw];"
+                f"[bottom_raw][2:v]overlay=0:0[bottom];"
+                f"[top][bottom]vstack=inputs=2[stacked];"
+                f"[stacked]{progress_bar_filter}[v];"
+                f"[3:a]volume=1.0[mus];"
+                f"[4:a]volume=0.85[alr];"
+                f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
+            )
+        else:
+            filter_complex = (
+                f"[0:v]{scale_top}[top];"
+                f"[1:v]{scale_bottom}[bottom_raw];"
+                f"[bottom_raw][2:v]overlay=0:0[bottom];"
+                f"[top][bottom]vstack=inputs=2[stacked];"
+                f"[stacked]{progress_bar_filter}[v];"
+                f"[3:a]volume=1.0[a]"
             )
 
     cmd += [
@@ -455,7 +663,6 @@ def build_split_screen_video(
         "-c:a", "aac", "-b:a", "192k",
         output_path
     ]
-
 
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):

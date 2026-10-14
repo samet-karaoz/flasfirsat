@@ -1,0 +1,38 @@
+[
+  {
+    "asin": "B08H99BPJN",
+    "title": "Sony PS5 DualSense Kablosuz Kol",
+    "store": "Amazon TR",
+    "base_price": 3499.0,
+    "target_price": 2499.0,
+    "drop_threshold_pct": 25.0,
+    "url": "https://www.amazon.com.tr/dp/B08H99BPJN"
+  },
+  {
+    "asin": "B07W4DH8JW",
+    "title": "Logitech G G102 Lightsync Gaming Mouse",
+    "store": "Amazon TR",
+    "base_price": 899.0,
+    "target_price": 549.0,
+    "drop_threshold_pct": 30.0,
+    "url": "https://www.amazon.com.tr/dp/B07W4DH8JW"
+  },
+  {
+    "asin": "B0H5VQFVTG",
+    "title": "Lenovo Legion R25f-30 Gaming Monitör",
+    "store": "Amazon TR",
+    "base_price": 6499.0,
+    "target_price": 5199.0,
+    "drop_threshold_pct": 20.0,
+    "url": "https://www.amazon.com.tr/dp/B0H5VQFVTG"
+  },
+  {
+    "asin": "B0B15VJZQZ",
+    "title": "SteelSeries Arctis Nova 1 Oyuncu Kulaklığı",
+    "store": "Amazon TR",
+    "base_price": 2199.0,
+    "target_price": 1499.0,
+    "drop_threshold_pct": 25.0,
+    "url": "https://www.amazon.com.tr/dp/B0B15VJZQZ"
+  }
+]

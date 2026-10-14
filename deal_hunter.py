@@ -34,6 +34,40 @@ BORING_REGEX = re.compile(
     re.IGNORECASE
 )
 
+VAGUE_TITLE_REGEX = re.compile(
+    r"(ürünleri|modelleri|çeşitleri|fırsatları|indirimleri|kampanyası|seçili\s*ürünler|"
+    r"\bpetshop\b|evcil\s*hayvan|köpek\s*mam|kedi\s*mam|"
+    r"günün\s*(fırsatı|indirimi)|süper\s*fırsat|büyük\s*indirim|fırsat\s*ürünü|"
+    r"kadın\s*giyim|erkek\s*giyim|çocuk\s*giyim|ayakkabı\s*modelleri|"
+    r"yüz\s*nemlendirici|şampuan\s*çeşit|bebek\s*bezi)",
+    re.IGNORECASE
+)
+
+def is_vague_deal(title: str, text: str = "") -> bool:
+    """
+    Belirli tek bir somut ürüne ait olmayan, genel kategori/kampanya duyurusu
+    olan belirsiz fırsatları eler (Örn: 'Petshop Ürünü', 'Columbia Ürünleri', 'Televizyon Modelleri').
+    """
+    t = (title or "").strip()
+    if not t or len(t) < 4:
+        return True
+
+    if VAGUE_TITLE_REGEX.search(t):
+        return True
+
+    single_brands = ["columbia", "adidas", "nike", "puma", "zara", "mango", "defacto", "koton", "mavi", "lcw"]
+    if t.lower() in single_brands or any(t.lower() == f"{b} ürünleri" or t.lower() == f"{b} ürünü" for b in single_brands):
+        return True
+
+    if text:
+        text_low = text.lower()
+        if any(phrase in text_low for phrase in ["tüm ürünlerde", "seçili ürünlerde", "koleksiyonunda", "kategorisinde indirim"]):
+            tech_indicators = ["pro", "max", "ultra", "plus", "gb", "hz", "inch", "inç", "v2", "v3", "rgb", "anc", "gen"]
+            if not any(k in t.lower() for k in tech_indicators):
+                return True
+
+    return False
+
 HIGH_DEMAND_KEYWORDS = [
     # Konsol & Gaming Donanım
     "playstation", "ps5", "ps4", "xbox", "nintendo", "switch",
@@ -340,6 +374,17 @@ GÖREV:
                 seen_subtypes.add(final_subtype)
 
             prod_id = asin_match.group(1) if asin_match else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
+            if asin_match:
+                asin = asin_match.group(1).upper()
+                deal_data["asin"] = asin
+                try:
+                    from price_tracker import record_price
+                    price_f = parse_price_to_float(raw_price)
+                    if price_f > 0:
+                        record_price(asin, "Amazon TR", deal_data.get("title", raw_title), price_f)
+                except Exception:
+                    pass
+
             img_path = os.path.join(TEMP_DIR, f"amz_{prod_id}.jpg")
             if not download_file(big_img, img_path):
                 if not download_file(raw_img, img_path):
@@ -433,9 +478,16 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             prompt = f"""Şu Türkçe fırsat/indirim mesajından ürün bilgilerini JSON olarak çıkar:
 \"\"\"{raw_text}\"\"\"
 
+ÖNEMLİ KURALLAR:
+1. Bu mesaj tek bir somut ve belirli bir ürüne mi ait (örn: 'Sony WH-1000XM4 Kulaklık', 'Lenovo R25f-30 Monitör')?
+   Yoksa birden fazla ürünü kapsayan genel bir kategori/marka duyurusu mu (örn: 'Columbia Ürünleri', 'Petshop Ürünü', 'Televizyon Modelleri')?
+2. Eğer genel bir kategori, birden fazla ürün veya belirsiz bir kampanya ise "is_specific_product" alanını false yap!
+3. Belirli tek bir ürünse "title" alanına NET marka ve model adını yaz (maksimum 30 karakter).
+
 Şu JSON formatında döndür:
 {{
-  "title": "Ürünün kısa ve net adı (maksimum 30 karakter)",
+  "is_specific_product": true,
+  "title": "Ürünün net marka ve model adı (Örn: Razer DeathAdder V2)",
   "old_price": "Varsa eski veya normal piyasa fiyatı (örn: 1.499 TL)",
   "new_price": "İndirimli satış fiyatı (örn: 799 TL)",
   "discount_pct": "İndirim yüzdesi (örn: -47%)",
@@ -447,6 +499,15 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             if isinstance(deal_data, list) and len(deal_data) > 0 and isinstance(deal_data[0], dict):
                 deal_data = deal_data[0]
             if not isinstance(deal_data, dict) or not deal_data.get("title") or not deal_data.get("new_price"):
+                continue
+
+            # Genel kategori veya belirsiz başlık filtresi
+            if not deal_data.get("is_specific_product", True):
+                print(f"[Deal Hunter] ⏭️ Genel/Belirsiz Kategori Duyurusu Elendi: {deal_data.get('title')}")
+                continue
+
+            if is_vague_deal(deal_data.get("title", ""), raw_text):
+                print(f"[Deal Hunter] ⏭️ Belirsiz Başlık Elendi: {deal_data.get('title')}")
                 continue
 
             # Minimum indirim kontrolü
@@ -480,6 +541,20 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             deal_data["source_channel"] = ch
             deal_data["store_url"] = store_url
             deal_data["store_name"] = store_name
+
+            # Amazon linki ise ASIN çıkar ve fiyat geçmişine kaydet
+            asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", store_url, re.IGNORECASE)
+            if asin_m:
+                asin = asin_m.group(1).upper()
+                deal_data["asin"] = asin
+                try:
+                    from price_tracker import record_price
+                    price_f = parse_price_to_float(deal_data.get("new_price", ""))
+                    if price_f > 0:
+                        record_price(asin, store_name, deal_data.get("title", ""), price_f)
+                except Exception:
+                    pass
+
             if pct_val >= 45:
                 deal_data["badge"] = "DİP FİYAT"
             elif pct_val >= 35:

@@ -224,31 +224,6 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
     ]
     draw.polygon(plane, fill=color)
 
-# ==========================================
-# AKILLI ÜRÜN ÖZELLİĞİ YAKALAYICI (FEATURE PILL)
-# ==========================================
-
-def extract_smart_feature(title: str, category: str = "") -> str:
-    t = (title or "").lower()
-    if any(k in t for k in ["termos", "quencher", "mug", "tumbler"]):
-        return "Çift Duvar Vakum Yalıtımı • 11s Soğuk Tutma"
-    if any(k in t for k in ["priz", "akım", "koruyucu"]):
-        return "13.500A Aşırı Gerilim & Yıldırım Koruması"
-    if any(k in t for k in ["kulaklık", "headset", "kraken"]):
-        return "7.1 Çevresel Ses • Ultra Hafif Gövde"
-    if any(k in t for k in ["mouse", "fare", "rival", "deathadder"]):
-        return "Optik Espor Sensörü • Ultra Hızlı Tepki"
-    if any(k in t for k in ["ütü", "buharlı"]):
-        return "Sürekli Yüksek Buhar Gücü • Çizilmez Taban"
-    if any(k in t for k in ["kahve", "espresso", "lattego"]):
-        return "15 Bar Yüksek Basınç • Otomatik Süt Köpürtücü"
-    if any(k in t for k in ["monitör", "kolu", "stand"]):
-        return "Amortisörlü Gazlı Yay Sistemi • 360° Dönebilir"
-    if any(k in t for k in ["filtre", "brita"]):
-        return "MicroFlow Kireç & Klor Filtreleme Teknolojisi"
-    if any(k in t for k in ["tost", "ızgara"]):
-        return "Yapışmaz Döküm Plaka • Hızlı Isınma"
-    return "Orijinal Faturalı & 2 Yıl Resmi Türkiye Garantili"
 
 # ==========================================
 # VIRAL MEME REAKSİYON METİNLERİ (REACTION HOOKS)
@@ -351,6 +326,8 @@ def create_product_banner(
     bank_campaign: str = "",
     net_cost: str = "",
     installment: str = "",
+    feature_text: str = "",
+    is_lowest_30d: bool = False,
     output_path: str = None
 ) -> str:
     """
@@ -432,19 +409,20 @@ def create_product_banner(
     glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=50))
     img.paste(glow_layer, (card_box[0], card_box[1]), glow_layer)
 
-    # 🛡️ Kart İçi Sol Üst: Güven Rozeti (Vector Shield & Checkmark)
-    trust_text = "ORİJİNAL ÜRÜN • DOĞRULANMIŞ"
+    # 🛡️ Kart İçi Sol Üst: Resmi Satıcı Doğrulama Rozeti
+    trust_text = "AMAZON TR RESMİ SATICI" if "amazon" in store_name.lower() else f"{store_name.upper()} DOĞRULANMIŞ"
     tr_w = draw.textlength(trust_text, font=f_trust)
     draw.rounded_rectangle((card_box[0] + 16, card_box[1] + 16, card_box[0] + 58 + tr_w, card_box[1] + 48), radius=8, fill=(241, 245, 249))
     draw_vector_shield_check(draw, card_box[0] + 32, card_box[1] + 32, (16, 185, 129))
     draw.text((card_box[0] + 48, card_box[1] + 21), trust_text, font=f_trust, fill=(71, 85, 105))
 
-    # 🏷️ GELİŞTİRME 2: Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" Fiyat Geçmişi Etiketi
-    lowest_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ"
-    low_w = draw.textlength(lowest_text, font=f_trust)
-    draw.rounded_rectangle((card_box[2] - low_w - 58, card_box[1] + 16, card_box[2] - 16, card_box[1] + 48), radius=8, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
-    draw_vector_trend_down(draw, card_box[2] - low_w - 38, card_box[1] + 32, (225, 29, 72))
-    draw.text((card_box[2] - low_w - 24, card_box[1] + 21), lowest_text, font=f_trust, fill=(225, 29, 72))
+    # 🏷️ Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" (SADECE veritabanında doğrulandıysa çizilir)
+    if is_lowest_30d:
+        lowest_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ"
+        low_w = draw.textlength(lowest_text, font=f_trust)
+        draw.rounded_rectangle((card_box[2] - low_w - 58, card_box[1] + 16, card_box[2] - 16, card_box[1] + 48), radius=8, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
+        draw_vector_trend_down(draw, card_box[2] - low_w - 38, card_box[1] + 32, (225, 29, 72))
+        draw.text((card_box[2] - low_w - 24, card_box[1] + 21), lowest_text, font=f_trust, fill=(225, 29, 72))
 
     # Ürün Görselini Kart İçine Ekle
     if product_image_path and os.path.exists(product_image_path):
@@ -459,15 +437,16 @@ def create_product_banner(
         except Exception as e:
             print(f"[Banner] Görsel yükleme uyarısı: {e}")
 
-    # 📦 GELİŞTİRME 4: Ürünün Can Alıcı Özellik Rozeti (Feature Pill)
-    feature_text = extract_smart_feature(title)
-    feat_w = draw.textlength(feature_text, font=f_feature)
-    feat_box_w = feat_w + 48
-    feat_x = (W - feat_box_w) // 2
-    feat_y = card_box[3] - 88
-    draw.rounded_rectangle((feat_x, feat_y, feat_x + feat_box_w, feat_y + 34), radius=17, fill=(241, 245, 249), outline=(203, 213, 225), width=1)
-    draw_vector_bolt(draw, feat_x + 18, feat_y + 17, (234, 88, 12))
-    draw.text((feat_x + 32, feat_y + 6), feature_text, font=f_feature, fill=(51, 65, 85))
+    # 📦 Ürünün Can Alıcı Özellik Rozeti (SADECE gerçek ürün sayfasından çekilmişse gösterilir)
+    if feature_text and len(feature_text.strip()) > 3:
+        clean_feat = feature_text.strip()
+        feat_w = draw.textlength(clean_feat, font=f_feature)
+        feat_box_w = feat_w + 48
+        feat_x = (W - feat_box_w) // 2
+        feat_y = card_box[3] - 88
+        draw.rounded_rectangle((feat_x, feat_y, feat_x + feat_box_w, feat_y + 34), radius=17, fill=(241, 245, 249), outline=(203, 213, 225), width=1)
+        draw_vector_bolt(draw, feat_x + 18, feat_y + 17, (234, 88, 12))
+        draw.text((feat_x + 32, feat_y + 6), clean_feat, font=f_feature, fill=(51, 65, 85))
 
     # Kart İçi Dinamik Mağaza Rozeti (Sağ Alt Köşe)
     store_styles = {

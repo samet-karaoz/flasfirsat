@@ -9,6 +9,7 @@ output/
 __pycache__/
 *.py[cod]
 *$py.class
+*.db
 
 # Büyük Model Dosyaları
 *.onnx

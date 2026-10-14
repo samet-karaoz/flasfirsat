@@ -114,6 +114,14 @@ def process_deal_to_reel(
     print(f"💰 Fiyat: {deal.get('old_price')} -> {deal.get('new_price')} ({deal.get('discount_pct')})")
     print(f"=======================================================")
 
+    # 0. Yayın Öncesi Canlı Stok ve Fiyat Doğrulaması
+    from product_verifier import verify_deal_before_publish
+    v_info = verify_deal_before_publish(deal)
+    if not v_info.get("valid", True):
+        print(f"[Deal Bot] ⏭️ Fırsat yayına uygun değil ({v_info.get('reason', 'Doğrulanamadı')}). Atlanıyor: {deal.get('title')}")
+        return None
+    deal = v_info.get("deal", deal)
+
     # Banka Kampanyası ve Net Maliyet Hesapla
     from campaign_calculator import calculate_campaign_and_net_cost
     camp_info = calculate_campaign_and_net_cost(deal.get("new_price", ""), deal.get("store_name", "Amazon TR"))
@@ -137,6 +145,8 @@ def process_deal_to_reel(
         bank_campaign=deal.get("bank_campaign", ""),
         net_cost=deal.get("net_cost", ""),
         installment=deal.get("installment", ""),
+        feature_text=deal.get("feature_pill", ""),
+        is_lowest_30d=deal.get("is_lowest_30d", False),
         output_path=banner_temp
     )
 
@@ -201,6 +211,13 @@ def process_deal_to_reel(
     else:
         print("[Web] ⏸️ Web vitrinine ekleme atlandı (--no-upload aktif).")
 
+    # 6. Performans Geri Bildirimi Kaydı
+    try:
+        from performance_tracker import log_published_deal
+        log_published_deal(deal, meme=meme_choice, audio=audio_choice, video_path=video_path)
+    except Exception as e:
+        print(f"[Performance] Kayıt uyarısı: {e}")
+
     print("\n✅ [TAMAMLANDI!] Fırsat Paylaşıma Hazır!")
     print(f"📁 Video:    {video_path}")
     print(f"📁 Açıklama: {caption_path}")
@@ -262,6 +279,7 @@ Kullanım Şekilleri:
     parser.add_argument("--audio", type=str, help="Kullanılacak özel müzik dosyası")
     parser.add_argument("--no-upload", action="store_true", help="Videoyu ve metni hazırla ancak Telegram'a ve web vitrinine yükleme yapma")
     parser.add_argument("--min-discount", type=int, default=25, help="Minimum indirim yüzdesi eşiği (Varsayılan: 25)")
+    parser.add_argument("--watchlist", action="store_true", help="İzleme listesindeki ürünlerin fiyat düşüşlerini kontrol et")
 
     args = parser.parse_args()
 
@@ -315,23 +333,51 @@ Kullanım Şekilleri:
         print(f"✍️ Açıklama Metni: {c_path}")
         return
 
+    # İzleme Listesi Fiyat Düşüşü Modu
+    if args.watchlist:
+        print(f"📡 [MOD: İZLEME LİSTESİ FİYAT DÜŞÜŞÜ ALARMI]")
+        from watchlist import check_watchlist_drops
+        drops = check_watchlist_drops(min_drop_pct=20.0)
+        if not drops:
+            print("💤 Takip listesindeki ürünlerde henüz %20+ fiyat düşüşü tespit edilmedi.")
+            return
+        print(f"🚨 {len(drops)} adet fiyat düşüş alarmı yakalandı! Videolar üretiliyor...")
+        for deal in drops[:args.count]:
+            process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+        return
+
     # Nöbetçi Modu (Full Aktif / Arka Plan)
     if args.watch:
-
         print(f"👀 [NÖBETÇİ MODU AKTİF]")
         print(f"Bot arka planda sürekli çalışacak ve her {args.interval} dakikada bir Amazon, Trendyol ve Hepsiburada'yı tarayacak.")
         print("Durdurmak için Ctrl+C basabilirsiniz.\n")
         history = load_history()
         while True:
             now_str = datetime.datetime.now().strftime("%H:%M:%S")
-            print(f"[{now_str}] 🔍 İndirimler taranıyor (Platform: {platform.upper()})...")
+            print(f"[{now_str}] 🔍 İndirimler ve İzleme Listesi taranıyor (Platform: {platform.upper()})...")
+
+            # 1. İzleme listesi fiyat düşüş kontrolü
+            try:
+                from watchlist import check_watchlist_drops
+                w_drops = check_watchlist_drops(min_drop_pct=20.0)
+                for drop_deal in w_drops:
+                    if get_deal_sig(drop_deal) not in history:
+                        print(f"🚨 [Watchlist Alarmı] {drop_deal['title']} için öncelikli video üretiliyor!")
+                        res = process_deal_to_reel(drop_deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+                        if res:
+                            history.add(get_deal_sig(drop_deal))
+            except Exception as e:
+                print(f"[Watchlist] Kontrol hatası: {e}")
+
+            # 2. Genel indirim avı
             deals = hunt_best_deals(limit=5, platform=platform, category=args.category, exclude_urls=history, min_discount=args.min_discount)
             new_deals = [d for d in deals if get_deal_sig(d) not in history]
             if new_deals:
                 print(f"🔔 {len(new_deals)} adet YENİ sıcak indirim yakalandı! Videolar hazırlanıyor...")
                 for deal in new_deals[:2]:
-                    process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
-                    history.add(get_deal_sig(deal))
+                    res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+                    if res:
+                        history.add(get_deal_sig(deal))
             else:
                 print("💤 Henüz yeni bir fırsat düşmedi. Bir sonraki kontrole kadar bekleniyor...")
 
@@ -370,13 +416,16 @@ Kullanım Şekilleri:
             print("❌ Yeni indirim bulunamadı.")
             sys.exit(1)
 
-        deals_to_process = chosen_deals[:args.count]
-        print(f"\n🎯 Toplam {len(deals_to_process)} adet en iyi fırsat seçildi (Ard arda tekrar engellendi)! Video üretiliyor...\n")
+        print(f"\n🎯 Aday fırsatlar arasından doğrulanmış {args.count} adet video üretilecek (Ard arda tekrar engellendi)...\n")
         results = []
-        for i, deal in enumerate(deals_to_process):
-            print(f">>> Fırsat {i+1}/{len(deals_to_process)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
+        candidate_idx = 0
+        while len(results) < args.count and candidate_idx < len(chosen_deals):
+            deal = chosen_deals[candidate_idx]
+            candidate_idx += 1
+            print(f">>> Fırsat Adayı {candidate_idx}/{len(chosen_deals)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
             res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
-            results.append(res)
+            if res:
+                results.append(res)
 
         print(f"\n🎉 Tüm işlem tamamlandı! Toplam {len(results)} video 'output/' klasöründe paylaşıma hazır.")
 

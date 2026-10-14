@@ -82,6 +82,14 @@ def get_valid_access_token() -> str:
     # Mevcut token'ı döndür
     return t_data.get("token", "")
 
+def sanitize_youtube_text(text: str) -> str:
+    """YouTube Data API başlık ve açıklamalarda < ve > karakterlerini kabul etmez (HTML/XSS koruması)."""
+    if not text:
+        return ""
+    t = text.replace("->", "➔").replace("<-", "⬅").replace("-->", "➔").replace("<--", "⬅")
+    t = t.replace("<", "").replace(">", "")
+    return t.strip()
+
 def publish_shorts_to_youtube(
     video_path: str,
     title: str,
@@ -97,8 +105,20 @@ def publish_shorts_to_youtube(
     - Windows Python 3.14 SSL bug'ından etkilenmeyen yüksek hızlı curl.exe Resumable Upload mimarisi.
     - 1080x1920 dikey video desteği.
     """
+    if not video_path:
+        return {"success": False, "error": "Video dosya yolu belirtilmedi."}
+
     if not os.path.exists(video_path):
-        return {"success": False, "error": f"Video dosyası bulunamadı: {video_path}"}
+        if video_path.startswith("http://") or video_path.startswith("https://"):
+            temp_vid = os.path.join(DATA_DIR, "temp_yt_upload.mp4")
+            cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-L", video_path, "-o", temp_vid]
+            subprocess.run(cmd)
+            if os.path.exists(temp_vid) and os.path.getsize(temp_vid) > 1000:
+                video_path = temp_vid
+            else:
+                return {"success": False, "error": f"Uzak video indirilemedi: {video_path}"}
+        else:
+            return {"success": False, "error": f"Video dosyası bulunamadı: {video_path}"}
 
     cred_info = check_youtube_credentials()
     if not cred_info.get("token_ready"):
@@ -110,15 +130,15 @@ def publish_shorts_to_youtube(
     except Exception as e:
         return {"success": False, "error": f"Yetkilendirme anahtarı alınamadı: {e}"}
 
-    # Başlığı Shorts standartlarına uyarla (Maks 100 karakter, #Shorts ekle)
-    clean_title = title.strip()
+    # Başlığı Shorts standartlarına uyarla (Maks 100 karakter, #Shorts ekle, < > temizle)
+    clean_title = sanitize_youtube_text(title)
     if "#Shorts" not in clean_title and "#shorts" not in clean_title:
         clean_title = f"{clean_title[:88]} #Shorts"
     else:
         clean_title = clean_title[:100]
 
-    # Açıklama metnini düzenle (#reklam, web vitrin linki ve #Shorts zorunlu)
-    clean_desc = description.strip()
+    # Açıklama metnini düzenle (#reklam, web vitrin linki, #Shorts zorunlu, < > temizle)
+    clean_desc = sanitize_youtube_text(description)
     from config import SITE_URL
     web_link = f"{SITE_URL}?utm_source=youtube&utm_medium=shorts"
     if SITE_URL not in clean_desc:
@@ -128,7 +148,8 @@ def publish_shorts_to_youtube(
 
     default_tags = ["shorts", "indirim", "fırsat", "kampanya", "alışveriş", "sıcakfırsat", "teknoloji"]
     if tags:
-        default_tags = list(set(default_tags + tags))
+        sanitized_tags = [sanitize_youtube_text(t) for t in tags if t]
+        default_tags = list(set(default_tags + sanitized_tags))
 
     privacy = privacy_status or YOUTUBE_PRIVACY_STATUS or "public"
 
@@ -151,8 +172,11 @@ def publish_shorts_to_youtube(
     print(f"🔒 Gizlilik:  {privacy.upper()}")
     print(f"📦 Dosya:     {os.path.basename(video_path)} ({int(file_size / (1024*1024))} MB)")
 
-    # 1. Resumable Upload Başlat (Start session)
-    meta_json = json.dumps(metadata)
+    # 1. Resumable Upload Başlat (Start session - Güvenli UTF-8 JSON dosyası üzerinden)
+    meta_temp = os.path.join(DATA_DIR, "yt_meta_temp.json")
+    with open(meta_temp, "w", encoding="utf-8") as f:
+        json.dump(metadata, f, ensure_ascii=False)
+
     init_cmd = [
         "curl.exe", "-4", "--ssl-no-revoke", "-s", "-i", "-X", "POST",
         "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
@@ -160,7 +184,7 @@ def publish_shorts_to_youtube(
         "-H", "Content-Type: application/json; charset=UTF-8",
         "-H", "X-Upload-Content-Type: video/mp4",
         "-H", f"X-Upload-Content-Length: {file_size}",
-        "-d", meta_json
+        "--data-binary", f"@{meta_temp}"
     ]
 
     init_res = subprocess.run(init_cmd, capture_output=True, text=True, encoding="utf-8")
@@ -174,7 +198,17 @@ def publish_shorts_to_youtube(
 
     if not upload_url:
         print(f"[YouTube Publisher] ❌ Resumable oturum açılamadı:\n{headers}")
-        return {"success": False, "error": f"Oturum açılamadı: {headers[:200]}"}
+        err_detail = "Bilinmeyen hata"
+        try:
+            json_start = headers.find("{")
+            if json_start != -1:
+                err_obj = json.loads(headers[json_start:])
+                err_detail = err_obj.get("error", {}).get("message", headers[:200])
+            else:
+                err_detail = headers[:200]
+        except Exception:
+            err_detail = headers[:200]
+        return {"success": False, "error": f"Oturum açılamadı: {err_detail}"}
 
     # 2. Video Dosyasını Yükle (PUT binary video)
     print("[YouTube Publisher] ⏳ Video Google sunucularına aktarılıyor...")

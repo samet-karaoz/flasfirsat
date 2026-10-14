@@ -210,8 +210,15 @@ def handle_callback_query(cq: dict):
         answer_telegram_callback_query(cq_id, text="📺 YouTube Shorts yüklemesi başlatılıyor...")
         edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>YouTube Shorts Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
 
+        target_video = video_path if (video_path and os.path.exists(video_path)) else None
+        if not target_video:
+            if not public_video_url and item.get("file_id"):
+                from telegram_notifier import get_telegram_file_url
+                public_video_url = get_telegram_file_url(item["file_id"])
+            target_video = public_video_url
+
         from youtube_publisher import publish_shorts_to_youtube
-        yt_res = publish_shorts_to_youtube(video_path, title=title, description=caption_text)
+        yt_res = publish_shorts_to_youtube(target_video or video_path, title=title, description=caption_text)
 
         if yt_res.get("success"):
             yt_url = yt_res.get("url", "")

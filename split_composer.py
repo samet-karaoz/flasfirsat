@@ -209,6 +209,15 @@ def draw_vector_coin(draw: ImageDraw.Draw, cx: int, cy: int, color=(255, 204, 0)
     draw.line((cx - 1, cy - 5, cx - 1, cy + 5), fill=(180, 83, 9), width=2)
     draw.line((cx - 3, cy, cx + 1, cy), fill=(180, 83, 9), width=2)
 
+def draw_vector_globe(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191, 36)):
+    draw.ellipse((cx - 11, cy - 11, cx + 11, cy + 11), outline=color, width=2)
+    draw.line((cx - 11, cy, cx + 11, cy), fill=color, width=1)
+    draw.ellipse((cx - 5, cy - 11, cx + 5, cy + 11), outline=color, width=1)
+
+def draw_vector_link(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191, 36)):
+    draw.rounded_rectangle((cx - 10, cy - 6, cx - 1, cy + 6), radius=3, outline=color, width=2)
+    draw.rounded_rectangle((cx - 2, cy - 6, cx + 8, cy + 6), radius=3, outline=color, width=2)
+
 def draw_vector_chat_bubble(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191, 36)):
     draw.rounded_rectangle((cx - 12, cy - 9, cx + 12, cy + 7), radius=4, fill=color)
     draw.polygon([(cx - 7, cy + 6), (cx - 2, cy + 6), (cx - 9, cy + 13)], fill=color)
@@ -574,22 +583,23 @@ def create_product_banner(
             sw = draw.textlength(sub_str, font=f_net)
             draw.text((new_box[0] + (new_box[2] - new_box[0] - sw) // 2, 860), sub_str, font=f_net, fill=(4, 120, 87))
 
-    # 7. GELİŞTİRME 3: ManyChat CTA Bandı + Parıltı Efekti (✨ "LİNK" ✨) + #işbirliği
+    # 7. Web & Profil CTA Bandı (🌐 "LİNK PROFİLDEKİ SİTEMİZDE" 🔗) + #işbirliği
     cta_box = (0, 898, W, 960)
     draw.rectangle(cta_box, fill=(15, 23, 42))
     draw.line((0, 898, W, 898), fill=(245, 158, 11), width=3)
 
-    cta_prefix = "Satın alma linki için yoruma "
-    cta_highlight = '"LİNK"'
-    cta_suffix = " yaz (Anında DM)"
+    cta_prefix = "İndirimli satın alma linki "
+    cta_highlight = "PROFİLDEKİ SİTEMİZDE"
+    cta_suffix = " sabitli!"
 
     p_w = draw.textlength(cta_prefix, font=f_cta)
     h_w = draw.textlength(cta_highlight, font=f_cta)
     s_w = draw.textlength(cta_suffix, font=f_cta)
-    total_cta_w = 34 + p_w + 22 + h_w + 22 + s_w + 34
+    total_cta_w = 34 + p_w + 18 + h_w + 18 + s_w + 34
     start_x = (W - total_cta_w) // 2
 
-    draw_vector_chat_bubble(draw, start_x + 14, 929, (251, 191, 36))
+    # Vector globe icon
+    draw_vector_globe(draw, start_x + 14, 929, (251, 191, 36))
     text_x = start_x + 36
     draw.text((text_x, 916), cta_prefix, font=f_cta, fill=(241, 245, 249))
     text_x += p_w + 6
@@ -609,8 +619,8 @@ def create_product_banner(
     draw.text((W - 85, 936), "#işbirliği", font=f_tiny, fill=(100, 116, 139))
     text_x += s_w + 14
 
-    # Vector DM plane
-    draw_vector_dm_plane(draw, text_x, 929, (251, 191, 36))
+    # Vector Link chain icon
+    draw_vector_link(draw, text_x, 929, (251, 191, 36))
 
     img.save(output_path, "PNG")
     return output_path

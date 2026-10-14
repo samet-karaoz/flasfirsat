@@ -26,9 +26,9 @@ Açıklama Kuralları:
 2. Fiyat avantajını açıkça göster (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve İndirim Oranı).
 3. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
 4. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
-5. Yoruma teşvik ve OTOMATİK DM ÇAĞRISI (En Önemli Kural): Yorum sayısını patlatmak için izleyiciyi yoruma "LİNK" yazmaya çağır:
-   "👉 Yoruma 'LİNK' yaz, satın alma linkini saniyeler içinde doğrudan DM kutuna gönderelim! 📩"
-   (Ayrıca: "🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!").
+5. Eylem Çağrısı (CTA Kuralı): Kullanıcıyı doğrudan profilindeki biyografiye/siteye ve Telegram'a yönlendir:
+   "👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐"
+   (Ayrıca: "🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!").
 6. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #kampanya #keşfet).
 
 Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
@@ -86,9 +86,9 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{net_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
-        f"👉 Yoruma 'LİNK' yaz, satın alma linkini anında DM kutuna yollayalım! 📩\n"
-        f"🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!\n"
-        f"🌐 Web: {SITE_URL}?utm_source=instagram&utm_medium=reels\n\n"
+        f"👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n"
+        f"🔗 Canlı Vitrin & Fırsatlar: {SITE_URL}?utm_source=instagram&utm_medium=reels\n"
+        f"📢 Telegram Kanalımız: @flasfirsat\n\n"
         f"#işbirliği #reklam #indirim #fırsat #teknoloji"
     )
     return sanitize_caption(fallback)

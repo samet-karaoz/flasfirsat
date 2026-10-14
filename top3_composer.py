@@ -238,8 +238,8 @@ def generate_top3_caption(deals: list) -> str:
         f"   💸 {d2.get('old_price')} ➔ {d2.get('new_price')} ({d2.get('discount_pct')})\n\n"
         f"🥇 #1: {d1.get('title')[:35]}...\n"
         f"   💸 {d1.get('old_price')} ➔ {d1.get('new_price')} ({d1.get('discount_pct')})\n\n"
-        f"👉 Yoruma 'LİNK' yaz, 3 fırsatın da linkini anında DM kutuna yollayalım! 📩\n"
-        f"🔗 Tüm linkler profilimizdeki sitede ve Telegram kanalımızda!\n\n"
+        f"👉 İndirimli satın alma linklerine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n"
+        f"🔗 Tüm linkler profilimizdeki sitede ve Telegram kanalımızda (@flasfirsat)!\n\n"
         f"#indirim #fırsat #teknoloji #kampanya #keşfet"
     )
     return caption

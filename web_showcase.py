@@ -135,10 +135,7 @@ def render_web_html(deals: list = None):
         window.dataLayer = window.dataLayer || [];
         function gtag(){{dataLayer.push(arguments);}}
         gtag('js', new Date());
-        gtag('config', '{ga_id}', {{
-            page_title: 'Flaş Fırsat ⚡ | Dip Fiyat Radarı',
-            anonymize_ip: true
-        }});
+        gtag('config', '{ga_id}');
     </script>"""
         ga_configured_js = "true"
         ga_id_js = f"'{ga_id}'"

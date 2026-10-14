@@ -444,6 +444,10 @@ Kullanım Şekilleri:
 
         chosen_deals = valid_deals if valid_deals else fresh_deals
 
+        # En yüksek indirim yüzdesine (%40+, %50+) göre sırala
+        from deal_hunter import get_deal_discount_pct, get_deal_savings_tl
+        chosen_deals.sort(key=lambda d: (get_deal_discount_pct(d), get_deal_savings_tl(d)), reverse=True)
+
         if not chosen_deals:
             print("❌ Yeni indirim bulunamadı.")
             sys.exit(1)

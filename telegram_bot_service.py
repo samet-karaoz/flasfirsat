@@ -90,7 +90,76 @@ def handle_callback_query(cq: dict):
     video_path = item.get("video_path", "")
     caption_text = item.get("caption_text", "")
     product_url = item.get("product_url", "")
-    public_video_url = item.get("public_video_url", "")
+    # 0) TÜM PLATFORMLARA YAYINLA (approve_all)
+    if action == "approve_all":
+        answer_telegram_callback_query(cq_id, text="🚀 Tüm platformlara yayın başlatılıyor...")
+        edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Tüm Platformlara Dağıtılıyor...</b>\n\n📦 {title}\nYouTube, Instagram, Telegram ve WhatsApp'a aktarılıyor...")
+
+        statuses = []
+        # 1. YouTube Shorts
+        try:
+            from youtube_publisher import publish_shorts_to_youtube
+            yt_res = publish_shorts_to_youtube(video_path, title=title, description=caption_text)
+            if yt_res.get("success"):
+                statuses.append(f"• 📺 YouTube Shorts: <a href=\"{yt_res.get('url')}\">İzle</a>")
+            else:
+                statuses.append(f"• 📺 YouTube Shorts: ❌ {yt_res.get('error', 'Hata')}")
+        except Exception as ey:
+            statuses.append(f"• 📺 YouTube Shorts: ❌ {ey}")
+
+        # 2. Instagram Reels
+        try:
+            from instagram_publisher import publish_reel_to_instagram
+            ig_res = publish_reel_to_instagram(video_path, caption_text)
+            if ig_res.get("success"):
+                statuses.append("• 🎬 Instagram Reels: ✅ Yayında")
+            else:
+                statuses.append(f"• 🎬 Instagram Reels: ❌ {ig_res.get('error', 'Hata')}")
+        except Exception as ei:
+            statuses.append(f"• 🎬 Instagram Reels: ❌ {ei}")
+
+        # 3. Telegram Kanalı
+        try:
+            from telegram_notifier import send_telegram_deal
+            tg_ok = send_telegram_deal(video_path, caption_text, product_url=product_url)
+            if tg_ok:
+                statuses.append(f"• 📢 Telegram Kanalı: ✅ {TELEGRAM_CHANNEL_ID}")
+            else:
+                statuses.append("• 📢 Telegram Kanalı: ❌ Hata")
+        except Exception as et:
+            statuses.append(f"• 📢 Telegram Kanalı: ❌ {et}")
+
+        # 4. WhatsApp Kanalı
+        try:
+            from whatsapp_publisher import publish_deal_to_whatsapp_channel
+            wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path"))
+            if wp_res.get("success"):
+                statuses.append("• 🟢 WhatsApp Kanalı: ✅ Flaş Fırsat ⚡")
+            else:
+                statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {wp_res.get('error', 'Hata')}")
+        except Exception as ew:
+            statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {ew}")
+
+        item["status"] = "published_all"
+        save_pending_deals(pending)
+
+        final_caption = (
+            f"🎉 <b>TÜM PLATFORMLARDA YAYINLANDI!</b>\n\n"
+            f"📦 <b>Ürün:</b> {title}\n"
+            f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
+            f"<b>Platform Durumları:</b>\n" + "\n".join(statuses)
+        )
+        from config import SITE_URL
+        markup = {
+            "inline_keyboard": [
+                [
+                    {"text": "🛒 Ürün Sayfası", "url": product_url} if product_url else {"text": "🌐 Web Vitrini", "url": SITE_URL},
+                    {"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=telegram&utm_medium=channel"}
+                ]
+            ]
+        }
+        edit_telegram_message_caption(chat_id, msg_id, final_caption, reply_markup=markup)
+        return
 
     # A) Instagram Reels Paylaş
     if action == "approve_ig":
@@ -378,6 +447,8 @@ def handle_user_message(msg: dict):
             "📌 <b>Nasıl Kullanılır?</b>\n"
             "Takip etmek istediğin herhangi bir <b>Amazon, Trendyol veya Hepsiburada</b> ürün linkini bana mesaj olarak göndermen yeterli!\n\n"
             "💡 <b>Komutlar:</b>\n"
+            "• <code>/program</code> - Günlük 12:30 & 20:00 yayın saatleri ve sıradaki paylaşım\n"
+            "• <code>/otopilot</code> - Saati beklemeden hemen 4 platforma yayın yap\n"
             "• <code>/takip [link]</code> - Ürünü fiyat takibine alır\n"
             "• <code>/listem</code> - Takip ettiğin ürünleri listeler\n"
             "• <code>/stats</code> - Web vitrini ve etkileşim analizlerini gösterir\n"
@@ -386,15 +457,48 @@ def handle_user_message(msg: dict):
         send_telegram_text(chat_id, welcome)
         return
 
+    # 1.5 /program veya /zamanlayici Komutu
+    if text.startswith("/program") or text.startswith("/zamanlayici"):
+        from scheduler_service import get_next_run_info
+        info = get_next_run_info()
+        prog_msg = (
+            "⏰ <b>FLAŞ FIRSAT OTOPİLOT YAYIN PROGRAMI</b> 🚀\n\n"
+            "Algoritmanın en yüksek etkileşim verdiği 2 saat kuşağı:\n"
+            "• 🌞 <b>1. Kuşak (Öğle Molası):</b> 12:30\n"
+            "• 🌙 <b>2. Kuşak (Akşam Prime Time):</b> 20:00\n\n"
+            f"👉 <b>Bir Sonraki Otomatik Yayın:</b> {info['next_time']}\n"
+            f"⏳ <b>Kalan Süre:</b> {info['remaining_str']} ({info['slot_name']})\n\n"
+            "📱 <b>Otomatik Yayınlanan Platformlar:</b>\n"
+            "• 📺 YouTube Shorts\n"
+            "• 🎬 Instagram Reels (@flasfirsat)\n"
+            "• 📢 Telegram Kanalı (@flasfirsat)\n"
+            "• 🟢 WhatsApp Kanalı (Flaş Fırsat ⚡)\n"
+            "• 🌐 Web Vitrini (Canlı İndirim Radarı)\n\n"
+            "💡 <i>Saati beklemeden hemen yayınlatmak için: <code>/otopilot</code></i>"
+        )
+        send_telegram_text(chat_id, prog_msg)
+        return
+
+    # 1.6 /otopilot Komutu (Hemen Tek Tıkla Döngü Başlat)
+    if text.startswith("/otopilot"):
+        send_telegram_text(chat_id, "🚀 <b>Otopilot döngüsü başlatıldı!</b>\n\nEn iyi indirim avlanıyor, split-screen video üretiliyor ve YouTube, Instagram, Telegram ve WhatsApp kanallarına otomatik dağıtılıyor. İşlem tamamlandığında rapor iletilecektir...")
+        import threading
+        from autopilot_engine import run_autopilot_deal_cycle
+        threading.Thread(target=run_autopilot_deal_cycle, kwargs={"dry_run": False, "slot_name": "Telegram Manuel Tetikleme"}, daemon=True).start()
+        return
+
     # 2. /yardim Komutu
     if text.startswith("/yardim"):
         help_text = (
-            "ℹ️ <b>Fırsat Avcısı Fiyat Takip Rehberi</b>\n\n"
-            "1️⃣ Takip etmek istediğin ürünün web sayfa linkini kopyala.\n"
-            "2️⃣ Bana doğrudan mesaj olarak yapıştır veya <code>/takip https://...</code> şeklinde yaz.\n"
-            "3️⃣ Botumuz ürünün anlık fiyatını kaydeder.\n"
-            "4️⃣ Ürünün fiyatı düştüğünde sana doğrudan indirimli satın alma linkiyle mesaj gelir! 🚀\n\n"
-            "📊 <i>Web vitrini ve etkileşim verileri için: <code>/stats</code></i>"
+            "ℹ️ <b>Fırsat Avcısı & Otopilot Rehberi</b>\n\n"
+            "🤖 <b>24/7 Otopilot Yayın Sistemi:</b>\n"
+            "Sistem her gün <b>12:30</b> ve <b>20:00</b> saatlerinde en iyi indirimi otomatik bulur, 9:16 reels videosunu derler ve tüm sosyal medya platformlarınıza eş zamanlı yükler!\n\n"
+            "💡 <b>Yönetim Komutları:</b>\n"
+            "• <code>/program</code> - Sıradaki otomatik yayın zamanı\n"
+            "• <code>/otopilot</code> - Hemen otomatik video üret ve 4 kanala yayınla\n"
+            "• <code>/stats</code> - Web paneli ve ziyaretçi istatistikleri\n"
+            "• <code>/takip [link]</code> - İstediğin ürünü fiyat takibine al\n"
+            "• <code>/listem</code> - Takip listen\n"
         )
         send_telegram_text(chat_id, help_text)
         return
@@ -582,8 +686,19 @@ def run_telegram_service():
     print("🤖 [TELEGRAM INTERAKTIF YÖNETİM & ALARM SERVİSİ BAŞLADI]")
     print("• Yönetici Onay Butonları: Aktif (Instagram, YouTube, Kanal)")
     print("• Kişisel Fiyat Takip Botu (/takip, /listem): Aktif")
+    print("• 24/7 Otopilot Zamanlayıcı: Aktif (12:30 & 20:00)")
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("=======================================================\n")
+
+    # Otopilot Zamanlayıcıyı Arka Planda Başlat (12:30 ve 20:00)
+    try:
+        import threading
+        from scheduler_service import run_scheduler_daemon
+        sched_thread = threading.Thread(target=run_scheduler_daemon, kwargs={"dry_run": False}, daemon=True)
+        sched_thread.start()
+        print("⏰ [ZAMANLAYICI SERVİSİ] 12:30 & 20:00 kuşağı için arka plan iş parçacığı başlatıldı.\n")
+    except Exception as es:
+        print(f"[Telegram Service] Zamanlayıcı başlatılamadı: {es}")
 
     offset = None
     last_alarm_check = time.time()

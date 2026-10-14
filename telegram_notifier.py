@@ -43,40 +43,6 @@ def get_telegram_file_url(file_id: str, bot_token: str = None) -> str:
         print(f"[Telegram Notifier] getFile hatası: {e}")
     return ""
 
-def send_telegram_deal_for_approval(
-    deal: dict,
-    video_path: str,
-    caption_text: str,
-    product_url: str = None,
-    chat_id: str = None,
-    bot_token: str = None
-) -> dict:
-    """
-    Üretilen videoyu doğrudan yöneticiye (chat_id) interaktif onay butonlarıyla gönderir.
-    Instagram Reels, YouTube Shorts veya Kanalda yayınlama kararı butona tıklanarak verilir.
-    """
-    token = bot_token or TELEGRAM_BOT_TOKEN
-    cid = chat_id or TELEGRAM_CHAT_ID
-
-    if not token or not cid:
-        print("[Telegram Notifier] ⚠️ Token veya Chat ID eksik.")
-        return {"success": False, "error": "Token veya Chat ID eksik"}
-
-    if not os.path.exists(video_path):
-        print(f"[Telegram Notifier] ❌ Video dosyası bulunamadı: {video_path}")
-        return {"success": False, "error": "Video bulunamadı"}
-
-    timestamp = int(time.time())
-    deal_id = f"deal_{timestamp}"
-
-    title = deal.get("title", "Fırsat Ürünü")
-    new_price = deal.get("new_price", "")
-    old_price = deal.get("old_price", "")
-    discount_pct = deal.get("discount_pct", "")
-    store = deal.get("store_name", "Amazon TR")
-    net_cost = deal.get("net_cost", "")
-    bank_camp = deal.get("bank_campaign", "")
-
 def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
     """WhatsApp kanalı veya gruplarında tek tıkla paylaşım için optimize edilmiş URL döner."""
     import urllib.parse
@@ -125,6 +91,40 @@ def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
     full_text = "\n".join(msg_lines)
     return f"https://api.whatsapp.com/send?text={urllib.parse.quote(full_text)}"
 
+def send_telegram_deal_for_approval(
+    deal: dict,
+    video_path: str,
+    caption_text: str,
+    product_url: str = None,
+    chat_id: str = None,
+    bot_token: str = None
+) -> dict:
+    """
+    Üretilen videoyu doğrudan yöneticiye (chat_id) interaktif onay butonlarıyla gönderir.
+    Instagram Reels, YouTube Shorts veya Kanalda yayınlama kararı butona tıklanarak verilir.
+    """
+    token = bot_token or TELEGRAM_BOT_TOKEN
+    cid = chat_id or TELEGRAM_CHAT_ID
+
+    if not token or not cid:
+        print("[Telegram Notifier] ⚠️ Token veya Chat ID eksik.")
+        return {"success": False, "error": "Token veya Chat ID eksik"}
+
+    if not os.path.exists(video_path):
+        print(f"[Telegram Notifier] ❌ Video dosyası bulunamadı: {video_path}")
+        return {"success": False, "error": "Video bulunamadı"}
+
+    timestamp = int(time.time())
+    deal_id = f"deal_{timestamp}"
+
+    title = deal.get("title", "Fırsat Ürünü")
+    new_price = deal.get("new_price", "")
+    old_price = deal.get("old_price", "")
+    discount_pct = deal.get("discount_pct", "")
+    store = deal.get("store_name", "Amazon TR")
+    net_cost = deal.get("net_cost", "")
+    bank_camp = deal.get("bank_campaign", "")
+
     # Yönetici Önizleme Mesajı
     approval_caption = (
         f"🎬 <b>YENİ FIRSAT ONAY BEKLİYOR!</b>\n\n"
@@ -141,11 +141,14 @@ def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
     # Butonlar
     inline_keyboard = [
         [
-            {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
-            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"}
+            {"text": "🚀 TÜM PLATFORMLARA YAYINLA (Tek Tık)", "callback_data": f"approve_all:{deal_id}"}
         ],
         [
-            {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"},
+            {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
+            {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
+        ],
+        [
+            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
             {"text": "🟢 WhatsApp Kanalına At (Oto)", "callback_data": f"approve_wp:{deal_id}"}
         ],
         [

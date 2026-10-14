@@ -89,84 +89,72 @@ def publish_deal_to_whatsapp_channel(
             context = p.chromium.launch_persistent_context(
                 user_data_dir=USER_DATA_DIR,
                 headless=headless,
-                channel="chromium",
+                channel="chrome",
                 args=[
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
                     "--disable-infobars"
                 ],
-                viewport={"width": 1280, "height": 800},
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                viewport={"width": 1280, "height": 800}
             )
 
             page = context.pages[0] if context.pages else context.new_page()
             page.goto("https://web.whatsapp.com", wait_until="domcontentloaded")
 
-            # 1. Sayfanın yüklenmesini bekle (Arama kutusu veya sohbet paneli)
+            # 1. Sayfanın yüklenmesini bekle (Sohbet paneli)
             print("[WhatsApp Publisher] ⏳ WhatsApp Web yükleniyor...")
-            search_box = page.wait_for_selector(
-                "div[contenteditable='true'][data-tab='3'], #pane-side",
+            pane = page.wait_for_selector(
+                "#pane-side, div[contenteditable='true']",
                 timeout=45000
             )
-            if not search_box:
+            if not pane:
                 context.close()
                 return {"success": False, "error": "WhatsApp Web açılamadı veya oturum süresi doldu."}
 
             time.sleep(2)
 
-            # 2. Kanalı Bul ve Aç
-            # Önce arama kutusuna kanal adını yaz
-            search_input = page.locator("div[contenteditable='true'][data-tab='3']").first
-            if search_input.is_visible():
-                search_input.click()
-                search_input.fill(target_channel)
+            # 2. Kanallar Sekmesini Aç
+            channel_tab = page.locator("button[aria-label*='Kanal'], div[aria-label*='Kanal'], span[data-icon='newsletter-outline']").first
+            if channel_tab.is_visible():
+                print("[WhatsApp Publisher] 📂 Kanallar sekmesine geçiliyor...")
+                channel_tab.click()
                 time.sleep(2)
 
-            # Ekranda çıkan kanala/sohbete tıkla
+            # 3. Kanalı Bul ve Aç
             channel_item = page.locator(f"span[title*='{target_channel}']").first
             if not channel_item.is_visible():
-                # Arama sonuçlarında genel span ara
-                channel_item = page.locator(f"div[role='listitem'] >> text='{target_channel}'").first
-
+                channel_item = page.locator("span[title*='Flaş Fırsat']").first
             if not channel_item.is_visible():
-                # Sol menüden 'Kanallar' sekmesine geçmeyi dene
-                channels_tab = page.locator("button[aria-label*='Kanal'], button[aria-label*='Channel'], span[data-icon='newsletter-outline']").first
-                if channels_tab.is_visible():
-                    channels_tab.click()
-                    time.sleep(2)
-                    channel_item = page.locator(f"span[title*='{target_channel}']").first
+                channel_item = page.locator("div[role='listitem']").filter(has_text="Flaş Fırsat").first
 
             if not channel_item.is_visible():
                 context.close()
-                return {"success": False, "error": f"'{target_channel}' adlı WhatsApp kanalı sohbet listenizde bulunamadı."}
+                return {"success": False, "error": f"'{target_channel}' adlı WhatsApp kanalı listenizde bulunamadı."}
 
             channel_item.click()
             time.sleep(2)
             print(f"[WhatsApp Publisher] ✅ '{target_channel}' kanalı açıldı.")
 
-            # 3. Görsel veya Metin Gönder
+            # 4. Görsel veya Metin Gönder
+            lines = caption_text.split("\n")
+
             if target_img and os.path.exists(target_img):
                 print(f"[WhatsApp Publisher] 🖼️ Görsel yükleniyor: {os.path.basename(target_img)}...")
-                # Dosya yükleme inputunu bul (WhatsApp Web'de gizli file input mevcuttur)
-                file_input = page.locator("input[type='file'][accept*='image']").first
-                if not file_input.is_visible():
-                    # Ekle (+) butonuna bas
-                    plus_btn = page.locator("div[title*='Ekle'], span[data-icon='plus'], div[aria-label*='Ekle']").first
-                    if plus_btn.is_visible():
-                        plus_btn.click()
-                        time.sleep(1)
-
                 page.set_input_files("input[type='file'][accept*='image']", target_img)
                 time.sleep(2)
 
                 # Açıklama (Caption) kutusuna metni yaz
-                caption_box = page.locator("div[contenteditable='true'][aria-label*='Açıklama'], div[contenteditable='true'][data-tab='10'], div[contenteditable='true']").last
+                caption_box = page.locator("div[contenteditable='true'][aria-label*='Açıklama'], div[contenteditable='true'][aria-label*='yazın'], div[contenteditable='true']").last
                 caption_box.click()
-                # Çok satırlı metni clipboard veya doğrudan yaz
-                page.keyboard.type(caption_text, delay=10)
+
+                for i, line in enumerate(lines):
+                    if line:
+                        page.keyboard.insert_text(line)
+                    if i < len(lines) - 1:
+                        page.keyboard.press("Shift+Enter")
                 time.sleep(1)
 
-                # Gönder butonuna bas
+                # Gönder butonu
                 send_btn = page.locator("span[data-icon='send'], div[aria-label*='Gönder']").first
                 if send_btn.is_visible():
                     send_btn.click()
@@ -174,13 +162,19 @@ def publish_deal_to_whatsapp_channel(
                     page.keyboard.press("Enter")
             else:
                 # Sadece Metin Gönder
-                msg_box = page.locator("div[contenteditable='true'][data-tab='10']").first
+                print("[WhatsApp Publisher] ✍️ Metin güncellemesi yazılıyor...")
+                msg_box = page.locator("div[contenteditable='true'][data-tab='10'], div[contenteditable='true'][aria-label*='mesaj'], div[contenteditable='true'][aria-label*='güncelleme']").last
                 msg_box.click()
-                page.keyboard.type(caption_text, delay=10)
+
+                for i, line in enumerate(lines):
+                    if line:
+                        page.keyboard.insert_text(line)
+                    if i < len(lines) - 1:
+                        page.keyboard.press("Shift+Enter")
                 time.sleep(1)
                 page.keyboard.press("Enter")
 
-            print("[WhatsApp Publisher] ⏳ Mesaj gönderiliyor...")
+            print("[WhatsApp Publisher] ⏳ Mesaj iletiliyor...")
             time.sleep(4)
             context.close()
             print("🎉 [WhatsApp Publisher] Fırsat WhatsApp Kanalında başarıyla yayınlandı!")
@@ -192,4 +186,4 @@ def publish_deal_to_whatsapp_channel(
 
 if __name__ == "__main__":
     st = check_whatsapp_ready()
-    print("Durum:", st)
+    print("WhatsApp Durumu:", st)

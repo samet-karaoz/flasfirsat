@@ -33,6 +33,7 @@ WATERMARK_TEXT = "h e s a p _ a d i"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 MUSIC_DIR = os.path.join(ASSETS_DIR, "music")
+DATA_DIR = os.path.join(BASE_DIR, "data")
 TEMP_DIR = os.path.join(BASE_DIR, "temp")
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 

@@ -2,12 +2,10 @@ name: ⚡ Flaş Fırsat Otomasyonu (24/7 Bulut Radarı)
 
 on:
   schedule:
-    # 1. Video: 12:30 TSİ (Öğle Molası & İlk İndirimler) -> 09:30 UTC
+    # 1. Kuşak: 12:30 TSİ (Öğle Molası) -> 09:30 UTC
     - cron: '30 9 * * *'
-    # 2. Video: 17:45 TSİ (İş/Okul Çıkışı & Servis Saati) -> 14:45 UTC
-    - cron: '45 14 * * *'
-    # 3. Video: 21:00 TSİ (Gece Zirvesi & Günün Ana Bombası) -> 18:00 UTC
-    - cron: '0 18 * * *'
+    # 2. Kuşak: 20:00 TSİ (Akşam Prime Time) -> 17:00 UTC
+    - cron: '0 17 * * *'
   workflow_dispatch:
     inputs:
       platform:

@@ -1295,6 +1295,9 @@ def render_web_html(deals: list = None):
             <a href="https://instagram.com/flasfirsat" target="_blank" class="social-btn" data-social="instagram">
                 <span>📸</span> Instagram
             </a>
+            <a href="https://www.youtube.com/@flasfirsat" target="_blank" class="social-btn" data-social="youtube">
+                <span>▶️</span> YouTube
+            </a>
             <a href="https://www.tiktok.com/@flasfirsat" target="_blank" class="social-btn" data-social="tiktok">
                 <span>🎵</span> TikTok
             </a>

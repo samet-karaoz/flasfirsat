@@ -181,14 +181,18 @@ def render_web_html(deals: list = None):
             safe_price = new_p.replace('"', '&quot;')
 
             cards_html += f"""
-            <div class="deal-card" data-title="{title.lower()} {store.lower()}">
-                <div class="card-img-wrap">
-                    <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
-                    <span class="badge-store {store_class}">{store}</span>
-                    <span class="badge-discount">{disc}</span>
-                </div>
+            <div class="deal-card" data-title="{title.lower()} {store.lower()}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
+                <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="{safe_title}">
+                    <div class="card-img-wrap">
+                        <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
+                        <span class="badge-store {store_class}">{store}</span>
+                        <span class="badge-discount">{disc}</span>
+                    </div>
+                </a>
                 <div class="card-content">
-                    <h3 class="card-title">{title}</h3>
+                    <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-title-link" title="{safe_title}">
+                        <h3 class="card-title">{title}</h3>
+                    </a>
                     <div class="price-section">
                         <span class="old-price">{old_p}</span>
                         <span class="new-price">{new_p}</span>
@@ -522,6 +526,21 @@ def render_web_html(deals: list = None):
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+        }
+
+        .card-img-link {
+            text-decoration: none;
+            display: block;
+        }
+
+        .card-title-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card-title-link:hover .card-title {
+            color: var(--primary-orange);
         }
 
         .card-title {
@@ -1251,15 +1270,16 @@ def render_web_html(deals: list = None):
             sessionStorage.setItem('flas_banner_dismissed', '1');
         }
 
-        // Ürün Satın Al Tıklama Takibi
+        // Ürün Satın Al Tıklama Takibi (Buton, Görsel veya Başlık)
         document.addEventListener('click', function(e) {
-            const btn = e.target.closest('.buy-btn');
+            const btn = e.target.closest('.buy-btn, .card-img-link, .card-title-link');
             if (!btn) return;
 
-            const title = btn.getAttribute('data-title') || 'Bilinmeyen Ürün';
-            const store = btn.getAttribute('data-store') || 'Diğer';
-            const price = btn.getAttribute('data-price') || '';
-            const dealId = btn.getAttribute('data-deal-id') || '';
+            const card = btn.closest('.deal-card');
+            const title = btn.getAttribute('data-title') || (card ? card.getAttribute('data-deal-title') : '') || 'Bilinmeyen Ürün';
+            const store = btn.getAttribute('data-store') || (card ? card.getAttribute('data-store') : '') || 'Diğer';
+            const price = btn.getAttribute('data-price') || (card ? card.getAttribute('data-price') : '') || '';
+            const dealId = btn.getAttribute('data-deal-id') || (card ? card.getAttribute('data-deal-id') : '') || '';
 
             // A) Google Analytics 4 Olayı
             if (typeof gtag === 'function') {

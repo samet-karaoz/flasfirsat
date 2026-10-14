@@ -140,9 +140,35 @@ def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bo
     status = check_instagram_credentials()
 
     if status.get("mode") == "instagrapi":
-        # Yerel dosya yolu gereklidir
-        if os.path.exists(video_source):
-            return publish_reel_via_instagrapi(video_source, caption)
+        # Yerel dosya yolu veya web/Telegram indirme URL'si
+        local_path = video_source
+        is_temp_file = False
+        if video_source.startswith("http://") or video_source.startswith("https://"):
+            import requests
+            temp_dl = os.path.join(DATA_DIR, f"temp_reel_{int(time.time())}.mp4")
+            try:
+                print(f"[Instagram Publisher] 📥 Video uzak sunucudan indiriliyor: {video_source[:60]}...")
+                r = requests.get(video_source, stream=True, timeout=60)
+                if r.status_code == 200:
+                    with open(temp_dl, "wb") as f:
+                        for chunk in r.iter_content(chunk_size=65536):
+                            f.write(chunk)
+                    local_path = temp_dl
+                    is_temp_file = True
+                else:
+                    return {"success": False, "error": f"Video indirilemedi (HTTP {r.status_code}): {video_source}"}
+            except Exception as e:
+                return {"success": False, "error": f"Video indirme hatası: {e}"}
+
+        if os.path.exists(local_path):
+            try:
+                return publish_reel_via_instagrapi(local_path, caption)
+            finally:
+                if is_temp_file and os.path.exists(local_path):
+                    try:
+                        os.remove(local_path)
+                    except Exception:
+                        pass
         else:
             return {"success": False, "error": f"Yerel video dosyası bulunamadı: {video_source}"}
 

@@ -97,15 +97,18 @@ def handle_callback_query(cq: dict):
         edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Instagram Reels Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
 
         from instagram_publisher import publish_reel_to_instagram
-        # Eğer Telegram file URL varsa kullan, yoksa hata bildir
-        if not public_video_url and item.get("file_id"):
-            from telegram_notifier import get_telegram_file_url
-            public_video_url = get_telegram_file_url(item["file_id"])
+        
+        target_video = video_path if (video_path and os.path.exists(video_path)) else None
+        if not target_video:
+            if not public_video_url and item.get("file_id"):
+                from telegram_notifier import get_telegram_file_url
+                public_video_url = get_telegram_file_url(item["file_id"])
+            target_video = public_video_url
 
-        if not public_video_url:
-            res_ig = {"success": False, "error": "Videonun internetten erişilebilir genel linki alınamadı."}
+        if not target_video:
+            res_ig = {"success": False, "error": "Videonun dosyası veya genel linki bulunamadı."}
         else:
-            res_ig = publish_reel_to_instagram(public_video_url, caption_text)
+            res_ig = publish_reel_to_instagram(target_video, caption_text)
 
         if res_ig.get("success"):
             media_id = res_ig.get("media_id", "")

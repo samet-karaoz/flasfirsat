@@ -8,8 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+from config import (
+    BASE_DIR,
+    DATA_DIR,
+    get_curl_cmd
+)
 TOKEN_PATH = os.path.join(DATA_DIR, "youtube_token.json")
 CLIENT_SECRETS_PATH = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", os.path.join(BASE_DIR, "client_secrets.json"))
 YOUTUBE_PRIVACY_STATUS = os.getenv("YOUTUBE_PRIVACY_STATUS", "public").strip().lower()
@@ -62,12 +65,12 @@ def get_valid_access_token() -> str:
         "grant_type": "refresh_token"
     }
 
-    cmd = [
-        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-X", "POST",
+    cmd = get_curl_cmd([
+        "-s", "-X", "POST",
         "https://oauth2.googleapis.com/token",
         "-H", "Content-Type: application/x-www-form-urlencoded",
         "-d", urllib.parse.urlencode(refresh_payload)
-    ]
+    ])
     res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
     try:
         ref_json = json.loads(res.stdout)
@@ -177,15 +180,15 @@ def publish_shorts_to_youtube(
     with open(meta_temp, "w", encoding="utf-8") as f:
         json.dump(metadata, f, ensure_ascii=False)
 
-    init_cmd = [
-        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-i", "-X", "POST",
+    init_cmd = get_curl_cmd([
+        "-s", "-i", "-X", "POST",
         "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
         "-H", f"Authorization: Bearer {access_token}",
         "-H", "Content-Type: application/json; charset=UTF-8",
         "-H", "X-Upload-Content-Type: video/mp4",
         "-H", f"X-Upload-Content-Length: {file_size}",
         "--data-binary", f"@{meta_temp}"
-    ]
+    ])
 
     init_res = subprocess.run(init_cmd, capture_output=True, text=True, encoding="utf-8")
     headers = init_res.stdout
@@ -212,13 +215,13 @@ def publish_shorts_to_youtube(
 
     # 2. Video Dosyasını Yükle (PUT binary video)
     print("[YouTube Publisher] ⏳ Video Google sunucularına aktarılıyor...")
-    put_cmd = [
-        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-X", "PUT",
+    put_cmd = get_curl_cmd([
+        "-s", "-X", "PUT",
         upload_url,
         "-H", "Content-Type: video/mp4",
         "-H", f"Content-Length: {file_size}",
         "--upload-file", video_path
-    ]
+    ])
 
     put_res = subprocess.run(put_cmd, capture_output=True, text=True, encoding="utf-8")
     try:

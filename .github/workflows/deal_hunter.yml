@@ -1,4 +1,4 @@
-name: ⚡ Flaş Fırsat Otomasyonu (24/7 Bulut Radarı)
+name: ⚡ Flaş Fırsat Otomasyonu (24/7 Bulut Otopilotu)
 
 on:
   schedule:
@@ -8,20 +8,10 @@ on:
     - cron: '0 17 * * *'
   workflow_dispatch:
     inputs:
-      platform:
-        description: 'Taranacak Mağaza'
-        required: true
-        default: 'amazon'
-        type: choice
-        options:
-          - amazon
-          - all
-          - trendyol
-          - hepsiburada
-      count:
-        description: 'Üretilecek Fırsat/Video Sayısı'
-        required: true
-        default: '1'
+      slot_name:
+        description: 'Kuşak Adı (Örn: Manuel Tetikleme)'
+        required: false
+        default: 'Manuel Bulut Tetiklemesi'
         type: string
 
 permissions:
@@ -30,7 +20,7 @@ permissions:
 jobs:
   hunt-and-publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - name: 📥 Depoyu Klonla (Checkout)
@@ -55,7 +45,33 @@ jobs:
           sudo apt-get install -y --no-install-recommends ffmpeg
           ffmpeg -version | head -n 1
 
-      - name: 🚀 Fırsat Radarı & Video Motorunu Çalıştır
+      - name: 🔑 YouTube ve Instagram Bulut Oturumlarını Yapılandır
+        env:
+          YT_TOKEN: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+          YT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
+          IG_SESSION: ${{ secrets.INSTAGRAM_SESSION_JSON }}
+        run: |
+          mkdir -p data
+          python -c "
+          import os
+          yt = os.getenv('YT_TOKEN')
+          if yt:
+              with open('data/youtube_token.json', 'w', encoding='utf-8') as f:
+                  f.write(yt)
+              print('✅ YouTube Token dosyası yüklendi.')
+          sec = os.getenv('YT_SECRETS')
+          if sec:
+              with open('client_secrets.json', 'w', encoding='utf-8') as f:
+                  f.write(sec)
+              print('✅ YouTube Client Secrets yüklendi.')
+          ig = os.getenv('IG_SESSION')
+          if ig:
+              with open('data/instagram_session.json', 'w', encoding='utf-8') as f:
+                  f.write(ig)
+              print('✅ Instagram Session dosyası yüklendi.')
+          "
+
+      - name: 🚀 4 Platformlu Bulut Otopilotunu Çalıştır
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -64,13 +80,13 @@ jobs:
           AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
           TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
           HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
+          INSTAGRAM_USERNAME: ${{ secrets.INSTAGRAM_USERNAME }}
+          INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
         run: |
-          PLATFORM="${{ inputs.platform }}"
-          [ -z "$PLATFORM" ] && PLATFORM="amazon"
-          COUNT="${{ inputs.count }}"
-          [ -z "$COUNT" ] && COUNT="1"
-          echo "🚀 Çalıştırılıyor: Platform=$PLATFORM, Adet=$COUNT"
-          python deal_bot.py --auto --platform "$PLATFORM" --count "$COUNT"
+          SLOT="${{ inputs.slot_name }}"
+          [ -z "$SLOT" ] && SLOT="Bulut Otopilotu (12:30 / 20:00)"
+          echo "🚀 Bulut Otopilotu Başlatılıyor: $SLOT"
+          python autopilot_engine.py --now --slot "$SLOT"
 
       - name: 🌐 Canlı Web Vitrinini Otomatik Commit & Push Et
         run: |

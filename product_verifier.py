@@ -26,15 +26,34 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     ])
 
     res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-    if res.returncode != 0 or len(res.stdout) < 5000:
+    out_low = res.stdout.lower()
+
+    # 0. BOT / CAPTCHA KORUMASI TESPİTİ (Fail-Safe: ASLA varsayılan True dönme!)
+    if (
+        "type the characters you see in this image" in out_low or
+        "robot check" in out_low or
+        "girdiğiniz karakterleri doğrulayın" in out_low or
+        "automated access" in out_low
+    ):
+        print(f"[Verifier] ⚠️ Amazon CAPTCHA / Bot Engeli Algılandı: {url}")
         return {
             "success": False,
-            "in_stock": True,
-            "reason": "Sayfa tam çekilemedi",
+            "in_stock": False,
+            "is_captcha": True,
+            "reason": "Amazon Bot Koruması / CAPTCHA",
+            "feature_pill": ""
+        }
+
+    if res.returncode != 0 or len(res.stdout) < 8000:
+        return {
+            "success": False,
+            "in_stock": False,
+            "reason": "Sayfa yüklenemedi / Boş yanıt",
             "feature_pill": ""
         }
 
     soup = BeautifulSoup(res.stdout, "html.parser")
+    from deal_hunter import parse_price_to_float
 
     # 1. STOK KONTROLÜ
     avail_el = soup.select_one("#availability")
@@ -42,21 +61,52 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     out_of_stock_phrases = ["mevcut değil", "stokta yok", "tükendi", "currently unavailable", "geçici olarak temin edilemiyor"]
     in_stock = not any(phrase in avail_text for phrase in out_of_stock_phrases)
 
-    # 2. CANLI FİYAT TESPİTİ
+    # 2. CANLI SATIŞ FİYATI VE GERÇEK LİSTE/ÖNCEKİ FİYATI (Strike Price)
     price_el = soup.select_one(".priceToPay") or soup.select_one("#corePriceDisplay_desktop_feature_div .a-price") or soup.select_one(".a-price .a-offscreen")
     live_price_str = price_el.text.strip().replace("\n", "").replace(" ", "") if price_el else ""
+    price_val = parse_price_to_float(live_price_str)
 
-    # 3. KUPON TESPİTİ
+    # Gerçek üstü çizili fiyat (Amazon'daki gerçek liste fiyatı)
+    strike_el = (
+        soup.select_one("#corePriceDisplay_desktop_feature_div .basisPrice .a-offscreen") or
+        soup.select_one("#corePriceDisplay_desktop_feature_div .a-text-price .a-offscreen") or
+        soup.select_one("span.priceBlockStrikePriceString") or
+        soup.select_one("span.a-text-strike")
+    )
+    real_strike_str = strike_el.text.strip().replace("\n", "").replace(" ", "") if strike_el else ""
+    real_strike_val = parse_price_to_float(real_strike_str)
+
+    # 3. GERÇEK SATICI DOĞRULAMASI (Amazon TR Resmi mi, Pazaryeri mi?)
+    is_sold_by_amazon = bool(re.search(r"Amazon\.com\.tr tarafından satılır", res.stdout, re.IGNORECASE))
+    is_shipped_by_amazon = bool(re.search(r"(?:ve gönderilir|Amazon tarafından gönderilir)", res.stdout, re.IGNORECASE))
+
+    if is_sold_by_amazon:
+        seller_badge = "AMAZON TR RESMİ SATICI"
+    elif is_shipped_by_amazon:
+        seller_badge = "AMAZON TR GÖNDERİMLİ"
+    else:
+        seller_badge = "AMAZON PAZARYERİ"
+
+    # 4. KUPON TESPİTİ VE NET İNDİRİM TL HESAPLAMA
     coupon_text = ""
+    coupon_amount_tl = 0.0
     coupon_el = soup.select_one("span.couponBadge") or soup.select_one("label[for*='coupon']") or soup.select_one("#couponBadge")
     if coupon_el:
         coupon_text = coupon_el.text.strip()
     else:
-        c_m = re.search(r"(\d+[\.,]?\d*)\s*(TL|%)\s*(değerinde\s*)?kupon", res.stdout, re.IGNORECASE)
+        c_m = re.search(r"(\d+[\.,]?\d*)\s*(TL|%)\s*(?:değerinde\s*)?kupon", res.stdout, re.IGNORECASE)
         if c_m:
             coupon_text = f"{c_m.group(1)} {c_m.group(2)} Kupon Fırsatı"
 
-    # 4. GERÇEK ÜRETİCİ ÖZELLİK MADDELERİ (Bullet Points & Overview Table)
+    if coupon_text and price_val > 0:
+        pct_m = re.search(r"%(\d+)", coupon_text)
+        tl_m = re.search(r"(\d+[\.,]?\d*)\s*TL", coupon_text, re.IGNORECASE)
+        if pct_m:
+            coupon_amount_tl = round(price_val * (float(pct_m.group(1)) / 100.0), 2)
+        elif tl_m:
+            coupon_amount_tl = parse_price_to_float(tl_m.group(1))
+
+    # 5. GERÇEK ÜRETİCİ ÖZELLİK MADDELERİ (Bullet Points & Overview Table)
     bullets = []
     for li in soup.select("#feature-bullets ul li"):
         txt = li.text.strip()
@@ -70,7 +120,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         if k and v:
             overview.append(f"{k.text.strip()}: {v.text.strip()}")
 
-    # 5. GERÇEK VERİLERDEN TEK SATIRLIK ÖZET (Gemini)
+    # 6. GERÇEK VERİLERDEN TEK SATIRLIK ÖZET (Gemini)
     feature_pill = ""
     raw_specs = "\n".join(bullets[:4] + overview[:4])
     if raw_specs:
@@ -91,9 +141,7 @@ SADECE tek satırlık özeti döndür (ek açıklama veya tırnak koyma):"""
         except Exception as e:
             print(f"[Verifier] Gemini özetleme uyarısı: {e}")
 
-    # 6. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
-    from deal_hunter import parse_price_to_float
-    price_val = parse_price_to_float(live_price_str)
+    # 7. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
     is_lowest_30d = False
     if asin and price_val > 0:
         record_price(asin, "Amazon TR", soup.title.text[:80] if soup.title else "", price_val)
@@ -107,7 +155,11 @@ SADECE tek satırlık özeti döndür (ek açıklama veya tırnak koyma):"""
         "stock_text": avail_text,
         "live_price_str": live_price_str,
         "live_price_val": price_val,
+        "real_strike_val": real_strike_val,
+        "seller_badge": seller_badge,
+        "is_sold_by_amazon": is_sold_by_amazon,
         "coupon_text": coupon_text,
+        "coupon_amount_tl": coupon_amount_tl,
         "feature_pill": feature_pill,
         "is_lowest_30d": is_lowest_30d
     }
@@ -115,7 +167,8 @@ SADECE tek satırlık özeti döndür (ek açıklama veya tırnak koyma):"""
 def verify_deal_before_publish(deal: dict) -> dict:
     """
     Video üretimi veya Telegram paylaşımı öncesi fırsatın son kontrolünü yapar.
-    Stok bitmişse veya fiyat aşırı yükselmişse paylaşımı durdurur.
+    Stok bitmişse, erişim engellenmişse veya fiyat aşırı yükselmişse paylaşımı durdurur.
+    Gerçek üstü çizili fiyatı ve satıcı rozetini günceller.
     """
     store_url = deal.get("store_url", "")
     store_name = deal.get("store_name", "")
@@ -123,9 +176,10 @@ def verify_deal_before_publish(deal: dict) -> dict:
     if "amazon" in store_url.lower() or store_name == "Amazon TR":
         print(f"[Doğrulama] 🔍 Ürün sayfası canlı kontrol ediliyor: {store_url}...")
         v_res = verify_amazon_product(store_url)
-        if not v_res.get("in_stock", True):
-            print(f"[Doğrulama] ❌ ÜRÜN STOKTA YOK! ({v_res.get('stock_text')}). Paylaşım iptal ediliyor.")
-            return {"valid": False, "reason": "Stokta yok"}
+        if not v_res.get("success", False) or not v_res.get("in_stock", False):
+            reason = v_res.get("reason", "Stokta yok veya doğrulanamadı")
+            print(f"[Doğrulama] ❌ ÜRÜN YAYINA UYGUN DEĞİL! ({reason}). Paylaşım iptal ediliyor.")
+            return {"valid": False, "reason": reason}
 
         # Canlı fiyat kontrolü (İndirim bitti mi / fahiş zam geldi mi?)
         if v_res.get("live_price_val", 0) > 0:
@@ -135,20 +189,48 @@ def verify_deal_before_publish(deal: dict) -> dict:
             if orig_p > 0 and live_p > orig_p * 1.15:
                 print(f"[Doğrulama] ❌ FİYAT DEĞİŞMİŞ/İNDİRİM BİTMİŞ! (Eski: {orig_p} TL -> Canlı: {live_p} TL). Paylaşım iptal ediliyor.")
                 return {"valid": False, "reason": "Fiyat artmış / indirim bitmiş"}
-            elif orig_p > 0 and live_p > 0 and abs(live_p - orig_p) > 1.0:
+            elif live_p > 0:
                 deal["new_price"] = f"{int(live_p):,} TL".replace(",", ".") if live_p.is_integer() else f"{live_p:,.2f} TL".replace(",", "X").replace(".", ",").replace("X", ".")
 
-        # Canlı özellik özeti varsa anlaşmaya ekle
+        # Gerçek Liste / Üstü Çizili Fiyat Entegrasyonu (Uydurma liste fiyatını engelle)
+        real_strike = v_res.get("real_strike_val", 0.0)
+        from price_tracker import get_real_previous_price
+        db_prev = get_real_previous_price(v_res.get("asin", ""), "Amazon TR")
+
+        if real_strike > v_res.get("live_price_val", 0):
+            deal["old_price"] = f"{int(real_strike):,} TL".replace(",", ".")
+            deal["has_verified_old_price"] = True
+            calc_pct = round(((real_strike - v_res['live_price_val']) / real_strike) * 100)
+            deal["discount_pct"] = f"-{calc_pct}%"
+            print(f"[Doğrulama] 🏷️ Gerçek Amazon Liste Fiyatı Doğrulandı: {deal['old_price']} (-%{calc_pct})")
+        elif db_prev > v_res.get("live_price_val", 0):
+            deal["old_price"] = f"{int(db_prev):,} TL".replace(",", ".")
+            deal["has_verified_old_price"] = True
+            calc_pct = round(((db_prev - v_res['live_price_val']) / db_prev) * 100)
+            deal["discount_pct"] = f"-{calc_pct}%"
+            print(f"[Doğrulama] 📈 Veritabanı Geçmiş Fiyatı Doğrulandı: {deal['old_price']} (-%{calc_pct})")
+        else:
+            deal["old_price"] = ""
+            deal["has_verified_old_price"] = False
+            print(f"[Doğrulama] ℹ️ Üstü çizili eski fiyat bulunamadı (Tek fiyatlı fırsat olarak işlenecek).")
+
+        # Gerçek Satıcı Rozeti
+        deal["seller_badge"] = v_res.get("seller_badge", "Amazon TR")
+        print(f"[Doğrulama] 🏢 Satıcı Doğrulandı: {deal['seller_badge']}")
+
+        # Kupon indirimi varsa net maliyete yansıt
+        coupon_tl = v_res.get("coupon_amount_tl", 0.0)
+        if coupon_tl > 0:
+            deal["coupon_info"] = v_res["coupon_text"]
+            deal["coupon_amount_tl"] = coupon_tl
+            print(f"[Doğrulama] 🎟️ Kupon Uygulandı: -{coupon_tl:.2f} TL indirim")
+
+        # Canlı özellik özeti varsa ekle
         if v_res.get("feature_pill"):
             deal["feature_pill"] = v_res["feature_pill"]
-            print(f"[Doğrulama] ✨ Gerçek Ürün Özelliği Doğrulandı: {v_res['feature_pill']}")
+            print(f"[Doğrulama] ✨ Gerçek Ürün Özelliği: {v_res['feature_pill']}")
 
-        # Kupon varsa ekle
-        if v_res.get("coupon_text"):
-            deal["coupon_info"] = v_res["coupon_text"]
-            print(f"[Doğrulama] 🎟️ Kupon Fırsatı Tespit Edildi: {v_res['coupon_text']}")
-
-        # Gerçek 30 günün en düşüğü doğrulandı mı?
+        # 30 günün en düşüğü kontrolü
         deal["is_lowest_30d"] = v_res.get("is_lowest_30d", False)
         if deal["is_lowest_30d"]:
             print(f"[Doğrulama] 📉 Veritabanında Son 30 Günün En Düşük Fiyatı Doğrulandı!")

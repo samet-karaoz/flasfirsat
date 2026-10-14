@@ -118,7 +118,14 @@ def process_deal_to_reel(
     from product_verifier import verify_deal_before_publish
     v_info = verify_deal_before_publish(deal)
     if not v_info.get("valid", True):
-        print(f"[Deal Bot] ⏭️ Fırsat yayına uygun değil ({v_info.get('reason', 'Doğrulanamadı')}). Atlanıyor: {deal.get('title')}")
+        reason = v_info.get("reason", "Doğrulanamadı")
+        print(f"[Deal Bot] ⏭️ Fırsat yayına uygun değil ({reason}). Atlanıyor: {deal.get('title')}")
+        if "captcha" in reason.lower() or "koruma" in reason.lower():
+            try:
+                from telegram_notifier import send_telegram_alert
+                send_telegram_alert(f"Amazon Bot Koruması/CAPTCHA algılandı: {deal.get('title')}\nURL: {deal.get('store_url')}")
+            except Exception:
+                pass
         return None
     deal = v_info.get("deal", deal)
 
@@ -129,6 +136,13 @@ def process_deal_to_reel(
     deal["net_cost"] = deal.get("net_cost") or camp_info["net_cost"]
     deal["installment"] = deal.get("installment") or camp_info.get("installment", "")
 
+    # Kupon varsa net maliyetten düş
+    if deal.get("coupon_amount_tl", 0) > 0 and deal.get("net_cost"):
+        from deal_hunter import parse_price_to_float
+        net_val = parse_price_to_float(deal["net_cost"])
+        final_net = max(0.0, net_val - deal["coupon_amount_tl"])
+        deal["net_cost"] = f"{int(final_net):,} TL".replace(",", ".")
+
     print(f"💳 Banka/Nays Avantajı: {deal['bank_campaign']} -> Net: {deal['net_cost']}")
 
     # 1. Ürün Banner'ı Üret (DEV İNDİRİM Sabit Şablon)
@@ -137,7 +151,7 @@ def process_deal_to_reel(
     create_product_banner(
         product_image_path=deal.get("image_path"),
         title=deal.get("title", "Günün Fırsatı"),
-        old_price=deal.get("old_price", "Piyasa Fiyatı"),
+        old_price=deal.get("old_price", ""),
         new_price=deal.get("new_price", "İndirimde"),
         discount_pct=deal.get("discount_pct", "-40%"),
         badge_text="DEV İNDİRİM",
@@ -147,6 +161,9 @@ def process_deal_to_reel(
         installment=deal.get("installment", ""),
         feature_text=deal.get("feature_pill", ""),
         is_lowest_30d=deal.get("is_lowest_30d", False),
+        has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
+        seller_badge_text=deal.get("seller_badge", ""),
+        coupon_text=deal.get("coupon_info", ""),
         output_path=banner_temp
     )
 
@@ -159,7 +176,8 @@ def process_deal_to_reel(
         audio_name=audio_choice,
         output_filename=video_filename,
         discount_pct=deal.get("discount_pct", ""),
-        product_title=deal.get("title", "")
+        product_title=deal.get("title", ""),
+        new_price=deal.get("new_price", "")
     )
 
     # Affiliate Link Dönüşümü

@@ -35,7 +35,8 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
 
     extra_info = f"\nBanka Kampanyası: {bank_campaign}\nNet Maliyet: {net_cost}" if net_cost else ""
-    user_prompt = f"Ürün: {product_title}\nEski Fiyat: {old_price}\nYeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÜrün Linki: {store_url}"
+    price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
+    user_prompt = f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÜrün Linki: {store_url}\nYasal Zorunluluk: Açıklamanın en sonuna mutlaka '#işbirliği #reklam' etiketlerini ekle."
 
     payload = {
         "contents": [{"parts": [{"text": user_prompt}]}],
@@ -46,15 +47,18 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
     with open(req_file, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False)
 
-    def sanitize_max_hashtags(text: str) -> str:
-        """Metindeki hashtag sayısını kesinlikle maksimum 5 ile sınırlar."""
+    def sanitize_caption(text: str) -> str:
+        """Metindeki hashtag sayısını dengeler ve #işbirliği zorunluluğunu garanti eder."""
         import re
+        # Yasal uyum: #işbirliği yoksa ekle
+        if "#işbirliği" not in text.lower():
+            text += "\n\n#işbirliği #reklam"
         tags = re.findall(r"(#[^\s#]+)", text)
-        if len(tags) > 5:
-            extra_tags = tags[5:]
-            for t in extra_tags:
+        # Reklam etiketleri hariç en fazla 5 genel etiket
+        general_tags = [t for t in tags if t.lower() not in ["#işbirliği", "#reklam"]]
+        if len(general_tags) > 5:
+            for t in general_tags[5:]:
                 text = re.sub(re.escape(t) + r"\b", "", text)
-            # Fazla boşlukları temizle
             text = re.sub(r"[ \t]+", " ", text).strip()
         return text
 
@@ -62,33 +66,31 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
         cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
         res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
-        
+
         try:
             data = json.loads(res.stdout)
             if "candidates" in data and len(data["candidates"]) > 0:
                 caption = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                return sanitize_max_hashtags(caption)
+                return sanitize_caption(caption)
         except Exception:
             continue
 
-    # Fallback Caption if all API models fail (Tam 5 etiket)
+    # Fallback Caption if all API models fail
     net_line = f"💳 {bank_campaign} ile Net Maliyet: {net_cost}\n" if net_cost else ""
-    pct_m = re.search(r'(\d+)', str(discount_pct))
-    is_huge = int(pct_m.group(1)) >= 35 if pct_m else False
-    urgency_line = "🚨 DİKKAT: Fiyat hatası olabilir veya her an stok bitebilir!\n" if is_huge else ""
+    old_line = f"❌ Eski Fiyat: {old_price}\n" if old_price else ""
+    pct_line = f" ({discount_pct} İndirim)" if discount_pct and discount_pct != "0%" else ""
 
     fallback = (
-        f"🔥 {product_title} fiyatı çöktü!\n\n"
-        f"❌ Eski Fiyat: {old_price}\n"
-        f"✅ Yeni Fiyat: {new_price} ({discount_pct} İndirim)\n"
+        f"🔥 {product_title} fırsatı yayında!\n\n"
+        f"{old_line}"
+        f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{net_line}"
-        f"{urgency_line}\n"
-        f"{deal_details}\n\n"
+        f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
         f"👉 Yoruma 'LİNK' yaz, satın alma linkini anında DM kutuna yollayalım! 📩\n"
         f"🔗 Tüm linkler profilimizdeki sitede ve Telegram'da!\n\n"
-        f"#indirim #fırsat #teknoloji #kampanya #keşfet"
+        f"#işbirliği #reklam #indirim #fırsat #teknoloji #kampanya"
     )
-    return sanitize_max_hashtags(fallback)
+    return sanitize_caption(fallback)
 
 
 if __name__ == "__main__":

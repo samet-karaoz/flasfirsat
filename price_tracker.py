@@ -77,14 +77,39 @@ def check_if_lowest_30d(product_id: str, current_price: float, store: str = "Ama
 
         prices = [r["price"] for r in rows]
         min_price = min(prices)
-        
-        # Eğer mevcut fiyat geçmişteki en düşük fiyata eşit veya daha ucuzsa
-        is_lowest = (current_price <= min_price) and len(prices) >= 2
+        max_price = max(prices)
+
+        dates = []
+        for r in rows:
+            raw_d = str(r["created_at"])
+            try:
+                d = datetime.fromisoformat(raw_d.split(".")[0])
+                dates.append(d)
+            except Exception:
+                pass
+
+        earliest_date = min(dates) if dates else datetime.now()
+        days_span = (datetime.now() - earliest_date).days
+        distinct_days = len(set(d.strftime("%Y-%m-%d") for d in dates)) if dates else 0
+
+        # Gerçek 30 günün en düşüğü iddiası için mevzuata uygun katı kurallar:
+        # 1. En az 14 gün öncesine dayanan kayıt bulunmalı (aynı gün kurulan veritabanında iddia yasak)
+        # 2. En az 3 farklı günde fiyat kaydı olmalı
+        # 3. Geçmişte mevcut fiyattan daha yüksek bir fiyat kaydedilmiş olmalı (gerçek bir fiyat düşüşü)
+        is_lowest = (
+            days_span >= 14 and
+            distinct_days >= 3 and
+            current_price <= min_price and
+            max_price > current_price
+        )
+
         return {
             "is_lowest": is_lowest,
             "history_count": len(prices),
+            "days_span": days_span,
+            "distinct_days": distinct_days,
             "lowest_seen": min_price,
-            "highest_seen": max(prices)
+            "highest_seen": max_price
         }
     finally:
         conn.close()

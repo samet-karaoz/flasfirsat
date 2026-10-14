@@ -106,3 +106,19 @@ def test_telegram_connection(bot_token: str = None) -> dict:
         return json.loads(res.stdout)
     except Exception:
         return {"ok": False, "error": "Bağlantı hatası"}
+
+def send_telegram_alert(message: str, chat_id: str = None, bot_token: str = None) -> bool:
+    """Sistem hatalarını veya CAPTCHA engellerini anında Telegram üzerinden bildirir."""
+    token = bot_token or TELEGRAM_BOT_TOKEN
+    cid = chat_id or TELEGRAM_CHAT_ID
+    if not token or not cid:
+        return False
+    msg_cmd = get_curl_cmd([
+        "-s",
+        "-F", f"chat_id={cid}",
+        "-F", f"text=⚠️ <b>[OTOMASYON UYARISI]</b>\n\n{message}",
+        "-F", "parse_mode=HTML",
+        f"https://api.telegram.org/bot{token}/sendMessage"
+    ])
+    res = subprocess.run(msg_cmd, capture_output=True, text=True)
+    return res.returncode == 0

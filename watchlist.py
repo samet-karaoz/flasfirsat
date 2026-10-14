@@ -93,10 +93,26 @@ def add_to_watchlist(asin_or_url: str, title: str, base_price: float, drop_thres
     save_watchlist(items)
     return new_item
 
+def sync_watchlist_baselines():
+    """Tüm izleme listesindeki taban fiyatları canlı gerçek fiyatlarla eşitler (uydurma taban fiyat kalmaz)."""
+    items = load_watchlist()
+    updated = False
+    for it in items:
+        if not it.get("baseline_verified", False):
+            res = verify_amazon_product(it.get("url") or it.get("asin"))
+            if res.get("success") and res.get("live_price_val", 0) > 0:
+                it["base_price"] = res["live_price_val"]
+                it["baseline_verified"] = True
+                it["target_price"] = round(res["live_price_val"] * (1 - it.get("drop_threshold_pct", 20.0) / 100), 2)
+                updated = True
+                print(f"[Watchlist] 🎯 Taban Fiyat Gerçek Veriyle Güncellendi: {it['title']} -> {it['base_price']} TL")
+    if updated:
+        save_watchlist(items)
+
 def check_watchlist_drops(min_drop_pct: float = 20.0) -> list:
     """
     İzleme listesindeki popüler ürünleri canlı sorgular.
-    Fiyatı taban fiyata göre %20 veya daha fazla düşmüş fırsatları tespit eder.
+    Fiyatı GERÇEK doğrulanmış taban fiyata göre %20 veya daha fazla düşmüş fırsatları tespit eder.
     """
     items = load_watchlist()
     triggered_deals = []
@@ -105,7 +121,6 @@ def check_watchlist_drops(min_drop_pct: float = 20.0) -> list:
 
     for item in items:
         url = item.get("url")
-        base_p = float(item.get("base_price", 0))
         asin = item.get("asin", "")
 
         res = verify_amazon_product(url or asin)
@@ -113,7 +128,19 @@ def check_watchlist_drops(min_drop_pct: float = 20.0) -> list:
             continue
 
         live_price = res.get("live_price_val", 0)
-        if live_price <= 0 or base_p <= 0:
+        if live_price <= 0:
+            continue
+
+        # Eğer ürünün taban fiyatı henüz ilk kez taranıyorsa, mevcut fiyatı taban kabul et
+        if not item.get("baseline_verified", False):
+            item["base_price"] = live_price
+            item["baseline_verified"] = True
+            save_watchlist(items)
+            print(f"[İzleme] 📌 İlk Taban Fiyat Kaydedildi: {item['title']} = {live_price:.0f} TL")
+            continue
+
+        base_p = float(item.get("base_price", 0))
+        if base_p <= 0:
             continue
 
         # Düşüş oranı

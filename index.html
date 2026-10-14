@@ -14,7 +14,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Google Analytics ID ayarlanmadı. Yerel telemetri ve etkileşim motoru çalışıyor. -->
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6FTHRHYFR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-E6FTHRHYFR', {
+            page_title: 'Flaş Fırsat ⚡ | Dip Fiyat Radarı',
+            anonymize_ip: true
+        });
+    </script>
     <style>
         :root {
             --bg-base: #0B0D12;
@@ -1273,8 +1284,8 @@
 
         // --- 2. ZİYARETÇİ VE ETKİLEŞİM TELEMETRİ MOTORU ---
         const STATS_KEY = 'flas_stats_v1';
-        const gaConfigured = false;
-        const gaIdSafe = '';
+        const gaConfigured = true;
+        const gaIdSafe = 'G-E6FTHRHYFR';
 
         function getStoredStats() {
             try {

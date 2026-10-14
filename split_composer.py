@@ -253,7 +253,7 @@ def select_smart_reaction_hook(discount_pct: str = "", product_title: str = "", 
 
 def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) -> str:
     """
-    Alt meme videosunun üstüne binecek şeffaf, modern glassmorphic reaksiyon başlığı üretir.
+    Alt meme videosunun üstüne binecek şeffaf, modern glassmorphic ve büyük reaksiyon başlığı üretir.
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
@@ -263,26 +263,28 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    f_hook = get_font("segoeuib", 26)
+    f_hook = get_font("segoeuib", 32)  # Büyütüldü: 32px
     clean_text = reaction_text.strip()
     text_w = draw.textlength(clean_text, font=f_hook)
 
-    box_w = min(W - 60, text_w + 50)
-    box_h = 56
+    box_w = min(W - 40, text_w + 64)
+    box_h = 68  # Büyütüldü: 68px
     box_x = (W - box_w) // 2
-    box_y = 24  # Meme videosunun tam üst kenarından 24px aşağıda
+    box_y = 22  # Meme videosunun tam üst kenarında
 
     # Koyu füme yarı saydam arka plan kapsülü
     draw.rounded_rectangle(
         (box_x, box_y, box_x + box_w, box_y + box_h),
-        radius=14,
-        fill=(15, 23, 42, 225),
-        outline=(255, 255, 255, 90),
+        radius=16,
+        fill=(15, 23, 42, 230),
+        outline=(255, 255, 255, 100),
         width=2
     )
 
+    t_bbox = draw.textbbox((0, 0), clean_text, font=f_hook)
+    t_h = t_bbox[3] - t_bbox[1]
     tx = (W - text_w) // 2
-    ty = box_y + (box_h - 26) // 2 - 2
+    ty = box_y + (box_h - t_h) // 2 - t_bbox[1]
     draw.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255, 255))
 
     img.save(output_path, "PNG")
@@ -312,7 +314,7 @@ def create_product_banner(
     2. ManyChat CTA Bandı (💬 Satın alma linki için yoruma "LİNK" yaz)
     3. Soft 3D Drop Shadow & Derinlik
     4. Doğrulanmış Güven Rozeti (🛡️ %100 Orijinal • Doğrulanmış)
-    5. Çift Fiyat & Net Maliyet Karşılaştırma Kartı
+    5. Çift Fiyat & Net Maliyet Karşılaştırma Kartı (Baskın İndirim Fiyatı & Ortalanmış Üstü Çizili Eski Fiyat)
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "product_top.png")
@@ -328,9 +330,9 @@ def create_product_banner(
     f_badge = get_font("segoeuib", 26)
     f_label = get_font("segoeuib", 21)
     f_trust = get_font("segoeuib", 19)
-    f_old_price = get_font("segoeuib", 38)
+    f_old_price = get_font("segoeuib", 30)  # Piyasa fiyatı daha kibar ve küçük: 30px
     f_new_label = get_font("segoeuib", 21)
-    f_new_price = get_font("segoeuib", 54)
+    f_new_price = get_font("segoeuib", 62)  # İndirimli fiyat son derece baskın: 62px
     f_net = get_font("segoeuib", 20)
     f_pct = get_font("segoeuib", 28)
     f_savings = get_font("segoeuib", 22)
@@ -433,16 +435,20 @@ def create_product_banner(
     draw.text((pill_x + 44, 722), sav_text, font=f_savings, fill=(255, 255, 255))
 
     # 6. Fiyat Kartları: Çift Kartlı Premium Tasarım
-    # Sol Kart: Piyasa Fiyatı
+    # Sol Kart: Piyasa Fiyatı (Daha kibar, üstü tam ortadan çizili)
     old_box = (40, 758, 420, 888)
     draw.rounded_rectangle(old_box, radius=16, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
     draw.text((old_box[0] + 20, 770), "PİYASA FİYATI", font=f_label, fill=(148, 163, 184))
     old_str = old_price if old_price else "Piyasa Fiyatı"
     op_w = draw.textlength(old_str, font=f_old_price)
     op_x = old_box[0] + (old_box[2] - old_box[0] - op_w) // 2
-    draw.text((op_x, 810), old_str, font=f_old_price, fill=(100, 116, 139))
-    # Üstü Çizili Kırmızı Çizgi (Tam Rakamların Ortasından Geçer)
-    draw.line((op_x - 6, 827, op_x + op_w + 6, 827), fill=(239, 68, 68), width=3)
+    op_y = 814
+    draw.text((op_x, op_y), old_str, font=f_old_price, fill=(148, 163, 184))
+    
+    # Tam merkezden geçen kırmızı çizgi (textbbox ile tam ortalanır)
+    tbbox = draw.textbbox((op_x, op_y), old_str, font=f_old_price)
+    strike_y = (tbbox[1] + tbbox[3]) // 2
+    draw.line((op_x - 8, strike_y, op_x + op_w + 8, strike_y), fill=(239, 68, 68), width=3)
 
     # Orta Geçiş İkonu (Chevron >)
     arrow_box = (436, 800, 484, 846)
@@ -451,14 +457,14 @@ def create_product_banner(
     draw.line((cx - 4, cy - 8, cx + 4, cy), fill=(234, 88, 12), width=3)
     draw.line((cx + 4, cy, cx - 4, cy + 8), fill=(234, 88, 12), width=3)
 
-    # Sağ Kart: İndirimli Yeni Fiyat (Zümrüt Yeşili)
+    # Sağ Kart: İndirimli Yeni Fiyat (Baskın Zümrüt Yeşili 62px)
     new_box = (500, 758, W - 40, 888)
     draw.rounded_rectangle(new_box, radius=16, fill=(236, 253, 245), outline=(16, 185, 129), width=2)
-    draw.ellipse((new_box[0] + 20, 778, new_box[0] + 28, 786), fill=(5, 150, 105))
-    draw.text((new_box[0] + 34, 768), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
+    draw.ellipse((new_box[0] + 20, 776, new_box[0] + 28, 784), fill=(5, 150, 105))
+    draw.text((new_box[0] + 34, 767), "İNDİRİMLİ FIRSAT FİYATI", font=f_new_label, fill=(4, 120, 87))
 
     new_str = new_price if new_price else "Fırsat Fiyatı"
-    draw.text((new_box[0] + 20, 796), new_str, font=f_new_price, fill=(5, 150, 105))
+    draw.text((new_box[0] + 20, 792), new_str, font=f_new_price, fill=(5, 150, 105))
 
     # Net / Taksit / Kampanya alt satırı
     sub_parts = []
@@ -470,7 +476,7 @@ def create_product_banner(
         sub_parts.append(clean_inst)
     if sub_parts:
         sub_str = "  •  ".join(sub_parts)
-        draw.text((new_box[0] + 20, 856), sub_str, font=f_net, fill=(4, 120, 87))
+        draw.text((new_box[0] + 20, 858), sub_str, font=f_net, fill=(4, 120, 87))
 
     # 7. ManyChat CTA Bandı (Alt Şerit 1080x62)
     cta_box = (0, 898, W, 960)
@@ -517,10 +523,10 @@ def build_split_screen_video(
     """
     Üst yarıda ürün banner'ı (1080x960),
     Alt yarıda viral meme videosu (1080x960),
-    Meme üzerinde akıllı reaksiyon kancası (Reaction Hook),
+    Meme üzerinde akıllı reaksiyon kancası (Reaction Hook - 32px),
     En altta dinamik neon ilerleme çubuğu (Animated Progress Bar),
-    Arka planda meme sesi veya phonk müzik ile 1080x1920 MP4 video üretir.
-    Fiyat hatası (%40+) durumunda ilk 1.5 saniyeye dikkat çekici alarm miksler.
+    Arka planda meme'in orijinal sesi veya phonk müzik ile 1080x1920 MP4 video üretir.
+    (Alarm sesi tamamen kaldırılmıştır).
     """
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(TEMP_DIR, exist_ok=True)
@@ -538,7 +544,7 @@ def build_split_screen_video(
     if not os.path.exists(bottom_meme_path):
         raise FileNotFoundError(f"Meme videosu bulunamadı: {bottom_meme_path}")
 
-    # 2. Akıllı Reaksiyon Kancası (Reaction Hook) Overlay Üret
+    # 2. Akıllı Reaksiyon Kancası (Reaction Hook) Overlay Üret (Büyük ve Okunaklı)
     if not reaction_text:
         reaction_text = select_smart_reaction_hook(discount_pct, product_title, is_price_error)
     print(f"[Montaj] 🎯 Reaksiyon Başlığı (Hook): {reaction_text}")
@@ -575,15 +581,6 @@ def build_split_screen_video(
     if use_external_audio:
         print(f"[Montaj] Seçilen Harici Ses: {os.path.basename(audio_path)}")
 
-    # Fiyat hatası alarm kontrolü
-    pct_m = re.search(r'(\d+)', str(discount_pct))
-    pct_val = int(pct_m.group(1)) if pct_m else 0
-    price_error_active = is_price_error or pct_val >= 40
-    alarm_wav = os.path.join(AUDIO_DIR, "alarm.wav")
-    has_alarm = price_error_active and os.path.exists(alarm_wav)
-    if has_alarm:
-        print("[Montaj] 🚨 FİYAT HATASI ACİLİYET ALARMI VİDEOYA EKLENİYOR!")
-
     is_image = top_source.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
     scale_top = "scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA" if is_image else "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
     scale_bottom = "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
@@ -608,52 +605,26 @@ def build_split_screen_video(
     )
 
     if not use_external_audio:
-        # Meme sesi kullanılıyor
-        if has_alarm:
-            cmd += ["-i", alarm_wav]
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
-                f"[1:a]volume=1.0[mus];"
-                f"[3:a]volume=0.85[alr];"
-                f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
-            )
-        else:
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
-                f"[1:a]volume=1.0[a]"
-            )
+        # Meme'in kendi sesi (alarm olmadan temiz ses miksi)
+        filter_complex = (
+            f"[0:v]{scale_top}[top];"
+            f"[1:v]{scale_bottom}[bottom_raw];"
+            f"[bottom_raw][2:v]overlay=0:0[bottom];"
+            f"[top][bottom]vstack=inputs=2[stacked];"
+            f"[stacked]{progress_bar_filter}[v];"
+            f"[1:a]volume=1.0[a]"
+        )
     else:
-        # Harici ses kullanılıyor
+        # Harici fon müziği
         cmd += ["-i", audio_path]
-        if has_alarm:
-            cmd += ["-i", alarm_wav]
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
-                f"[3:a]volume=1.0[mus];"
-                f"[4:a]volume=0.85[alr];"
-                f"[mus][alr]amix=inputs=2:duration=first:dropout_transition=2[a]"
-            )
-        else:
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"[stacked]{progress_bar_filter}[v];"
-                f"[3:a]volume=1.0[a]"
-            )
+        filter_complex = (
+            f"[0:v]{scale_top}[top];"
+            f"[1:v]{scale_bottom}[bottom_raw];"
+            f"[bottom_raw][2:v]overlay=0:0[bottom];"
+            f"[top][bottom]vstack=inputs=2[stacked];"
+            f"[stacked]{progress_bar_filter}[v];"
+            f"[3:a]volume=1.0[a]"
+        )
 
     cmd += [
         "-filter_complex", filter_complex,

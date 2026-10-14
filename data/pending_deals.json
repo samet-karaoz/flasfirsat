@@ -1,0 +1,23 @@
+{
+  "deal_1791947098": {
+    "deal_id": "deal_1791947098",
+    "message_id": 37,
+    "chat_id": "6101216739",
+    "deal": {
+      "title": "Philips LatteGo Tam Otomatik Espresso Makinesi",
+      "old_price": "22.999 TL",
+      "new_price": "14.999 TL",
+      "discount_pct": "-35%",
+      "store_name": "Amazon TR",
+      "net_cost": "14.249 TL",
+      "bank_campaign": "Amazon %5 İade"
+    },
+    "video_path": "output/20261014_053438_philips_lattego_espresso_makin.mp4",
+    "caption_text": "Philips LatteGo test caption",
+    "product_url": "https://www.amazon.com.tr/dp/B08H99BPJN",
+    "file_id": "BAACAgQAAxkDAAMlas7xYX5ftcI5ncXfx-SqPVAB4qMAAoYeAAK8k3lS_sCNveNhcus9BA",
+    "public_video_url": "https://api.telegram.org/file/bot8742183075:AAGYA_Y3TkOiy7kBaIwVaZ6A6NVG4uKr5kU/videos/file_0.mp4",
+    "status": "pending",
+    "created_at": "2026-10-14 06:05:07"
+  }
+}

@@ -9,7 +9,7 @@ from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, p
 from split_composer import create_product_banner, build_split_screen_video, AVAILABLE_MEMES, AVAILABLE_AUDIOS
 from top3_composer import build_top3_video, generate_top3_caption
 from caption_generator import generate_viral_caption
-from telegram_notifier import send_telegram_deal
+from telegram_notifier import send_telegram_deal, send_telegram_deal_for_approval
 
 from affiliate import get_affiliate_url
 from web_showcase import add_deal_to_web
@@ -93,7 +93,8 @@ def process_deal_to_reel(
     meme_choice: str = None,
     audio_choice: str = None,
     output_prefix: str = None,
-    upload: bool = True
+    upload: bool = True,
+    require_approval: bool = True
 ) -> dict:
     """
     Tek bir fırsat nesnesinden (deal dict):
@@ -214,9 +215,12 @@ def process_deal_to_reel(
     sub = get_product_subtype(deal.get("title", ""))
     set_last_subtype(sub)
 
-    # 4. Telegram Bildirimi (Telefona Video + Açıklama + Ürün Linki Gönder)
+    # 4. Telegram Bildirimi (Onay Butonlu veya Doğrudan Gönderim)
     if upload:
-        send_telegram_deal(video_path, caption_text, product_url=aff_url)
+        if require_approval:
+            send_telegram_deal_for_approval(deal, video_path, caption_text, product_url=aff_url)
+        else:
+            send_telegram_deal(video_path, caption_text, product_url=aff_url)
     else:
         print("\n[Telegram] ⏸️ Yükleme atlandı (--no-upload aktif). Video ve açıklama sadece yerel olarak hazırlandı.")
 
@@ -298,6 +302,7 @@ Kullanım Şekilleri:
     parser.add_argument("--no-upload", action="store_true", help="Videoyu ve metni hazırla ancak Telegram'a ve web vitrinine yükleme yapma")
     parser.add_argument("--min-discount", type=int, default=25, help="Minimum indirim yüzdesi eşiği (Varsayılan: 25)")
     parser.add_argument("--watchlist", action="store_true", help="İzleme listesindeki ürünlerin fiyat düşüşlerini kontrol et")
+    parser.add_argument("--direct", action="store_true", help="Yönetici onayı beklemeden doğrudan kanala ve sosyal medyaya yayınla (Varsayılan: Onay butonlu güvenli mod)")
 
     args = parser.parse_args()
 
@@ -361,7 +366,7 @@ Kullanım Şekilleri:
             return
         print(f"🚨 {len(drops)} adet fiyat düşüş alarmı yakalandı! Videolar üretiliyor...")
         for deal in drops[:args.count]:
-            process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+            process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
         return
 
     # Nöbetçi Modu (Full Aktif / Arka Plan)
@@ -381,7 +386,7 @@ Kullanım Şekilleri:
                 for drop_deal in w_drops:
                     if get_deal_sig(drop_deal) not in history:
                         print(f"🚨 [Watchlist Alarmı] {drop_deal['title']} için öncelikli video üretiliyor!")
-                        res = process_deal_to_reel(drop_deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+                        res = process_deal_to_reel(drop_deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
                         if res:
                             history.add(get_deal_sig(drop_deal))
             except Exception as e:
@@ -393,7 +398,7 @@ Kullanım Şekilleri:
             if new_deals:
                 print(f"🔔 {len(new_deals)} adet YENİ sıcak indirim yakalandı! Videolar hazırlanıyor...")
                 for deal in new_deals[:2]:
-                    res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+                    res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
                     if res:
                         history.add(get_deal_sig(deal))
             else:
@@ -441,7 +446,7 @@ Kullanım Şekilleri:
             deal = chosen_deals[candidate_idx]
             candidate_idx += 1
             print(f">>> Fırsat Adayı {candidate_idx}/{len(chosen_deals)} işleniyor: [{deal.get('store_name')}] {deal.get('title')}")
-            res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+            res = process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
             if res:
                 results.append(res)
 
@@ -458,7 +463,7 @@ Kullanım Şekilleri:
         if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
         if args.hook: deal["hook"] = args.hook
 
-        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
 
     elif args.url:
         print(f"🔗 [MOD: WEB URL ANALİZİ İLE ÜRETİM]")
@@ -470,7 +475,7 @@ Kullanım Şekilleri:
         if args.badge != "GÜNÜN FIRSATI": deal["badge"] = args.badge
         if args.hook: deal["hook"] = args.hook
 
-        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload)
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
 
     elif args.manual or args.title:
         print("✍️ [MOD: MANUEL GİRİŞ İLE ÜRETİM]")
@@ -483,7 +488,7 @@ Kullanım Şekilleri:
             "hook": args.hook or "Piyasanın çok altında, kaçırılmayacak fırsat!",
             "image_path": args.image or os.path.join(TEMP_DIR, "hunt_prod_1.jpg")
         }
-        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio)
+        process_deal_to_reel(deal, meme_choice=args.meme, audio_choice=args.audio, upload=not args.no_upload, require_approval=not args.direct)
 
 if __name__ == "__main__":
     main()

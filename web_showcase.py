@@ -82,6 +82,8 @@ def add_deal_to_web(deal: dict):
         "net_cost": net_cost,
         "installment": installment,
         "image_url": web_img_rel,
+        "is_expired": False,
+        "expired_reason": "",
         "date_added": datetime.now().strftime("%d.%m.%Y %H:%M")
     }
 
@@ -124,6 +126,77 @@ def remove_deal_from_web(identifier: str) -> bool:
         print(f"[Web] 🗑️ Ürün vitrinden silindi: {identifier}")
         return True
     return False
+
+def check_and_update_all_deals_status() -> dict:
+    """
+    Web vitrinindeki tüm ürünlerin Amazon canlı stok ve fiyat durumunu denetler.
+    Stok bitmişse veya indirim sona ermişse ürünü otomatik olarak is_expired=True yapar
+    ve web vitrinini yeniden derleyip canlı siteye yansıtır.
+    """
+    ensure_web_setup()
+    deals = load_deals()
+    if not deals:
+        return {"updated": False, "expired_count": 0}
+
+    from product_verifier import verify_amazon_product
+    from deal_hunter import parse_price_to_float
+
+    changes_made = False
+    expired_count = 0
+
+    print("\n[Web Vitrini] 🔍 Canlı stok ve fiyat kontrolü başlatılıyor...")
+
+    for d in deals:
+        url = d.get("store_url", "")
+        # Yalnızca Amazon ürünlerini kontrol et
+        if "amazon" in url.lower() or d.get("store_name") == "Amazon TR":
+            title = d.get("title", "Ürün")
+            try:
+                v_res = verify_amazon_product(url)
+                if not v_res.get("success", False):
+                    continue
+
+                in_stock = v_res.get("in_stock", True)
+                live_price = v_res.get("live_price_val", 0.0)
+                original_deal_price = parse_price_to_float(d.get("new_price", ""))
+
+                was_expired = d.get("is_expired", False)
+
+                # 1. Stok bitmiş mi?
+                if not in_stock:
+                    d["is_expired"] = True
+                    d["expired_reason"] = "Stok Tükendi"
+                    if not was_expired:
+                        changes_made = True
+                        expired_count += 1
+                        print(f"[Web Vitrini] 🔴 Stok Tükendi: {title}")
+
+                # 2. Fiyat artmış mı / indirim bitmiş mi? (Örn: %12'den fazla zam gelmişse)
+                elif original_deal_price > 0 and live_price > (original_deal_price * 1.12):
+                    d["is_expired"] = True
+                    d["expired_reason"] = "İndirim Bitti"
+                    if not was_expired:
+                        changes_made = True
+                        expired_count += 1
+                        print(f"[Web Vitrini] 🔴 İndirim Bitti (Eski: {original_deal_price} TL -> Canlı: {live_price} TL): {title}")
+
+                # 3. Eğer stok geri geldiyse ve indirim devam ediyorsa aktife al
+                elif in_stock and original_deal_price > 0 and live_price <= (original_deal_price * 1.05) and was_expired:
+                    d["is_expired"] = False
+                    d["expired_reason"] = ""
+                    changes_made = True
+                    print(f"[Web Vitrini] 🟢 Fırsat Yeniden Aktif: {title}")
+
+            except Exception as e:
+                print(f"[Web Vitrini] Kontrol hatası ({title}): {e}")
+
+    if changes_made:
+        save_deals(deals)
+        render_web_html(deals)
+        push_to_github()
+        print(f"[Web Vitrini] 🚀 Vitrin güncellendi! {expired_count} adet ürünün durumu yenilendi.")
+
+    return {"updated": changes_made, "expired_count": expired_count}
 
 def push_to_github():
     try:
@@ -198,13 +271,31 @@ def render_web_html(deals: list = None):
             safe_store = store.replace('"', '&quot;')
             safe_price = new_p.replace('"', '&quot;')
 
+            # Expired Durum Kontrolü
+            is_expired = d.get("is_expired", False)
+            expired_reason = d.get("expired_reason", "İndirim Bitti") or "İndirim Bitti"
+            status_attr = "expired" if is_expired else "active"
+            card_class = "deal-card expired-card" if is_expired else "deal-card"
+
+            expired_badge_html = f'<span class="badge-expired">🔴 {expired_reason.upper()}</span>' if is_expired else ""
+            buy_btn_html = (
+                f'<a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="buy-btn expired-btn" data-deal-id="{deal_id}" data-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">'
+                f'⌛ İndirim Sona Erdi (Fiyatı Gör)'
+                f'</a>'
+            ) if is_expired else (
+                f'<a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="{deal_id}" data-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">'
+                f'🔥 Fırsata Git & Satın Al'
+                f'</a>'
+            )
+
             cards_html += f"""
-            <div class="deal-card" data-title="{title.lower()} {store.lower()}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
+            <div class="{card_class}" data-status="{status_attr}" data-title="{title.lower()} {store.lower()}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
                 <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="{safe_title}">
                     <div class="card-img-wrap">
                         <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
                         <span class="badge-store {store_class}">{store}</span>
                         <span class="badge-discount">{disc}</span>
+                        {expired_badge_html}
                     </div>
                 </a>
                 <div class="card-content">
@@ -230,9 +321,7 @@ def render_web_html(deals: list = None):
                         </div>
                     </div>
 
-                    <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="{deal_id}" data-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
-                        🔥 Fırsata Git & Satın Al
-                    </a>
+                    {buy_btn_html}
                 </div>
             </div>
 """
@@ -698,6 +787,107 @@ def render_web_html(deals: list = None):
             grid-column: 1 / -1;
         }
 
+        /* Filter Tabs (Devam Edenler / Bitenler) */
+        .filter-tabs-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+        }
+
+        .filter-tabs-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 99px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-tab:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, #FF5722, #E64A19);
+            color: #ffffff;
+            border-color: #FF5722;
+            box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+        }
+
+        .tab-badge {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .filter-tab.active .tab-badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        /* Expired Deal Card Styles */
+        .deal-card.expired-card {
+            opacity: 0.65;
+            filter: grayscale(0.5);
+            border-color: rgba(239, 68, 68, 0.25);
+            transition: all 0.3s;
+        }
+
+        .deal-card.expired-card:hover {
+            opacity: 0.92;
+            filter: grayscale(0.15);
+            border-color: rgba(239, 68, 68, 0.45);
+        }
+
+        .badge-expired {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #EF4444, #B91C1C);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.76rem;
+            padding: 5px 11px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);
+            z-index: 10;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        .buy-btn.expired-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #94A3B8;
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+
+        .buy-btn.expired-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #FCA5A5;
+            transform: scale(1.01);
+        }
+
         footer {
             text-align: center;
             margin-top: 50px;
@@ -1129,6 +1319,18 @@ def render_web_html(deals: list = None):
             </div>
         </div>
 
+        <div class="filter-tabs-wrapper">
+            <button class="filter-tab active" data-filter="active" onclick="setStatusFilter('active', this)">
+                ⚡ Devam Eden Fırsatlar <span class="tab-badge" id="activeBadge">0</span>
+            </button>
+            <button class="filter-tab" data-filter="all" onclick="setStatusFilter('all', this)">
+                📦 Tüm Fırsatlar <span class="tab-badge" id="allBadge">0</span>
+            </button>
+            <button class="filter-tab" data-filter="expired" onclick="setStatusFilter('expired', this)">
+                ⌛ Biten İndirimler <span class="tab-badge" id="expiredBadge">0</span>
+            </button>
+        </div>
+
         <div class="deals-grid" id="dealsGrid">
 {{CARDS_HTML}}
         </div>
@@ -1165,15 +1367,49 @@ def render_web_html(deals: list = None):
     </dialog>
 
     <script>
-        // --- 1. ARAMA VE FİLTRELEME MOTORU ---
+        // --- 1. ARAMA VE KATEGORİ FİLTRELEME MOTORU (Aktif / Bitenler) ---
+        let currentStatusFilter = 'active';
+
+        function setStatusFilter(status, btn) {
+            currentStatusFilter = status;
+            document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            filterDeals();
+        }
+
+        function updateBadges() {
+            const cards = document.querySelectorAll('.deal-card');
+            let activeTotal = 0;
+            let expiredTotal = 0;
+            cards.forEach(card => {
+                if (card.getAttribute('data-status') === 'expired') {
+                    expiredTotal++;
+                } else {
+                    activeTotal++;
+                }
+            });
+            const ab = document.getElementById('activeBadge');
+            const alb = document.getElementById('allBadge');
+            const eb = document.getElementById('expiredBadge');
+            if (ab) ab.textContent = activeTotal;
+            if (alb) alb.textContent = cards.length;
+            if (eb) eb.textContent = expiredTotal;
+        }
+
         let searchDebounce = null;
         function filterDeals() {
             const input = document.getElementById('searchInput').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.deal-card');
             let visibleCount = 0;
+
             cards.forEach(card => {
-                const title = card.getAttribute('data-title') || '';
-                if (title.includes(input)) {
+                const title = (card.getAttribute('data-title') || '').toLowerCase();
+                const cardStatus = card.getAttribute('data-status') || 'active';
+
+                const matchesSearch = !input || title.includes(input);
+                const matchesStatus = (currentStatusFilter === 'all') || (cardStatus === currentStatusFilter);
+
+                if (matchesSearch && matchesStatus) {
                     card.style.display = 'flex';
                     visibleCount++;
                 } else {
@@ -1549,6 +1785,14 @@ def render_web_html(deals: list = None):
                 renderStatsUI();
             }
         }
+
+        // İlk açılışta rozet sayılarını hesapla ve aktif fırsatları filtrele
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBadges();
+            filterDeals();
+        });
+        updateBadges();
+        filterDeals();
     </script>
 </body>
 </html>

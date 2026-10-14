@@ -231,6 +231,13 @@ def process_deal_to_reel(
             add_deal_to_web(deal)
         except Exception as e:
             print(f"[Web] Vitrine ekleme uyarısı: {e}")
+
+        # 5b. Web Vitrinindeki Tüm Fırsatların Canlı Stok ve İndirim Durumunu Denetle
+        try:
+            from web_showcase import check_and_update_all_deals_status
+            check_and_update_all_deals_status()
+        except Exception as e:
+            print(f"[Web] Canlı stok ve fırsat denetim uyarısı: {e}")
     else:
         print("[Web] ⏸️ Web vitrinine ekleme atlandı (--no-upload aktif).")
 

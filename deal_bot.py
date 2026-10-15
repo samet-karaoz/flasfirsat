@@ -6,7 +6,7 @@ import argparse
 import random
 import datetime
 from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, parse_deal_from_image, parse_deal_from_url, get_product_subtype
-from split_composer import create_product_banner, build_split_screen_video, AVAILABLE_MEMES, AVAILABLE_AUDIOS
+from split_composer import create_product_banner, build_split_screen_video, AVAILABLE_MEMES, AVAILABLE_AUDIOS, select_smart_meme
 from top3_composer import build_top3_video, generate_top3_caption
 from caption_generator import generate_viral_caption
 from telegram_notifier import send_telegram_deal, send_telegram_deal_for_approval
@@ -157,9 +157,15 @@ def process_deal_to_reel(
     except Exception as emv:
         print(f"[Deal Bot] Piyasa doğrulama uyarısı: {emv}")
 
-    # 1. Ürün Banner'ı Üret (DEV İNDİRİM Sabit Şablon)
-    banner_temp = os.path.join(TEMP_DIR, f"banner_{base_name}.png")
-    print("[1/3] 🎨 Üst banner (1080x960) tasarlanıyor...")
+    # 0. Akıllı Meme Seçimi (Tek Seferde Seçilir, Mükerrerliği Engeller & Her İki Varyantta Aynı Kalır)
+    if not meme_choice:
+        chosen_meme = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""))
+    else:
+        chosen_meme = meme_choice
+
+    # 1a. Instagram Banner'ı Üret (💬 Yoruma LİNK Yazın CTA)
+    banner_ig = os.path.join(TEMP_DIR, f"banner_{base_name}_ig.png")
+    print("[1/3] 🎨 Instagram bannerı (Yoruma LİNK yazın) tasarlanıyor...")
     create_product_banner(
         product_image_path=deal.get("image_path"),
         title=deal.get("title", "Günün Fırsatı"),
@@ -177,17 +183,57 @@ def process_deal_to_reel(
         seller_badge_text=deal.get("seller_badge", ""),
         coupon_text=deal.get("coupon_info", ""),
         market_badge=deal.get("market_badge", ""),
-        output_path=banner_temp
+        cta_type="instagram",
+        output_path=banner_ig
     )
 
-    # 2. Viral Split-Screen Video Derle (Akıllı Meme Eşleştirme - Ard arda aynı meme gelmez)
+    # 1b. YouTube Shorts Banner'ı Üret (👉 İndirim Linkine BİO'DAN Ulaşabilirsiniz CTA)
+    banner_yt = os.path.join(TEMP_DIR, f"banner_{base_name}_yt.png")
+    print("[1/3] 🎨 YouTube Shorts bannerı (BİO'DAN link) tasarlanıyor...")
+    create_product_banner(
+        product_image_path=deal.get("image_path"),
+        title=deal.get("title", "Günün Fırsatı"),
+        old_price=deal.get("old_price", ""),
+        new_price=deal.get("new_price", "İndirimde"),
+        discount_pct=deal.get("discount_pct", "-40%"),
+        badge_text="DEV İNDİRİM",
+        store_name=deal.get("store_name", "Amazon TR"),
+        bank_campaign=deal.get("bank_campaign", ""),
+        net_cost=deal.get("net_cost", ""),
+        installment=deal.get("installment", ""),
+        feature_text=deal.get("feature_pill", ""),
+        is_lowest_30d=deal.get("is_lowest_30d", False),
+        has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
+        seller_badge_text=deal.get("seller_badge", ""),
+        coupon_text=deal.get("coupon_info", ""),
+        market_badge=deal.get("market_badge", ""),
+        cta_type="youtube",
+        output_path=banner_yt
+    )
+
+    # 2a. Instagram / Genel Viral Video Derle
     video_filename = f"{base_name}.mp4"
-    print(f"[2/3] 🎥 Video derleniyor (Split Screen 1080x1920)...")
+    print(f"[2/3] 🎥 Instagram / Genel video derleniyor ({chosen_meme})...")
     video_path = build_split_screen_video(
-        top_source=banner_temp,
-        meme_name=meme_choice,
+        top_source=banner_ig,
+        meme_name=chosen_meme,
         audio_name=audio_choice,
         output_filename=video_filename,
+        discount_pct=deal.get("discount_pct", ""),
+        product_title=deal.get("title", ""),
+        new_price=deal.get("new_price", ""),
+        reaction_text=deal.get("reaction_text"),
+        enable_voiceover=False
+    )
+
+    # 2b. YouTube Shorts Özel Videosu Derle
+    yt_video_filename = f"{base_name}_youtube.mp4"
+    print(f"[2/3] 🎥 YouTube Shorts videosu derleniyor ({chosen_meme})...")
+    youtube_video_path = build_split_screen_video(
+        top_source=banner_yt,
+        meme_name=chosen_meme,
+        audio_name=audio_choice,
+        output_filename=yt_video_filename,
         discount_pct=deal.get("discount_pct", ""),
         product_title=deal.get("title", ""),
         new_price=deal.get("new_price", ""),
@@ -232,7 +278,7 @@ def process_deal_to_reel(
     # 4. Telegram Bildirimi (Onay Butonlu veya Doğrudan Gönderim)
     if upload:
         if require_approval:
-            send_telegram_deal_for_approval(deal, video_path, caption_text, product_url=aff_url)
+            send_telegram_deal_for_approval(deal, video_path, caption_text, product_url=aff_url, youtube_video_path=youtube_video_path)
         else:
             send_telegram_deal(video_path, caption_text, product_url=aff_url)
     else:
@@ -272,6 +318,7 @@ def process_deal_to_reel(
 
     return {
         "video_path": video_path,
+        "youtube_video_path": youtube_video_path,
         "caption_path": caption_path,
         "caption_text": caption_text,
         "deal": deal

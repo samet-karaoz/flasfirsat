@@ -197,6 +197,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             return result
 
         video_path = prod_res["video_path"]
+        youtube_video_path = prod_res.get("youtube_video_path") or video_path
         caption_text = prod_res["caption_text"]
         aff_url = deal.get("affiliate_url") or deal.get("store_url", "")
         result["deal"] = {
@@ -208,6 +209,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         }
 
         result["video_path"] = video_path
+        result["youtube_video_path"] = youtube_video_path
         result["caption_text"] = caption_text
 
         # Instagram Story Görselini Oluştur (Hem testte hem yayında hazır olsun)
@@ -221,9 +223,11 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
 
         if dry_run:
             print("\n[Autopilot Engine] 🧪 DRY-RUN Aktif: Sosyal medya ve Telegram yayınlama adımları atlandı.")
-            print(f"📁 Hazır Video Dosyası: {video_path}")
+            print(f"📁 Hazır Instagram/Genel Video: {video_path}")
+            if youtube_video_path:
+                print(f"📁 Hazır YouTube Shorts Video:  {youtube_video_path}")
             if story_img:
-                print(f"📁 Hazır Story Kartı:  {story_img}")
+                print(f"📁 Hazır Story Kartı:          {story_img}")
             result["success"] = True
             result["dry_run"] = True
             record_autopilot_run(result)
@@ -232,11 +236,16 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # 3. Sırasıyla 4 Platforma Yayınla
         print("\n[Adım 3/4] 📡 4 Platforma Eşzamanlı Otomatik Yayın Başlatılıyor...")
 
-        # A) YouTube Shorts
+        # A) YouTube Shorts (Platforma Özel: BİO Link CTA Bandı & Açıklama)
         print("\n--- 1. YouTube Shorts ---")
         try:
             from youtube_publisher import publish_shorts_to_youtube
-            yt_res = publish_shorts_to_youtube(video_path, title=title, description=caption_text)
+            yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
+            yt_desc = caption_text
+            if "BİO" not in yt_desc and "bio" not in yt_desc:
+                yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
+
+            yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
             if yt_res.get("success"):
                 result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
                 print(f"✅ YouTube Shorts Başarılı: {yt_res.get('url')}")
@@ -491,7 +500,10 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
         # YouTube Shorts
         try:
             from youtube_publisher import publish_shorts_to_youtube
-            yt_res = publish_shorts_to_youtube(video_path, title="Haftanın En İyi 3 Fırsatı 🔥", description=caption_text)
+            yt_desc = caption_text
+            if "BİO" not in yt_desc and "bio" not in yt_desc:
+                yt_desc = f"👉 İndirim linklerine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
+            yt_res = publish_shorts_to_youtube(video_path, title="Haftanın En İyi 3 Fırsatı 🔥", description=yt_desc)
             if yt_res.get("success"):
                 result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
             else:

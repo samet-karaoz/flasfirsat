@@ -348,6 +348,7 @@ def create_product_banner(
     seller_badge_text: str = "",
     coupon_text: str = "",
     market_badge: str = "",
+    cta_type: str = "instagram",
     output_path: str = None
 ) -> str:
     """
@@ -633,47 +634,85 @@ def create_product_banner(
             sw = draw.textlength(sub_str, font=f_net)
             draw.text((box_center_x - sw // 2, 858), sub_str, font=f_net, fill=(4, 120, 87))
 
-    # 7. Etkileşim & DM CTA Bandı (💬 "YORUMA LİNK YAZIN, DM İLE İLETELİM" ✈️) + #işbirliği
+    # 7. Etkileşim & DM / BİO CTA Bandı (Platforma Özel: Instagram vs YouTube) + #işbirliği
     cta_box = (0, 898, W, 960)
     draw.rectangle(cta_box, fill=(15, 23, 42))
     draw.line((0, 898, W, 898), fill=(245, 158, 11), width=3)
 
     f_cta_bold = get_font("segoeuib", 25)
-    cta_prefix = "Yoruma "
-    cta_highlight = "LİNK"
-    cta_suffix = " yazın, DM ile iletelim!"
 
-    p_w = draw.textlength(cta_prefix, font=f_cta_bold)
-    h_w = draw.textlength(cta_highlight, font=f_cta_bold)
-    s_w = draw.textlength(cta_suffix, font=f_cta_bold)
+    if str(cta_type).strip().lower() == "youtube":
+        cta_prefix = "İndirim linkine "
+        cta_highlight = "BİO'DAN"
+        cta_suffix = " ulaşabilirsiniz!"
 
-    pill_w = h_w + 22
-    total_cta_w = 34 + p_w + 8 + pill_w + 10 + s_w + 34
-    start_x = (W - total_cta_w) // 2
+        p_w = draw.textlength(cta_prefix, font=f_cta_bold)
+        h_w = draw.textlength(cta_highlight, font=f_cta_bold)
+        s_w = draw.textlength(cta_suffix, font=f_cta_bold)
 
-    # Vector Chat Balonu
-    draw_vector_chat_bubble(draw, start_x + 14, 929, (251, 191, 36))
-    text_x = start_x + 36
+        pill_w = h_w + 22
+        total_cta_w = 34 + p_w + 8 + pill_w + 10 + s_w + 34
+        start_x = (W - total_cta_w) // 2
 
-    # "Yoruma "
-    draw.text((text_x, 915), cta_prefix, font=f_cta_bold, fill=(241, 245, 249))
-    text_x += p_w + 6
+        # Vector Link İkonu
+        draw_vector_link(draw, start_x + 14, 929, (251, 191, 36))
+        text_x = start_x + 36
 
-    # "LİNK" Vurgu Hapı
-    pill_x1 = text_x
-    pill_y1 = 911
-    pill_x2 = text_x + pill_w
-    pill_y2 = 947
-    draw.rounded_rectangle((pill_x1, pill_y1, pill_x2, pill_y2), radius=8, fill=(245, 158, 11))
-    draw.text((pill_x1 + 11, 915), cta_highlight, font=f_cta_bold, fill=(15, 23, 42))
-    text_x += pill_w + 10
+        # "İndirim linkine "
+        draw.text((text_x, 915), cta_prefix, font=f_cta_bold, fill=(241, 245, 249))
+        text_x += p_w + 6
 
-    # " yazın, DM ile iletelim!"
-    draw.text((text_x, 915), cta_suffix, font=f_cta_bold, fill=(241, 245, 249))
-    text_x += s_w + 16
+        # "BİO'DAN" Vurgu Hapı
+        pill_x1 = text_x
+        pill_y1 = 911
+        pill_x2 = text_x + pill_w
+        pill_y2 = 947
+        draw.rounded_rectangle((pill_x1, pill_y1, pill_x2, pill_y2), radius=8, fill=(245, 158, 11))
+        draw.text((pill_x1 + 11, 915), cta_highlight, font=f_cta_bold, fill=(15, 23, 42))
+        text_x += pill_w + 10
 
-    # Vector DM Uçağı İkonu
-    draw_vector_dm_plane(draw, text_x, 928, (251, 191, 36))
+        # " ulaşabilirsiniz!"
+        draw.text((text_x, 915), cta_suffix, font=f_cta_bold, fill=(241, 245, 249))
+        text_x += s_w + 16
+
+        # Vector Küre (Web/Bio) İkonu
+        draw_vector_globe(draw, text_x, 928, (251, 191, 36))
+    else:
+        cta_prefix = "Yoruma "
+        cta_highlight = "LİNK"
+        cta_suffix = " yazın, DM ile iletelim!"
+
+        p_w = draw.textlength(cta_prefix, font=f_cta_bold)
+        h_w = draw.textlength(cta_highlight, font=f_cta_bold)
+        s_w = draw.textlength(cta_suffix, font=f_cta_bold)
+
+        pill_w = h_w + 22
+        total_cta_w = 34 + p_w + 8 + pill_w + 10 + s_w + 34
+        start_x = (W - total_cta_w) // 2
+
+        # Vector Chat Balonu
+        draw_vector_chat_bubble(draw, start_x + 14, 929, (251, 191, 36))
+        text_x = start_x + 36
+
+        # "Yoruma "
+        draw.text((text_x, 915), cta_prefix, font=f_cta_bold, fill=(241, 245, 249))
+        text_x += p_w + 6
+
+        # "LİNK" Vurgu Hapı
+        pill_x1 = text_x
+        pill_y1 = 911
+        pill_x2 = text_x + pill_w
+        pill_y2 = 947
+        draw.rounded_rectangle((pill_x1, pill_y1, pill_x2, pill_y2), radius=8, fill=(245, 158, 11))
+        draw.text((pill_x1 + 11, 915), cta_highlight, font=f_cta_bold, fill=(15, 23, 42))
+        text_x += pill_w + 10
+
+        # " yazın, DM ile iletelim!"
+        draw.text((text_x, 915), cta_suffix, font=f_cta_bold, fill=(241, 245, 249))
+        text_x += s_w + 16
+
+        # Vector DM Uçağı İkonu
+        draw_vector_dm_plane(draw, text_x, 928, (251, 191, 36))
 
     # Yasal Uyum Etiketi (#işbirliği)
     draw.text((W - 24, 936), "#işbirliği #reklam", font=f_tiny, fill=(148, 163, 184), anchor="rm")

@@ -97,7 +97,8 @@ def send_telegram_deal_for_approval(
     caption_text: str,
     product_url: str = None,
     chat_id: str = None,
-    bot_token: str = None
+    bot_token: str = None,
+    youtube_video_path: str = None
 ) -> dict:
     """
     Üretilen videoyu doğrudan yöneticiye (chat_id) interaktif onay butonlarıyla gönderir.
@@ -198,6 +199,7 @@ def send_telegram_deal_for_approval(
             "chat_id": cid,
             "deal": deal,
             "video_path": video_path,
+            "youtube_video_path": youtube_video_path,
             "caption_text": caption_text,
             "product_url": product_url,
             "whatsapp_share_url": wp_share_url,

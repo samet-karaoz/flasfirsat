@@ -14,7 +14,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Google Analytics ID ayarlanmadı. Yerel telemetri ve etkileşim motoru çalışıyor. -->
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6FTHRHYFR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-E6FTHRHYFR');
+    </script>
     <style>
         :root {
             --bg-base: #0B0D12;
@@ -1008,42 +1016,6 @@
 
         <div class="deals-grid" id="dealsGrid">
 
-            <div class="deal-card" data-status="active" data-title="bluefox dijital mutfak tartısı amazon tr" data-deal-id="deal_1792074118_18" data-deal-title="Bluefox Dijital Mutfak Tartısı" data-store="Amazon TR" data-price="389 TL">
-                <a href="https://www.amazon.com.tr/dp/B08W34BD8J?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Bluefox Dijital Mutfak Tartısı">
-                    <div class="card-img-wrap">
-                        <img src="assets/products/bluefox_dijital_mutfak_ta_03a566bb.jpg" alt="Bluefox Dijital Mutfak Tartısı" class="card-img" loading="lazy">
-                        <span class="badge-store store-amazon">Amazon TR</span>
-                        <span class="badge-discount">-35%</span>
-                        
-                    </div>
-                </a>
-                <div class="card-content">
-                    <a href="https://www.amazon.com.tr/dp/B08W34BD8J?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-title-link" title="Bluefox Dijital Mutfak Tartısı">
-                        <h3 class="card-title">Bluefox Dijital Mutfak Tartısı</h3>
-                    </a>
-                    <div class="price-section">
-                        <span class="old-price">599,00 TL</span>
-                        <span class="new-price">389 TL</span>
-                    </div>
-
-                    <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (39 TL)</span>
-                        </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">350 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
-                        </div>
-                    </div>
-
-                    <a href="https://www.amazon.com.tr/dp/B08W34BD8J?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="deal_1792074118_18" data-title="Bluefox Dijital Mutfak Tartısı" data-store="Amazon TR" data-price="389 TL">🔥 Fırsata Git & Satın Al</a>
-                </div>
-            </div>
-
             <div class="deal-card" data-status="active" data-title="playstation 5 pro amazon tr" data-deal-id="deal_1792056993_18" data-deal-title="PlayStation 5 Pro" data-store="Amazon TR" data-price="72.999 TL">
                 <a href="https://www.amazon.com.tr/dp/B0DJH2NS6R?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="PlayStation 5 Pro">
                     <div class="card-img-wrap">
@@ -1792,8 +1764,8 @@
 
         // --- 2. ZİYARETÇİ VE ETKİLEŞİM TELEMETRİ MOTORU ---
         const STATS_KEY = 'flas_stats_v1';
-        const gaConfigured = false;
-        const gaIdSafe = '';
+        const gaConfigured = true;
+        const gaIdSafe = 'G-E6FTHRHYFR';
 
         function getStoredStats() {
             try {

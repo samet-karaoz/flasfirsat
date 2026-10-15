@@ -108,10 +108,27 @@ def publish_reel_via_instagrapi(video_path: str, caption: str) -> dict:
         print(f"\n[Instagram Publisher] 📤 Reels yükleniyor: {os.path.basename(video_path)}...")
         print(f"✍️ Açıklama: {caption[:80]}...")
 
+        # Otomatik FFmpeg thumbnail üretimi (Moviepy bağımlılığı olmadan %100 garantili)
+        thumb_path = str(video_path) + ".jpg"
+        if not os.path.exists(thumb_path):
+            import subprocess
+            try:
+                subprocess.run([
+                    "ffmpeg", "-y", "-ss", "00:00:01",
+                    "-i", str(video_path), "-vframes", "1",
+                    "-q:v", "2", thumb_path
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+            except Exception as ethumb:
+                print(f"[Instagram Publisher] ⚠️ FFmpeg thumbnail oluşturulamadı: {ethumb}")
+
+        upload_kwargs = {"caption": caption}
+        if os.path.exists(thumb_path):
+            upload_kwargs["thumbnail"] = Path(thumb_path)
+
         # Reels yükleme (clip_upload)
         media = cl.clip_upload(
             Path(video_path),
-            caption=caption
+            **upload_kwargs
         )
 
         media_pk = getattr(media, "pk", "")

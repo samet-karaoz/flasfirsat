@@ -746,6 +746,8 @@ def run_telegram_service():
     last_alarm_check = time.time()
     last_dm_check = time.time()
 
+    is_dm_scanning = False
+
     while True:
         try:
             params = {"timeout": 30}
@@ -774,19 +776,24 @@ def run_telegram_service():
                 check_user_price_alarms()
                 last_alarm_check = time.time()
 
-            # 2 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder
-            if time.time() - last_dm_check > 120:
+            # 3 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder (Eşzamanlı kilit ile)
+            if time.time() - last_dm_check > 180 and not is_dm_scanning:
                 last_dm_check = time.time()
+                is_dm_scanning = True
                 try:
                     def _periodic_dm():
+                        global is_dm_scanning
                         try:
                             from instagram_auto_dm import check_and_reply_comments
                             check_and_reply_comments()
                         except Exception as e_dm_run:
                             print(f"[Telegram Service] Periyodik Auto-DM hatası: {e_dm_run}")
+                        finally:
+                            is_dm_scanning = False
                     import threading
                     threading.Thread(target=_periodic_dm, daemon=True).start()
                 except Exception as e_dm:
+                    is_dm_scanning = False
                     print(f"[Telegram Service] Auto-DM iş parçacığı hatası: {e_dm}")
 
         except requests.exceptions.RequestException:

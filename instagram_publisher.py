@@ -47,8 +47,12 @@ def check_instagram_credentials() -> dict:
         "error": "Instagram bilgileri eksik. Lütfen .env dosyasına INSTAGRAM_USERNAME ve INSTAGRAM_PASSWORD ekleyin."
     }
 
-def get_instagrapi_client():
-    """Oturum açılmış ve yapılandırılmış instagrapi Client nesnesi döner."""
+_CACHED_INSTAGRAPI_CLIENT = None
+_LAST_SESSION_CHECK_TIME = 0
+
+def get_instagrapi_client(force_refresh: bool = False):
+    """Oturum açılmış ve yapılandırılmış instagrapi Client nesnesi döner. Bellekte önbelleğe alır."""
+    global _CACHED_INSTAGRAPI_CLIENT, _LAST_SESSION_CHECK_TIME
     from instagrapi import Client
     from instagrapi.exceptions import (
         BadPassword,
@@ -56,6 +60,19 @@ def get_instagrapi_client():
         ChallengeRequired,
         FeedbackRequired
     )
+
+    now = time.time()
+    if not force_refresh and _CACHED_INSTAGRAPI_CLIENT is not None:
+        # Son 10 dakika içinde oturum başarıyla doğrulanmışsa doğrudan bellekteki nesneyi dön
+        if (now - _LAST_SESSION_CHECK_TIME) < 600:
+            return _CACHED_INSTAGRAPI_CLIENT
+        # 10 dakikada bir oturum hala canlı mı diye hafif kontrol yap
+        try:
+            _CACHED_INSTAGRAPI_CLIENT.get_timeline_feed()
+            _LAST_SESSION_CHECK_TIME = now
+            return _CACHED_INSTAGRAPI_CLIENT
+        except Exception:
+            _CACHED_INSTAGRAPI_CLIENT = None
 
     os.makedirs(DATA_DIR, exist_ok=True)
     cl = Client()
@@ -75,6 +92,8 @@ def get_instagrapi_client():
             # Oturum canlı mı test et
             cl.get_timeline_feed()
             print("✅ [Instagram Publisher] Kayıtlı oturum doğrulandı!")
+            _CACHED_INSTAGRAPI_CLIENT = cl
+            _LAST_SESSION_CHECK_TIME = now
             return cl
         except Exception as e:
             print(f"[Instagram Publisher] ⚠️ Kayıtlı oturum yenileniyor ({e})...")
@@ -85,6 +104,8 @@ def get_instagrapi_client():
         cl.login(INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
         cl.dump_settings(SESSION_FILE)
         print("✅ [Instagram Publisher] Giriş başarılı! Oturum anahtarı kaydedildi.")
+        _CACHED_INSTAGRAPI_CLIENT = cl
+        _LAST_SESSION_CHECK_TIME = now
         return cl
     except TwoFactorRequired:
         raise RuntimeError("Instagram hesabınızda İki Adımlı Doğrulama (2FA) açık. Lütfen geçici olarak SMS kodunu girin.")

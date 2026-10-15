@@ -761,8 +761,8 @@ def run_telegram_service():
                 check_user_price_alarms()
                 last_alarm_check = time.time()
 
-            # 10 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder
-            if time.time() - last_dm_check > 600:
+            # 2 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder
+            if time.time() - last_dm_check > 120:
                 last_dm_check = time.time()
                 try:
                     def _periodic_dm():

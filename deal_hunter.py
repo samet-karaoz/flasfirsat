@@ -27,11 +27,13 @@ BORING_REGEX = re.compile(
     r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı|tutucu|"
     r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık|yumuşatıcı|şampuan|diş\s*fırçası|mendil|pijama|çanta(sı)?|"
+    r"tartı(sı)?|terazi(si)?|baskül|ölçüm|termometre|ateş\s*ölçer|"
+    r"saklama\s*kabı|kavanoz|rende|süzgeç|açacak|maşa|spatula|kesme\s*tahtası|bulaşık|sünger|"
     r"bebek|mama(sı)?|süt[üu]?|devam\s*sütü|vitamin|omega|balık\s*yağı|takviye|"
     r"bisküvi|kek|gofret|çikolata|cips|makarna|salça|bakliyat|kuruyemiş|çekirdek|ton\s*balığı|baharat|"
     r"motosiklet|lastik|kask(ı)?|disk\s*kilidi|saç\s*toniği|sabun|"
     r"tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
-    r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|flash\s*bellek|usb\s*bellek|"
+    r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|"
     r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|aparat[ıi]?|"
     r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
     r"tıraş\s*başlığı|conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
@@ -221,11 +223,11 @@ def download_file(url: str, output_path: str) -> bool:
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
 AMAZON_CATALOG_SOURCES = [
+    ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
+    ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
     ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
     ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
-    ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
-    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen"),
-    ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames")
+    ("AKILLI_EV", "https://www.amazon.com.tr/gp/bestsellers/electronics/13735824031")
 ]
 
 CAT_ROTATION_FILE = os.path.join(TEMP_DIR, "amazon_cat_rot.txt")

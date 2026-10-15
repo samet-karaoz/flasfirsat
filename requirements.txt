@@ -4,3 +4,7 @@ python-dotenv>=1.0.0
 requests>=2.31.0
 yt-dlp>=2024.0.0
 instagrapi>=2.1.0
+instagrapi[video]>=2.1.0
+moviepy==2.2.1
+fastapi
+uvicorn

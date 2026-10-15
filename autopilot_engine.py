@@ -60,7 +60,7 @@ def send_telegram_admin_summary(summary_text: str, reply_markup: dict = None, dr
     except Exception as e:
         print(f"[Autopilot Engine] Telegram özet gönderim hatası: {e}")
 
-def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -> dict:
+def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False) -> dict:
     """
     En algoritmik 2 saatte (12:30 ve 20:00) veya isteğe bağlı çalışan tam otomatik döngü:
     1. En yüksek indirimli ve teyitli ürünü avlar (Amazon TR / Fırsat Kanalları).
@@ -85,6 +85,41 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         "platforms": {},
         "error": None
     }
+
+    # 0. Çift Paylaşım Koruması (Duplicate Run Guard):
+    # Eğer son 45 dakika içinde zaten başarılı bir canlı yayın yapılmışsa mükerrer paylaşımı engelle
+    if not dry_run and not force:
+        try:
+            import subprocess
+            subprocess.run(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=15)
+        except Exception:
+            pass
+
+        history_items = load_autopilot_history()
+        for item in reversed(history_items):
+            if item.get("success") and not item.get("dry_run"):
+                ts_str = item.get("timestamp")
+                if ts_str:
+                    try:
+                        past_dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S")
+                        diff_sec = (datetime.now() - past_dt).total_seconds()
+                        if 0 <= diff_sec < 2700: # 45 dakika (2700 saniye)
+                            mins_ago = int(diff_sec // 60)
+                            deal_title = item.get("deal", {}).get("title", "Ürün") if isinstance(item.get("deal"), dict) else "Ürün"
+                            msg = (
+                                f"🛑 [MÜKERRER PAYLAŞIM ENGELLENDİ] Son {mins_ago} dakika önce "
+                                f"zaten başarılı bir yayın yapılmış ({item.get('slot')} - {deal_title}). "
+                                f"Aynı kuşağın veya ürünün tekrar yayınlanmaması için bu işlem durduruldu. "
+                                f"(Zorlamak için --force parametresi kullanılabilir.)"
+                            )
+                            print(f"\n{msg}\n")
+                            result["success"] = True
+                            result["skipped"] = True
+                            result["error"] = msg
+                            return result
+                    except Exception:
+                        pass
+                break
 
     try:
         # 1. En iyi fırsatı tara
@@ -532,12 +567,13 @@ if __name__ == "__main__":
     parser.add_argument("--now", action="store_true", help="Hemen bir otopilot döngüsü çalıştır")
     parser.add_argument("--top3", action="store_true", help="Top 3 haftalık fırsat bülteni videosu üret ve yayınla")
     parser.add_argument("--dry-run", action="store_true", help="Gerçek yükleme yapmadan video ve metni test et")
+    parser.add_argument("--force", action="store_true", help="45 dakikalık çift paylaşım korumasını atla")
     parser.add_argument("--slot", default="Manuel Test", help="Kuşak adı")
     args = parser.parse_args()
 
     if args.top3:
         run_top3_deal_cycle(dry_run=args.dry_run, slot_name=args.slot)
     elif args.now or args.dry_run:
-        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot)
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force)
     else:
-        print("Kullanım: python autopilot_engine.py --now (veya --top3, --dry-run)")
+        print("Kullanım: python autopilot_engine.py --now (veya --top3, --dry-run, --force)")

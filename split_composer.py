@@ -2,36 +2,30 @@ import os
 import subprocess
 import random
 import re
+import json
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR
+from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR, DATA_DIR
 from deal_hunter import parse_price_to_float
 
 MEMES_DIR = os.path.join(BASE_DIR, "assets", "memes")
 AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
-AVAILABLE_MEMES = [
-    "knight_cat.mp4",
-    "dicaprio_cheers.mp4",
-    "bateman_walk.mp4",
-    "bale_nod.mp4",
-    "homelander_stare.mp4",
-    "walter_white.mp4",
-    "the_rock.mp4",
-    "ryan_gosling.mp4",
-    "mcconaughey_chest.mp4",
-    "the_weeknd_lost.mp4",
-    "bully_maguire.mp4",
-    "kanye_stare.mp4",
-    "vince_mcmahon.mp4",
-    "cat_vibing.mp4",
-    "shark_nemo.mp4",
-    # Yeni Eklenen Türk Kültürü & Viral Instagram Memeleri
-    "limon_davulcu.mp4",
-    "angaraya_mi_geldin.mp4",
-    "degirmenci_dayi_cj.mp4",
-    "bicerdover_ciftetelli.mp4",
-    "limon_halay.mp4"
+# Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
+MEME_ROTATION_ORDER = [
+    "vince_mcmahon.mp4",        # 1. Para koklama / Şok sevinç reaksiyonu
+    "bicerdover_ciftetelli.mp4", # 2. Biçerdöver çiftetelli (Türk viral dans)
+    "homelander_stare.mp4",     # 3. Homelander şok / Ciddi bakış
+    "cat_vibing.mp4",           # 4. Vibing Cat (Ritimle kafa sallayan kedi)
+    "degirmenci_dayi_cj.mp4",   # 5. GTA San Andreas Değirmenci Dayı
+    "bale_nod.mp4",             # 6. Christian Bale onaylama / takdir
+    "limon_davulcu.mp4",        # 7. Limoncu Davulcu (Türk viral dans)
+    "shark_nemo.mp4",           # 8. Kayıp Balık Nemo Bruce köpekbalığı
+    "angaraya_mi_geldin.mp4",   # 9. Angara'ya mı geldin la
+    "knight_cat.mp4",           # 10. Şövalye Kedi
+    "the_rock.mp4",             # 11. The Rock ikonik kaş kaldırma
+    "limon_halay.mp4"           # 12. Limon Halay (Türk viral halay)
 ]
+AVAILABLE_MEMES = MEME_ROTATION_ORDER
 
 AVAILABLE_AUDIOS = [
     "phonk_meme.m4a",
@@ -82,79 +76,90 @@ def wrap_text(text: str, max_chars_per_line: int = 34) -> list:
         lines.append(" ".join(current_line))
     return lines[:2] # Maksimum 2 satır, görsel alanını ferah tutmak için
 
-LAST_MEME_FILE = os.path.join(TEMP_DIR, "last_meme.txt")
+MEME_STATE_FILE = os.path.join(DATA_DIR, "meme_history.json")
+
+def load_meme_state() -> dict:
+    os.makedirs(DATA_DIR, exist_ok=True)
+    if os.path.exists(MEME_STATE_FILE):
+        try:
+            with open(MEME_STATE_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    return data
+        except Exception:
+            pass
+    return {"next_index": 0, "recent_used": []}
+
+def save_meme_state(state: dict):
+    os.makedirs(DATA_DIR, exist_ok=True)
+    try:
+        with open(MEME_STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[Meme Engine] Durum kaydedilemedi: {e}")
+
+def get_ordered_meme_pool() -> list:
+    """Diskte mevcut olan tüm meme videolarını dengeli ve sıralı bir havuz olarak döndürür."""
+    if not os.path.exists(MEMES_DIR):
+        return []
+    disk_files = [f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4")]
+    # Önceden küratörlüğü yapılmış dengeli sıra
+    pool = [m for m in MEME_ROTATION_ORDER if m in disk_files]
+    # Listede olmayan yeni eklenmiş mp4'leri de sıranın sonuna ekle
+    for f in sorted(disk_files):
+        if f not in pool:
+            pool.append(f)
+    return pool
 
 def get_last_meme() -> str:
-    try:
-        if os.path.exists(LAST_MEME_FILE):
-            with open(LAST_MEME_FILE, "r", encoding="utf-8") as f:
-                return f.read().strip()
-    except Exception:
-        pass
-    return ""
+    state = load_meme_state()
+    recent = state.get("recent_used", [])
+    return recent[-1] if recent else ""
 
 def set_last_meme(meme_name: str):
-    try:
-        os.makedirs(TEMP_DIR, exist_ok=True)
-        with open(LAST_MEME_FILE, "w", encoding="utf-8") as f:
-            f.write(meme_name)
-    except Exception:
-        pass
+    pass
 
 def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "") -> str:
     """
-    İndirim oranına, ürün kategorisine ve başlığına göre en yüksek viral potansiyele sahip
-    meme videosunu kütüphaneden akıllıca seçer.
-    Aynı videonun üst üste iki kez seçilmesini otomatik olarak engeller.
+    Kütüphanedeki tüm meme videolarını sıra sıra (Round-Robin) döngüye sokar.
+    Son 3 videoda kullanılan memeleri kesin olarak hariç tutarak mükerrerliği %100 engeller.
+    Herhangi bir kategori veya oran şartlandırması yapmadan havuzdaki tüm videoları sırayla eşit kullanır.
     """
-    available = [m for m in AVAILABLE_MEMES if os.path.exists(os.path.join(MEMES_DIR, m))]
-    if not available:
-        available = [f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4")]
-    if not available:
-        return "knight_cat.mp4"
+    pool = get_ordered_meme_pool()
+    if not pool:
+        return "vince_mcmahon.mp4"
 
-    last_used = get_last_meme()
+    state = load_meme_state()
+    next_idx = state.get("next_index", 0) % len(pool)
+    recent = state.get("recent_used", [])
 
-    def pick_without_repeat(candidates_list: list) -> str:
-        valid = [c for c in candidates_list if c in available]
-        if not valid:
-            valid = available
-        pool = [c for c in valid if c != last_used] if len(valid) > 1 else valid
-        chosen = random.choice(pool)
-        set_last_meme(chosen)
-        return chosen
+    # Son 3 videodaki memeleri koruma listesine al (cooldown: en az 3 video boyunca tekrar seçilemez)
+    cooldown_count = min(3, len(pool) - 1) if len(pool) > 1 else 0
+    cooldown_set = set(recent[-cooldown_count:]) if cooldown_count > 0 else set()
 
-    pct_match = re.search(r'(\d+)', str(discount_pct))
-    pct_val = int(pct_match.group(1)) if pct_match else 30
-    title_low = (title or "").lower()
+    # Sıradaki adayı seç; eğer cooldown listesindeyse havuzda sırayla ilerle
+    chosen = None
+    for attempt in range(len(pool)):
+        candidate_idx = (next_idx + attempt) % len(pool)
+        candidate = pool[candidate_idx]
+        if candidate not in cooldown_set:
+            chosen = candidate
+            next_idx = (candidate_idx + 1) % len(pool)
+            break
 
-    # 1. Dev Çöküş İndirimleri (%40 ve üzeri) - Şok, Para & Çılgın Kutlama
-    if pct_val >= 40:
-        return pick_without_repeat([
-            "limon_davulcu.mp4", "bicerdover_ciftetelli.mp4", "limon_halay.mp4",
-            "angaraya_mi_geldin.mp4", "degirmenci_dayi_cj.mp4", "bully_maguire.mp4"
-        ])
+    # Emniyet: Hepsi cooldown listesindeyse sıradaki adayı al
+    if not chosen:
+        chosen = pool[next_idx]
+        next_idx = (next_idx + 1) % len(pool)
 
-    # 2. Gaming, Espor ve Donanım Ürünleri - GTA CJ, ETS2 Tır & Dinamik Tepkiler
-    gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "espor", "oyuncu", "monitor", "ekran kartı"]
-    if any(k in title_low for k in gaming_kw):
-        return pick_without_repeat([
-            "degirmenci_dayi_cj.mp4", "angaraya_mi_geldin.mp4", "bicerdover_ciftetelli.mp4",
-            "limon_davulcu.mp4", "bully_maguire.mp4", "bateman_walk.mp4"
-        ])
+    # Durumu güncelle ve kaydet
+    recent.append(chosen)
+    state["next_index"] = next_idx
+    state["recent_used"] = recent[-30:] # Son 30 kaydı tut
+    save_meme_state(state)
 
-    # 3. Yüksek Fırsat / Viral Hit (%25 - %39) - Halay, Çiftetelli & Zafer
-    if pct_val >= 25:
-        return pick_without_repeat([
-            "limon_halay.mp4", "bicerdover_ciftetelli.mp4", "angaraya_mi_geldin.mp4",
-            "degirmenci_dayi_cj.mp4", "limon_davulcu.mp4", "bully_maguire.mp4"
-        ])
-
-    # 4. Genel Ürünler
-    return pick_without_repeat([
-        "bicerdover_ciftetelli.mp4", "limon_davulcu.mp4", "limon_halay.mp4",
-        "angaraya_mi_geldin.mp4", "degirmenci_dayi_cj.mp4", "bully_maguire.mp4"
-    ])
+    print(f"[Meme Rotasyonu] 🎬 Sıradaki Video: {chosen} (Sıra: {next_idx}/{len(pool)}, Cooldown: {list(cooldown_set)})")
+    return chosen
 
 # ==========================================
 # VEKTÖR İKON ÇİZİM YARDIMCILARI (Windows Emojisi Bağımsız & Keskin)

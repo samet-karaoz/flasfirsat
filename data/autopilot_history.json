@@ -193,5 +193,23 @@
     "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261015_142043_bluefox_dijital_mutfak_tartisi.mp4",
     "caption_text": "🚨 Bu fiyata mutfakta böyle bir devrim yok! \n\nEski Fiyat: 599 TL ❌ -> Yeni Fiyat: 389 TL ✅ (%35 İndirim)\n💳 Nays ile %10 iadeyle Net Maliyet: 350 TL!\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #mutfak #kampanya #keşfet #işbirliği #reklam",
     "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_35_amz_B08W34BD8J.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-10-15 17:53:28",
+    "slot": "Test Kuşağı",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "SanDisk 64GB USB Bellek",
+      "new_price": "425,79 TL",
+      "old_price": "699 TL",
+      "discount_pct": "-39%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B017RD10X8?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_175754_sandisk_64gb_usb_bellek.mp4",
+    "caption_text": "🚨 BU FİYATA BÖYLE BİR HIZ YOK! \n\nSanDisk 64GB USB Bellek muazzam bir indirimle düştü! \nEski Fiyat ❌: 699 TL \nYeni Fiyat ✅: 425,79 TL (%39 İndirim!)\n💳 Nays ile %10 iade (43 TL) ile Net Maliyet: 383 TL!\n\n🚨 DİKKAT: %39'luk dev indirim ve stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#fırsat #indirim #teknoloji #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_39_amz_B017RD10X8.jpg.jpg",
+    "dry_run": true
   }
 ]

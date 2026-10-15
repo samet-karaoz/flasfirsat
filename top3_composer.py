@@ -8,7 +8,8 @@ from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR
 from split_composer import (
     get_font, wrap_text, MEMES_DIR, AUDIO_DIR,
     AVAILABLE_MEMES, AVAILABLE_AUDIOS,
-    create_product_banner, create_reaction_hook_overlay
+    create_product_banner, create_reaction_hook_overlay,
+    select_smart_meme
 )
 
 def create_top3_card(
@@ -74,24 +75,11 @@ def build_top3_video(
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(TEMP_DIR, exist_ok=True)
 
-    # 1. Kedi olmayan, orijinal müzikli Türk viral meme havuzu
-    valid_memes = [
-        "degirmenci_dayi_cj.mp4",
-        "bicerdover_ciftetelli.mp4",
-        "limon_davulcu.mp4",
-        "angaraya_mi_geldin.mp4",
-        "limon_halay.mp4"
-    ]
-    existing_memes = [m for m in valid_memes if os.path.exists(os.path.join(MEMES_DIR, m))]
-    if not existing_memes:
-        existing_memes = [f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4") and "cat" not in f.lower()]
-
+    # 1. Meme videosunu sıra sıra rotasyon havuzundan seç (Round-Robin)
     if meme_name and os.path.exists(os.path.join(MEMES_DIR, meme_name)):
         chosen_meme = meme_name
-    elif existing_memes:
-        chosen_meme = random.choice(existing_memes)
     else:
-        chosen_meme = "degirmenci_dayi_cj.mp4"
+        chosen_meme = select_smart_meme(title="Top 3 Fırsat Bülteni")
 
     bottom_meme_path = os.path.join(MEMES_DIR, chosen_meme)
     print(f"[Top3] 🎬 Seçilen Tek Kesintisiz Meme: {chosen_meme}")

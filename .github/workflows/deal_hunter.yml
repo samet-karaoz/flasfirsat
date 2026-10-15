@@ -92,7 +92,7 @@ jobs:
         run: |
           git config --global user.name "flasfirsat-bot[bot]"
           git config --global user.email "bot@flasfirsat.com"
-          git add index.html data/deals.json data/autopilot_history.json data/replied_comments.json assets/products/ history_deals.json || true
+          git add index.html data/deals.json data/autopilot_history.json data/meme_history.json data/replied_comments.json assets/products/ history_deals.json || true
           if git diff --staged --quiet; then
             echo "Değişiklik yok, commit atlanıyor."
           else

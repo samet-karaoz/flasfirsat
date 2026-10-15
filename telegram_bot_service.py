@@ -481,10 +481,18 @@ def handle_user_message(msg: dict):
 
     # 1.6 /otopilot Komutu (Hemen Tek Tıkla Döngü Başlat)
     if text.startswith("/otopilot"):
-        send_telegram_text(chat_id, "🚀 <b>Otopilot döngüsü başlatıldı!</b>\n\nEn iyi indirim avlanıyor, split-screen video üretiliyor ve YouTube, Instagram, Telegram ve WhatsApp kanallarına otomatik dağıtılıyor. İşlem tamamlandığında rapor iletilecektir...")
+        is_force = ("zorla" in text.lower() or "force" in text.lower())
+        send_telegram_text(chat_id, "🚀 <b>Otopilot döngüsü başlatıldı!</b>\n\nEn iyi indirim avlanıyor, dikey viral video üretiliyor ve YouTube, Instagram, Telegram ve WhatsApp kanallarına otomatik dağıtılıyor. İşlem tamamlandığında rapor iletilecektir...")
         import threading
-        from autopilot_engine import run_autopilot_deal_cycle
-        threading.Thread(target=run_autopilot_deal_cycle, kwargs={"dry_run": False, "slot_name": "Telegram Manuel Tetikleme"}, daemon=True).start()
+        def _run_auto():
+            try:
+                from autopilot_engine import run_autopilot_deal_cycle
+                res = run_autopilot_deal_cycle(dry_run=False, slot_name="Telegram Manuel Tetikleme", force=is_force)
+                if res.get("skipped"):
+                    send_telegram_text(chat_id, f"ℹ️ {res.get('error') or res.get('reason')}")
+            except Exception as ex:
+                send_telegram_text(chat_id, f"❌ Otopilot hatası: {ex}")
+        threading.Thread(target=_run_auto, daemon=True).start()
         return
 
     # 1.7 /dm Komutu (Instagram Yorumlarını Tara ve DM Gönder)
@@ -719,15 +727,20 @@ def run_telegram_service():
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("=======================================================\n")
 
-    # Otopilot Zamanlayıcıyı Arka Planda Başlat (12:30 ve 20:00)
-    try:
-        import threading
-        from scheduler_service import run_scheduler_daemon
-        sched_thread = threading.Thread(target=run_scheduler_daemon, kwargs={"dry_run": False}, daemon=True)
-        sched_thread.start()
-        print("⏰ [ZAMANLAYICI SERVİSİ] 12:30 & 20:00 kuşağı için arka plan iş parçacığı başlatıldı.\n")
-    except Exception as es:
-        print(f"[Telegram Service] Zamanlayıcı başlatılamadı: {es}")
+    # 24/7 Bulut Otopilotu (GitHub Actions) 12:30 & 20:00 için birincil zamanlayıcıdır.
+    # Lokal zamanlayıcı yalnızca ENABLE_LOCAL_SCHEDULER=true olduğunda çalışır.
+    enable_local_sched = os.getenv("ENABLE_LOCAL_SCHEDULER", "false").strip().lower() in ("true", "1", "yes")
+    if enable_local_sched:
+        try:
+            import threading
+            from scheduler_service import run_scheduler_daemon
+            sched_thread = threading.Thread(target=run_scheduler_daemon, kwargs={"dry_run": False}, daemon=True)
+            sched_thread.start()
+            print("⏰ [LOKAL ZAMANLAYICI SERVİSİ] 12:30 & 20:00 kuşağı için arka plan iş parçacığı başlatıldı.\n")
+        except Exception as es:
+            print(f"[Telegram Service] Zamanlayıcı başlatılamadı: {es}")
+    else:
+        print("☁️ [BULUT OTOPİLOTU AKTİF] 12:30 & 20:00 kuşakları GitHub Actions bulut sunucusu tarafından 7/24 kesintisiz yönetilmektedir (Çift paylaşım koruması devrede).\n")
 
     offset = None
     last_alarm_check = time.time()

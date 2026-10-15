@@ -16,6 +16,7 @@ REPLIED_COMMENTS_FILE = os.path.join(DATA_DIR, "replied_comments.json")
 DM_KEYWORDS = [
     "link", "linki", "linkini", "link lütfen", "link at", "link atar mısın", "link atarmısınız",
     "link atabilir misiniz", "link verir misiniz", "linki gönder", "link atar msn",
+    "linkk", "linkkk", "link pls", "link please",
     "fiyat", "fiyatı", "fiyat nedir", "fiyatı ne", "fiyat alabilir miyim",
     "dm", "dm lütfen", "dm at", "dm atar mısın", "dm bakar mısınız",
     "istiyorum", "almak istiyorum", "alabilir miyim", "nasıl alırım", "nereden alırım",
@@ -108,9 +109,10 @@ def extract_link_from_caption(caption: str) -> str:
             return u
     return ""
 
-def find_best_product_link(caption: str) -> tuple[str, str]:
+def find_best_product_link(caption: str, media_id: str = None) -> tuple[str, str]:
     """
-    Açıklama metninden, deals.json'dan ve otopilot geçmişinden en doğru ürün linkini ve başlığını bulur.
+    Açıklama metninden, otopilot geçmişinden (media_id ile doğrudan veya metinle)
+    ve deals.json'dan en doğru ürün linkini ve başlığını bulur.
     Döner: (product_name, target_url)
     """
     cap_url = extract_link_from_caption(caption)
@@ -118,9 +120,44 @@ def find_best_product_link(caption: str) -> tuple[str, str]:
     product_name = lines[0].replace("🔥", "").replace("🚨", "").strip() if lines else "Fırsat Ürünü"
 
     caption_low = (caption or "").lower()
-
-    # 1. data/deals.json içindeki güncel ürünlerle eşleştir (En yüksek doğruluk)
+    history_file = os.path.join(DATA_DIR, "autopilot_history.json")
     deals_file = os.path.join(DATA_DIR, "deals.json")
+
+    # 1. media_id ile doğrudan otopilot geçmişi eşleştirmesi (En yüksek kesinlik, %100 hatasız)
+    if media_id and os.path.exists(history_file):
+        try:
+            with open(history_file, "r", encoding="utf-8") as f:
+                history = json.load(f)
+                str_media_id = str(media_id).strip()
+                for item in reversed(history):
+                    plat_ig = item.get("platforms", {}).get("instagram", {})
+                    hist_m_id = str(plat_ig.get("media_id", "")).strip()
+                    if hist_m_id and (hist_m_id == str_media_id or hist_m_id in str_media_id or str_media_id in hist_m_id):
+                        deal = item.get("deal") or {}
+                        aff_url = deal.get("affiliate_url") or deal.get("store_url")
+                        title = deal.get("title") or ""
+                        if aff_url:
+                            return (title or product_name, aff_url)
+        except Exception as e_hist:
+            print(f"[Auto DM] media_id geçmiş arama hatası: {e_hist}")
+
+    # 2. autopilot_history.json metin/başlık kontrolü (Otopilot tarafından paylaşılan ürünler önceliklidir)
+    if os.path.exists(history_file):
+        try:
+            with open(history_file, "r", encoding="utf-8") as f:
+                history = json.load(f)
+                for item in reversed(history):
+                    deal = item.get("deal") or {}
+                    aff_url = deal.get("affiliate_url") or deal.get("store_url")
+                    title = deal.get("title") or ""
+                    if aff_url and title:
+                        words = [w.lower() for w in re.findall(r"\w+", title) if len(w) > 3]
+                        if words and sum(1 for w in words if w in caption_low) >= 1:
+                            return (title or product_name, aff_url)
+        except Exception:
+            pass
+
+    # 3. data/deals.json içindeki güncel ürünlerle eşleştir
     best_match = None
     best_score = 0
 
@@ -144,27 +181,10 @@ def find_best_product_link(caption: str) -> tuple[str, str]:
     if best_match and best_score >= 1:
         return best_match
 
-    # 2. autopilot_history.json kontrolü
-    history_file = os.path.join(DATA_DIR, "autopilot_history.json")
-    if os.path.exists(history_file):
-        try:
-            with open(history_file, "r", encoding="utf-8") as f:
-                history = json.load(f)
-                for item in reversed(history):
-                    deal = item.get("deal") or {}
-                    aff_url = deal.get("affiliate_url")
-                    title = deal.get("title") or ""
-                    if aff_url:
-                        words = [w.lower() for w in re.findall(r"\w+", title) if len(w) > 3]
-                        if words and sum(1 for w in words if w in caption_low) >= 1:
-                            return (title or product_name, aff_url)
-        except Exception:
-            pass
-
     if cap_url:
         return (product_name, cap_url)
 
-    # 3. Fallback: Web Vitrini
+    # 4. Fallback: Web Vitrini
     return (product_name, f"{SITE_URL}?utm_source=instagram&utm_medium=auto_dm")
 
 def sync_git_remote():
@@ -228,7 +248,9 @@ def check_and_reply_comments(max_medias: int = 5, limit_per_run: int = 10) -> in
 
             media_pk = media.pk
             caption = media.caption_text or ""
-            product_name, target_link = find_best_product_link(caption)
+            product_name, target_link = find_best_product_link(caption, media_id=str(media_pk))
+            media_code = getattr(media, "code", "")
+            print(f"[Auto DM] 📌 Medya {media_pk} ({media_code}) -> Ürün: '{product_name}' | Link: {target_link}")
             media_users_replied = set()
 
             try:
@@ -317,7 +339,8 @@ def check_and_reply_comments(max_medias: int = 5, limit_per_run: int = 10) -> in
                             f"👉 Link: {target_link}\n\n"
                             f"⚡ Tüm anlık sıcak indirimler & kupon radarı için web vitrinimiz:\n"
                             f"🌐 {SITE_URL}?utm_source=instagram&utm_medium=auto_dm\n\n"
-                            f"{closing}"
+                            f"{closing}\n"
+                            f"*(#işbirliği)*"
                         )
                         try:
                             cl.direct_send(dm_message, user_ids=[user_pk])

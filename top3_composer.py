@@ -7,7 +7,8 @@ from PIL import Image, ImageDraw
 from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR
 from split_composer import (
     get_font, wrap_text, MEMES_DIR, AUDIO_DIR,
-    AVAILABLE_MEMES, AVAILABLE_AUDIOS
+    AVAILABLE_MEMES, AVAILABLE_AUDIOS,
+    create_product_banner, create_reaction_hook_overlay
 )
 
 def create_top3_card(
@@ -17,96 +18,42 @@ def create_top3_card(
     old_price: str,
     new_price: str,
     discount_pct: str,
-    output_path: str
+    output_path: str,
+    store_name: str = "Amazon TR",
+    bank_campaign: str = "",
+    net_cost: str = "",
+    installment: str = "",
+    feature_text: str = "",
+    is_lowest_30d: bool = False,
+    has_verified_old_price: bool = True,
+    seller_badge_text: str = "",
+    coupon_text: str = "",
+    market_badge: str = ""
 ) -> str:
     """
-    Top 3 formatına özel, 1080x960 ebatlarında sıralama rozetli (1., 2., 3.) afiş üretir.
+    Kullanıcı talebi doğrultusunda tekli videolardaki standart ajans kalitesindeki
+    şablon ile birebir aynı tasarımı (fiyat kutuları, DM bandı, rozetler) üretir.
     """
-    W, H = 1080, 960
-    img = Image.new("RGB", (W, H), (244, 246, 250))
-    draw = ImageDraw.Draw(img)
-
-    f_badge = get_font("segoeuib", 28)
-    f_title = get_font("segoeuib", 38)
-    f_old_price = get_font("segoeuib", 40)
-    f_new_price = get_font("segoeuib", 66)
-    f_pct = get_font("segoeuib", 28)
-
-    # Sıralama teması (Hatasız ve net tipografi)
-    if rank == 1:
-        rank_text = "1. GÜNÜN BOMBASI"
-        badge_fill = (220, 38, 38) # Kırmızı
-    elif rank == 2:
-        rank_text = "2. GÜNÜN FIRSATI"
-        badge_fill = (234, 88, 12) # Turuncu
-    else:
-        rank_text = "3. GÜNÜN FIRSATI"
-        badge_fill = (13, 148, 136) # Teal / Zümrüt
-
-    # Sol Üst Sıralama Rozeti
-    rw = draw.textlength(rank_text, font=f_badge)
-    draw.rounded_rectangle((40, 24, 40 + rw + 40, 76), radius=14, fill=badge_fill)
-    draw.text((60, 35), rank_text, font=f_badge, fill=(255, 255, 255))
-
-
-    # Sağ Üst İndirim Rozeti
-    clean_pct = discount_pct.strip()
-    if clean_pct and not clean_pct.endswith("İNDİRİM"):
-        clean_pct = f"{clean_pct} İNDİRİM"
-    pw = draw.textlength(clean_pct, font=f_pct)
-    draw.rounded_rectangle((W - 40 - pw - 40, 24, W - 40, 76), radius=14, fill=(225, 29, 72))
-    draw.text((W - 40 - pw - 20, 35), clean_pct, font=f_pct, fill=(255, 255, 255))
-
-    # Ürün Başlığı (2 satır)
-    title_lines = wrap_text(title, max_chars_per_line=36)
-    ty = 94
-    for line in title_lines:
-        draw.text((40, ty), line, font=f_title, fill=(15, 23, 42))
-        ty += 46
-
-    # Ürün Fotoğrafı
-    card_top = max(156, ty + 10)
-    card_bottom = 746
-    card_box = (40, card_top, W - 40, card_bottom)
-    draw.rounded_rectangle(card_box, radius=24, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
-
-    if product_image_path and os.path.exists(product_image_path):
-        try:
-            p_img = Image.open(product_image_path).convert("RGBA")
-            max_w = card_box[2] - card_box[0] - 60
-            max_h = card_box[3] - card_box[1] - 50
-            p_img.thumbnail((max_w, max_h), Image.Resampling.LANCZOS)
-            px = card_box[0] + (card_box[2] - card_box[0] - p_img.width) // 2
-            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2
-            img.paste(p_img, (px, py), p_img)
-        except Exception as e:
-            print(f"[Top3 Card] Görsel hatası: {e}")
-
-    # Alt Fiyat Kutuları
-    old_box = (40, 764, 400, 874)
-    draw.rounded_rectangle(old_box, radius=18, fill=(241, 245, 249))
-    draw.text((56, 774), "ESKİ FİYAT", font=get_font("segoeuib", 20), fill=(148, 163, 184))
-    draw.text((56, 804), str(old_price), font=f_old_price, fill=(148, 163, 184))
-    
-    # Çizgi çek
-    line_y = 828
-    ow = draw.textlength(str(old_price), font=f_old_price)
-    draw.line((54, line_y, 56 + ow + 4, line_y), fill=(239, 68, 68), width=4)
-
-    new_box = (420, 764, W - 40, 874)
-    draw.rounded_rectangle(new_box, radius=18, fill=(236, 253, 245), outline=(167, 243, 208), width=2)
-    draw.text((440, 774), "YENİ İNDİRİMLİ FİYAT", font=get_font("segoeuib", 22), fill=(5, 150, 105))
-    draw.text((440, 800), str(new_price), font=f_new_price, fill=(4, 120, 87))
-
-    # CTA Alt Şerit
-    cta_font = get_font("segoeuib", 23)
-    cta_text = "Yoruma 'LİNK' yaz, 3 fırsatın da linkini anında yollayalım!"
-    cw = draw.textlength(cta_text, font=cta_font)
-    draw.text(((W - cw) // 2, 902), cta_text, font=cta_font, fill=(100, 116, 139))
-
-
-    img.save(output_path, "PNG")
-    return output_path
+    badge_title = f"#{rank} GÜNÜN BOMBASI" if rank == 1 else f"#{rank} GÜNÜN FIRSATI"
+    return create_product_banner(
+        product_image_path=product_image_path,
+        title=title,
+        old_price=old_price,
+        new_price=new_price,
+        discount_pct=discount_pct,
+        badge_text=badge_title,
+        store_name=store_name,
+        bank_campaign=bank_campaign,
+        net_cost=net_cost,
+        installment=installment,
+        feature_text=feature_text,
+        is_lowest_30d=is_lowest_30d,
+        has_verified_old_price=has_verified_old_price,
+        seller_badge_text=seller_badge_text,
+        coupon_text=coupon_text,
+        market_badge=market_badge,
+        output_path=output_path
+    )
 
 def build_top3_video(
     deals: list,
@@ -114,11 +61,12 @@ def build_top3_video(
     output_filename: str = "top3_deals.mp4"
 ) -> str:
     """
-    Kullanıcı İsteklerine Özel Tasarım:
-    - Üst Yarı (1080x960): 3 fırsatın görselleri ve indirim kartları sırayla geçer (1 -> 2 -> 3).
-    - Alt Yarı (1080x960): TEK BİR viral meme videosu baştan sona kesintisiz oynar.
-    - Ses: Phonk müzik yerine meme'in kendi ikonik orijinal müziği/sesi kullanılır.
-    - Kedi videoları kesinlikle hariç tutulmuştur (Limon Davulcu, Çiftetelli, CJ vb. kullanılır).
+    Top 3 Fırsat Derleme Videosu:
+    - Üst Yarı (1080x960): Normal videolarımızdaki standart ajans şablonu (1 -> 2 -> 3 sırayla geçer).
+    - Orta Bölüm: Glassmorphic 'GÜNÜN EN İYİ 3 İNDİRİMİNİ GÖREN BEN:' reaksiyon kancası.
+    - Alt Yarı (1080x960): Kesintisiz tek viral meme videosu baştan sona oynar.
+    - Alt Kenar: Süreyle senkronize neon ilerleme çubuğu (progress bar).
+    - Ses: SFX veya karmaşa yok; meme'in kendi ikonik orijinal müziği/sesi doğal netlikte kullanılır.
     """
     if len(deals) < 3:
         raise ValueError("Top 3 videosu için en az 3 fırsat gereklidir!")
@@ -128,16 +76,14 @@ def build_top3_video(
 
     # 1. Kedi olmayan, orijinal müzikli Türk viral meme havuzu
     valid_memes = [
-        "limon_davulcu.mp4",
-        "bicerdover_ciftetelli.mp4",
         "degirmenci_dayi_cj.mp4",
+        "bicerdover_ciftetelli.mp4",
+        "limon_davulcu.mp4",
         "angaraya_mi_geldin.mp4",
         "limon_halay.mp4"
     ]
-    # Kütüphanedeki mevcut olanları filtrele
     existing_memes = [m for m in valid_memes if os.path.exists(os.path.join(MEMES_DIR, m))]
     if not existing_memes:
-        # Fallback: Kedi olmayan herhangi bir mp4
         existing_memes = [f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4") and "cat" not in f.lower()]
 
     if meme_name and os.path.exists(os.path.join(MEMES_DIR, meme_name)):
@@ -145,7 +91,7 @@ def build_top3_video(
     elif existing_memes:
         chosen_meme = random.choice(existing_memes)
     else:
-        chosen_meme = "limon_davulcu.mp4"
+        chosen_meme = "degirmenci_dayi_cj.mp4"
 
     bottom_meme_path = os.path.join(MEMES_DIR, chosen_meme)
     print(f"[Top3] 🎬 Seçilen Tek Kesintisiz Meme: {chosen_meme}")
@@ -162,35 +108,57 @@ def build_top3_video(
     d2 = round(slide_dur, 2)
     d3 = round(duration - (d1 + d2), 2)
 
-    # 3. Üst kartları üret (1. Fırsat, 2. Fırsat, 3. Fırsat)
+    # 3. Üst kartları üret (1. Fırsat, 2. Fırsat, 3. Fırsat) - Standart Şablon ile
     card_files = []
     for rank in [1, 2, 3]:
         deal = deals[rank - 1]
         card_out = os.path.join(TEMP_DIR, f"top3_single_card_{rank}.png")
-        create_top3_card(
-            rank=rank,
+        badge_title = f"#{rank} GÜNÜN BOMBASI" if rank == 1 else f"#{rank} GÜNÜN FIRSATI"
+        create_product_banner(
             product_image_path=deal.get("image_path") or deal.get("local_img") or deal.get("image_url"),
             title=deal.get("title", f"Fırsat Ürünü #{rank}"),
-            old_price=deal.get("old_price", "0 TL"),
-            new_price=deal.get("new_price", "0 TL"),
+            old_price=deal.get("old_price", ""),
+            new_price=deal.get("new_price", ""),
             discount_pct=deal.get("discount_pct", "-30%"),
+            badge_text=badge_title,
+            store_name=deal.get("store_name", "Amazon TR"),
+            bank_campaign=deal.get("bank_campaign", ""),
+            net_cost=deal.get("net_cost", ""),
+            installment=deal.get("installment", ""),
+            feature_text=deal.get("feature_pill", ""),
+            is_lowest_30d=deal.get("is_lowest_30d", False),
+            has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
+            seller_badge_text=deal.get("seller_badge", ""),
+            coupon_text=deal.get("coupon_info", ""),
+            market_badge=deal.get("market_badge", ""),
             output_path=card_out
         )
         card_files.append(card_out)
 
+    # 4. Orta Bölüm Reaksiyon Bandı (Tekli videolarla birebir aynı stil)
+    reaction_overlay_path = os.path.join(TEMP_DIR, "top3_reaction_overlay.png")
+    create_reaction_hook_overlay("GÜNÜN EN İYİ 3 İNDİRİMİNİ GÖREN BEN:", output_path=reaction_overlay_path)
+
     output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-    # 4. FFmpeg Montajı:
-    # [0:v], [1:v], [2:v] -> 3 slayt üstte sırayla (1080x960)
-    # [3:v] -> Tek meme altta (1080x960)
-    # Ses -> [3:a] meme'in kendi orijinal sesi
+    # 5. Dynamic Progress Bar (Neon İlerleme Çubuğu)
+    progress_bar_filter = (
+        f"color=c=0x0F172A@0.8:s=1080x14:d={duration:.2f}[pbg];"
+        f"color=c=0xFF5722:s=1080x14:d={duration:.2f}[pfill];"
+        f"[stacked][pbg]overlay=0:1906[with_pbg];"
+        f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1906[v]"
+    )
+
+    # 6. FFmpeg Montajı:
     filter_complex = (
         f"[0:v]scale=1080:960[c1];"
         f"[1:v]scale=1080:960[c2];"
         f"[2:v]scale=1080:960[c3];"
         f"[c1][c2][c3]concat=n=3:v=1:a=0[top];"
-        f"[3:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom];"
-        f"[top][bottom]vstack=inputs=2[v]"
+        f"[3:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom_raw];"
+        f"[bottom_raw][4:v]overlay=0:0[bottom];"
+        f"[top][bottom]vstack=inputs=2[stacked];"
+        f"{progress_bar_filter}"
     )
 
     cmd = [
@@ -199,15 +167,13 @@ def build_top3_video(
         "-loop", "1", "-t", str(d2), "-i", card_files[1],
         "-loop", "1", "-t", str(d3), "-i", card_files[2],
         "-i", bottom_meme_path,
+        "-loop", "1", "-t", str(duration), "-i", reaction_overlay_path,
         "-filter_complex", filter_complex,
         "-map", "[v]"
     ]
 
     if has_audio:
         cmd += ["-map", "3:a", "-c:a", "aac", "-b:a", "192k"]
-    else:
-        # Eğer meme'de ses yoksa alternatif Türk müziği
-        pass
 
     cmd += [
         "-t", str(duration),

@@ -21,7 +21,14 @@ def get_font(size: int, bold: bool = True):
                 return ImageFont.truetype(c, size)
             except Exception:
                 pass
-    return ImageFont.load_default()
+def clean_text_for_pil(text: str) -> str:
+    if not text:
+        return ""
+    import re
+    # 4-byte emojileri ve yazı tipi tarafından desteklenmeyen sembolleri (kutu [] karakterlerini) temizle
+    cleaned = re.sub(r'[\U00010000-\U0010ffff]', '', text)
+    cleaned = re.sub(r'[\u2600-\u27BF]', '', cleaned)
+    return cleaned.strip()
 
 def create_story_card(deal: dict, output_path: str = None) -> str:
     """
@@ -48,7 +55,7 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
     draw = ImageDraw.Draw(img)
 
     # 2. Üst Header: Logo & FLAŞ FIRSAT Rozeti (Varsa Akakçe Piyasa Rozeti)
-    header_text = deal.get("market_badge") or "GÜNÜN FLAŞ İNDİRİMİ"
+    header_text = clean_text_for_pil(deal.get("market_badge") or "GÜNÜN FLAŞ İNDİRİMİ")
     draw.rounded_rectangle([60, 90, 1020, 200], radius=25, fill=(28, 31, 38, 240), outline=(255, 200, 0, 180), width=3)
     header_font = get_font(44, bold=True)
     draw.text((width // 2, 145), header_text, font=header_font, fill=(255, 215, 0), anchor="mm")
@@ -72,21 +79,21 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
             print(f"[Story Card] Görsel yerleştirme hatası: {e}")
 
     # İndirim Rozeti (Görselin Sağ Üst Köşesinde Patlayan Rozet)
-    disc_text = deal.get("discount_pct", "-%40")
+    disc_text = clean_text_for_pil(deal.get("discount_pct", "-%40"))
     draw.rounded_rectangle([card_x2 - 220, card_y1 + 30, card_x2 - 30, card_y1 + 130], radius=20, fill=(225, 29, 72), outline=(255, 255, 255), width=3)
     badge_font = get_font(48, bold=True)
     draw.text((card_x2 - 125, card_y1 + 80), disc_text, font=badge_font, fill=(255, 255, 255), anchor="mm")
 
-    # Satıcı Rozeti (Sol Üst - Otomatik Genişleyen Kutu)
-    seller = (deal.get("seller_badge") or deal.get("store_name", "Amazon TR")).upper()
-    seller_font = get_font(30, bold=True)
+    # Satıcı Rozeti (Sol Üst - Otomatik Genişleyen ve Taşmayan Kutu)
+    seller = clean_text_for_pil((deal.get("seller_badge") or deal.get("store_name", "Amazon TR")).upper())
+    seller_font = get_font(28, bold=True)
     s_bbox = seller_font.getbbox(seller)
-    s_w = s_bbox[2] - s_bbox[0] + 40
+    s_w = (s_bbox[2] - s_bbox[0]) + 48
     draw.rounded_rectangle([card_x1 + 30, card_y1 + 30, card_x1 + 30 + s_w, card_y1 + 105], radius=18, fill=(15, 23, 42, 230))
     draw.text((card_x1 + 30 + s_w // 2, card_y1 + 68), seller, font=seller_font, fill=(56, 189, 248), anchor="mm")
 
     # 4. Ürün Başlığı (Alt Alan)
-    title = deal.get("title", "Fırsat Ürünü")
+    title = clean_text_for_pil(deal.get("title", "Fırsat Ürünü"))
     title_font = get_font(52, bold=True)
     # 2 satıra böl
     words = title.split()
@@ -120,7 +127,7 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
     # Banka/Nays Kampanyası (Varsa)
     if net_c:
         bank_font = get_font(38, bold=True)
-        camp_text = f"Nays ile Net Fiyat: {net_c}"
+        camp_text = clean_text_for_pil(f"Nays ile Net Fiyat: {net_c}")
         draw.rounded_rectangle([200, 1420, 880, 1490], radius=20, fill=(30, 41, 59, 220), outline=(56, 189, 248), width=2)
         draw.text((width // 2, 1455), camp_text, font=bank_font, fill=(56, 189, 248), anchor="mm")
 

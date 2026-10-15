@@ -201,10 +201,10 @@ def verify_deal_before_publish(deal: dict) -> dict:
             if v_res.get("is_captcha") and deal.get("new_price") and deal.get("image_path") and os.path.exists(deal.get("image_path")):
                 print(f"[Doğrulama] ⚠️ Amazon Datacenter CAPTCHA algılandı ancak fırsat verisi taranan kaynaktan teyitli ({deal.get('title')}). Taranan veriyle devam ediliyor.")
                 deal["seller_badge"] = deal.get("seller_badge") or "AMAZON TR"
-                return {"valid": True, "deal": deal}
+                return {"valid": True, "verified": True, "deal": deal}
 
             print(f"[Doğrulama] ❌ ÜRÜN YAYINA UYGUN DEĞİL! ({reason}). Paylaşım iptal ediliyor.")
-            return {"valid": False, "reason": reason}
+            return {"valid": False, "verified": False, "reason": reason}
 
         # Canlı fiyat kontrolü (İndirim bitti mi / fahiş zam geldi mi?)
         if v_res.get("live_price_val", 0) > 0:
@@ -270,4 +270,4 @@ def verify_deal_before_publish(deal: dict) -> dict:
         if deal["is_lowest_30d"]:
             print(f"[Doğrulama] 📉 Veritabanında Son 30 Günün En Düşük Fiyatı Doğrulandı!")
 
-    return {"valid": True, "deal": deal}
+    return {"valid": True, "verified": True, "deal": deal}

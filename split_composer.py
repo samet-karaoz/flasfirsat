@@ -770,13 +770,9 @@ def build_split_screen_video(
         f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1906[v]"
     )
 
-    # 5. Viral Kanca Ses Efekti (SFX: Whoosh veya Kasa Sesi / Cha-Ching)
-    sfx_file = "cash_register.wav" if discount_pct >= 35 else "whoosh.wav"
-    sfx_path = os.path.join(AUDIO_DIR, sfx_file)
-    has_sfx = os.path.exists(sfx_path)
-    if has_sfx:
-        print(f"[Montaj] 🔊 Hook Ses Efekti (SFX) Eklendi: {sfx_file} (t=0.35s)")
-
+    # 5. Ses Yapılandırması: Kullanıcı isteğiyle harici SFX ve ekstra müzikler kaldırıldı.
+    # Meme videosunun kendi orijinal viral sesi temiz ve doğal haliyle kullanılır.
+    has_sfx = False
     input_idx = 3  # 0: top_source, 1: bottom_meme, 2: reaction_overlay
 
     if not use_external_audio:
@@ -792,30 +788,19 @@ def build_split_screen_video(
         voice_stream = f"[{input_idx}:a]"
         input_idx += 1
 
-    sfx_stream = None
-    if has_sfx:
-        cmd += ["-i", sfx_path]
-        sfx_stream = f"[{input_idx}:a]"
-        input_idx += 1
-
-    # Ses mikseri filtrelerini dinamik oluştur
+    # Ses mikseri filtrelerini oluştur
     audio_parts = []
     mix_sources = []
 
-    # Fon / Meme Müziği
-    bg_vol = 0.35 if voice_path else 0.85
+    # Meme'in kendi sesi
+    bg_vol = 0.35 if voice_path else 1.0
     audio_parts.append(f"{bg_stream}volume={bg_vol}[bg]")
     mix_sources.append("[bg]")
 
-    # Seslendirme (Voiceover)
+    # Seslendirme (Voiceover varsa)
     if voice_stream:
         audio_parts.append(f"{voice_stream}volume=1.4[voice]")
         mix_sources.append("[voice]")
-
-    # Tok Kanca SFX Efekti (Whoosh veya Kasa Sesi)
-    if sfx_stream:
-        audio_parts.append(f"{sfx_stream}adelay=350|350,volume=0.9[sfx]")
-        mix_sources.append("[sfx]")
 
     if len(mix_sources) > 1:
         mix_inputs_str = "".join(mix_sources)

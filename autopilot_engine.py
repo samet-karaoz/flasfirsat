@@ -39,8 +39,11 @@ def record_autopilot_run(record: dict):
     except Exception as e:
         print(f"[Autopilot Engine] Geçmiş kaydedilemedi: {e}")
 
-def send_telegram_admin_summary(summary_text: str, reply_markup: dict = None):
+def send_telegram_admin_summary(summary_text: str, reply_markup: dict = None, dry_run: bool = False):
     """Yöneticiye Telegram üzerinden özet raporu gönderir."""
+    if dry_run:
+        print("[Autopilot Engine] 🧪 DRY-RUN Aktif: Telegram yönetici mesajı gönderilmedi.")
+        return
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
     import requests
@@ -115,7 +118,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         if not candidates:
             err = "Uygun kriterde (yeterli indirim ve stok) fırsat ürünü bulunamadı."
             print(f"[Autopilot Engine] ❌ {err}")
-            send_telegram_admin_summary(f"⚠️ <b>[OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}")
+            send_telegram_admin_summary(f"⚠️ <b>[OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}", dry_run=dry_run)
             result["error"] = err
             record_autopilot_run(result)
             return result
@@ -153,7 +156,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         if not prod_res or not prod_res.get("video_path") or not deal:
             err = f"Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi ({len(candidates)} aday test edildi)."
             print(f"[Autopilot Engine] ❌ {err}")
-            send_telegram_admin_summary(f"⚠️ <b>[OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}")
+            send_telegram_admin_summary(f"⚠️ <b>[OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}", dry_run=dry_run)
             result["error"] = err
             record_autopilot_run(result)
             return result
@@ -169,8 +172,23 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
             "affiliate_url": aff_url
         }
 
+        result["video_path"] = video_path
+        result["caption_text"] = caption_text
+
+        # Instagram Story Görselini Oluştur (Hem testte hem yayında hazır olsun)
+        story_img = None
+        try:
+            from story_composer import create_story_card
+            story_img = create_story_card(deal)
+            result["story_image_path"] = story_img
+        except Exception as est:
+            print(f"[Autopilot Engine] Story kartı oluşturma uyarısı: {est}")
+
         if dry_run:
-            print("\n[Autopilot Engine] 🧪 DRY-RUN Aktif: Yayınlama adımları atlandı.")
+            print("\n[Autopilot Engine] 🧪 DRY-RUN Aktif: Sosyal medya ve Telegram yayınlama adımları atlandı.")
+            print(f"📁 Hazır Video Dosyası: {video_path}")
+            if story_img:
+                print(f"📁 Hazır Story Kartı:  {story_img}")
             result["success"] = True
             result["dry_run"] = True
             record_autopilot_run(result)
@@ -212,16 +230,15 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         # B2) Instagram Story (Tıklanabilir Link Çıkartması ile)
         print("\n--- 2b. Instagram Story (Tıklanabilir Link Çıkartması) ---")
         try:
-            from story_composer import create_story_card
             from instagram_publisher import publish_story_with_link
-            story_img = create_story_card(deal)
-            st_res = publish_story_with_link(story_img, link_url=aff_url)
-            if st_res.get("success"):
-                result["platforms"]["instagram_story"] = {"status": "ok", "media_id": st_res.get("media_id")}
-                print(f"✅ Instagram Story Başarılı (Link Çıkartmalı)! ID: {st_res.get('media_id')}")
-            else:
-                result["platforms"]["instagram_story"] = {"status": "error", "error": st_res.get("error")}
-                print(f"❌ Instagram Story Hatası: {st_res.get('error')}")
+            if story_img and os.path.exists(story_img):
+                st_res = publish_story_with_link(story_img, link_url=aff_url)
+                if st_res.get("success"):
+                    result["platforms"]["instagram_story"] = {"status": "ok", "media_id": st_res.get("media_id")}
+                    print(f"✅ Instagram Story Başarılı (Link Çıkartmalı)! ID: {st_res.get('media_id')}")
+                else:
+                    result["platforms"]["instagram_story"] = {"status": "error", "error": st_res.get("error")}
+                    print(f"❌ Instagram Story Hatası: {st_res.get('error')}")
         except Exception as es:
             result["platforms"]["instagram_story"] = {"status": "error", "error": str(es)}
             print(f"❌ Instagram Story İstisna: {es}")
@@ -344,7 +361,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
     except Exception as e:
         err = f"Otopilot genel hatası: {e}\n{traceback.format_exc()}"
         print(f"[Autopilot Engine] ❌ {err}")
-        send_telegram_admin_summary(f"🚨 <b>[OTOPİLOT KRİTİK HATA]</b>\nKuşak: {slot_name}\n\n<code>{str(e)}</code>")
+        send_telegram_admin_summary(f"🚨 <b>[OTOPİLOT KRİTİK HATA]</b>\nKuşak: {slot_name}\n\n<code>{str(e)}</code>", dry_run=dry_run)
         result["error"] = str(e)
         record_autopilot_run(result)
         return result
@@ -373,7 +390,7 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
 
     try:
         from deal_hunter import hunt_best_deals, get_deal_discount_pct, get_deal_savings_tl, get_product_subtype
-        from product_verifier import verify_and_enrich_product
+        from product_verifier import verify_deal_before_publish
         from top3_composer import build_top3_video, generate_top3_caption
         from deal_bot import load_history, save_history, get_affiliate_url
 
@@ -401,20 +418,21 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             if sub != "general" and sub in seen_subtypes:
                 continue
 
-            v_deal = verify_and_enrich_product(c)
-            if v_deal and v_deal.get("image_path") and os.path.exists(v_deal["image_path"]):
-                raw_u = v_deal.get("store_url") or v_deal.get("url") or ""
-                aff_u = get_affiliate_url(raw_u, v_deal.get("store_name", ""))
-                v_deal["affiliate_url"] = aff_u
-                top3_deals.append(v_deal)
+            v_res = verify_deal_before_publish(c)
+            if v_res and (v_res.get("verified") or v_res.get("valid")):
+                c = v_res.get("deal", c)
+                raw_u = c.get("store_url") or c.get("url") or ""
+                aff_u = get_affiliate_url(raw_u, c.get("store_name", ""))
+                c["affiliate_url"] = aff_u
+                top3_deals.append(c)
                 if sub != "general":
                     seen_subtypes.add(sub)
-                print(f"✅ Top 3 Adayı Seçildi (#{len(top3_deals)}): {v_deal.get('title')[:40]} (-%{get_deal_discount_pct(v_deal)})")
+                print(f"✅ Top 3 Adayı Seçildi (#{len(top3_deals)}): {c.get('title')[:40]} (-%{get_deal_discount_pct(c)})")
 
         if len(top3_deals) < 3:
             err = f"Top 3 videosu için yeterli teyitli aday toplanamadı ({len(top3_deals)}/3 aday bulundu)."
             print(f"[Top3 Engine] ❌ {err}")
-            send_telegram_admin_summary(f"⚠️ <b>[TOP 3 OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}")
+            send_telegram_admin_summary(f"⚠️ <b>[TOP 3 OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}", dry_run=dry_run)
             result["error"] = err
             record_autopilot_run(result)
             return result
@@ -495,7 +513,7 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             f"• 📢 Telegram: {'✅ Yayında' if result['platforms'].get('telegram', {}).get('status') == 'ok' else '❌ Hata'}\n"
             f"• 🌐 Web Vitrini: ✅ 3 Ürün Eklendi"
         )
-        send_telegram_admin_summary(summary_msg)
+        send_telegram_admin_summary(summary_msg, dry_run=dry_run)
         record_autopilot_run(result)
         print("\n🎉 [TOP 3] Bülten yayını başarıyla tamamlandı!")
         return result
@@ -503,7 +521,7 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
     except Exception as e:
         err = f"Top 3 otopilot hatası: {e}\n{traceback.format_exc()}"
         print(f"[Top3 Engine] ❌ {err}")
-        send_telegram_admin_summary(f"🚨 <b>[TOP 3 OTOPİLOT HATASI]</b>\nKuşak: {slot_name}\n\n<code>{str(e)}</code>")
+        send_telegram_admin_summary(f"🚨 <b>[TOP 3 OTOPİLOT HATASI]</b>\nKuşak: {slot_name}\n\n<code>{str(e)}</code>", dry_run=dry_run)
         result["error"] = str(e)
         record_autopilot_run(result)
         return result

@@ -32,7 +32,9 @@ BORING_REGEX = re.compile(
     r"motosiklet|lastik|kask(ı)?|disk\s*kilidi|saç\s*toniği|sabun|"
     r"tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
     r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|flash\s*bellek|usb\s*bellek|"
-    r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|aparat[ıi]?)",
+    r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|aparat[ıi]?|"
+    r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
+    r"tıraş\s*başlığı|conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
 )
 
@@ -54,7 +56,7 @@ def is_vague_deal(title: str, text: str = "") -> bool:
     if not t or len(t) < 4:
         return True
 
-    if VAGUE_TITLE_REGEX.search(t):
+    if VAGUE_TITLE_REGEX.search(t) or BORING_REGEX.search(t):
         return True
 
     single_brands = ["columbia", "adidas", "nike", "puma", "zara", "mango", "defacto", "koton", "mavi", "lcw"]

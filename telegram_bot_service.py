@@ -24,6 +24,7 @@ TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "@flasfirsat").strip()
 
 DATA_DIR = os.path.join(BASE_DIR, "data")
 USER_ALARMS_FILE = os.path.join(DATA_DIR, "user_alarms.json")
+IS_DM_SCANNING = False
 
 def load_user_alarms() -> list:
     if os.path.exists(USER_ALARMS_FILE):
@@ -752,11 +753,12 @@ def run_telegram_service():
     else:
         print("☁️ [BULUT OTOPİLOTU AKTİF] 12:30 & 20:00 kuşakları GitHub Actions bulut sunucusu tarafından 7/24 kesintisiz yönetilmektedir (Çift paylaşım koruması devrede).\n")
 
+    global IS_DM_SCANNING
     offset = None
     last_alarm_check = time.time()
-    last_dm_check = time.time()
+    last_dm_check = time.time() - 150  # İlk kontrole 30 saniye sonra başla
 
-    is_dm_scanning = False
+    IS_DM_SCANNING = False
 
     while True:
         try:
@@ -787,23 +789,23 @@ def run_telegram_service():
                 last_alarm_check = time.time()
 
             # 3 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder (Eşzamanlı kilit ile)
-            if time.time() - last_dm_check > 180 and not is_dm_scanning:
+            if time.time() - last_dm_check > 180 and not IS_DM_SCANNING:
                 last_dm_check = time.time()
-                is_dm_scanning = True
+                IS_DM_SCANNING = True
                 try:
                     def _periodic_dm():
-                        global is_dm_scanning
+                        global IS_DM_SCANNING
                         try:
                             from instagram_auto_dm import check_and_reply_comments
                             check_and_reply_comments()
                         except Exception as e_dm_run:
                             print(f"[Telegram Service] Periyodik Auto-DM hatası: {e_dm_run}")
                         finally:
-                            is_dm_scanning = False
+                            IS_DM_SCANNING = False
                     import threading
                     threading.Thread(target=_periodic_dm, daemon=True).start()
                 except Exception as e_dm:
-                    is_dm_scanning = False
+                    IS_DM_SCANNING = False
                     print(f"[Telegram Service] Auto-DM iş parçacığı hatası: {e_dm}")
 
         except requests.exceptions.RequestException:

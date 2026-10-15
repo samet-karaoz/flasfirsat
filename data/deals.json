@@ -1,5 +1,21 @@
 [
   {
+    "id": "deal_1792074118_18",
+    "title": "Bluefox Dijital Mutfak Tartısı",
+    "old_price": "599,00 TL",
+    "new_price": "389 TL",
+    "discount_pct": "-35%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B08W34BD8J?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile %10 İade (39 TL)",
+    "net_cost": "350 TL",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "image_url": "assets/products/bluefox_dijital_mutfak_ta_03a566bb.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "15.10.2026 14:21"
+  },
+  {
     "id": "deal_1792056993_18",
     "title": "PlayStation 5 Pro",
     "old_price": "76.399 TL",

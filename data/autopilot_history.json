@@ -151,5 +151,47 @@
     "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_123315_playstation_5_pro.mp4",
     "caption_text": "🚨 Karaborsaya düşmeden bu fiyata bulmak imkansızdı! \n\nEski Fiyat ❌ -> 76.399 TL \nYeni Fiyat ✅ -> 72.999 TL (%4 İndirim)\n\n💳 Nays ile 250 TL iade ve Prime kargo avantajıyla Net Maliyet: 72.749 TL!\n\n🚨 DİKKAT: Yüksek talep nedeniyle stoklar her an tükenebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #ps5pro #oyun #fırsat #keşfet #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_46_amz_B0DJH2NS6R.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-10-15 14:17:45",
+    "slot": "Bulut Otopilotu (12:30 / 20:00)",
+    "success": true,
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/7VJ_a78bP1Y"
+      },
+      "instagram": {
+        "status": "error",
+        "error": "Could not generate video thumbnail. Pass thumbnail=... or install MoviePy 2.2.1. Install video dependencies with pip install \"instagrapi[video]\" and then install MoviePy with pip install --no-deps \"moviepy==2.2.1\". Make sure ffmpeg is executable or set IMAGEIO_FFMPEG_EXE."
+      },
+      "instagram_story": {
+        "status": "ok",
+        "media_id": "4008530596442984416"
+      },
+      "telegram": {
+        "status": "error",
+        "error": "Telegram kanala gönderilemedi"
+      },
+      "whatsapp": {
+        "status": "error",
+        "error": "No module named 'playwright'"
+      },
+      "web": {
+        "status": "ok",
+        "url": "https://samet-karaoz.github.io/flasfirsat"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Bluefox Dijital Mutfak Tartısı",
+      "new_price": "389 TL",
+      "old_price": "599,00 TL",
+      "discount_pct": "-35%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B08W34BD8J?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261015_142043_bluefox_dijital_mutfak_tartisi.mp4",
+    "caption_text": "🚨 Bu fiyata mutfakta böyle bir devrim yok! \n\nEski Fiyat: 599 TL ❌ -> Yeni Fiyat: 389 TL ✅ (%35 İndirim)\n💳 Nays ile %10 iadeyle Net Maliyet: 350 TL!\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #mutfak #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_35_amz_B08W34BD8J.jpg.jpg"
   }
 ]

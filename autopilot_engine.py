@@ -397,7 +397,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         }
         # Fırsatı geçmiş listesine ekle (Sonraki döngülerde aynı ürünün tekrar seçilmesini önler)
         try:
-            from deal_bot import save_history, set_last_product, set_last_subtype, get_product_subtype
+            from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
+            history = load_history()
             deal_sig = deal.get("store_url") or deal.get("url") or title
             if deal_sig:
                 history.add(deal_sig)

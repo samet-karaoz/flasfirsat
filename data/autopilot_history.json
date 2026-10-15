@@ -254,5 +254,48 @@
     "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_211505_sandisk_64gb_usb_bellek_youtube.mp4",
     "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTME Mİ?! \n\n699 TL ❌ -> 425,79 TL ✅ (%39 İndirim)\n💳 Nays ile %10 iade (43 TL) ile NET MALİYET: 383 TL!\n\n🚨 DİKKAT: %39'luk dev indirim ve bu fiyat, stoklar tükenmeden kaçmaz! Elini çabuk tutan kapar.\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #teknoloji #kampanya #keşfet #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_39_amz_B017RD10X8.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-10-15 21:24:10",
+    "slot": "Akşam Kuşağı (Lenovo 240Hz Monitör)",
+    "success": true,
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/lKyi7mlg5vw"
+      },
+      "instagram": {
+        "status": "ok",
+        "media_id": "4008653237639127393"
+      },
+      "instagram_story": {
+        "status": "ok",
+        "media_id": "4008653610186952968"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      },
+      "whatsapp": {
+        "status": "ok",
+        "channel": "Flaş Fırsat ⚡"
+      },
+      "web": {
+        "status": "ok",
+        "url": "https://samet-karaoz.github.io/flasfirsat"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Lenovo Legion 240Hz Gaming Monitör",
+      "new_price": "5.879,02 TL",
+      "old_price": "8.998 TL",
+      "discount_pct": "-35%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0GRWGJS54?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_212411_lenovo_legion_240hz_gaming_mon.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_212411_lenovo_legion_240hz_gaming_mon_youtube.mp4",
+    "caption_text": "🚨 BU FİYATA BÖYLE BİR CANAVAR YOK! 240Hz MONİTÖR BEDAVAYA GELİYOR! \n\n8.998 TL ❌ -> 5.879 TL ✅ (%35 İndirim!)\n💳 Nays ile 250 TL iade ve 3 taksit avantajıyla Net Maliyet sadece 5.629 TL!\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun! 0.5ms IPS panele sahip bu 240Hz oyuncu monitörünü kaçıran üzülür!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #oyuncu #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_amz_B0GRWGJS54.jpg.jpg"
   }
 ]

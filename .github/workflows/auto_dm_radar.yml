@@ -1,0 +1,76 @@
+name: 💬 Instagram Auto-DM Radarı (24/7 Bulut)
+
+on:
+  schedule:
+    # Her 20 dakikada bir otomatik tara (UTC)
+    - cron: '*/20 * * * *'
+  workflow_dispatch:
+    inputs:
+      manual_trigger:
+        description: 'Manuel Tetikleme Nedeni'
+        required: false
+        default: 'Manuel Kontrol'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  check-and-reply-dm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Depoyu Klonla (Checkout)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Python 3.11 Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Bağımlılıkları Yükle
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔑 Instagram Bulut Oturumunu Yükle
+        env:
+          IG_SESSION: ${{ secrets.INSTAGRAM_SESSION_JSON }}
+        run: |
+          mkdir -p data
+          python -c "
+          import os
+          ig = os.getenv('IG_SESSION')
+          if ig:
+              with open('data/instagram_session.json', 'w', encoding='utf-8') as f:
+                  f.write(ig)
+              print('✅ Instagram Session dosyası yüklendi.')
+          "
+
+      - name: 🔍 Instagram Yorumlarını Tara & DM İlet
+        env:
+          INSTAGRAM_USERNAME: ${{ secrets.INSTAGRAM_USERNAME }}
+          INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
+          AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
+          TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
+          HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
+          SITE_URL: "https://samet-karaoz.github.io/flasfirsat"
+        run: |
+          python -u instagram_auto_dm.py
+
+      - name: 💾 Yorum Geçmişini Kaydet (Commit & Push)
+        run: |
+          git config --global user.name "flasfirsat-bot[bot]"
+          git config --global user.email "bot@flasfirsat.com"
+          git add data/replied_comments.json || true
+          if git diff --staged --quiet; then
+            echo "Yeni yanıtlanan yorum yok, commit atlanıyor."
+          else
+            git commit -m "💬 Instagram Auto-DM geçmişi güncellendi [skip ci]"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

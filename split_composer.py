@@ -12,18 +12,18 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
-    "vince_mcmahon.mp4",        # 1. Para koklama / Şok sevinç reaksiyonu
+    "knight_cat.mp4",           # 1. Şövalye Kedi (Zırhlı kedi viral)
     "bicerdover_ciftetelli.mp4", # 2. Biçerdöver çiftetelli (Türk viral dans)
     "homelander_stare.mp4",     # 3. Homelander şok / Ciddi bakış
-    "cat_vibing.mp4",           # 4. Vibing Cat (Ritimle kafa sallayan kedi)
-    "degirmenci_dayi_cj.mp4",   # 5. GTA San Andreas Değirmenci Dayı
-    "bale_nod.mp4",             # 6. Christian Bale onaylama / takdir
-    "limon_davulcu.mp4",        # 7. Limoncu Davulcu (Türk viral dans)
+    "degirmenci_dayi_cj.mp4",   # 4. GTA San Andreas Değirmenci Dayı
+    "bale_nod.mp4",             # 5. Christian Bale onaylama / takdir
+    "limon_davulcu.mp4",        # 6. Limoncu Davulcu (Türk viral dans)
+    "cat_vibing.mp4",           # 7. Vibing Cat (Ritimle kafa sallayan kedi)
     "shark_nemo.mp4",           # 8. Kayıp Balık Nemo Bruce köpekbalığı
     "angaraya_mi_geldin.mp4",   # 9. Angara'ya mı geldin la
-    "knight_cat.mp4",           # 10. Şövalye Kedi
-    "the_rock.mp4",             # 11. The Rock ikonik kaş kaldırma
-    "limon_halay.mp4"           # 12. Limon Halay (Türk viral halay)
+    "the_rock.mp4",             # 10. The Rock ikonik kaş kaldırma
+    "limon_halay.mp4",          # 11. Limon Halay (Türk viral halay)
+    "vince_mcmahon.mp4"         # 12. Vince McMahon para koklama / Şok sevinç
 ]
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 

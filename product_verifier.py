@@ -221,33 +221,36 @@ def verify_deal_before_publish(deal: dict) -> dict:
         from deal_hunter import parse_price_to_float
         orig_old_val = parse_price_to_float(orig_old_price)
         live_val = v_res.get("live_price_val", 0.0)
+        if live_val <= 0:
+            live_val = parse_price_to_float(deal.get("new_price", ""))
+
         real_strike = v_res.get("real_strike_val", 0.0)
         from price_tracker import get_real_previous_price
         db_prev = get_real_previous_price(v_res.get("asin", ""), "Amazon TR")
 
-        if real_strike > live_val:
-            deal["old_price"] = f"{int(real_strike):,} TL".replace(",", ".")
+        chosen_old = 0.0
+        source_lbl = ""
+        # En az %10 fiyat farkı olmalı, aksi halde eski fiyat olarak kabul edilemez
+        if real_strike > 0 and real_strike >= live_val * 1.10:
+            chosen_old = real_strike
+            source_lbl = "Gerçek Amazon Liste Fiyatı"
+        elif orig_old_val > 0 and orig_old_val >= live_val * 1.10:
+            chosen_old = orig_old_val
+            source_lbl = "Taranan Piyasa/Liste Fiyatı"
+        elif db_prev > 0 and db_prev >= live_val * 1.15:
+            chosen_old = db_prev
+            source_lbl = "Veritabanı Geçmiş Fiyatı"
+
+        if chosen_old > live_val:
+            deal["old_price"] = f"{int(chosen_old):,} TL".replace(",", ".")
             deal["has_verified_old_price"] = True
-            calc_pct = round(((real_strike - live_val) / real_strike) * 100)
+            calc_pct = round(((chosen_old - live_val) / chosen_old) * 100)
             deal["discount_pct"] = f"-{calc_pct}%"
-            print(f"[Doğrulama] 🏷️ Gerçek Amazon Liste Fiyatı Doğrulandı: {deal['old_price']} (-%{calc_pct})")
-        elif db_prev > live_val:
-            deal["old_price"] = f"{int(db_prev):,} TL".replace(",", ".")
-            deal["has_verified_old_price"] = True
-            calc_pct = round(((db_prev - live_val) / db_prev) * 100)
-            deal["discount_pct"] = f"-{calc_pct}%"
-            print(f"[Doğrulama] 📈 Veritabanı Geçmiş Fiyatı Doğrulandı: {deal['old_price']} (-%{calc_pct})")
-        elif orig_old_val > live_val:
-            # 14/30 günlük fiyat veritabanı tam dolana kadar taranan referans piyasa/liste fiyatını koru
-            deal["old_price"] = orig_old_price
-            deal["has_verified_old_price"] = True
-            calc_pct = round(((orig_old_val - live_val) / orig_old_val) * 100)
-            deal["discount_pct"] = f"-{calc_pct}%"
-            print(f"[Doğrulama] 🏷️ Taranan Piyasa/Liste Fiyatı Korundu: {deal['old_price']} (-%{calc_pct})")
+            print(f"[Doğrulama] 🏷️ {source_lbl} Doğrulandı: {deal['old_price']} (-%{calc_pct})")
         else:
             deal["old_price"] = ""
             deal["has_verified_old_price"] = False
-            print(f"[Doğrulama] ℹ️ Üstü çizili eski fiyat bulunamadı (Tek fiyatlı fırsat olarak işlenecek).")
+            print(f"[Doğrulama] ℹ️ Eski fiyat bulunamadı veya mevcut fiyata çok yakın. Tek fiyat olarak işlenecek.")
 
         # Gerçek Satıcı Rozeti
         deal["seller_badge"] = v_res.get("seller_badge", "Amazon TR")

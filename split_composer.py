@@ -517,9 +517,10 @@ def create_product_banner(
     draw.text((card_box[0] + 38, card_box[3] - 40), clean_inst, font=f_label, fill=(4, 120, 87))
 
     # 5. DÜRÜST FİYAT MİMARİSİ: Doğrulanmış Eski Fiyat Varsa İki Kutu, Yoksa Tek Büyük Hero Kutu
-    show_old_price = bool(has_verified_old_price and old_price and old_price.strip())
-    old_val = parse_price_to_float(old_price) if show_old_price else 0
+    old_val = parse_price_to_float(old_price) if (old_price and str(old_price).strip()) else 0
     new_val = parse_price_to_float(new_price)
+    # Eski fiyat sadece gerçekten mevcut fiyattan en az %8 daha yüksekse gösterilir; aksi halde tek hero kutu kullanılır
+    show_old_price = bool(has_verified_old_price and old_val >= (new_val * 1.08))
     savings = (old_val - new_val) if (show_old_price and old_val > new_val) else 0
 
     sub_parts = []

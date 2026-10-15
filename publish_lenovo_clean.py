@@ -21,10 +21,10 @@ deal = {
 }
 
 if __name__ == "__main__":
-    print("🚀 Şövalye Kedi ile Lenovo 240Hz Monitör yayını başlatılıyor...")
+    print("🚀 Şövalye Kedi ve Doğru Fiyat Kartıyla Lenovo 240Hz Monitör yayını başlatılıyor...")
     res = run_autopilot_deal_cycle(
         dry_run=False,
-        slot_name="Akşam Kuşağı (Şövalye Kedi & Lenovo 240Hz)",
+        slot_name="Akşam Kuşağı (Lenovo 240Hz Monitör - Şövalye Kedi)",
         force=True,
         custom_deal=deal
     )

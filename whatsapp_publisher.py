@@ -2,7 +2,10 @@ import os
 import sys
 import time
 import re
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:
+    sync_playwright = None
 from config import BASE_DIR, DATA_DIR, SITE_URL
 
 USER_DATA_DIR = os.path.join(DATA_DIR, "whatsapp_user_data")
@@ -113,6 +116,11 @@ def publish_deal_to_whatsapp_channel(
             print(f"[WhatsApp Publisher] Webhook hatası: {e_hook}")
 
     # 2. Yerel / Headless Playwright Tarayıcı Modu
+    if not sync_playwright:
+        msg = "Playwright modülü sistemde yüklü değil. Yerel WhatsApp paylaşımı için 'pip install playwright' gereklidir."
+        print(f"[WhatsApp Publisher] ⚠️ {msg}")
+        return {"success": False, "error": msg}
+
     chk = check_whatsapp_ready()
     if not chk.get("ready"):
         print(f"[WhatsApp Publisher] ⚠️ {chk.get('message')}")

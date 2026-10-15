@@ -14,15 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6FTHRHYFR"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-E6FTHRHYFR');
-    </script>
+    <!-- Google Analytics ID ayarlanmadı. Yerel telemetri ve etkileşim motoru çalışıyor. -->
     <style>
         :root {
             --bg-base: #0B0D12;
@@ -1016,6 +1008,42 @@
 
         <div class="deals-grid" id="dealsGrid">
 
+            <div class="deal-card" data-status="active" data-title="asus tuf 27" 165hz monitör amazon tr" data-deal-id="deal_1792095414_20" data-deal-title="Asus TUF 27&quot; 165Hz Monitör" data-store="Amazon TR" data-price="7.733,01 TL">
+                <a href="https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Asus TUF 27&quot; 165Hz Monitör">
+                    <div class="card-img-wrap">
+                        <img src="assets/products/asus_tuf_27__165hz_monit__543719e7.jpg" alt="Asus TUF 27&quot; 165Hz Monitör" class="card-img" loading="lazy">
+                        <span class="badge-store store-amazon">Amazon TR</span>
+                        <span class="badge-discount">-33%</span>
+                        
+                    </div>
+                </a>
+                <div class="card-content">
+                    <a href="https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-title-link" title="Asus TUF 27&quot; 165Hz Monitör">
+                        <h3 class="card-title">Asus TUF 27" 165Hz Monitör</h3>
+                    </a>
+                    <div class="price-section">
+                        <span class="old-price">11.499 TL</span>
+                        <span class="new-price">7.733,01 TL</span>
+                    </div>
+
+                    <div class="campaign-box">
+                        <div class="campaign-header">
+                            <span class="campaign-tag">💳 EK AVANTAJ</span>
+                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        </div>
+                        <div class="net-cost-row">
+                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
+                            <span class="net-cost-val">7.483 TL</span>
+                        </div>
+                        <div class="installment-row">
+                            <span class="installment-txt">⚡ 3 Taksit x 2.578 TL</span>
+                        </div>
+                    </div>
+
+                    <a href="https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="deal_1792095414_20" data-title="Asus TUF 27&quot; 165Hz Monitör" data-store="Amazon TR" data-price="7.733,01 TL">🔥 Fırsata Git & Satın Al</a>
+                </div>
+            </div>
+
             <div class="deal-card" data-status="active" data-title="lenovo legion 240hz gaming monitör amazon tr" data-deal-id="deal_1792089571_20" data-deal-title="Lenovo Legion 240Hz Gaming Monitör" data-store="Amazon TR" data-price="5.879,02 TL">
                 <a href="https://www.amazon.com.tr/dp/B0GRWGJS54?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Lenovo Legion 240Hz Gaming Monitör">
                     <div class="card-img-wrap">
@@ -1836,8 +1864,8 @@
 
         // --- 2. ZİYARETÇİ VE ETKİLEŞİM TELEMETRİ MOTORU ---
         const STATS_KEY = 'flas_stats_v1';
-        const gaConfigured = true;
-        const gaIdSafe = 'G-E6FTHRHYFR';
+        const gaConfigured = false;
+        const gaIdSafe = '';
 
         function getStoredStats() {
             try {

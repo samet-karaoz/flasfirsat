@@ -1,5 +1,21 @@
 [
   {
+    "id": "deal_1792095414_20",
+    "title": "Asus TUF 27\" 165Hz Monitör",
+    "old_price": "11.499 TL",
+    "new_price": "7.733,01 TL",
+    "discount_pct": "-33%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
+    "net_cost": "7.483 TL",
+    "installment": "3 Taksit x 2.578 TL",
+    "image_url": "assets/products/asus_tuf_27__165hz_monit__543719e7.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "15.10.2026 20:16"
+  },
+  {
     "id": "deal_1792089571_20",
     "title": "Lenovo Legion 240Hz Gaming Monitör",
     "old_price": "8.998 TL",

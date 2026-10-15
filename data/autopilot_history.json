@@ -383,5 +383,48 @@
     "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_213733_lenovo_legion_240hz_gaming_mon_youtube.mp4",
     "caption_text": "🚨 240Hz IPS Monitörde Yılın Fiyatı! Bu fiyata kaçıran üzülür!\n\n8.998 TL ❌ -> 5.879 TL ✅ (%35 İndirim)\n💳 Nays ile 250 TL iade ve 3 taksit imkanıyla Net Maliyet: 5.629 TL!\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #oyuncu #kampanya #keşfet #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_amz_B0GRWGJS54.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-10-15 20:14:51",
+    "slot": "Bulut Otopilotu (12:30 / 20:00)",
+    "success": true,
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/TAVufP68g2o"
+      },
+      "instagram": {
+        "status": "error",
+        "error": "login_required"
+      },
+      "instagram_story": {
+        "status": "error",
+        "error": "login_required"
+      },
+      "telegram": {
+        "status": "error",
+        "error": "Telegram kanala gönderilemedi"
+      },
+      "whatsapp": {
+        "status": "error",
+        "error": "Playwright modülü sistemde yüklü değil. Yerel WhatsApp paylaşımı için 'pip install playwright' gereklidir."
+      },
+      "web": {
+        "status": "ok",
+        "url": "https://samet-karaoz.github.io/flasfirsat"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Asus TUF 27\" 165Hz Monitör",
+      "new_price": "7.733,01 TL",
+      "old_price": "11.499 TL",
+      "discount_pct": "-33%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261015_201628_asus_tuf_27_165hz_monitor.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261015_201628_asus_tuf_27_165hz_monitor_youtube.mp4",
+    "caption_text": "🚨 BU FİYAT GERÇEK Mİ?! Asus TUF 27\" 165Hz QHD monitörde tarihi indirim! 🎮\n\nEski Fiyat: 11.499 TL ❌\nYeni Fiyat: 7.733 TL ✅\nİndirim: %33🔥\n\n💳 Nays ile 250 TL iade sonrası net maliyet: 7.483 TL!\n\n🚨 DİKKAT: Stoklar her an tükenebilir, bu fiyat seviyesi uzun süre kalmaz, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #teknoloji #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_33_amz_B09BNHFDW5.jpg.jpg"
   }
 ]

@@ -737,16 +737,16 @@ def run_telegram_service():
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("=======================================================\n")
 
-    # 24/7 Bulut Otopilotu (GitHub Actions) 12:30 & 20:00 için birincil zamanlayıcıdır.
-    # Lokal zamanlayıcı yalnızca ENABLE_LOCAL_SCHEDULER=true olduğunda çalışır.
-    enable_local_sched = os.getenv("ENABLE_LOCAL_SCHEDULER", "false").strip().lower() in ("true", "1", "yes")
+    # 24/7 Zamanlayıcı: Hem lokal servis hem GitHub Actions çift korumalı çalışır.
+    # 45 dakikalık duplicate run guard sayesinde asla mükerrer paylaşım yapılmaz.
+    enable_local_sched = os.getenv("ENABLE_LOCAL_SCHEDULER", "true").strip().lower() in ("true", "1", "yes")
     if enable_local_sched:
         try:
             import threading
             from scheduler_service import run_scheduler_daemon
             sched_thread = threading.Thread(target=run_scheduler_daemon, kwargs={"dry_run": False}, daemon=True)
             sched_thread.start()
-            print("⏰ [LOKAL ZAMANLAYICI SERVİSİ] 12:30 & 20:00 kuşağı için arka plan iş parçacığı başlatıldı.\n")
+            print("⏰ [LOKAL ZAMANLAYICI AKTİF] 12:30 & 20:00 kuşağı için yerel zamanlayıcı başlatıldı (GitHub gecikmelerine karşı garanti).\n")
         except Exception as es:
             print(f"[Telegram Service] Zamanlayıcı başlatılamadı: {es}")
     else:

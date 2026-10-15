@@ -16,14 +16,15 @@ deal = {
     "installment": "Peşin Fiyatına 3 Taksit x 1.959 TL",
     "image_path": os.path.abspath("assets/products/amz_B0GRWGJS54.jpg"),
     "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0GRWGJS54"
+    "store_url": "https://www.amazon.com.tr/dp/B0GRWGJS54",
+    "reaction_text": "BU FİYATA 240Hz MONİTÖR GÖRÜNCE BENİM ODAK SEVİYESİ:"
 }
 
 if __name__ == "__main__":
-    print("🚀 Lenovo Legion 240Hz Oyuncu Monitörü yayını başlatılıyor...")
+    print("🚀 Şövalye Kedi ile Lenovo 240Hz Monitör yayını başlatılıyor...")
     res = run_autopilot_deal_cycle(
         dry_run=False,
-        slot_name="Akşam Kuşağı (Lenovo 240Hz Monitör)",
+        slot_name="Akşam Kuşağı (Şövalye Kedi & Lenovo 240Hz)",
         force=True,
         custom_deal=deal
     )

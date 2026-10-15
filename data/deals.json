@@ -1,5 +1,21 @@
 [
   {
+    "id": "deal_1792056974_17",
+    "title": "PlayStation 5 Pro",
+    "old_price": "76.399 TL",
+    "new_price": "72.999 TL",
+    "discount_pct": "-4%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DJH2NS6R?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
+    "net_cost": "72.749 TL",
+    "installment": "3 Taksit x 24.333 TL",
+    "image_url": "assets/products/playstation_5_pro_2efbc8f3.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "15.10.2026 12:36"
+  },
+  {
     "id": "deal_1792052960_16",
     "title": "SanDisk 128GB Type-C Bellek",
     "old_price": "1.399,00 TL",

@@ -1,0 +1,71 @@
+[
+  {
+    "timestamp": "2026-10-15 10:28:04",
+    "slot": "Lokal Onizleme Testi",
+    "success": false,
+    "platforms": {},
+    "error": "'>=' not supported between instances of 'str' and 'int'"
+  },
+  {
+    "timestamp": "2026-10-15 10:31:50",
+    "slot": "Lokal Onizleme Testi",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Philips AquaClean Filtre",
+      "new_price": "843,97 TL",
+      "old_price": "1.350 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0B5L4LYHZ?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_103419_philips_aquaclean_filtre.mp4",
+    "caption_text": "🚨 KAHVE MAKİNESİ OLANLAR BU FIRSATI KAÇIRMASIN! ☕️\n\nKahve makinenizin ömrünü uzatan, kireçten koruyan orijinal Philips AquaClean Filtre'de büyük indirim!\n\n❌ Eski Fiyat: 1.350 TL\n✅ Yeni Fiyat: 843,97 TL\n📉 İndirim Oranı: %37\n\n💳 Nays ile %10 iade (84 TL) sayesinde cebinizden çıkacak net tutar sadece 760 TL!\n\n🚨 DİKKAT: Stoklar bu fiyata çok hızlı tükeniyor, ihtiyacınız varsa elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #philips #kahve #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_37_amz_B0B5L4LYHZ.jpg.jpg",
+    "dry_run": true
+  },
+  {
+    "timestamp": "2026-10-15 10:35:19",
+    "slot": "Lokal Top 3 Onizleme",
+    "type": "top3",
+    "success": false,
+    "platforms": {},
+    "error": "cannot import name 'verify_and_enrich_product' from 'product_verifier' (C:\\Users\\Samet\\Desktop\\Otomasyon\\product_verifier.py)"
+  },
+  {
+    "timestamp": "2026-10-15 10:35:48",
+    "slot": "Lokal Top 3 Onizleme",
+    "type": "top3",
+    "success": false,
+    "platforms": {},
+    "error": "Top 3 videosu için yeterli teyitli aday toplanamadı (0/3 aday bulundu)."
+  },
+  {
+    "timestamp": "2026-10-15 10:41:17",
+    "slot": "Lokal Top 3 Onizleme",
+    "type": "top3",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "dry_run": true,
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\top3_weekly_1792050317.mp4"
+  },
+  {
+    "timestamp": "2026-10-15 10:58:10",
+    "slot": "Demo Tekli Video",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Stanley IceFlow 0.89L",
+      "new_price": "1.691 TL",
+      "old_price": "2.699 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0FP4XN8MN?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_110041_stanley_iceflow_089l.mp4",
+    "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTMECE Mİ?!\n\nOrijinal Stanley IceFlow 0.89L pipetli termos bardakta dev indirim!\nEski Fiyat ❌: 2.699 TL \nYeni Fiyat ✅: 1.691 TL (%37 İndirim)\n💳 Nays ile 169 TL nakit iadeyle NET MALİYET: 1.522 TL!\n\n🚨 DİKKAT: İndirim oranı %35'in üzerinde ve stoklar her an tükenebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #stanley #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_37_amz_B0FP4XN8MN.jpg.jpg",
+    "dry_run": true
+  }
+]

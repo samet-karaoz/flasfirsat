@@ -211,5 +211,48 @@
     "caption_text": "🚨 BU FİYATA BÖYLE BİR HIZ YOK! \n\nSanDisk 64GB USB Bellek muazzam bir indirimle düştü! \nEski Fiyat ❌: 699 TL \nYeni Fiyat ✅: 425,79 TL (%39 İndirim!)\n💳 Nays ile %10 iade (43 TL) ile Net Maliyet: 383 TL!\n\n🚨 DİKKAT: %39'luk dev indirim ve stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#fırsat #indirim #teknoloji #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_39_amz_B017RD10X8.jpg.jpg",
     "dry_run": true
+  },
+  {
+    "timestamp": "2026-10-15 21:11:58",
+    "slot": "Akşam Prime Time (20:00 Kuşağı)",
+    "success": true,
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/p-5oddajFQE"
+      },
+      "instagram": {
+        "status": "ok",
+        "media_id": "4008648381851307073"
+      },
+      "instagram_story": {
+        "status": "ok",
+        "media_id": "4008648744962080143"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      },
+      "whatsapp": {
+        "status": "ok",
+        "channel": "Flaş Fırsat ⚡"
+      },
+      "web": {
+        "status": "ok",
+        "url": "https://samet-karaoz.github.io/flasfirsat"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "SanDisk 64GB USB Bellek",
+      "new_price": "425,79 TL",
+      "old_price": "699 TL",
+      "discount_pct": "-39%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B017RD10X8?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_211505_sandisk_64gb_usb_bellek.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_211505_sandisk_64gb_usb_bellek_youtube.mp4",
+    "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTME Mİ?! \n\n699 TL ❌ -> 425,79 TL ✅ (%39 İndirim)\n💳 Nays ile %10 iade (43 TL) ile NET MALİYET: 383 TL!\n\n🚨 DİKKAT: %39'luk dev indirim ve bu fiyat, stoklar tükenmeden kaçmaz! Elini çabuk tutan kapar.\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #teknoloji #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_39_amz_B017RD10X8.jpg.jpg"
   }
 ]

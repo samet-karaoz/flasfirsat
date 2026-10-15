@@ -379,6 +379,85 @@ def check_and_reply_comments(max_medias: int = 5, limit_per_run: int = 10) -> in
                     # Spam Algoritma Koruması: Doğal insan davranışı için 4-7 saniye bekle
                     time.sleep(random.uniform(4.0, 7.0))
 
+        # =========================================================================
+        # 🛡️ ADIM 2: Instagram Aktivite / Bildirim Akışı Taraması (Shadow-Drop Emniyeti)
+        # Instagram'ın gönderi altına düşürmeyip gizlediği ama bildirim kutusuna gelen yorumları yakalar!
+        # =========================================================================
+        try:
+            print("[Auto DM] 🔔 Bildirim akışı taranıyor (Gizlenen yorum emniyeti)...")
+            news = cl.news_inbox_v1()
+            stories = (news.get("new_stories", []) if isinstance(news, dict) else []) + (news.get("old_stories", []) if isinstance(news, dict) else [])
+            for st in stories:
+                if processed_count >= limit_per_run:
+                    break
+                args = st.get("args", {})
+                story_type = st.get("story_type")
+                # StoryType 12: Yorum bildirimi
+                if story_type != 12:
+                    continue
+
+                rich_text = args.get("rich_text", "") or args.get("text", "")
+                text_clean = normalize_turkish(rich_text)
+
+                # Negatif kelime filtresi
+                if any(nw in text_clean for nw in NEGATIVE_STOP_WORDS):
+                    continue
+
+                # Pozitif anahtar kelime tespiti
+                is_match = False
+                for kw in DM_KEYWORDS:
+                    kw_norm = normalize_turkish(kw)
+                    if re.search(rf"\b{re.escape(kw_norm)}\b", text_clean):
+                        is_match = True
+                        break
+
+                if not is_match:
+                    continue
+
+                profile_name = args.get("profile_name", "")
+                profile_id = args.get("profile_id")
+                media_info = args.get("media", [{}])[0] if args.get("media") else {}
+                target_media_id = str(media_info.get("id", "")).split("_")[0]
+
+                if not profile_id or not profile_name:
+                    continue
+
+                # Tekilleştirme: daha önce gönderildiyse atla
+                notif_key = f"notif_{profile_name}_{target_media_id}"
+                if notif_key in replied_set:
+                    continue
+
+                # En doğru ürün linkini bul
+                notif_prod_name, notif_link = find_best_product_link("", media_id=target_media_id)
+                greeting = random.choice(GREETINGS).format(user=profile_name)
+                intro = random.choice(INTROS)
+                closing = random.choice(CLOSINGS)
+                dm_message = (
+                    f"{greeting}\n\n"
+                    f"{intro}\n"
+                    f"🛒 {notif_prod_name}\n"
+                    f"👉 Link: {notif_link}\n\n"
+                    f"⚡ Tüm anlık sıcak indirimler & kupon radarı için web vitrinimiz:\n"
+                    f"🌐 {SITE_URL}?utm_source=instagram&utm_medium=auto_dm\n\n"
+                    f"{closing}\n"
+                    f"*(#işbirliği)*"
+                )
+
+                try:
+                    cl.direct_send(dm_message, user_ids=[profile_id])
+                    print(f"✅ [Auto DM - Bildirimden] DM Gönderildi -> @{profile_name} (Medya: {target_media_id})")
+                    replied_set.add(notif_key)
+                    save_replied_comments(replied_set)
+                    processed_count += 1
+                    time.sleep(random.uniform(4.0, 7.0))
+                except Exception as e_dm_notif:
+                    print(f"⚠️ [Auto DM - Bildirimden] DM iletilemedi (@{profile_name}): {e_dm_notif}")
+                    replied_set.add(notif_key)
+                    save_replied_comments(replied_set)
+
+        except Exception as e_news:
+            print(f"[Auto DM] Bildirim akışı tarama hatası: {e_news}")
+
         if processed_count > 0:
             print(f"🎉 [Auto DM] Bu döngüde toplam {processed_count} kişiye indirim linki iletildi!\n")
             push_git_history()

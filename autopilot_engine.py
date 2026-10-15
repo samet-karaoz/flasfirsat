@@ -243,6 +243,30 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             record_autopilot_run(result)
             return result
 
+        # =========================================================================
+        # 🛡️ YARI OTOMATİK MOD KONTROLÜ (Yönetici Onayı Zorunlu)
+        # Bot kafasına göre otomatik paylaşmaz; videoyu hazırlar ve Telegram'a
+        # onay butonlarıyla gönderir. Siz 'Onayla' butonuna basmadıkça yayınlanmaz.
+        # =========================================================================
+        require_approval = os.getenv("AUTOPILOT_REQUIRE_APPROVAL", "true").strip().lower() in ("true", "1", "yes")
+
+        if require_approval:
+            print("\n[Autopilot Engine] 🛡️ YARI OTOMATİK MOD AKTİF: Fırsat yönetici onayına sunuluyor...")
+            from telegram_notifier import send_telegram_deal_for_approval
+            approval_res = send_telegram_deal_for_approval(
+                deal,
+                video_path,
+                caption_text,
+                product_url=aff_url,
+                youtube_video_path=youtube_video_path
+            )
+            result["mode"] = "semi_automatic_approval"
+            result["approval"] = approval_res
+            result["success"] = approval_res.get("success", False)
+            record_autopilot_run(result)
+            print("📲 [YARI OTOMATİK] Video ve onay butonları Telegram'a iletildi. Kullanıcı onay verene kadar yayın bekleyecek.\n")
+            return result
+
         # 3. Sırasıyla 4 Platforma Yayınla
         print("\n[Adım 3/4] 📡 4 Platforma Eşzamanlı Otomatik Yayın Başlatılıyor...")
 
@@ -504,6 +528,31 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             result["dry_run"] = True
             result["video_path"] = video_path
             record_autopilot_run(result)
+            return result
+
+        # =========================================================================
+        # 🛡️ YARI OTOMATİK MOD KONTROLÜ (Top 3 Yönetici Onayı)
+        # =========================================================================
+        require_approval = os.getenv("AUTOPILOT_REQUIRE_APPROVAL", "true").strip().lower() in ("true", "1", "yes")
+
+        if require_approval:
+            print("\n[Top3 Engine] 🛡️ YARI OTOMATİK MOD AKTİF: Top 3 videosu yönetici onayına sunuluyor...")
+            from telegram_notifier import send_telegram_deal_for_approval
+            from config import SITE_URL
+            avg_disc = int(sum(get_deal_discount_pct(d) for d in top3_deals) / len(top3_deals)) if top3_deals else 0
+            deal_summary = {
+                "title": f"🏆 {slot_name}",
+                "new_price": f"Top 3 Fırsat (Ort. -%{avg_disc})",
+                "old_price": "Çoklu Ürün",
+                "discount_pct": f"-%{avg_disc}",
+                "store_name": "Karma (Amazon / Hepsiburada)"
+            }
+            approval_res = send_telegram_deal_for_approval(deal_summary, video_path, caption_text, product_url=SITE_URL)
+            result["mode"] = "semi_automatic_approval"
+            result["approval"] = approval_res
+            result["success"] = approval_res.get("success", False)
+            record_autopilot_run(result)
+            print("📲 [YARI OTOMATİK] Top 3 videosu ve onay butonları Telegram'a iletildi.\n")
             return result
 
         print("\n📡 Top 3 Videosu Platformlara Dağıtılıyor...")

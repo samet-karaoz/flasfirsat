@@ -4,6 +4,7 @@ import json
 import re
 import random
 import subprocess
+import requests
 from pathlib import Path
 from dotenv import load_dotenv
 from config import BASE_DIR, DATA_DIR, SITE_URL
@@ -11,6 +12,36 @@ from config import BASE_DIR, DATA_DIR, SITE_URL
 load_dotenv()
 
 REPLIED_COMMENTS_FILE = os.path.join(DATA_DIR, "replied_comments.json")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+
+def send_admin_dm_report(username: str, product_name: str, target_link: str, source: str = "Reels Yorumu", status: str = "iletildi"):
+    """Yönetici Telegram hesabına anlık şeffaf DM bildirim raporu iletir."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+
+    now_str = time.strftime("%H:%M:%S")
+    if status == "iletildi":
+        icon = "📩"
+        durum_str = "✅ DM Başarıyla Gönderildi"
+    else:
+        icon = "⚠️"
+        durum_str = f"❌ DM İletilemedi ({status})"
+
+    text = (
+        f"{icon} <b>[ŞEFFAF BİLDİRİM - AUTO DM]</b>\n\n"
+        f"👤 <b>Kullanıcı:</b> @{username}\n"
+        f"🛒 <b>Ürün:</b> {product_name}\n"
+        f"🔗 <b>Link:</b> {target_link}\n"
+        f"📡 <b>Kaynak:</b> {source}\n"
+        f"📊 <b>Durum:</b> {durum_str}\n"
+        f"⏰ <b>Saat:</b> {now_str}"
+    )
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        requests.post(url, data={"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "HTML", "disable_web_page_preview": "true"}, timeout=8)
+    except Exception as e:
+        print(f"[Auto DM] Admin bildirim hatası: {e}")
 
 # Pozitif istek anahtar kelimeleri (Tek başına riskli "al" kelimesi çıkarıldı)
 DM_KEYWORDS = [
@@ -347,9 +378,11 @@ def check_and_reply_comments(max_medias: int = 5, limit_per_run: int = 10) -> in
                             print(f"✅ [Auto DM] DM Gönderildi -> @{user_handle}")
                             dm_sent = True
                             media_users_replied.add(user_pk)
+                            send_admin_dm_report(user_handle, product_name, target_link, source="Reels Yorumu", status="iletildi")
                         except Exception as edm:
                             print(f"⚠️ [Auto DM] DM iletilemedi (@{user_handle} - DM kutusu kapalı olabilir): {edm}")
                             dm_sent = False
+                            send_admin_dm_report(user_handle, product_name, target_link, source="Reels Yorumu", status="DM Kutusu Kapalı")
 
                     # Yorumu Beğen
                     try:
@@ -449,11 +482,13 @@ def check_and_reply_comments(max_medias: int = 5, limit_per_run: int = 10) -> in
                     replied_set.add(notif_key)
                     save_replied_comments(replied_set)
                     processed_count += 1
+                    send_admin_dm_report(profile_name, notif_prod_name, notif_link, source="Bildirim Akışı (Gizlenen Yorum)", status="iletildi")
                     time.sleep(random.uniform(4.0, 7.0))
                 except Exception as e_dm_notif:
                     print(f"⚠️ [Auto DM - Bildirimden] DM iletilemedi (@{profile_name}): {e_dm_notif}")
                     replied_set.add(notif_key)
                     save_replied_comments(replied_set)
+                    send_admin_dm_report(profile_name, notif_prod_name, notif_link, source="Bildirim Akışı (Gizlenen Yorum)", status=str(e_dm_notif))
 
         except Exception as e_news:
             print(f"[Auto DM] Bildirim akışı tarama hatası: {e_news}")

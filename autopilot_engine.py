@@ -124,24 +124,34 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         from deal_hunter import get_deal_discount_pct, get_deal_savings_tl
         candidates.sort(key=lambda d: (get_deal_discount_pct(d), get_deal_savings_tl(d)), reverse=True)
 
-        deal = candidates[0]
-        title = deal.get("title", "Fırsat")
-        pct = get_deal_discount_pct(deal)
-        print(f"🎯 Seçilen En Yüksek İndirimli Ürün: {title} (-%{pct})")
-        print(f"💰 İndirim:     {deal.get('old_price')} ➔ {deal.get('new_price')} ({deal.get('discount_pct')})")
-
-        # 2. Videoyu ve İçerikleri Üret
-        print("\n[Adım 2/4] 🎬 Split-screen viral video ve açıklama hazırlanıyor...")
+        # 2. Videoyu ve İçerikleri Üret (En yüksek indirimden başlayarak geçerli bir aday bulunana kadar tara)
+        print(f"\n[Adım 2/4] 🎬 Split-screen viral video ve açıklama hazırlanıyor ({len(candidates)} aday taranacak)...")
         from deal_bot import process_deal_to_reel
 
-        prod_res = process_deal_to_reel(
-            deal=deal,
-            upload=False,
-            require_approval=False
-        )
+        deal = None
+        title = None
+        prod_res = None
 
-        if not prod_res or not prod_res.get("video_path"):
-            err = f"Video üretimi veya ürün doğrulaması başarısız oldu ({title})."
+        for idx, cand in enumerate(candidates, 1):
+            cand_title = cand.get("title", "Fırsat")
+            cand_pct = get_deal_discount_pct(cand)
+            print(f"\n👉 Aday {idx}/{len(candidates)} deneniyor: {cand_title} (-%{cand_pct})...")
+            p_res = process_deal_to_reel(
+                deal=cand,
+                upload=False,
+                require_approval=False
+            )
+            if p_res and p_res.get("video_path"):
+                prod_res = p_res
+                deal = cand
+                title = cand_title
+                print(f"🎉 Aday {idx} başarıyla doğrulandı ve video hazırlandı: {title}")
+                break
+            else:
+                print(f"⏭️ Aday {idx} elendi / doğrulanamadı. Sıradaki adaya geçiliyor...")
+
+        if not prod_res or not prod_res.get("video_path") or not deal:
+            err = f"Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi ({len(candidates)} aday test edildi)."
             print(f"[Autopilot Engine] ❌ {err}")
             send_telegram_admin_summary(f"⚠️ <b>[OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}")
             result["error"] = err

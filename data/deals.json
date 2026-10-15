@@ -1,5 +1,21 @@
 [
   {
+    "id": "deal_1792088820_19",
+    "title": "Lenovo Legion 240Hz Gaming Monitör",
+    "old_price": "8.998 TL",
+    "new_price": "5.879,02 TL",
+    "discount_pct": "-35%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0GRWGJS54?tag=flasfirsat04-21",
+    "bank_campaign": "Nays ile 250 TL İade + 3 Taksit",
+    "net_cost": "5.629 TL",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.959 TL",
+    "image_url": "assets/products/lenovo_legion_240hz_gamin_a4fecd19.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "15.10.2026 21:27"
+  },
+  {
     "id": "deal_1792088228_18",
     "title": "SanDisk 64GB USB Bellek",
     "old_price": "699 TL",

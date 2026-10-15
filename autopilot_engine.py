@@ -60,7 +60,7 @@ def send_telegram_admin_summary(summary_text: str, reply_markup: dict = None, dr
     except Exception as e:
         print(f"[Autopilot Engine] Telegram özet gönderim hatası: {e}")
 
-def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False) -> dict:
+def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False, custom_deal: dict = None) -> dict:
     """
     En algoritmik 2 saatte (12:30 ve 20:00) veya isteğe bağlı çalışan tam otomatik döngü:
     1. En yüksek indirimli ve teyitli ürünü avlar (Amazon TR / Fırsat Kanalları).
@@ -122,23 +122,27 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 break
 
     try:
-        # 1. En iyi fırsatı tara
-        print("\n[Adım 1/4] 🔍 En yüksek indirimli taze fırsat avlanıyor...")
-        from deal_hunter import hunt_best_deals, get_product_subtype
-        from deal_bot import load_history, get_last_subtype
+        if custom_deal:
+            print(f"\n[Adım 1/4] 🎯 Özel Fırsat Belirtildi: {custom_deal.get('title')}")
+            candidates = [custom_deal]
+        else:
+            # 1. En iyi fırsatı tara
+            print("\n[Adım 1/4] 🔍 En yüksek indirimli taze fırsat avlanıyor...")
+            from deal_hunter import hunt_best_deals, get_product_subtype
+            from deal_bot import load_history, get_last_subtype
 
-        history = load_history()
-        last_sub = get_last_subtype()
-        exclude_subs = {last_sub} if (last_sub and last_sub != "general") else None
+            history = load_history()
+            last_sub = get_last_subtype()
+            exclude_subs = {last_sub} if (last_sub and last_sub != "general") else None
 
-        candidates = hunt_best_deals(
-            limit=5,
-            platform="amazon",
-            category="all",
-            exclude_urls=history,
-            exclude_subtypes=exclude_subs,
-            min_discount=25
-        )
+            candidates = hunt_best_deals(
+                limit=5,
+                platform="amazon",
+                category="all",
+                exclude_urls=history,
+                exclude_subtypes=exclude_subs,
+                min_discount=25
+            )
 
         if not candidates:
             print("[Autopilot Engine] ⚠️ %25 üzeri taze Amazon fırsatı bulunamadı. Genel kanallara bakılıyor...")
@@ -158,9 +162,15 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             record_autopilot_run(result)
             return result
 
-        # En yüksek indirim oranına (%40, %50 vb.) ve net TL kârına göre kesin sıralama yap
-        from deal_hunter import get_deal_discount_pct, get_deal_savings_tl
-        candidates.sort(key=lambda d: (get_deal_discount_pct(d), get_deal_savings_tl(d)), reverse=True)
+        # Deal Scoring (Viral Potansiyel, Net TL Tasarruf ve Kategoriye Göre Puanla)
+        from deal_hunter import calculate_deal_viral_score, get_deal_discount_pct, get_deal_savings_tl
+        candidates.sort(key=lambda d: calculate_deal_viral_score(d), reverse=True)
+        print("\n🏆 [DEAL SCORING] Adaylar Viral Puanlarına Göre Sıralandı:")
+        for rank, c in enumerate(candidates, 1):
+            c_score = calculate_deal_viral_score(c)
+            c_sav = get_deal_savings_tl(c)
+            c_pct = get_deal_discount_pct(c)
+            print(f"  {rank}. [{c_score:.0f} Puan] {c.get('title')} | Tasarruf: {int(c_sav):,} TL (-%{c_pct})")
 
         # 2. Videoyu ve İçerikleri Üret (En yüksek indirimden başlayarak geçerli bir aday bulunana kadar tara)
         print(f"\n[Adım 2/4] 🎬 Split-screen viral video ve açıklama hazırlanıyor ({len(candidates)} aday taranacak)...")

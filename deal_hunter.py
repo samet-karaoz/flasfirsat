@@ -29,6 +29,7 @@ BORING_REGEX = re.compile(
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık|yumuşatıcı|şampuan|diş\s*fırçası|mendil|pijama|çanta(sı)?|"
     r"tartı(sı)?|terazi(si)?|baskül|ölçüm|termometre|ateş\s*ölçer|"
     r"saklama\s*kabı|kavanoz|rende|süzgeç|açacak|maşa|spatula|kesme\s*tahtası|bulaşık|sünger|"
+    r"flaş\s*bellek|usb\s*bellek|flash\s*bellek|hafıza\s*kartı|sd\s*kart|microsd|flash\s*drive|usb\s*drive|kart\s*okuyucu|"
     r"bebek|mama(sı)?|süt[üu]?|devam\s*sütü|vitamin|omega|balık\s*yağı|takviye|"
     r"bisküvi|kek|gofret|çikolata|cips|makarna|salça|bakliyat|kuruyemiş|çekirdek|ton\s*balığı|baharat|"
     r"motosiklet|lastik|kask(ı)?|disk\s*kilidi|saç\s*toniği|sabun|"
@@ -160,6 +161,70 @@ def get_deal_savings_tl(deal: dict) -> float:
     old_p = parse_price_to_float(deal.get("old_price", ""))
     new_p = parse_price_to_float(deal.get("new_price", ""))
     return max(0.0, old_p - new_p)
+
+def calculate_deal_viral_score(deal: dict) -> float:
+    """
+    Fırsat Puanlama (Deal Scoring) Motoru:
+    Sosyal medyada (Reels/Shorts) viral olma ve satışa dönüşme potansiyelini 0-100 puan üzerinden hesaplar:
+    1. Net TL Tasarrufu (%40 ağırlık): 1.000 TL+ ve 2.500 TL+ gibi dev tasarruflara dev öncelik verir.
+    2. İndirim Yüzdesi (%30 ağırlık): %30-%50 arası yüksek oranlar.
+    3. Viral / Talep Gören Kategori ve Marka Bonusu (%30 ağırlık): Monitör, Gaming, Apple, Kulaklık, Mouse vb.
+    4. Düşük Bütçeli Sarf Malzemesi Cezası: Fiyatı < 500 TL ve kârı < 300 TL olan sönük ürünleri geriye atar.
+    """
+    pct = get_deal_discount_pct(deal)
+    savings_tl = get_deal_savings_tl(deal)
+    new_p = parse_price_to_float(deal.get("new_price", ""))
+    title = str(deal.get("title") or "").lower()
+
+    score = 0.0
+
+    # 1. Net TL Tasarruf Puanı (Maks 40 puan)
+    if savings_tl >= 2500:
+        score += 40
+    elif savings_tl >= 1500:
+        score += 35
+    elif savings_tl >= 800:
+        score += 28
+    elif savings_tl >= 400:
+        score += 20
+    elif savings_tl >= 200:
+        score += 10
+    else:
+        score += 2
+
+    # 2. İndirim Yüzdesi Puanı (Maks 30 puan)
+    if pct >= 45:
+        score += 30
+    elif pct >= 35:
+        score += 25
+    elif pct >= 25:
+        score += 18
+    elif pct >= 15:
+        score += 10
+    else:
+        score += 5
+
+    # 3. Viral / Yüksek Talep Kategori ve Marka Bonusu (Maks 30 puan)
+    VIRAL_KEYWORDS = [
+        "monitör", "monitor", "gaming", "oyuncu", "240hz", "165hz", "144hz", "ips", "oled",
+        "apple", "airtag", "airpods", "iphone", "ipad", "macbook",
+        "playstation", "ps5", "xbox", "gamepad", "kolu",
+        "razer", "logitech", "steelseries", "hyperx", "corsair", "asus rog",
+        "kulaklık", "headset", "mouse", "klavye",
+        "kahve", "espresso", "delonghi", "philips", "nespresso",
+        "robot", "süpürge", "dyson", "roborock", "dreame",
+        "anker", "jbl", "sony", "marshall",
+        "lenovo", "legion", "msi", "acer nitro", "hp victus"
+    ]
+    if any(k in title for k in VIRAL_KEYWORDS):
+        score += 30
+
+    # 4. Düşük Bütçeli / Heyecansız Ürün Cezası
+    # 500 TL altı ve tasarrufu 300 TL'den az olan ürünler Reels için heyecan yaratmaz
+    if new_p < 500 and savings_tl < 300:
+        score -= 40
+
+    return score
 
 MIN_PRODUCT_PRICE_TL = 350  # 350 TL altındaki küçük kırtasiye/ıvır zıvır ürünleri ele
 

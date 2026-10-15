@@ -193,7 +193,13 @@ def publish_deal_to_whatsapp_channel(
 
                 # Açıklama (Caption) kutusuna metni yaz
                 caption_box = page.locator("div[contenteditable='true'][aria-label*='Açıklama'], div[contenteditable='true'][aria-label*='yazın'], div[contenteditable='true']").last
-                caption_box.click()
+                try:
+                    caption_box.click(force=True, timeout=5000)
+                except Exception:
+                    try:
+                        caption_box.focus(timeout=3000)
+                    except Exception:
+                        pass
 
                 for i, line in enumerate(lines):
                     if line:

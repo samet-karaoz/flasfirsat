@@ -67,5 +67,47 @@
     "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTMECE Mİ?!\n\nOrijinal Stanley IceFlow 0.89L pipetli termos bardakta dev indirim!\nEski Fiyat ❌: 2.699 TL \nYeni Fiyat ✅: 1.691 TL (%37 İndirim)\n💳 Nays ile 169 TL nakit iadeyle NET MALİYET: 1.522 TL!\n\n🚨 DİKKAT: İndirim oranı %35'in üzerinde ve stoklar her an tükenebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #stanley #kampanya #keşfet #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_37_amz_B0FP4XN8MN.jpg.jpg",
     "dry_run": true
+  },
+  {
+    "timestamp": "2026-10-15 11:20:50",
+    "slot": "Kullanıcı İstek Kuşağı",
+    "success": true,
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/GYdaf_DiB3Q"
+      },
+      "instagram": {
+        "status": "ok",
+        "media_id": "4008352146389029060"
+      },
+      "instagram_story": {
+        "status": "ok",
+        "media_id": "4008352619868563676"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      },
+      "whatsapp": {
+        "status": "error",
+        "error": "Locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"div[contenteditable='true'][aria-label*='Açıklama'], div[contenteditable='true'][aria-label*='yazın'], div[contenteditable='true']\").last\n    - locator resolved to <div tabindex=\"10\" data-tab=\"10\" role=\"textbox\" spellcheck=\"true\" contenteditable=\"true\" aria-activedescendant=\"\" aria-autocomplete=\"list\" data-lexical-editor=\"true\" aria-owns=\"emoji-suggestion\" aria-placeholder=\"Bir güncelleme yazın\" data-testid=\"conversation-compose-box-input\" class=\"x1hx0egp x6ikm8r x1odjw0f x1k6rcq7 x6prxxf\" aria-label=\"Flaş Fırsat⚡ sohbetine bir mesaj yazın\">…</div>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lwn1j xl56j7k x1q0g3np x6s0dn4 x9f619 x1iyjqo2 xs83m0k xdl72j9 xav9cv8 xlese2p xviac27 xat24cr\">…</div> from <div class=\"x10l6tqk x13vifvy x1o0tod x78zum5 xh8yej3 x5yr21d x6ikm8r x10wlt62 x47corl\">…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lwn1j xl56j7k x1q0g3np x6s0dn4 x9f619 x1iyjqo2 xs83m0k xdl72j9 xav9cv8 xlese2p xviac27 xat24cr\">…</div> from <div class=\"x10l6tqk x13vifvy x1o0tod x78zum5 xh8yej3 x5yr21d x6ikm8r x10wlt62 x47corl\">…</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lwn1j xl56j7k x1q0g3np x6s0dn4 x9f619 x1iyjqo2 xs83m0k xdl72j9 xav9cv8 xlese2p xviac27 xat24cr\">…</div> from <div class=\"x10l6tqk x13vifvy x1o0tod x78zum5 xh8yej3 x5yr21d x6ikm8r x10wlt62 x47corl\">…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+      },
+      "web": {
+        "status": "ok",
+        "url": "https://samet-karaoz.github.io/flasfirsat"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "SanDisk 128GB Type-C Bellek",
+      "new_price": "899 TL",
+      "old_price": "1.399,00 TL",
+      "discount_pct": "-36%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07YYJRXQR?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_112547_sandisk_128gb_type-c_bellek.mp4",
+    "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTME Mİ?! Bu fiyata kaçıran üzülür!\n\nSanDisk 128GB Type-C Bellek (Çift Girişli)\n1.399,00 TL ❌ -> 899 TL ✅ (%36 İNDİRİM!)\n\n💳 Nays ile %10 iade (90 TL) ile \n🔥 NET MALİYET: 809 TL!\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #teknoloji #kampanya #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_36_amz_B07YYJRXQR.jpg.jpg"
   }
 ]

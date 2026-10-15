@@ -146,6 +146,17 @@ def process_deal_to_reel(
 
     print(f"💳 Banka/Nays Avantajı: {deal['bank_campaign']} -> Net: {deal['net_cost']}")
 
+    # Piyasa En Ucuz Fiyat Doğrulaması (Akakçe / Piyasa Teyidi)
+    try:
+        from market_verifier import verify_market_price
+        mv_res = verify_market_price(deal.get("title", ""), deal.get("new_price", ""))
+        if mv_res.get("is_market_lowest") and mv_res.get("badge_text"):
+            deal["market_badge"] = mv_res["badge_text"]
+            deal["market_highlight"] = mv_res.get("highlight_text", "")
+            print(f"🔥 [Piyasa Doğrulandı] {deal['market_badge']}")
+    except Exception as emv:
+        print(f"[Deal Bot] Piyasa doğrulama uyarısı: {emv}")
+
     # 1. Ürün Banner'ı Üret (DEV İNDİRİM Sabit Şablon)
     banner_temp = os.path.join(TEMP_DIR, f"banner_{base_name}.png")
     print("[1/3] 🎨 Üst banner (1080x960) tasarlanıyor...")
@@ -165,6 +176,7 @@ def process_deal_to_reel(
         has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
         seller_badge_text=deal.get("seller_badge", ""),
         coupon_text=deal.get("coupon_info", ""),
+        market_badge=deal.get("market_badge", ""),
         output_path=banner_temp
     )
 
@@ -196,7 +208,7 @@ def process_deal_to_reel(
         old_price=deal.get("old_price", ""),
         new_price=deal.get("new_price", ""),
         discount_pct=deal.get("discount_pct", ""),
-        deal_details=deal.get("hook", ""),
+        deal_details=deal.get("market_highlight") or deal.get("hook", ""),
         store_url=aff_url,
         bank_campaign=deal.get("bank_campaign", ""),
         net_cost=deal.get("net_cost", "")

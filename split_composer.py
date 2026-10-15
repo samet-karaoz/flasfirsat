@@ -35,7 +35,9 @@ AVAILABLE_MEMES = [
 
 AVAILABLE_AUDIOS = [
     "phonk_meme.m4a",
-    "brazilian_phonk.m4a"
+    "brazilian_phonk.m4a",
+    "viral_bass.m4a",
+    "drift_phonk.m4a"
 ]
 
 FONTS_DIR = os.path.join(BASE_DIR, "assets", "fonts")
@@ -340,6 +342,7 @@ def create_product_banner(
     has_verified_old_price: bool = True,
     seller_badge_text: str = "",
     coupon_text: str = "",
+    market_badge: str = "",
     output_path: str = None
 ) -> str:
     """
@@ -433,13 +436,18 @@ def create_product_banner(
     draw_vector_shield_check(draw, card_box[0] + 32, card_box[1] + 32, (16, 185, 129))
     draw.text((card_box[0] + 48, card_box[1] + 21), trust_text, font=f_trust, fill=(71, 85, 105))
 
-    # 🏷️ Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" (SADECE veritabanında en az 14 gün geçmişle doğrulandıysa çizilir)
+    # 🏷️ Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" veya "Piyasanın X TL Altında" (Doğrulanmış veri)
+    top_badge_text = ""
     if is_lowest_30d:
-        lowest_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ"
-        low_w = draw.textlength(lowest_text, font=f_trust)
+        top_badge_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ"
+    elif market_badge:
+        top_badge_text = market_badge.strip().upper()
+
+    if top_badge_text:
+        low_w = draw.textlength(top_badge_text, font=f_trust)
         draw.rounded_rectangle((card_box[2] - low_w - 58, card_box[1] + 16, card_box[2] - 16, card_box[1] + 48), radius=8, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
         draw_vector_trend_down(draw, card_box[2] - low_w - 38, card_box[1] + 32, (225, 29, 72))
-        draw.text((card_box[2] - low_w - 24, card_box[1] + 21), lowest_text, font=f_trust, fill=(225, 29, 72))
+        draw.text((card_box[2] - low_w - 24, card_box[1] + 21), top_badge_text, font=f_trust, fill=(225, 29, 72))
 
     # 🎨 rembg ile Arka Planı Temizlenmiş Ürün Görselini Ekle
     if product_image_path and os.path.exists(product_image_path):
@@ -762,53 +770,69 @@ def build_split_screen_video(
         f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1906[v]"
     )
 
+    # 5. Viral Kanca Ses Efekti (SFX: Whoosh veya Kasa Sesi / Cha-Ching)
+    sfx_file = "cash_register.wav" if discount_pct >= 35 else "whoosh.wav"
+    sfx_path = os.path.join(AUDIO_DIR, sfx_file)
+    has_sfx = os.path.exists(sfx_path)
+    if has_sfx:
+        print(f"[Montaj] 🔊 Hook Ses Efekti (SFX) Eklendi: {sfx_file} (t=0.35s)")
+
+    input_idx = 3  # 0: top_source, 1: bottom_meme, 2: reaction_overlay
+
     if not use_external_audio:
-        # Meme'in kendi sesi
-        if voice_path:
-            cmd += ["-i", voice_path]
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"{progress_bar_filter};"
-                f"[1:a]volume=0.35[bg];"
-                f"[3:a]volume=1.4[voice];"
-                f"[bg][voice]amix=inputs=2:duration=first:dropout_transition=2[a]"
-            )
-        else:
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"{progress_bar_filter};"
-                f"[1:a]volume=1.0[a]"
-            )
+        bg_stream = "[1:a]"
     else:
-        # Harici fon müziği
         cmd += ["-i", audio_path]
-        if voice_path:
-            cmd += ["-i", voice_path]
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"{progress_bar_filter};"
-                f"[3:a]volume=0.35[bg];"
-                f"[4:a]volume=1.4[voice];"
-                f"[bg][voice]amix=inputs=2:duration=first:dropout_transition=2[a]"
-            )
-        else:
-            filter_complex = (
-                f"[0:v]{scale_top}[top];"
-                f"[1:v]{scale_bottom}[bottom_raw];"
-                f"[bottom_raw][2:v]overlay=0:0[bottom];"
-                f"[top][bottom]vstack=inputs=2[stacked];"
-                f"{progress_bar_filter};"
-                f"[3:a]volume=1.0[a]"
-            )
+        bg_stream = f"[{input_idx}:a]"
+        input_idx += 1
+
+    voice_stream = None
+    if voice_path:
+        cmd += ["-i", voice_path]
+        voice_stream = f"[{input_idx}:a]"
+        input_idx += 1
+
+    sfx_stream = None
+    if has_sfx:
+        cmd += ["-i", sfx_path]
+        sfx_stream = f"[{input_idx}:a]"
+        input_idx += 1
+
+    # Ses mikseri filtrelerini dinamik oluştur
+    audio_parts = []
+    mix_sources = []
+
+    # Fon / Meme Müziği
+    bg_vol = 0.35 if voice_path else 0.85
+    audio_parts.append(f"{bg_stream}volume={bg_vol}[bg]")
+    mix_sources.append("[bg]")
+
+    # Seslendirme (Voiceover)
+    if voice_stream:
+        audio_parts.append(f"{voice_stream}volume=1.4[voice]")
+        mix_sources.append("[voice]")
+
+    # Tok Kanca SFX Efekti (Whoosh veya Kasa Sesi)
+    if sfx_stream:
+        audio_parts.append(f"{sfx_stream}adelay=350|350,volume=0.9[sfx]")
+        mix_sources.append("[sfx]")
+
+    if len(mix_sources) > 1:
+        mix_inputs_str = "".join(mix_sources)
+        audio_parts.append(f"{mix_inputs_str}amix=inputs={len(mix_sources)}:duration=first:dropout_transition=2[a]")
+    else:
+        audio_parts.append(f"{mix_sources[0]}anull[a]")
+
+    audio_filter_str = ";".join(audio_parts)
+
+    filter_complex = (
+        f"[0:v]{scale_top}[top];"
+        f"[1:v]{scale_bottom}[bottom_raw];"
+        f"[bottom_raw][2:v]overlay=0:0[bottom];"
+        f"[top][bottom]vstack=inputs=2[stacked];"
+        f"{progress_bar_filter};"
+        f"{audio_filter_str}"
+    )
 
     cmd += [
         "-filter_complex", filter_complex,

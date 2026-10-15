@@ -17,7 +17,9 @@ DEFAULT_CHANNELS = [
     "dh_sicakfirsatlar",
     "firsatalemi",
     "firsatpaylasim",
-    "indirimkaplani"
+    "indirimkaplani",
+    "teknolojifirsatlari",
+    "firsatkulubu"
 ]
 
 BORING_REGEX = re.compile(

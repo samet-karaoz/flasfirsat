@@ -209,6 +209,23 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
             result["platforms"]["instagram"] = {"status": "error", "error": str(ei)}
             print(f"❌ Instagram Reels İstisna: {ei}")
 
+        # B2) Instagram Story (Tıklanabilir Link Çıkartması ile)
+        print("\n--- 2b. Instagram Story (Tıklanabilir Link Çıkartması) ---")
+        try:
+            from story_composer import create_story_card
+            from instagram_publisher import publish_story_with_link
+            story_img = create_story_card(deal)
+            st_res = publish_story_with_link(story_img, link_url=aff_url)
+            if st_res.get("success"):
+                result["platforms"]["instagram_story"] = {"status": "ok", "media_id": st_res.get("media_id")}
+                print(f"✅ Instagram Story Başarılı (Link Çıkartmalı)! ID: {st_res.get('media_id')}")
+            else:
+                result["platforms"]["instagram_story"] = {"status": "error", "error": st_res.get("error")}
+                print(f"❌ Instagram Story Hatası: {st_res.get('error')}")
+        except Exception as es:
+            result["platforms"]["instagram_story"] = {"status": "error", "error": str(es)}
+            print(f"❌ Instagram Story İstisna: {es}")
+
         # C) Telegram Kanalı (@flasfirsat)
         print("\n--- 3. Telegram Kanalı ---")
         try:
@@ -266,6 +283,13 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         else:
             status_lines.append(f"• 🎬 <b>Instagram Reels:</b> ❌ {ig_info.get('error', 'Hata')}")
 
+        # Instagram Story
+        st_info = result["platforms"].get("instagram_story", {})
+        if st_info.get("status") == "ok":
+            status_lines.append(f"• 📸 <b>Instagram Story:</b> ✅ Link Çıkartmalı Hikaye Yayında")
+        elif "instagram_story" in result["platforms"]:
+            status_lines.append(f"• 📸 <b>Instagram Story:</b> ❌ {st_info.get('error', 'Hata')}")
+
         # Telegram
         tg_info = result["platforms"].get("telegram", {})
         if tg_info.get("status") == "ok":
@@ -300,7 +324,18 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
                 ]
             ]
         }
-        send_telegram_admin_summary(report_msg, reply_markup=markup)
+        # Fırsatı geçmiş listesine ekle (Sonraki döngülerde aynı ürünün tekrar seçilmesini önler)
+        try:
+            from deal_bot import save_history, set_last_product, set_last_subtype, get_product_subtype
+            deal_sig = deal.get("store_url") or deal.get("url") or title
+            if deal_sig:
+                history.add(deal_sig)
+                save_history(history)
+            set_last_product(title)
+            set_last_subtype(get_product_subtype(title))
+            print(f"[Autopilot Engine] 💾 Ürün geçmiş listesine işlendi ({len(history)} ürün).")
+        except Exception as eh:
+            print(f"[Autopilot Engine] ⚠️ Geçmiş kaydedilemedi: {eh}")
 
         record_autopilot_run(result)
         print("\n🎉 [OTOPİLOT] Döngü başarıyla tamamlandı ve raporlandı!")
@@ -314,15 +349,177 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel") -
         record_autopilot_run(result)
         return result
 
+def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3 Bülteni") -> dict:
+    """
+    Haftalık veya özel istek üzerine çalışan Top 3 Fırsat Otopilotu:
+    1. En yüksek indirimli ve teyitli 3 farklı alt kategorideki ürünü avlar.
+    2. 1080x1920 dikey kesintisiz viral meme + 3 slaytlı Top 3 videosunu derler.
+    3. 4 platforma (YouTube Shorts, Instagram Reels, Telegram, WhatsApp) yayınlar.
+    4. Web vitrinine ekler ve yöneticiye detaylı rapor iletir.
+    """
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print("\n" + "="*65)
+    print(f"🏆 [TOP 3 OTOPİLOTU BAŞLATILDI] Kuşak: {slot_name} | Zaman: {now_str}")
+    print("="*65)
+
+    result = {
+        "timestamp": now_str,
+        "slot": slot_name,
+        "type": "top3",
+        "success": False,
+        "platforms": {},
+        "error": None
+    }
+
+    try:
+        from deal_hunter import hunt_best_deals, get_deal_discount_pct, get_deal_savings_tl, get_product_subtype
+        from product_verifier import verify_and_enrich_product
+        from top3_composer import build_top3_video, generate_top3_caption
+        from deal_bot import load_history, save_history, get_affiliate_url
+
+        history = load_history()
+        candidates = hunt_best_deals(
+            limit=12,
+            platform="all",
+            category="all",
+            exclude_urls=history,
+            min_discount=20
+        )
+
+        if len(candidates) < 3:
+            candidates = hunt_best_deals(limit=12, platform="all", category="all", min_discount=15)
+
+        candidates.sort(key=lambda d: (get_deal_discount_pct(d), get_deal_savings_tl(d)), reverse=True)
+
+        top3_deals = []
+        seen_subtypes = set()
+
+        for c in candidates:
+            if len(top3_deals) >= 3:
+                break
+            sub = get_product_subtype(c.get("title", ""))
+            if sub != "general" and sub in seen_subtypes:
+                continue
+
+            v_deal = verify_and_enrich_product(c)
+            if v_deal and v_deal.get("image_path") and os.path.exists(v_deal["image_path"]):
+                raw_u = v_deal.get("store_url") or v_deal.get("url") or ""
+                aff_u = get_affiliate_url(raw_u, v_deal.get("store_name", ""))
+                v_deal["affiliate_url"] = aff_u
+                top3_deals.append(v_deal)
+                if sub != "general":
+                    seen_subtypes.add(sub)
+                print(f"✅ Top 3 Adayı Seçildi (#{len(top3_deals)}): {v_deal.get('title')[:40]} (-%{get_deal_discount_pct(v_deal)})")
+
+        if len(top3_deals) < 3:
+            err = f"Top 3 videosu için yeterli teyitli aday toplanamadı ({len(top3_deals)}/3 aday bulundu)."
+            print(f"[Top3 Engine] ❌ {err}")
+            send_telegram_admin_summary(f"⚠️ <b>[TOP 3 OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}")
+            result["error"] = err
+            record_autopilot_run(result)
+            return result
+
+        ts = int(time.time())
+        video_filename = f"top3_weekly_{ts}.mp4"
+        print(f"\n🎬 Top 3 videosu derleniyor: {video_filename}...")
+        video_path = build_top3_video(top3_deals, output_filename=video_filename)
+        caption_text = generate_top3_caption(top3_deals)
+
+        if dry_run:
+            print("\n[Top3 Engine] 🧪 DRY-RUN Aktif: Yayınlama adımları atlandı.")
+            result["success"] = True
+            result["dry_run"] = True
+            result["video_path"] = video_path
+            record_autopilot_run(result)
+            return result
+
+        print("\n📡 Top 3 Videosu Platformlara Dağıtılıyor...")
+
+        # YouTube Shorts
+        try:
+            from youtube_publisher import publish_shorts_to_youtube
+            yt_res = publish_shorts_to_youtube(video_path, title="Haftanın En İyi 3 Fırsatı 🔥", description=caption_text)
+            if yt_res.get("success"):
+                result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
+            else:
+                result["platforms"]["youtube"] = {"status": "error", "error": yt_res.get("error")}
+        except Exception as ey:
+            result["platforms"]["youtube"] = {"status": "error", "error": str(ey)}
+
+        # Instagram Reels
+        try:
+            from instagram_publisher import publish_reel_to_instagram
+            ig_res = publish_reel_to_instagram(video_path, caption_text)
+            if ig_res.get("success"):
+                result["platforms"]["instagram"] = {"status": "ok", "media_id": ig_res.get("media_id")}
+            else:
+                result["platforms"]["instagram"] = {"status": "error", "error": ig_res.get("error")}
+        except Exception as ei:
+            result["platforms"]["instagram"] = {"status": "error", "error": str(ei)}
+
+        # Telegram Kanalı
+        try:
+            from telegram_notifier import send_telegram_deal
+            tg_ok = send_telegram_deal(video_path, caption_text, product_url=top3_deals[0].get("affiliate_url"))
+            if tg_ok:
+                result["platforms"]["telegram"] = {"status": "ok", "channel": TELEGRAM_CHANNEL_ID}
+            else:
+                result["platforms"]["telegram"] = {"status": "error", "error": "Telegram kanala gönderilemedi"}
+        except Exception as et:
+            result["platforms"]["telegram"] = {"status": "error", "error": str(et)}
+
+        # Web Vitrinine 3 Ürünü de Ekle
+        try:
+            from web_showcase import add_deal_to_web
+            for d in top3_deals:
+                add_deal_to_web(d)
+            result["platforms"]["web"] = {"status": "ok", "url": SITE_URL}
+        except Exception as ewb:
+            result["platforms"]["web"] = {"status": "error", "error": str(ewb)}
+
+        for d in top3_deals:
+            sig = d.get("store_url") or d.get("url") or d.get("title")
+            if sig:
+                history.add(sig)
+        save_history(history)
+
+        result["success"] = True
+        summary_msg = (
+            f"🏆 <b>TOP 3 HAFTALIK BÜLTEN YAYINLANDI!</b> 🚀\n"
+            f"⏰ <b>Kuşak:</b> {slot_name}\n\n"
+            f"🥇 #1: {top3_deals[0].get('title')[:35]} ({top3_deals[0].get('new_price')})\n"
+            f"🥈 #2: {top3_deals[1].get('title')[:35]} ({top3_deals[1].get('new_price')})\n"
+            f"🥉 #3: {top3_deals[2].get('title')[:35]} ({top3_deals[2].get('new_price')})\n\n"
+            f"• 📺 YouTube Shorts: {'✅ Yayında' if result['platforms'].get('youtube', {}).get('status') == 'ok' else '❌ Hata'}\n"
+            f"• 🎬 Instagram Reels: {'✅ Yayında' if result['platforms'].get('instagram', {}).get('status') == 'ok' else '❌ Hata'}\n"
+            f"• 📢 Telegram: {'✅ Yayında' if result['platforms'].get('telegram', {}).get('status') == 'ok' else '❌ Hata'}\n"
+            f"• 🌐 Web Vitrini: ✅ 3 Ürün Eklendi"
+        )
+        send_telegram_admin_summary(summary_msg)
+        record_autopilot_run(result)
+        print("\n🎉 [TOP 3] Bülten yayını başarıyla tamamlandı!")
+        return result
+
+    except Exception as e:
+        err = f"Top 3 otopilot hatası: {e}\n{traceback.format_exc()}"
+        print(f"[Top3 Engine] ❌ {err}")
+        send_telegram_admin_summary(f"🚨 <b>[TOP 3 OTOPİLOT HATASI]</b>\nKuşak: {slot_name}\n\n<code>{str(e)}</code>")
+        result["error"] = str(e)
+        record_autopilot_run(result)
+        return result
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Flaş Fırsat Otopilot Yayın Motoru")
     parser.add_argument("--now", action="store_true", help="Hemen bir otopilot döngüsü çalıştır")
+    parser.add_argument("--top3", action="store_true", help="Top 3 haftalık fırsat bülteni videosu üret ve yayınla")
     parser.add_argument("--dry-run", action="store_true", help="Gerçek yükleme yapmadan video ve metni test et")
     parser.add_argument("--slot", default="Manuel Test", help="Kuşak adı")
     args = parser.parse_args()
 
-    if args.now or args.dry_run:
+    if args.top3:
+        run_top3_deal_cycle(dry_run=args.dry_run, slot_name=args.slot)
+    elif args.now or args.dry_run:
         run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot)
     else:
-        print("Kullanım: python autopilot_engine.py --now (veya --dry-run)")
+        print("Kullanım: python autopilot_engine.py --now (veya --top3, --dry-run)")

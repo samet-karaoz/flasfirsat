@@ -197,7 +197,36 @@ def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bo
         p_res = requests.post(pub_url, data={"creation_id": c_id, "access_token": INSTAGRAM_ACCESS_TOKEN}).json()
         return {"success": "id" in p_res, "media_id": p_res.get("id")}
 
-    return {"success": False, "error": status.get("error", "Instagram ayarları yapılmamış")}
+def publish_story_with_link(image_path: str, link_url: str, caption: str = "") -> dict:
+    """
+    1080x1920 dikey görseli Instagram Hikayelerine (Story) doğrudan tıklanabilir Link Çıkartması ile yükler.
+    """
+    if not os.path.exists(image_path):
+        return {"success": False, "error": f"Story görseli bulunamadı: {image_path}"}
+
+    status = check_instagram_credentials()
+    if status.get("mode") != "instagrapi":
+        return {"success": False, "error": "Story yüklemesi için instagrapi oturumu gereklidir."}
+
+    try:
+        from instagrapi.types import StoryLink
+        cl = get_instagrapi_client()
+        story_link = StoryLink(webUri=link_url)
+        print(f"\n[Instagram Story] 📸 Hikaye yükleniyor: {os.path.basename(image_path)}...")
+        print(f"🔗 Tıklanabilir Link: {link_url}")
+
+        media = cl.photo_upload_to_story(
+            Path(image_path),
+            caption=caption,
+            links=[story_link]
+        )
+        media_pk = getattr(media, "pk", "")
+        print(f"🎉 [Instagram Story] Hikaye başarıyla yayınlandı! (ID: {media_pk})")
+        return {"success": True, "media_id": str(media_pk)}
+
+    except Exception as e:
+        print(f"[Instagram Story] ❌ Hikaye yükleme hatası: {e}")
+        return {"success": False, "error": str(e)}
 
 if __name__ == "__main__":
     print("--- INSTAGRAM PUBLISHER DURUMU ---")

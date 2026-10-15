@@ -71,14 +71,52 @@ def publish_deal_to_whatsapp_channel(
     Playwright ve WhatsApp Web üzerinden verilen fırsatı doğrudan WhatsApp Kanalına otomatik gönderir.
     Görsel varsa görsel + açıklama, yoksa metin olarak iletir.
     """
+    target_channel = channel_name or WHATSAPP_CHANNEL_NAME or "Flaş Fırsat"
+    caption_text = format_whatsapp_message(deal)
+    target_img = image_path if (image_path and os.path.exists(image_path)) else deal.get("image_path")
+
+    # 1. Bulut Webhook / API Köprüsü Kontrolü (Cloud-First Mode)
+    webhook_url = os.getenv("WHATSAPP_WEBHOOK_URL") or os.getenv("WHATSAPP_API_URL")
+    if webhook_url:
+        print(f"\n[WhatsApp Publisher] 🌐 Bulut Webhook Köprüsü Kullanılıyor: {webhook_url}...")
+        try:
+            import requests
+            payload = {
+                "channel": target_channel,
+                "caption": caption_text,
+                "title": deal.get("title"),
+                "price": deal.get("new_price"),
+                "url": deal.get("affiliate_url") or deal.get("store_url", "")
+            }
+            files = {}
+            f_handle = None
+            if target_img and os.path.exists(target_img):
+                f_handle = open(target_img, "rb")
+                files["image"] = f_handle
+
+            headers = {}
+            api_token = os.getenv("WHATSAPP_API_TOKEN")
+            if api_token:
+                headers["Authorization"] = f"Bearer {api_token}"
+
+            try:
+                res = requests.post(webhook_url, data=payload, files=files, headers=headers, timeout=20)
+                if res.status_code in (200, 201, 202):
+                    print("✅ [WhatsApp Publisher] Bulut Köprüsü ile WhatsApp Kanalına Başarıyla Gönderildi!")
+                    return {"success": True, "mode": "cloud_webhook"}
+                else:
+                    print(f"⚠️ [WhatsApp Publisher] Webhook yanıt kodu: {res.status_code}")
+            finally:
+                if f_handle:
+                    f_handle.close()
+        except Exception as e_hook:
+            print(f"[WhatsApp Publisher] Webhook hatası: {e_hook}")
+
+    # 2. Yerel / Headless Playwright Tarayıcı Modu
     chk = check_whatsapp_ready()
     if not chk.get("ready"):
         print(f"[WhatsApp Publisher] ⚠️ {chk.get('message')}")
         return {"success": False, "error": chk.get("message")}
-
-    target_channel = channel_name or WHATSAPP_CHANNEL_NAME or "Flaş Fırsat"
-    caption_text = format_whatsapp_message(deal)
-    target_img = image_path if (image_path and os.path.exists(image_path)) else deal.get("image_path")
 
     print(f"\n[WhatsApp Publisher] 🚀 WhatsApp Kanalına otomatik paylaşım başlatılıyor...")
     print(f"📢 Hedef Kanal: {target_channel}")
@@ -86,17 +124,27 @@ def publish_deal_to_whatsapp_channel(
 
     try:
         with sync_playwright() as p:
-            context = p.chromium.launch_persistent_context(
-                user_data_dir=USER_DATA_DIR,
-                headless=headless,
-                channel="chrome",
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                    "--disable-infobars"
-                ],
-                viewport={"width": 1280, "height": 800}
-            )
+            launch_args = [
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-infobars",
+                "--disable-dev-shm-usage"
+            ]
+            try:
+                context = p.chromium.launch_persistent_context(
+                    user_data_dir=USER_DATA_DIR,
+                    headless=headless,
+                    channel="chrome",
+                    args=launch_args,
+                    viewport={"width": 1280, "height": 800}
+                )
+            except Exception:
+                context = p.chromium.launch_persistent_context(
+                    user_data_dir=USER_DATA_DIR,
+                    headless=headless,
+                    args=launch_args,
+                    viewport={"width": 1280, "height": 800}
+                )
 
             page = context.pages[0] if context.pages else context.new_page()
             page.goto("https://web.whatsapp.com", wait_until="domcontentloaded")

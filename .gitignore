@@ -5,7 +5,10 @@
 client_secrets.json
 
 # Veritabanı, Oturum ve Çalışma Zamanı Verileri
-data/
+data/*
+!data/deals.json
+!data/autopilot_history.json
+!data/replied_comments.json
 *.db
 
 # Geçici ve Çıktı Dosyaları

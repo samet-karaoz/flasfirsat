@@ -88,14 +88,15 @@ jobs:
           echo "🚀 Bulut Otopilotu Başlatılıyor: $SLOT"
           python autopilot_engine.py --now --slot "$SLOT"
 
-      - name: 🌐 Canlı Web Vitrinini Otomatik Commit & Push Et
+      - name: 🌐 Canlı Web Vitrinini ve Fırsat Geçmişini Otomatik Commit & Push Et
         run: |
           git config --global user.name "flasfirsat-bot[bot]"
           git config --global user.email "bot@flasfirsat.com"
-          git add index.html data/ assets/products/ history_deals.json || true
+          git add index.html data/deals.json data/autopilot_history.json data/replied_comments.json assets/products/ history_deals.json || true
           if git diff --staged --quiet; then
             echo "Değişiklik yok, commit atlanıyor."
           else
             git commit -m "⚡ Otomatik Flaş Fırsat & Canlı Vitrin Güncellemesi [skip ci]"
-            git push
+            git pull --rebase origin main || true
+            git push origin main
           fi

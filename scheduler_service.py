@@ -90,8 +90,13 @@ def run_scheduler_daemon(dry_run: bool = False):
                     if slot_id not in executed_slots:
                         print(f"\n🔔 [ZAMANLAYICI TETİKLENDİ!] Saat: {sh:02d}:{sm:02d} -> {slot['name']}")
                         
-                        # Otopilot döngüsünü çalıştır
-                        res = run_autopilot_deal_cycle(dry_run=dry_run, slot_name=slot["name"])
+                        # Pazar akşamı 20:00 kuşağında haftalık Top 3 bülteni yayınla, diğer günlerde tekli fırsat
+                        if now.weekday() == 6 and sh == 20:
+                            print("🏆 [Pazar Özel] Haftalık 'En İyi 3 İndirim' videosu hazırlanıyor...")
+                            from autopilot_engine import run_top3_deal_cycle
+                            res = run_top3_deal_cycle(dry_run=dry_run, slot_name="Haftalık Top 3 Bülteni (Pazar Özel)")
+                        else:
+                            res = run_autopilot_deal_cycle(dry_run=dry_run, slot_name=slot["name"])
                         
                         # Durumu kaydet (aynı dakika içinde ikinci kez çalışmaması için)
                         executed_slots.append(slot_id)

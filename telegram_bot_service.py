@@ -487,6 +487,33 @@ def handle_user_message(msg: dict):
         threading.Thread(target=run_autopilot_deal_cycle, kwargs={"dry_run": False, "slot_name": "Telegram Manuel Tetikleme"}, daemon=True).start()
         return
 
+    # 1.7 /dm Komutu (Instagram Yorumlarını Tara ve DM Gönder)
+    if text.startswith("/dm") or text.startswith("/autodm"):
+        send_telegram_text(chat_id, "🔍 <b>Instagram Reels yorumları taranıyor...</b>\n\n'LİNK', 'FİYAT' yazan takipçilere DM ile doğrudan ürün linkleri gönderiliyor...")
+        import threading
+        def _run_dm():
+            try:
+                from instagram_auto_dm import check_and_reply_comments
+                count = check_and_reply_comments()
+                send_telegram_text(chat_id, f"✅ <b>Auto-DM Tamamlandı!</b>\nToplam <b>{count}</b> takipçiye link DM ile iletildi.")
+            except Exception as ex:
+                send_telegram_text(chat_id, f"❌ Auto-DM hatası: {ex}")
+        threading.Thread(target=_run_dm, daemon=True).start()
+        return
+
+    # 1.8 /top3 Komutu (Haftanın En İyi 3 Fırsatı Videosu)
+    if text.startswith("/top3"):
+        send_telegram_text(chat_id, "🏆 <b>Top 3 Fırsat Bülteni Başlatıldı!</b>\n\nEn yüksek indirimli 3 ürün taranıyor, sıralama kartları ve tek kesintisiz viral meme ile 9:16 video derleniyor...")
+        import threading
+        def _run_top3():
+            try:
+                from autopilot_engine import run_top3_deal_cycle
+                run_top3_deal_cycle(dry_run=False, slot_name="Telegram Top 3 Tetikleme")
+            except Exception as ex:
+                send_telegram_text(chat_id, f"❌ Top 3 hatası: {ex}")
+        threading.Thread(target=_run_top3, daemon=True).start()
+        return
+
     # 2. /yardim Komutu
     if text.startswith("/yardim"):
         help_text = (
@@ -495,7 +522,9 @@ def handle_user_message(msg: dict):
             "Sistem her gün <b>12:30</b> ve <b>20:00</b> saatlerinde en iyi indirimi otomatik bulur, 9:16 reels videosunu derler ve tüm sosyal medya platformlarınıza eş zamanlı yükler!\n\n"
             "💡 <b>Yönetim Komutları:</b>\n"
             "• <code>/program</code> - Sıradaki otomatik yayın zamanı\n"
-            "• <code>/otopilot</code> - Hemen otomatik video üret ve 4 kanala yayınla\n"
+            "• <code>/otopilot</code> - Hemen otomatik tekli video üret ve 4 kanala yayınla\n"
+            "• <code>/top3</code> - Günün/Haftanın en iyi 3 fırsatından 3'lü video üret\n"
+            "• <code>/dm</code> - Instagram Reels yorumlarını tara ve link isteyenlere Auto-DM at\n"
             "• <code>/stats</code> - Web paneli ve ziyaretçi istatistikleri\n"
             "• <code>/takip [link]</code> - İstediğin ürünü fiyat takibine al\n"
             "• <code>/listem</code> - Takip listen\n"
@@ -702,6 +731,7 @@ def run_telegram_service():
 
     offset = None
     last_alarm_check = time.time()
+    last_dm_check = time.time()
 
     while True:
         try:
@@ -730,6 +760,21 @@ def run_telegram_service():
                 print("[Telegram Service] ⏰ Takip edilen ürünlerin fiyatları kontrol ediliyor...")
                 check_user_price_alarms()
                 last_alarm_check = time.time()
+
+            # 10 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder
+            if time.time() - last_dm_check > 600:
+                last_dm_check = time.time()
+                try:
+                    def _periodic_dm():
+                        try:
+                            from instagram_auto_dm import check_and_reply_comments
+                            check_and_reply_comments()
+                        except Exception as e_dm_run:
+                            print(f"[Telegram Service] Periyodik Auto-DM hatası: {e_dm_run}")
+                    import threading
+                    threading.Thread(target=_periodic_dm, daemon=True).start()
+                except Exception as e_dm:
+                    print(f"[Telegram Service] Auto-DM iş parçacığı hatası: {e_dm}")
 
         except requests.exceptions.RequestException:
             time.sleep(3)

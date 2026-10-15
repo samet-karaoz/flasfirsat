@@ -109,5 +109,47 @@
     "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_112547_sandisk_128gb_type-c_bellek.mp4",
     "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTME Mİ?! Bu fiyata kaçıran üzülür!\n\nSanDisk 128GB Type-C Bellek (Çift Girişli)\n1.399,00 TL ❌ -> 899 TL ✅ (%36 İNDİRİM!)\n\n💳 Nays ile %10 iade (90 TL) ile \n🔥 NET MALİYET: 809 TL!\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #fırsat #teknoloji #kampanya #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_36_amz_B07YYJRXQR.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-10-15 12:30:02",
+    "slot": "Öğle Molası (12:30)",
+    "success": true,
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/90kd3pYDoaA"
+      },
+      "instagram": {
+        "status": "ok",
+        "media_id": "4008386006460119529"
+      },
+      "instagram_story": {
+        "status": "ok",
+        "media_id": "4008386458481339872"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      },
+      "whatsapp": {
+        "status": "ok",
+        "channel": "Flaş Fırsat ⚡"
+      },
+      "web": {
+        "status": "ok",
+        "url": "https://samet-karaoz.github.io/flasfirsat"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "PlayStation 5 Pro",
+      "new_price": "72.999 TL",
+      "old_price": "76.399 TL",
+      "discount_pct": "-4%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DJH2NS6R?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261015_123315_playstation_5_pro.mp4",
+    "caption_text": "🚨 Karaborsaya düşmeden bu fiyata bulmak imkansızdı! \n\nEski Fiyat ❌ -> 76.399 TL \nYeni Fiyat ✅ -> 72.999 TL (%4 İndirim)\n\n💳 Nays ile 250 TL iade ve Prime kargo avantajıyla Net Maliyet: 72.749 TL!\n\n🚨 DİKKAT: Yüksek talep nedeniyle stoklar her an tükenebilir, elinizi çabuk tutun!\n\n👉 İndirimli satın alma linkine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n🔗 Tüm indirimler profilimizdeki sitede ve Telegram'da!\n\n#indirim #ps5pro #oyun #fırsat #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_46_amz_B0DJH2NS6R.jpg.jpg"
   }
 ]

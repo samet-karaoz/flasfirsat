@@ -322,6 +322,15 @@ def process_deal_to_reel(
     with open(caption_path, "w", encoding="utf-8") as f:
         f.write(caption_text)
 
+    # 3b. 1080x1920 Dikey Instagram Story Kartı Üret
+    story_card_path = None
+    try:
+        from story_composer import create_story_card
+        story_card_path = create_story_card(deal)
+        print(f"📸 [Story Composer] Story kartı hazırlandı: {story_card_path}")
+    except Exception as es:
+        print(f"[Deal Bot] Story kartı üretim uyarısı: {es}")
+
     # Geçmişe kaydet (Hem URL hem ürün başlığı kaydedilir, mükerrer paylaşım 0'a indirilir)
     sig = get_deal_sig(deal)
     history = load_history()
@@ -337,7 +346,12 @@ def process_deal_to_reel(
     # 4. Telegram Bildirimi (Onay Butonlu veya Doğrudan Gönderim)
     if upload:
         if require_approval:
-            send_telegram_deal_for_approval(deal, video_path, caption_text, product_url=aff_url, youtube_video_path=youtube_video_path)
+            send_telegram_deal_for_approval(
+                deal, video_path, caption_text,
+                product_url=aff_url,
+                youtube_video_path=youtube_video_path,
+                story_image_path=story_card_path
+            )
         else:
             send_telegram_deal(video_path, caption_text, product_url=aff_url)
     else:

@@ -498,5 +498,37 @@
       "file_id": "BAACAgQAAxkDAANJatKQnEflpC_qcLhvtEevvgSapgADSiIAAoi-mFJaENU6UEWS4j0E",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_7.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-17 00:58",
+    "slot": "Telegram Onaylı YouTube",
+    "success": true,
+    "deal": {
+      "title": "Tapo C211 2K Güvenlik Kamerası",
+      "old_price": "1.199 TL",
+      "new_price": "999 TL",
+      "discount_pct": "-17%",
+      "discount_val": 33,
+      "badge": "DEV İNDİRİM",
+      "hook": "2K 3MP çözünürlük, 360 derece yatay hareket ve gece görüşüyle 1000 TL altına rakipsiz ev ve bebek kamerası!",
+      "store_name": "Amazon TR",
+      "store_url": "https://www.amazon.com.tr/dp/B0CHFG8XBZ?tag=flasfirsat04-21",
+      "image_path": "temp/amz_B0CHFG8XBZ.jpg",
+      "feature_pill": "2K 3MP • 360° Kablosuz Güvenlik",
+      "seller_badge": "AMAZON TR RESMİ SATICI",
+      "installment": "Peşin Fiyatına 3 Taksit x 333 TL",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "net_cost": "",
+      "coupon_info": "",
+      "has_verified_old_price": true,
+      "is_lowest_30d": false,
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0CHFG8XBZ?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/qWrwEY9mJ3c"
+      }
+    }
   }
 ]

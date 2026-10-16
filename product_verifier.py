@@ -109,13 +109,21 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     # 4. KUPON TESPİTİ VE NET İNDİRİM TL HESAPLAMA
     coupon_text = ""
     coupon_amount_tl = 0.0
-    coupon_el = soup.select_one("span.couponBadge") or soup.select_one("label[for*='coupon']") or soup.select_one("#couponBadge")
-    if coupon_el:
-        coupon_text = coupon_el.text.strip()
-    else:
-        c_m = re.search(r"(\d+[\.,]?\d*)\s*(TL|%)\s*(?:değerinde\s*)?kupon", res.stdout, re.IGNORECASE)
-        if c_m:
-            coupon_text = f"{c_m.group(1)} {c_m.group(2)} Kupon Fırsatı"
+    coupon_el = soup.select_one("span.couponBadge") or soup.select_one("label[for*='coupon']") or soup.select_one("#couponBadge") or soup.select_one("#promoPriceBlockMessage_feature_div")
+    raw_coupon = coupon_el.text.strip() if coupon_el else ""
+    c_m = re.search(r"(%?\s*\d+[\.,]?\d*)\s*(TL|%|₺)?\s*(?:değerinde\s*|indirim\s*)?kupon", raw_coupon or res.stdout, re.IGNORECASE)
+    if c_m:
+        val_part = c_m.group(1).strip()
+        unit_part = (c_m.group(2) or "").strip().upper()
+        if "%" in val_part or unit_part == "%":
+            num_only = re.sub(r"[^\d]", "", val_part)
+            coupon_text = f"%{num_only} İndirim Kuponu"
+        else:
+            coupon_text = f"{val_part} TL İndirim Kuponu"
+    elif raw_coupon and "kupon" in raw_coupon.lower():
+        cleaned_c = re.sub(r"(?i)(şartlar|kuponu uygula|uygulayın|detaylar)", "", raw_coupon)
+        cleaned_c = re.sub(r"\s+", " ", cleaned_c).strip(" -•:.,")
+        coupon_text = cleaned_c[:30]
 
     if coupon_text and price_val > 0:
         pct_m = re.search(r"%(\d+)", coupon_text)
@@ -256,12 +264,15 @@ def verify_deal_before_publish(deal: dict) -> dict:
         deal["seller_badge"] = v_res.get("seller_badge", "Amazon TR")
         print(f"[Doğrulama] 🏢 Satıcı Doğrulandı: {deal['seller_badge']}")
 
-        # Kupon indirimi varsa net maliyete yansıt
+        # Kupon indirimi varsa net maliyete ve bilgilendirmeye yansıt
         coupon_tl = v_res.get("coupon_amount_tl", 0.0)
-        if coupon_tl > 0:
+        if v_res.get("coupon_text"):
             deal["coupon_info"] = v_res["coupon_text"]
+        if coupon_tl > 0:
             deal["coupon_amount_tl"] = coupon_tl
-            print(f"[Doğrulama] 🎟️ Kupon Uygulandı: -{coupon_tl:.2f} TL indirim")
+            print(f"[Doğrulama] 🎟️ Kupon Uygulandı: {deal.get('coupon_info')} (-{coupon_tl:.2f} TL indirim)")
+        elif deal.get("coupon_info"):
+            print(f"[Doğrulama] 🎟️ Kupon Bilgilendirmesi: {deal.get('coupon_info')}")
 
         # Canlı özellik özeti varsa ekle
         if v_res.get("feature_pill"):

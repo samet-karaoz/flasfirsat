@@ -754,14 +754,39 @@ def create_product_banner(
     savings = (old_val - new_val) if (show_old_price and old_val > new_val) else 0
 
     sub_parts = []
+    clean_coupon = re.sub(r'[^\w\s.,xX+\-/%]', '', str(coupon_text)).strip() if coupon_text else ""
+    if clean_coupon:
+        sub_parts.append("Sayfadaki Kuponu Aktif Et")
     if net_cost:
         clean_net = re.sub(r'[^\w\s.,xX+\-/%]', '', net_cost).strip()
         sub_parts.append(f"Nays ile Net: {clean_net}")
-    if installment:
+    if installment and not clean_coupon:
         clean_inst_s = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
         sub_parts.append(clean_inst_s)
     sub_str = "  •  ".join(sub_parts) if sub_parts else ""
     new_str = new_price if new_price else "Fırsat Fiyatı"
+
+    def _draw_coupon_or_savings_pill(center_x: int):
+        if clean_coupon:
+            up_c = clean_coupon.upper()
+            c_clean = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
+            if len(c_clean) > 32:
+                c_clean = c_clean[:32].strip()
+            c_w = draw.textlength(c_clean, font=f_savings)
+            pill_w = int(c_w + 48)
+            pill_x1 = center_x - pill_w // 2
+            pill_y1, pill_y2 = 716, 750
+            draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
+            draw.text((center_x, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
+        elif savings > 0:
+            sav_str = f"{int(savings):,} TL".replace(',', '.')
+            sav_text = f"{sav_str} NET TASARRUF"
+            s_w = draw.textlength(sav_text, font=f_savings)
+            pill_w = int(s_w + 54)
+            pill_x1 = center_x - pill_w // 2
+            pill_y1, pill_y2 = 716, 750
+            draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
+            draw.text((center_x, (pill_y1 + pill_y2) // 2), sav_text, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
 
     if show_old_price:
         # Sol Kutu: Piyasa Fiyatı
@@ -786,7 +811,7 @@ def create_product_banner(
         draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
-        lbl_text = "İNDİRİMLİ FIRSAT FİYATI"
+        lbl_text = "KUPONLU FIRSAT FİYATI" if clean_coupon else "İNDİRİMLİ FIRSAT FİYATI"
         draw.text((box_center_x, 770), lbl_text, font=f_new_label, fill=theme["new_label_col"], anchor="mm")
 
         price_cy = 818 if sub_str else 828
@@ -795,24 +820,8 @@ def create_product_banner(
         if sub_str:
             draw.text((box_center_x, 864), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
 
-        # Floating Net Tasarruf / Kupon Rozeti
-        if savings > 0:
-            sav_str = f"{int(savings):,} TL".replace(',', '.')
-            sav_text = f"{sav_str} NET TASARRUF"
-            s_w = draw.textlength(sav_text, font=f_savings)
-            pill_w = int(s_w + 54)
-            pill_x1 = box_center_x - pill_w // 2
-            pill_y1, pill_y2 = 716, 750
-            draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
-            draw.text((box_center_x, (pill_y1 + pill_y2) // 2), sav_text, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
-        elif coupon_text:
-            c_clean = f"KUPON: {coupon_text.upper()}"
-            c_w = draw.textlength(c_clean, font=f_savings)
-            pill_w = int(c_w + 48)
-            pill_x1 = box_center_x - pill_w // 2
-            pill_y1, pill_y2 = 716, 750
-            draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
-            draw.text((box_center_x, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
+        # Floating Kupon / Net Tasarruf Rozeti
+        _draw_coupon_or_savings_pill(box_center_x)
 
     else:
         # Tek Büyük ve Geniş Hero Kutu (Tam Ortalanmış)
@@ -820,7 +829,7 @@ def create_product_banner(
         draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
-        lbl_single = "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
+        lbl_single = "KUPONLU FIRSAT FİYATI" if clean_coupon else "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
         draw.text((box_center_x, 770), lbl_single, font=f_new_label, fill=theme["new_label_col"], anchor="mm")
 
         price_cy = 818 if sub_str else 828
@@ -828,6 +837,8 @@ def create_product_banner(
 
         if sub_str:
             draw.text((box_center_x, 864), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
+
+        _draw_coupon_or_savings_pill(box_center_x)
 
     # 7. Etkileşim & Anti-Spam DM / BİO CTA Bandı (Platforma Özel: Instagram vs YouTube) + #işbirliği
     cta_box = (0, 898, W, 960)

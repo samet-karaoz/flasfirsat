@@ -69,6 +69,10 @@ def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
     elif new_p:
         msg_lines.append(f"✅ Fırsat Fiyatı: *{new_p}*")
 
+    coupon_info = str(deal.get("coupon_info", "")).strip()
+    if coupon_info:
+        msg_lines.append(f"🎟️ Kupon: *{coupon_info}* (Sayfada Aktif Edin)")
+
     if net_cost:
         msg_lines.append(f"💳 {bank_camp} ➔ *Net: {net_cost}*")
 
@@ -126,6 +130,7 @@ def send_telegram_deal_for_approval(
     store = deal.get("store_name", "Amazon TR")
     net_cost = deal.get("net_cost", "")
     bank_camp = deal.get("bank_campaign", "")
+    coupon_info = str(deal.get("coupon_info", "")).strip()
 
     # Yönetici Önizleme Mesajı
     approval_caption = (
@@ -133,6 +138,8 @@ def send_telegram_deal_for_approval(
         f"📦 <b>Ürün:</b> {title}\n"
         f"💰 <b>Fiyat:</b> <s>{old_price}</s> ➔ <b>{new_price}</b> ({discount_pct})\n"
     )
+    if coupon_info:
+        approval_caption += f"🎟️ <b>Kupon:</b> {coupon_info} (Sayfada Aktif Et)\n"
     if net_cost:
         approval_caption += f"💳 <b>Net Maliyet:</b> {net_cost} ({bank_camp})\n"
     approval_caption += f"🏪 <b>Mağaza:</b> {store}\n\n"

@@ -124,11 +124,17 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
         new_font = get_font(76, bold=True)
         draw.text((width // 2, y_price), new_p or old_p, font=new_font, fill=(74, 222, 128), anchor="mm")
 
-    # Banka/Nays Kampanyası (Varsa)
-    if net_c:
-        bank_font = get_font(38, bold=True)
-        camp_text = clean_text_for_pil(f"Nays ile Net Fiyat: {net_c}")
-        draw.rounded_rectangle([200, 1420, 880, 1490], radius=20, fill=(30, 41, 59, 220), outline=(56, 189, 248), width=2)
+    # Kupon veya Banka/Nays Kampanyası (Varsa)
+    coupon_str = str(deal.get("coupon_info", "")).strip()
+    if coupon_str or net_c:
+        bank_font = get_font(36 if (coupon_str and net_c) else 38, bold=True)
+        if coupon_str and net_c:
+            camp_text = clean_text_for_pil(f"Kupon: {coupon_str} • Net: {net_c}")
+        elif coupon_str:
+            camp_text = clean_text_for_pil(f"Kupon Fırsatı: {coupon_str} (Sayfada Aktif Et)")
+        else:
+            camp_text = clean_text_for_pil(f"Nays ile Net Fiyat: {net_c}")
+        draw.rounded_rectangle([140, 1420, 940, 1490], radius=20, fill=(30, 41, 59, 220), outline=(56, 189, 248), width=2)
         draw.text((width // 2, 1455), camp_text, font=bank_font, fill=(56, 189, 248), anchor="mm")
 
     # 6. Tıklanabilir Link Çıkartması Hedef Alanı (En Yüksek Dönüşüm & Tıklama Oranı)

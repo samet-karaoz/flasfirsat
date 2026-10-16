@@ -88,17 +88,30 @@ def add_deal_to_web(deal: dict):
     }
 
     # Başa ekle (en yeni en üstte)
-    # Aynı url veya başlık varsa güncelle
+    # Aynı url, ASIN veya başlık varsa güncelle (Asla aynı ürünü 2 kez vitrine koyma)
+    import re
+    new_url_clean = deal_item["store_url"].split("?")[0].strip().lower()
+    new_asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", deal_item["store_url"], re.IGNORECASE)
+    new_asin = new_asin_m.group(1).upper() if new_asin_m else ""
+
     existing_idx = None
     for i, d in enumerate(deals):
-        if d.get("title") == deal_item["title"]:
+        d_title = d.get("title", "")
+        d_url = d.get("store_url", "")
+        d_url_clean = d_url.split("?")[0].strip().lower()
+        if d_title == deal_item["title"]:
+            existing_idx = i
+            break
+        if new_url_clean and new_url_clean != "#" and d_url_clean == new_url_clean:
+            existing_idx = i
+            break
+        if new_asin and new_asin.lower() in d_url.lower():
             existing_idx = i
             break
 
     if existing_idx is not None:
-        deals[existing_idx] = deal_item
-    else:
-        deals.insert(0, deal_item)
+        deals.pop(existing_idx)
+    deals.insert(0, deal_item)
 
     # Maksimum 100 ürün sakla
     deals = deals[:100]

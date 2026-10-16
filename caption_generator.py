@@ -9,13 +9,14 @@ MODEL_CANDIDATES = [
     "gemini-flash-latest"
 ]
 
-def generate_viral_caption(product_title: str, old_price: str, new_price: str, discount_pct: str, deal_details: str = "", store_url: str = "", bank_campaign: str = "", net_cost: str = "") -> str:
+def generate_viral_caption(product_title: str, old_price: str, new_price: str, discount_pct: str, deal_details: str = "", store_url: str = "", bank_campaign: str = "", net_cost: str = "", coupon_info: str = "") -> str:
     """
     Instagram Reels ve TikTok için etkileşimi patlatan, merak uyandıran,
     yoruma teşvik eden açıklama metni (caption) ve viral hashtag'ler üretir.
-    Banka kampanyası ve net maliyet bilgisini de içerir.
+    Banka kampanyası, kupon bilgilendirmesi ve net maliyet bilgisini de içerir.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
+    coupon_clean = str(coupon_info).strip() if coupon_info else ""
     
     system_prompt = """Sen Instagram ve TikTok'ta milyonlarca izlenen viral fırsat ve indirim sayfalarını yöneten dahi bir sosyal medya ve büyüme uzmanısın.
 
@@ -24,18 +25,21 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, videoyu 
 Açıklama Kuralları:
 1. İlk satır: Dikkat çekici bir soru veya iddialı bir hook (Örn: "DDR5 sistem bedavaya mı geliyor?!", "Bu fiyata alan yaşadı!", "🚨 FİYAT HATASI MI?!").
 2. Fiyat avantajını açıkça göster (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve İndirim Oranı).
-3. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
-    4. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
-5. Eylem Çağrısı (Anti-Spam, Reklam & ManyChat Uyumlu): Asla izleyiciden tek kelimelik 'LİNK' isteme (Instagram 'link' kelimesini spam filtresine takıyor). Bunun yerine hem profildeki siteyi hem de doğal anahtar kelimeyi birlikte sun:
+3. Varsa Kupon Bilgilendirmesi (ÖNEMLİ): Eğer üründe kupon indirimi varsa mutlaka açıkça belirt: "🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki kupon kutucuğunu işaretlemeyi / kuponu aktif etmeyi unutmayın!"
+4. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
+5. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
+6. Eylem Çağrısı (Anti-Spam, Reklam & ManyChat Uyumlu): Asla izleyiciden tek kelimelik 'LİNK' isteme (Instagram 'link' kelimesini spam filtresine takıyor). Bunun yerine hem profildeki siteyi hem de doğal anahtar kelimeyi birlikte sun:
    "🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)"
-6. Algoritma Tetikleyicisi (Kaydet & Paylaş): Instagram algoritmasında öne çıkmak için kaydetme ve paylaşma çağrısı ekle:
+7. Algoritma Tetikleyicisi (Kaydet & Paylaş): Instagram algoritmasında öne çıkmak için kaydetme ve paylaşma çağrısı ekle:
    "📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️"
-7. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #kampanya #keşfet).
+8. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #kampanya #keşfet).
 
 Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
 
     extra_info = f"\nBanka Kampanyası: {bank_campaign}\nNet Maliyet: {net_cost}" if net_cost else ""
+    if coupon_clean:
+        extra_info += f"\nKupon Bilgilendirmesi (Zorunlu Vurgula): {coupon_clean} (İzleyiciye ürün sayfasındaki kuponu aktif etmesi gerektiğini açıkça yaz)"
     price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
     user_prompt = f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÜrün Linki: {store_url}\nYasal Zorunluluk: Açıklamanın en sonuna mutlaka '#işbirliği #reklam' etiketlerini ekle."
 
@@ -49,8 +53,16 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         json.dump(payload, f, ensure_ascii=False)
 
     def sanitize_caption(text: str) -> str:
-        """Metindeki hashtag sayısını dengeler ve #işbirliği zorunluluğunu garanti eder."""
+        """Metindeki hashtag sayısını dengeler, kupon uyarısını ve #işbirliği zorunluluğunu garanti eder."""
         import re
+        if coupon_clean and "kupon" not in text.lower():
+            coupon_notice = f"\n🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki '{coupon_clean}' kuponunu aktif etmeyi unutmayın!\n"
+            lines = text.split("\n")
+            if len(lines) > 2:
+                lines.insert(2, coupon_notice.strip())
+                text = "\n".join(lines)
+            else:
+                text = coupon_notice + text
         # Yasal uyum: #işbirliği yoksa ekle
         if "#işbirliği" not in text.lower():
             text += "\n\n#işbirliği #reklam"
@@ -78,6 +90,7 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
     # Fallback Caption if all API models fail
     net_line = f"💳 {bank_campaign} ile Net Maliyet: {net_cost}\n" if net_cost else ""
+    coupon_line = f"🎟️ KUPON BİLGİSİ: Ürün sayfasındaki '{coupon_clean}' kuponunu aktif etmeyi unutmayın!\n" if coupon_clean else ""
     old_line = f"❌ Eski Fiyat: {old_price}\n" if old_price else ""
     pct_line = f" ({discount_pct} İndirim)" if discount_pct and discount_pct != "0%" else ""
 
@@ -85,6 +98,7 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"🔥 {product_title} fırsatı yayında!\n\n"
         f"{old_line}"
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
+        f"{coupon_line}"
         f"{net_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
         f"🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (DM'den isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)\n"

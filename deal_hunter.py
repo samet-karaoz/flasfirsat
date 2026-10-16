@@ -399,7 +399,8 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
                 prod_url = "https://www.amazon.com.tr" + href.split("?")[0]
 
             # Daha önce üretilmişse pas geç
-            if exclude_urls and any(prod_url in ex or (asin_match and asin_match.group(1) in ex) for ex in exclude_urls):
+            if is_deal_already_shared(raw_title, prod_url, exclude_urls):
+                print(f"[Deal Hunter] ⏭️ Mükerrer Ürün Koruması (Daha önce paylaşıldı): {raw_title[:45]}")
                 continue
 
             raw_img = img_el.get("src", "")
@@ -431,6 +432,10 @@ GÖREV:
 """
             deal_data = call_gemini(prompt, json_mode=True)
             if not deal_data or not deal_data.get("title"):
+                continue
+
+            if is_deal_already_shared(deal_data.get("title", ""), prod_url, exclude_urls):
+                print(f"[Deal Hunter] ⏭️ Mükerrer Ürün Koruması (Başlık eşleşmesi): {deal_data.get('title')}")
                 continue
 
             # Minimum İndirim Oranı Kontrolü
@@ -475,6 +480,40 @@ GÖREV:
             print(f"[Deal Hunter] 🔥 Yüksek İndirim Yakalandı: {deal_data['title']} | {deal_data['new_price']} (-%{pct_val}, Net: {camp['net_cost']}) | Link: {prod_url}")
 
     return deals
+
+def _normalize_title_tokens(t: str) -> str:
+    if not t:
+        return ""
+    tr_map = str.maketrans("ıİğĞüÜşŞöÖçÇ", "iiggüüssoocc")
+    s = t.translate(tr_map).lower()
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    stop_words = {"oyuncu", "gaming", "kablosuz", "wireless", "kablolu", "siyah", "beyaz", "orijinal", "yeni", "nesil", "model", "turkiye", "garantili", "mouse", "klavye", "kulaklik", "kulakligi", "monitor", "termos", "filtre", "bellek"}
+    tokens = [w for w in s.split() if len(w) >= 2 and w not in stop_words]
+    return " ".join(tokens[:3])
+
+def is_deal_already_shared(title: str, url: str, exclude_urls: set) -> bool:
+    """Ürünün URL, ASIN veya marka/model başlığı bazında daha önce paylaşılıp paylaşılmadığını denetler."""
+    if not exclude_urls:
+        return False
+    url_clean = (url or "").split("?")[0].strip().lower()
+    asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", url or "", re.IGNORECASE)
+    asin = asin_m.group(1).upper() if asin_m else ""
+    norm_cand = _normalize_title_tokens(title)
+
+    for ex in exclude_urls:
+        if not ex:
+            continue
+        ex_str = str(ex).strip()
+        ex_low = ex_str.lower()
+        if url_clean and len(url_clean) > 12 and (url_clean in ex_low or ex_low.split("?")[0] == url_clean):
+            return True
+        if asin and asin.lower() in ex_low:
+            return True
+        if not ex_str.startswith("http") and norm_cand and len(norm_cand) >= 5:
+            norm_ex = _normalize_title_tokens(ex_str)
+            if norm_ex and len(norm_ex) >= 5 and (norm_cand == norm_ex or norm_cand in norm_ex or norm_ex in norm_cand):
+                return True
+    return False
 
 def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set = None, min_discount: int = 25) -> list:
     """
@@ -539,7 +578,7 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             if not store_url:
                 continue
 
-            if exclude_urls and any(store_url in ex for ex in exclude_urls):
+            if is_deal_already_shared("", store_url, exclude_urls):
                 continue
 
             # Mağaza tespit et (Amazon TR, Trendyol, Hepsiburada)
@@ -554,6 +593,7 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
    Yoksa birden fazla ürünü kapsayan genel bir kategori/marka duyurusu mu (örn: 'Columbia Ürünleri', 'Petshop Ürünü', 'Televizyon Modelleri')?
 2. Eğer genel bir kategori, birden fazla ürün veya belirsiz bir kampanya ise "is_specific_product" alanını false yap!
 3. Belirli tek bir ürünse "title" alanına NET marka ve model adını yaz (maksimum 30 karakter).
+4. Eğer mesajda kupon indirimi, kupon kodu veya sepette kupon şartı belirtilmişse "coupon_info" alanına kısa ve net yaz (örn: "200 TL Kuponu Aktif Et", "Kupon Kodu: FIRSAT100"). Kupon yoksa "" bırak.
 
 Şu JSON formatında döndür:
 {{
@@ -562,6 +602,7 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
   "old_price": "Varsa eski veya normal piyasa fiyatı (örn: 1.499 TL)",
   "new_price": "İndirimli satış fiyatı (örn: 799 TL)",
   "discount_pct": "İndirim yüzdesi (örn: -47%)",
+  "coupon_info": "Varsa kupon bilgisi (örn: '150 TL Kupon İndirimi'), yoksa ''",
   "badge": "İndirim %45 üzeriyse 'DİP FİYAT', %35 üzeriyse 'DEV İNDİRİM', diğerinde '{store_name.upper()} FIRSATI'",
   "hook": "Neden kaçırılmaması gerektiğini özetleyen tek cümlelik detay"
 }}
@@ -570,6 +611,10 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             if isinstance(deal_data, list) and len(deal_data) > 0 and isinstance(deal_data[0], dict):
                 deal_data = deal_data[0]
             if not isinstance(deal_data, dict) or not deal_data.get("title") or not deal_data.get("new_price"):
+                continue
+
+            if is_deal_already_shared(deal_data.get("title", ""), store_url, exclude_urls):
+                print(f"[Deal Hunter] ⏭️ Mükerrer Ürün Koruması (Daha önce paylaşıldı): {deal_data.get('title')}")
                 continue
 
             # Genel kategori veya belirsiz başlık filtresi

@@ -23,7 +23,18 @@ def get_last_product() -> str:
     try:
         if os.path.exists(LAST_PRODUCT_FILE):
             with open(LAST_PRODUCT_FILE, "r", encoding="utf-8") as f:
-                return f.read().strip()
+                val = f.read().strip()
+                if val:
+                    return val
+    except Exception:
+        pass
+    try:
+        deals_json = os.path.join(os.path.dirname(HISTORY_FILE), "data", "deals.json")
+        if os.path.exists(deals_json):
+            with open(deals_json, "r", encoding="utf-8") as f:
+                deals = json.load(f)
+                if isinstance(deals, list) and len(deals) > 0 and isinstance(deals[0], dict):
+                    return deals[0].get("title", "")
     except Exception:
         pass
     return ""
@@ -41,7 +52,7 @@ def get_last_subtype() -> str:
         if os.path.exists(LAST_SUBTYPE_FILE):
             with open(LAST_SUBTYPE_FILE, "r", encoding="utf-8") as f:
                 val = f.read().strip()
-                if val:
+                if val and val != "general":
                     return val
     except Exception:
         pass
@@ -57,19 +68,70 @@ def set_last_subtype(subtype: str):
         pass
 
 def load_history() -> set:
-
+    history = set()
     if os.path.exists(HISTORY_FILE):
         try:
             with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                return set(json.load(f))
+                history.update(json.load(f))
         except Exception:
-            return set()
-    return set()
+            pass
+
+    # Web Vitrini (data/deals.json), Otopilot Geçmişi ve Onay Havuzundaki tüm ürünleri birleştir (Asla aynı ürünü 2 kez paylaşma)
+    data_dir = os.path.join(os.path.dirname(HISTORY_FILE), "data")
+    deals_json = os.path.join(data_dir, "deals.json")
+    if os.path.exists(deals_json):
+        try:
+            with open(deals_json, "r", encoding="utf-8") as f:
+                for d in json.load(f):
+                    if isinstance(d, dict):
+                        if d.get("store_url"):
+                            history.add(d["store_url"])
+                        if d.get("title"):
+                            history.add(d["title"])
+        except Exception:
+            pass
+
+    autopilot_json = os.path.join(data_dir, "autopilot_history.json")
+    if os.path.exists(autopilot_json):
+        try:
+            with open(autopilot_json, "r", encoding="utf-8") as f:
+                for item in json.load(f):
+                    d = item.get("deal") if isinstance(item, dict) else None
+                    if isinstance(d, dict):
+                        if d.get("affiliate_url"):
+                            history.add(d["affiliate_url"])
+                        if d.get("store_url"):
+                            history.add(d["store_url"])
+                        if d.get("title"):
+                            history.add(d["title"])
+        except Exception:
+            pass
+
+    pending_json = os.path.join(data_dir, "pending_deals.json")
+    if os.path.exists(pending_json):
+        try:
+            with open(pending_json, "r", encoding="utf-8") as f:
+                pdata = json.load(f)
+                if isinstance(pdata, dict):
+                    for item in pdata.values():
+                        if isinstance(item, dict):
+                            if item.get("product_url"):
+                                history.add(item["product_url"])
+                            d = item.get("deal")
+                            if isinstance(d, dict):
+                                if d.get("store_url"):
+                                    history.add(d["store_url"])
+                                if d.get("title"):
+                                    history.add(d["title"])
+        except Exception:
+            pass
+
+    return history
 
 def save_history(history: set):
     try:
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-            json.dump(list(history), f, ensure_ascii=False, indent=2)
+            json.dump(sorted(list(history)), f, ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"[Uyarı] Geçmiş kaydedilemedi: {e}")
 
@@ -257,7 +319,8 @@ def process_deal_to_reel(
         deal_details=deal.get("market_highlight") or deal.get("hook", ""),
         store_url=aff_url,
         bank_campaign=deal.get("bank_campaign", ""),
-        net_cost=deal.get("net_cost", "")
+        net_cost=deal.get("net_cost", ""),
+        coupon_info=deal.get("coupon_info", "")
     )
 
     caption_filename = f"{base_name}_aciklama.txt"
@@ -265,12 +328,14 @@ def process_deal_to_reel(
     with open(caption_path, "w", encoding="utf-8") as f:
         f.write(caption_text)
 
-    # Geçmişe kaydet
+    # Geçmişe kaydet (Hem URL hem ürün başlığı kaydedilir, mükerrer paylaşım 0'a indirilir)
     sig = get_deal_sig(deal)
+    history = load_history()
     if sig:
-        history = load_history()
         history.add(sig)
-        save_history(history)
+    if deal.get("title"):
+        history.add(deal.get("title"))
+    save_history(history)
     set_last_product(deal.get("title", ""))
     sub = get_product_subtype(deal.get("title", ""))
     set_last_subtype(sub)
@@ -486,9 +551,9 @@ Kullanım Şekilleri:
 
         fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
         if not fresh_deals:
-            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
+            fresh_deals = hunt_best_deals(limit=10, platform="all", category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
         if not fresh_deals:
-            fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, min_discount=15)
+            fresh_deals = hunt_best_deals(limit=10, platform="all", category=args.category, exclude_urls=history, min_discount=15)
 
         # Son işlenen ürünle veya alt kategorisiyle aynı olanları filtrele (ard arda tekrar etmez)
         valid_deals = []

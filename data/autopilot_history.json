@@ -449,5 +449,28 @@
       "success": false,
       "error": "Unauthorized"
     }
+  },
+  {
+    "timestamp": "2026-10-16 19:51:52",
+    "slot": "Bulut Otopilotu (12:30 / 20:00)",
+    "success": false,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Razer DeathAdder V3 Pro",
+      "new_price": "4.607,04 TL",
+      "old_price": "6.499 TL",
+      "discount_pct": "-29%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0B6XZLNHQ?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261016_195458_razer_deathadder_v3_pro.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261016_195458_razer_deathadder_v3_pro_youtube.mp4",
+    "caption_text": "🚨 ES-SPORCULAR BU FİYATA ŞOK! PROFESYONEL MAÇLARIN VAZGEÇİLMEZİ İLK DEFA BU KADAR DÜŞTÜ! 😱\n\nEs-spor dünyasının efsanesi Razer DeathAdder V3 Pro dev indirimde! 30K sensör performansı ve tüy gibi hafifliğiyle rakiplerini ezip geçmek isteyenler bu fırsatı kaçırmasın! \n\n6.499 TL ❌ -> 4.607,04 TL ✅ (%29 İndirim)\n💳 Nays ile 250 TL iade ve Prime kargo avantajıyla Net Maliyet: 4.357 TL! \n\n🚨 DİKKAT: Stoklar eriyor, bu fiyat uzun süre kalmaz! Elini çabuk tutan kapar! 🏃‍♂️💨\n\n👉 Yoruma 'Fırsat linki' yaz, satın alma linkini saniyeler içinde doğrudan DM kutuna iletelim! 📩\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, bu fareye ihtiyacı olan kankaına GÖNDER! ✈️\n🔗 Tüm indirimli linkler profilimizdeki sitemizde ve Telegram'da!\n\n#indirim #fırsat #oyuncu #gaming #keşfet #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_29_amz_B0B6XZLNHQ.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": false,
+      "error": "Unauthorized"
+    }
   }
 ]

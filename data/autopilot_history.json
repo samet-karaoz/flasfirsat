@@ -472,5 +472,31 @@
       "success": false,
       "error": "Unauthorized"
     }
+  },
+  {
+    "timestamp": "2026-10-16 23:56:41",
+    "slot": "Manuel Test",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Logitech M350s Pebble 2",
+      "new_price": "719 TL",
+      "old_price": "999 TL",
+      "discount_pct": "-28%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07W6HVQXB?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261016_235923_logitech_m350s_pebble_2.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261016_235923_logitech_m350s_pebble_2_youtube.mp4",
+    "caption_text": "Kablosuz sessiz mouse arayanlar bu fiyata kaçırmasın! 🤫🖱️\n\n999 TL ❌ -> 719 TL ✅ (%28 İndirim)\n💳 Nays ile %10 iadeyle Net Maliyet: 647 TL!\n\n🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'FIRSAT' yazabilir 👇)\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, sessiz mouse arayan arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #mouse #kampanya #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_28_amz_B07W6HVQXB.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792184474",
+      "message_id": 73,
+      "file_id": "BAACAgQAAxkDAANJatKQnEflpC_qcLhvtEevvgSapgADSiIAAoi-mFJaENU6UEWS4j0E",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_7.mp4"
+    }
   }
 ]

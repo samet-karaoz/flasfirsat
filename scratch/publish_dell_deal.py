@@ -24,11 +24,11 @@ deal = {
     "reaction_text": "200Hz IPS MONİTÖRÜ 4.449 TL'YE GÖREN BİZİM TAYFA:"
 }
 
-print("🚀 Dell 200Hz Gaming Monitör fırsat paketi üretiliyor...")
+print("🚀 Dell 200Hz Gaming Monitör fırsat paketi (Angara'ya Mı Geldin Meme) üretiliyor...")
 res = process_deal_to_reel(
     deal,
     upload=True,
     require_approval=True,
-    meme_choice="cat_vibing.mp4"
+    meme_choice="angaraya_mi_geldin.mp4"
 )
 print("SONUÇ:", res)

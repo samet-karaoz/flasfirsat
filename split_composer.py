@@ -800,7 +800,7 @@ def create_product_banner(
 
         op_w = draw.textlength(old_price, font=f_old_price)
         draw.text((ocx, 828), old_price, font=f_old_price, fill=theme["old_text_col"], anchor="mm")
-        draw.line((ocx - op_w // 2 - 8, 832, ocx + op_w // 2 + 8, 824), fill=(239, 68, 68), width=4)
+        draw.line((ocx - op_w // 2 - 8, 828, ocx + op_w // 2 + 8, 828), fill=(239, 68, 68), width=4)
 
         # Orta Ok Kutusu
         arrow_box = (336, 800, 378, 842)

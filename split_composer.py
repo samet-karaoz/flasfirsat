@@ -328,7 +328,172 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     return output_path
 
 # ==========================================
-# ANA ÜRÜN AFİŞİ (1080x960 - V3 ENHANCED)
+# AKILLI DİNAMİK RENK SKALASI & TEMA MOTORU (4 STÜDYO ŞABLONU)
+# ==========================================
+
+BANNER_THEMES = {
+    "obsidian_dark": {
+        "name": "Obsidian Cyber-Luxury (Koyu Sinematik & Neon Zümrüt)",
+        "bg_top": (11, 15, 25),
+        "bg_bottom": (20, 28, 46),
+        "title_color": (248, 250, 252),
+        "card_border": (56, 189, 248),
+        "glow_color": (56, 189, 248, 95),
+        "badge_left_bg": (234, 88, 12),
+        "badge_right_bg": (225, 29, 72),
+        "old_box_bg": (30, 41, 59),
+        "old_box_border": (71, 85, 105),
+        "old_text_col": (148, 163, 184),
+        "arrow_bg": (30, 41, 59),
+        "arrow_fg": (56, 189, 248),
+        "new_box_bg": (6, 78, 59),
+        "new_box_border": (16, 185, 129),
+        "new_label_col": (167, 243, 208),
+        "new_price_col": (52, 211, 153),
+        "savings_pill_bg": (245, 158, 11),
+        "savings_pill_fg": (15, 23, 42),
+        "cta_bg": (9, 13, 22),
+        "cta_line": (56, 189, 248),
+        "cta_pill_bg": (56, 189, 248),
+        "cta_pill_fg": (9, 13, 22),
+        "trust_bg": (241, 245, 249),
+        "trust_fg": (30, 41, 59),
+        "inst_bg": (236, 253, 245),
+        "inst_fg": (4, 120, 87),
+    },
+    "studio_warm": {
+        "name": "Apple Studio Warm-Luxury (Sıcak Krem & Koyu Lacivert Kontrast)",
+        "bg_top": (250, 247, 242),
+        "bg_bottom": (238, 232, 222),
+        "title_color": (15, 23, 42),
+        "card_border": (214, 206, 194),
+        "glow_color": (251, 191, 36, 95),
+        "badge_left_bg": (15, 23, 42),
+        "badge_right_bg": (220, 38, 38),
+        "old_box_bg": (255, 255, 255),
+        "old_box_border": (203, 213, 225),
+        "old_text_col": (100, 116, 139),
+        "arrow_bg": (255, 255, 255),
+        "arrow_fg": (234, 88, 12),
+        "new_box_bg": (15, 23, 42),
+        "new_box_border": (245, 158, 11),
+        "new_label_col": (253, 224, 71),
+        "new_price_col": (74, 222, 128),
+        "savings_pill_bg": (16, 185, 129),
+        "savings_pill_fg": (255, 255, 255),
+        "cta_bg": (15, 23, 42),
+        "cta_line": (245, 158, 11),
+        "cta_pill_bg": (245, 158, 11),
+        "cta_pill_fg": (15, 23, 42),
+        "trust_bg": (241, 245, 249),
+        "trust_fg": (51, 65, 85),
+        "inst_bg": (236, 253, 245),
+        "inst_fg": (4, 120, 87),
+    },
+    "fiyat_hatasi_alarm": {
+        "name": "Kırmızı Alarm / Fiyat Hatası Modu (Crimson & Gold)",
+        "bg_top": (69, 10, 10),
+        "bg_bottom": (24, 10, 14),
+        "title_color": (255, 255, 255),
+        "card_border": (248, 113, 113),
+        "glow_color": (251, 146, 60, 115),
+        "badge_left_bg": (220, 38, 38),
+        "badge_right_bg": (245, 158, 11),
+        "old_box_bg": (45, 18, 22),
+        "old_box_border": (153, 27, 27),
+        "old_text_col": (252, 165, 165),
+        "arrow_bg": (45, 18, 22),
+        "arrow_fg": (250, 204, 21),
+        "new_box_bg": (20, 20, 25),
+        "new_box_border": (250, 204, 21),
+        "new_label_col": (253, 224, 71),
+        "new_price_col": (250, 204, 21),
+        "savings_pill_bg": (220, 38, 38),
+        "savings_pill_fg": (255, 255, 255),
+        "cta_bg": (127, 29, 29),
+        "cta_line": (250, 204, 21),
+        "cta_pill_bg": (250, 204, 21),
+        "cta_pill_fg": (69, 10, 10),
+        "trust_bg": (254, 242, 242),
+        "trust_fg": (153, 27, 27),
+        "inst_bg": (254, 242, 242),
+        "inst_fg": (185, 28, 28),
+    },
+    "cyber_gaming": {
+        "name": "Cyber Gaming & Setup (Elektrik İndigo & Neon Pembe)",
+        "bg_top": (238, 242, 255),
+        "bg_bottom": (224, 231, 255),
+        "title_color": (30, 27, 75),
+        "card_border": (129, 140, 248),
+        "glow_color": (167, 139, 250, 95),
+        "badge_left_bg": (79, 70, 229),
+        "badge_right_bg": (236, 72, 153),
+        "old_box_bg": (255, 255, 255),
+        "old_box_border": (199, 210, 254),
+        "old_text_col": (100, 116, 139),
+        "arrow_bg": (255, 255, 255),
+        "arrow_fg": (79, 70, 229),
+        "new_box_bg": (236, 253, 245),
+        "new_box_border": (16, 185, 129),
+        "new_label_col": (4, 120, 87),
+        "new_price_col": (5, 150, 105),
+        "savings_pill_bg": (79, 70, 229),
+        "savings_pill_fg": (255, 255, 255),
+        "cta_bg": (30, 27, 75),
+        "cta_line": (236, 72, 153),
+        "cta_pill_bg": (250, 204, 21),
+        "cta_pill_fg": (30, 27, 75),
+        "trust_bg": (238, 242, 255),
+        "trust_fg": (49, 46, 129),
+        "inst_bg": (236, 253, 245),
+        "inst_fg": (4, 120, 87),
+    }
+}
+
+def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str = "", theme_name: str = "auto") -> dict:
+    """
+    Ürünün indirim oranına, kategorisine ve günün saatine göre 4 stüdyo şablonundan en uygun olanı seçer.
+    """
+    if theme_name and theme_name in BANNER_THEMES:
+        return BANNER_THEMES[theme_name]
+
+    pct_m = re.search(r'(\d+)', str(discount_pct))
+    pct_val = int(pct_m.group(1)) if pct_m else 0
+    t_low = (title or "").lower()
+    b_low = (badge_text or "").lower()
+
+    # 1. %35 ve üzeri dev indirim veya Fiyat Hatası şüphesi -> Şablon 3: Kırmızı Alarm
+    if pct_val >= 35 or "hata" in b_low or "alarm" in b_low or "acil" in b_low:
+        return BANNER_THEMES["fiyat_hatasi_alarm"]
+
+    # 2. Gaming / Setup / Bilgisayar Ekipmanları -> Şablon 4: Cyber Gaming & Setup
+    gaming_kw = [
+        "mouse", "klavye", "kulaklık", "monitör", "monitor", "gaming", "oyuncu",
+        "ps5", "gamepad", "koltuk", "ekran kartı", "ssd", "ram", "laptop",
+        "notebook", "kasa", "anakart", "işlemci", "webcam", "mikrofon", "north bayou"
+    ]
+    if any(k in t_low for k in gaming_kw):
+        return BANNER_THEMES["cyber_gaming"]
+
+    # 3. Ev, Mutfak, Yaşam, Termos, Kişisel Bakım -> Şablon 2: Apple Studio Warm
+    warm_kw = [
+        "termos", "stanley", "kahve", "airfryer", "süpürge", "ütü", "mutfak",
+        "tencere", "bardak", "krem", "bakım", "parfüm", "şampuan", "deterjan",
+        "ayakkabı", "çanta", "kamp", "çadır", "fırın", "blender", "tost"
+    ]
+    if any(k in t_low for k in warm_kw):
+        return BANNER_THEMES["studio_warm"]
+
+    # 4. Akşam kuşağı veya genel teknoloji ürünleri -> Şablon 1: Obsidian Cyber-Luxury
+    import datetime as _dt
+    curr_hour = _dt.datetime.now().hour
+    if curr_hour >= 17 or curr_hour < 7:
+        return BANNER_THEMES["obsidian_dark"]
+
+    return BANNER_THEMES["studio_warm"]
+
+# ==========================================
+# ANA ÜRÜN AFİŞİ (1080x960 - V4 STUDIO MULTI-THEME)
 # ==========================================
 
 def create_product_banner(
@@ -349,17 +514,17 @@ def create_product_banner(
     coupon_text: str = "",
     market_badge: str = "",
     cta_type: str = "instagram",
-    output_path: str = None
+    output_path: str = None,
+    theme_name: str = "auto"
 ) -> str:
     """
     Ürün görseli ve fiyat bilgilerinden 1080x960 ebatlarında
-    Top-tier ajans kalitesinde afiş üretir:
-    1. Ürün arkasında rembg ile saydamlaştırılmış dekupe ve soft spotlight / ışıma efekti
-    2. "Son 30 Günün En Düşüğü" geçmiş fiyat rozeti (sadece veritabanı onaylıysa)
-    3. Can alıcı teknik özellik hap rozeti (Feature Pill)
+    4 dinamik renk skalasına sahip stüdyo kalitesinde afiş üretir:
+    1. Akıllı Dinamik Renk Skalası (Obsidian Dark, Studio Warm, Kırmızı Alarm, Cyber Gaming)
+    2. Ürün altında gerçekçi 3D Zemin Gölgesi (Contact Floor Shadow) ve Renkli Spotlight
+    3. "Son 30 Günün En Düşüğü" veya piyasa doğrulama rozeti
     4. Dürüst Fiyat Mimarisi (Doğrulanmışsa 2 kutulu, doğrulanmamışsa tek büyük Hero kutusu)
-    5. ManyChat CTA Bandında Parıltı Efekti (✨ "LİNK" ✨) ve #işbirliği yasal etiketi
-    6. Floating Net Tasarruf / Kupon Rozeti
+    5. Anti-Spam "LİNK GÖNDER" CTA Bandı ve #işbirliği yasal etiketi
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "product_top.png")
@@ -368,81 +533,101 @@ def create_product_banner(
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
 
-    W, H = 1080, 960
-    img = Image.new("RGB", (W, H), (244, 246, 250))
-    draw = ImageDraw.Draw(img)
+    theme = select_banner_theme(title=title, discount_pct=discount_pct, badge_text=badge_text, theme_name=theme_name)
+    print(f"[Banner Engine] 🎨 Seçilen Renk Skalası: {theme['name']}")
 
-    f_badge = get_font("segoeuib", 26)
+    W, H = 1080, 960
+    bg_top = theme["bg_top"]
+    bg_bottom = theme["bg_bottom"]
+
+    # Dikey yumuşak stüdyo gradyan arka planı
+    base_rgb = Image.new("RGB", (W, H), bg_top)
+    draw_bg = ImageDraw.Draw(base_rgb)
+    for y in range(H):
+        r = int(bg_top[0] + (bg_bottom[0] - bg_top[0]) * (y / H))
+        g = int(bg_top[1] + (bg_bottom[1] - bg_top[1]) * (y / H))
+        b = int(bg_top[2] + (bg_bottom[2] - bg_top[2]) * (y / H))
+        draw_bg.line([(0, y), (W, y)], fill=(r, g, b))
+
+    img = base_rgb.convert("RGBA")
+    draw = ImageDraw.Draw(img, "RGBA")
+
+    f_badge = get_font("segoeuib", 25)
     f_label = get_font("segoeuib", 20)
     f_trust = get_font("segoeuib", 19)
     f_feature = get_font("segoeuib", 20)
     f_old_lbl = get_font("segoeuib", 17)
-    f_old_price = get_font("segoeuib", 28)
+    f_old_price = get_font("segoeuib", 29)
     f_new_label = get_font("segoeuib", 20)
     f_new_price = get_font("segoeuib", 60)
     f_net = get_font("segoeuib", 19)
-    f_pct = get_font("segoeuib", 28)
-    f_savings = get_font("segoeuib", 22)
-    f_cta = get_font("segoeuib", 24)
+    f_pct = get_font("segoeuib", 26)
+    f_savings = get_font("segoeuib", 21)
     f_tiny = get_font("segoeuib", 13)
 
-    # 1. Sol Üst Rozet: DEV İNDİRİM (Vector Şimşekli)
+    # 1. Sol Üst Rozet: DEV İNDİRİM / FİYAT HATASI (Vector Şimşekli)
     clean_badge = badge_text.strip() if badge_text else "DEV İNDİRİM"
+    pct_m = re.search(r'(\d+)', str(discount_pct))
+    pct_val = int(pct_m.group(1)) if pct_m else 0
+    if pct_val >= 35 and clean_badge == "DEV İNDİRİM":
+        clean_badge = "FİYAT HATASI OLABİLİR" if pct_val >= 42 else "SÜPER FIRSAT"
+
     b_w = draw.textlength(clean_badge, font=f_badge)
-    badge_fill = (255, 87, 34)  # Alev Turuncusu
-    draw.rounded_rectangle((40, 22, 40 + b_w + 58, 74), radius=14, fill=badge_fill)
-    draw_vector_bolt(draw, 64, 48, (255, 204, 0))
-    draw.text((82, 34), clean_badge, font=f_badge, fill=(255, 255, 255))
+    b1_x2 = int(40 + b_w + 62)
+    draw.rounded_rectangle((40, 20, b1_x2, 72), radius=14, fill=theme["badge_left_bg"])
+    draw_vector_bolt(draw, 64, 46, (255, 215, 0))
+    draw.text((82 + b_w // 2, 46), clean_badge, font=f_badge, fill=(255, 255, 255), anchor="mm")
 
     # 2. Sağ Üst Rozet: % İNDİRİM (Varsa)
     clean_pct = discount_pct.strip()
     if clean_pct and clean_pct != "0%" and clean_pct != "-0%":
-        if not clean_pct.endswith("İNDİRİM"):
+        if not clean_pct.endswith("İNDİRİM") and not clean_pct.endswith("FİYAT"):
             clean_pct = f"{clean_pct} İNDİRİM"
         p_w = draw.textlength(clean_pct, font=f_pct)
-        draw.rounded_rectangle((W - 40 - p_w - 38, 22, W - 40, 74), radius=14, fill=(225, 29, 72))
-        draw.text((W - 40 - p_w - 19, 33), clean_pct, font=f_pct, fill=(255, 255, 255))
+        b2_x1 = int(W - 40 - p_w - 42)
+        draw.rounded_rectangle((b2_x1, 20, W - 40, 72), radius=14, fill=theme["badge_right_bg"])
+        draw.text(((b2_x1 + W - 40) // 2, 46), clean_pct, font=f_pct, fill=(255, 255, 255), anchor="mm")
 
     # 3. Başlık (Temiz 1 veya 2 Satır Formatı)
     title_lines = wrap_text(title, max_chars_per_line=36)
     if len(title_lines) == 1:
-        f_title = get_font("segoeuib", 38)
-        draw.text((40, 92), title_lines[0], font=f_title, fill=(15, 23, 42))
-        card_top = 146
+        f_title = get_font("segoeuib", 36)
+        draw.text((40, 110), title_lines[0], font=f_title, fill=theme["title_color"], anchor="lm")
+        card_top = 148
     else:
-        f_title = get_font("segoeuib", 32)
-        draw.text((40, 88), title_lines[0], font=f_title, fill=(15, 23, 42))
-        draw.text((40, 124), title_lines[1], font=f_title, fill=(15, 23, 42))
-        card_top = 166
+        f_title = get_font("segoeuib", 31)
+        draw.text((40, 86), title_lines[0], font=f_title, fill=theme["title_color"])
+        draw.text((40, 122), title_lines[1], font=f_title, fill=theme["title_color"])
+        card_top = 164
 
-    # 4. Ürün Kartı (Soft Drop Shadow ile 3D Derinlik)
-    card_box = (40, card_top, W - 40, 706)
-    for offset, col in [(5, (220, 224, 234)), (3, (228, 232, 240)), (1, (235, 238, 244))]:
-        draw.rounded_rectangle((card_box[0]+offset, card_box[1]+offset, card_box[2]+offset, card_box[3]+offset), radius=22, fill=col)
-    draw.rounded_rectangle(card_box, radius=22, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
+    # 4. Ürün Kartı (Stüdyo Çerçevesi)
+    card_box = (40, card_top, W - 40, 704)
+    draw.rounded_rectangle(card_box, radius=24, fill=(255, 255, 255, 255), outline=theme["card_border"], width=3)
 
-    # 🌟 GELİŞTİRME 1: Ürün Arkasına Soft Spotlight (Işıma) Efekti
+    # 🌟 Ürün Arkasına Temaya Uyumlu Soft Spotlight (Işıma) Efekti
     cw = card_box[2] - card_box[0]
     ch = card_box[3] - card_box[1]
     glow_layer = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
     glow_draw = ImageDraw.Draw(glow_layer)
     gcx = cw // 2
-    gcy = ch // 2 + 10
-    glow_draw.ellipse((gcx - 170, gcy - 170, gcx + 170, gcy + 170), fill=(255, 237, 213, 110))
-    glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=50))
+    gcy = ch // 2 + 6
+    glow_draw.ellipse((gcx - 210, gcy - 185, gcx + 210, gcy + 185), fill=theme["glow_color"])
+    glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=55))
     img.paste(glow_layer, (card_box[0], card_box[1]), glow_layer)
+    draw = ImageDraw.Draw(img, "RGBA")
 
-    # 🛡️ Kart İçi Sol Üst: Resmi Satıcı Doğrulama Rozeti (HTML'den Doğrulanmış)
+    # 🛡️ Kart İçi Sol Üst: Resmi Satıcı Doğrulama Rozeti
     if seller_badge_text:
         trust_text = seller_badge_text
     else:
         trust_text = "AMAZON TR RESMİ SATICI" if "amazon" in store_name.lower() else f"{store_name.upper()} DOĞRULANMIŞ"
     tr_w = draw.textlength(trust_text, font=f_trust)
-    draw.rounded_rectangle((card_box[0] + 16, card_box[1] + 16, card_box[0] + 58 + tr_w, card_box[1] + 48), radius=8, fill=(241, 245, 249))
-    draw_vector_shield_check(draw, card_box[0] + 32, card_box[1] + 32, (16, 185, 129))
-    draw.text((card_box[0] + 48, card_box[1] + 21), trust_text, font=f_trust, fill=(71, 85, 105))
+    tx2 = int(card_box[0] + 60 + tr_w)
+    draw.rounded_rectangle((card_box[0] + 16, card_box[1] + 16, tx2, card_box[1] + 50), radius=10, fill=theme["trust_bg"])
+    draw_vector_shield_check(draw, card_box[0] + 33, card_box[1] + 33, (16, 185, 129))
+    draw.text((card_box[0] + 50 + tr_w // 2, card_box[1] + 33), trust_text, font=f_trust, fill=theme["trust_fg"], anchor="mm")
 
-    # 🏷️ Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" veya "Piyasanın X TL Altında" (Doğrulanmış veri)
+    # 🏷️ Kart İçi Sağ Üst: "Son 30 Günün En Düşüğü" veya "Piyasanın X TL Altında"
     top_badge_text = ""
     if is_lowest_30d:
         top_badge_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ"
@@ -451,11 +636,12 @@ def create_product_banner(
 
     if top_badge_text:
         low_w = draw.textlength(top_badge_text, font=f_trust)
-        draw.rounded_rectangle((card_box[2] - low_w - 58, card_box[1] + 16, card_box[2] - 16, card_box[1] + 48), radius=8, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
-        draw_vector_trend_down(draw, card_box[2] - low_w - 38, card_box[1] + 32, (225, 29, 72))
-        draw.text((card_box[2] - low_w - 24, card_box[1] + 21), top_badge_text, font=f_trust, fill=(225, 29, 72))
+        lx1 = int(card_box[2] - low_w - 58)
+        draw.rounded_rectangle((lx1, card_box[1] + 16, card_box[2] - 16, card_box[1] + 50), radius=10, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
+        draw_vector_trend_down(draw, lx1 + 20, card_box[1] + 33, (225, 29, 72))
+        draw.text((lx1 + 36 + low_w // 2, card_box[1] + 33), top_badge_text, font=f_trust, fill=(225, 29, 72), anchor="mm")
 
-    # 🎨 rembg ile Arka Planı Temizlenmiş Ürün Görselini Ekle
+    # 🎨 rembg ile Arka Planı Temizlenmiş Ürün Görseli + 3D Zemin Gölgesi (Contact Floor Shadow)
     if product_image_path and os.path.exists(product_image_path):
         try:
             cutout_path = f"{os.path.splitext(product_image_path)[0]}_cutout.png"
@@ -470,31 +656,43 @@ def create_product_banner(
 
             load_path = cutout_path if os.path.exists(cutout_path) else product_image_path
             p_img = Image.open(load_path).convert("RGBA")
-            # Saydam kenar boşluklarını kırparak ürünün kart içinde maksimum netlik ve büyüklükte olmasını sağla
             alpha = p_img.split()[-1]
             bbox = alpha.getbbox()
             if bbox:
                 p_img = p_img.crop(bbox)
 
-            max_img_w = card_box[2] - card_box[0] - 60
-            max_img_h = card_box[3] - card_box[1] - 130
+            max_img_w = card_box[2] - card_box[0] - 70
+            max_img_h = card_box[3] - card_box[1] - 135
             p_img.thumbnail((max_img_w, max_img_h), Image.Resampling.LANCZOS)
             px = card_box[0] + (card_box[2] - card_box[0] - p_img.width) // 2
-            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2 - 8
+            py = card_box[1] + (card_box[3] - card_box[1] - p_img.height) // 2 - 10
+
+            # 3D Zemin Gölgesi (Ürünün havada asılı durmasını engeller, stüdyo derinliği verir)
+            sh_w = max(80, int(p_img.width * 0.82))
+            sh_h = 30
+            shadow_layer = Image.new("RGBA", (sh_w + 80, sh_h + 60), (0, 0, 0, 0))
+            sh_draw = ImageDraw.Draw(shadow_layer)
+            sh_draw.ellipse((40, 30, 40 + sh_w, 30 + sh_h), fill=(15, 23, 42, 85))
+            shadow_layer = shadow_layer.filter(ImageFilter.GaussianBlur(radius=13))
+            sh_x = card_box[0] + (card_box[2] - card_box[0] - shadow_layer.width) // 2
+            sh_y = py + p_img.height - 20
+            img.paste(shadow_layer, (sh_x, sh_y), shadow_layer)
+
             img.paste(p_img, (px, py), p_img)
+            draw = ImageDraw.Draw(img, "RGBA")
         except Exception as e:
             print(f"[Banner] Görsel yükleme uyarısı: {e}")
 
-    # 📦 Ürünün Can Alıcı Özellik Rozeti (SADECE gerçek ürün sayfasından çekilmişse gösterilir)
+    # 📦 Ürünün Can Alıcı Özellik Rozeti (Varsa)
     if feature_text and len(feature_text.strip()) > 3:
         clean_feat = feature_text.strip()
         feat_w = draw.textlength(clean_feat, font=f_feature)
-        feat_box_w = feat_w + 48
+        feat_box_w = int(feat_w + 52)
         feat_x = (W - feat_box_w) // 2
-        feat_y = card_box[3] - 88
+        feat_y = card_box[3] - 90
         draw.rounded_rectangle((feat_x, feat_y, feat_x + feat_box_w, feat_y + 34), radius=17, fill=(241, 245, 249), outline=(203, 213, 225), width=1)
         draw_vector_bolt(draw, feat_x + 18, feat_y + 17, (234, 88, 12))
-        draw.text((feat_x + 32, feat_y + 6), clean_feat, font=f_feature, fill=(51, 65, 85))
+        draw.text((feat_x + 32 + feat_w // 2, feat_y + 17), clean_feat, font=f_feature, fill=(51, 65, 85), anchor="mm")
 
     # Kart İçi Dinamik Mağaza Rozeti (Sağ Alt Köşe)
     store_styles = {
@@ -506,141 +704,106 @@ def create_product_banner(
     st_info = store_styles.get(store_name, {"name": store_name.upper(), "bg": (15, 23, 42), "fg": (255, 255, 255)})
     tag_text = f"{st_info['name']}  •  @flasfirsat"
     t_w = draw.textlength(tag_text, font=f_label)
-    draw.rounded_rectangle((card_box[2] - t_w - 36, card_box[3] - 44, card_box[2] - 16, card_box[3] - 14), radius=8, fill=st_info["bg"])
-    draw.text((card_box[2] - t_w - 26, card_box[3] - 40), tag_text, font=f_label, fill=st_info["fg"])
+    sx1 = int(card_box[2] - t_w - 40)
+    draw.rounded_rectangle((sx1, card_box[3] - 48, card_box[2] - 16, card_box[3] - 14), radius=9, fill=st_info["bg"])
+    draw.text(((sx1 + card_box[2] - 16) // 2, card_box[3] - 31), tag_text, font=f_label, fill=st_info["fg"], anchor="mm")
 
     # Kart İçi Dinamik Taksit Rozeti (Sol Alt Köşe)
     clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip() if installment else "Peşin Fiyatına 3 Taksit"
     it_w = draw.textlength(clean_inst, font=f_label)
-    draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 44, card_box[0] + 16 + it_w + 24, card_box[3] - 14), radius=8, fill=(236, 253, 245), outline=(16, 185, 129), width=1)
-    draw.ellipse((card_box[0] + 24, card_box[3] - 31, card_box[0] + 32, card_box[3] - 23), fill=(5, 150, 105))
-    draw.text((card_box[0] + 38, card_box[3] - 40), clean_inst, font=f_label, fill=(4, 120, 87))
+    ix2 = int(card_box[0] + 44 + it_w)
+    draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 48, ix2, card_box[3] - 14), radius=9, fill=theme["inst_bg"], outline=(16, 185, 129), width=1)
+    draw.text(((card_box[0] + 16 + ix2) // 2, card_box[3] - 31), clean_inst, font=f_label, fill=theme["inst_fg"], anchor="mm")
 
     # 5. DÜRÜST FİYAT MİMARİSİ: Doğrulanmış Eski Fiyat Varsa İki Kutu, Yoksa Tek Büyük Hero Kutu
     old_val = parse_price_to_float(old_price) if (old_price and str(old_price).strip()) else 0
     new_val = parse_price_to_float(new_price)
-    # Eski fiyat sadece gerçekten mevcut fiyattan en az %8 daha yüksekse gösterilir; aksi halde tek hero kutu kullanılır
     show_old_price = bool(has_verified_old_price and old_val >= (new_val * 1.08))
     savings = (old_val - new_val) if (show_old_price and old_val > new_val) else 0
 
     sub_parts = []
     if net_cost:
         clean_net = re.sub(r'[^\w\s.,xX+\-/%]', '', net_cost).strip()
-        sub_parts.append(f"Net: {clean_net}")
+        sub_parts.append(f"Nays ile Net: {clean_net}")
     if installment:
-        clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
-        sub_parts.append(clean_inst)
+        clean_inst_s = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
+        sub_parts.append(clean_inst_s)
     sub_str = "  •  ".join(sub_parts) if sub_parts else ""
     new_str = new_price if new_price else "Fırsat Fiyatı"
 
     if show_old_price:
-        # İki Kutu: Sol Piyasa Fiyatı, Sağ Fırsat Fiyatı
-        old_box = (40, 750, 320, 892)
-        draw.rounded_rectangle(old_box, radius=18, fill=(255, 255, 255), outline=(226, 232, 240), width=2)
-        draw.text((old_box[0] + (old_box[2] - old_box[0] - draw.textlength("PİYASA FİYATI", font=f_old_lbl)) // 2, 768), "PİYASA FİYATI", font=f_old_lbl, fill=(148, 163, 184))
+        # Sol Kutu: Piyasa Fiyatı
+        old_box = (40, 746, 322, 888)
+        draw.rounded_rectangle(old_box, radius=20, fill=theme["old_box_bg"], outline=theme["old_box_border"], width=2)
+        ocx = (old_box[0] + old_box[2]) // 2
+        draw.text((ocx, 774), "PİYASA FİYATI", font=f_old_lbl, fill=theme["old_text_col"], anchor="mm")
 
         op_w = draw.textlength(old_price, font=f_old_price)
-        op_x = old_box[0] + (old_box[2] - old_box[0] - op_w) // 2
-        op_y = 812
-        draw.text((op_x, op_y), old_price, font=f_old_price, fill=(148, 163, 184))
+        draw.text((ocx, 828), old_price, font=f_old_price, fill=theme["old_text_col"], anchor="mm")
+        draw.line((ocx - op_w // 2 - 8, 832, ocx + op_w // 2 + 8, 824), fill=(239, 68, 68), width=4)
 
-        tbbox = draw.textbbox((op_x, op_y), old_price, font=f_old_price)
-        strike_y = (tbbox[1] + tbbox[3]) // 2
-        draw.line((op_x - 8, strike_y, op_x + op_w + 8, strike_y), fill=(239, 68, 68), width=4)
+        # Orta Ok Kutusu
+        arrow_box = (336, 800, 378, 842)
+        draw.rounded_rectangle(arrow_box, radius=10, fill=theme["arrow_bg"], outline=theme["old_box_border"], width=1)
+        acx, acy = 357, 821
+        draw.line((acx - 4, acy - 8, acx + 4, acy), fill=theme["arrow_fg"], width=3)
+        draw.line((acx + 4, acy, acx - 4, acy + 8), fill=theme["arrow_fg"], width=3)
 
-        arrow_box = (338, 804, 380, 846)
-        draw.rounded_rectangle(arrow_box, radius=10, fill=(255, 255, 255), outline=(203, 213, 225), width=1)
-        cx, cy = 359, 825
-        draw.line((cx - 4, cy - 8, cx + 4, cy), fill=(234, 88, 12), width=3)
-        draw.line((cx + 4, cy, cx - 4, cy + 8), fill=(234, 88, 12), width=3)
-
-        new_box = (398, 750, W - 40, 892)
-        draw.rounded_rectangle((new_box[0]+4, new_box[1]+5, new_box[2]+4, new_box[3]+5), radius=18, fill=(185, 235, 210))
-        draw.rounded_rectangle((new_box[0]+2, new_box[1]+2, new_box[2]+2, new_box[3]+2), radius=18, fill=(210, 245, 225))
-        draw.rounded_rectangle(new_box, radius=18, fill=(236, 253, 245), outline=(16, 185, 129), width=3)
-
-        # Kutu Merkez Koordinatları (Kusursuz Simetri ve Hizalama)
+        # Sağ Kutu: İndirimli Fırsat Fiyatı
+        new_box = (394, 746, W - 40, 888)
+        draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
-        # 1. Başlık: İNDİRİMLİ FIRSAT FİYATI (Tam Ortalanmış)
         lbl_text = "İNDİRİMLİ FIRSAT FİYATI"
-        lbl_w = draw.textlength(lbl_text, font=f_new_label)
-        dot_r = 4
-        spacing = 8
-        total_lbl_w = (dot_r * 2) + spacing + lbl_w
-        lbl_start_x = box_center_x - total_lbl_w // 2
-        lbl_y = 768
-        draw.ellipse((lbl_start_x, lbl_y + 7 - dot_r, lbl_start_x + dot_r * 2, lbl_y + 7 + dot_r), fill=(5, 150, 105))
-        draw.text((lbl_start_x + (dot_r * 2) + spacing, lbl_y), lbl_text, font=f_new_label, fill=(4, 120, 87))
+        draw.text((box_center_x, 770), lbl_text, font=f_new_label, fill=theme["new_label_col"], anchor="mm")
 
-        # 2. Fiyat: Yeni İndirimli Fiyat (Kutu İçinde Yatayda TAM ORTALANMIŞ)
-        pw = draw.textlength(new_str, font=f_new_price)
-        price_x = box_center_x - pw // 2
-        price_y = 786 if sub_str else 796
-        draw.text((price_x, price_y), new_str, font=f_new_price, fill=(5, 150, 105))
+        price_cy = 818 if sub_str else 828
+        draw.text((box_center_x, price_cy), new_str, font=f_new_price, fill=theme["new_price_col"], anchor="mm")
 
-        # 3. Alt Bilgi: Net Tutar / Taksit (Tam Ortalanmış)
         if sub_str:
-            sw = draw.textlength(sub_str, font=f_net)
-            sub_x = box_center_x - sw // 2
-            draw.text((sub_x, 860), sub_str, font=f_net, fill=(4, 120, 87))
+            draw.text((box_center_x, 864), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
 
-        # 4. Floating Net Tasarruf / Kupon Rozeti (İndirimli Fiyat Kutusunun Tam Üst Merkezine Oturur)
+        # Floating Net Tasarruf / Kupon Rozeti
         if savings > 0:
             sav_str = f"{int(savings):,} TL".replace(',', '.')
             sav_text = f"{sav_str} NET TASARRUF"
             s_w = draw.textlength(sav_text, font=f_savings)
-            pill_w = s_w + 64
-            pill_x = box_center_x - pill_w // 2
-            pill_y1 = 718
-            pill_y2 = 752
-            draw.rounded_rectangle((pill_x + 1, pill_y1 + 1, pill_x + pill_w + 1, pill_y2 + 1), radius=12, fill=(200, 205, 215))
-            draw.rounded_rectangle((pill_x, pill_y1, pill_x + pill_w, pill_y2), radius=12, fill=(16, 185, 129))
-            draw_vector_coin(draw, pill_x + 24, (pill_y1 + pill_y2) // 2, (255, 204, 0))
-            draw.text((pill_x + 44, pill_y1 + 7), sav_text, font=f_savings, fill=(255, 255, 255))
+            pill_w = int(s_w + 54)
+            pill_x1 = box_center_x - pill_w // 2
+            pill_y1, pill_y2 = 716, 750
+            draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
+            draw.text((box_center_x, (pill_y1 + pill_y2) // 2), sav_text, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
         elif coupon_text:
-            c_clean = f"🎟️ {coupon_text.upper()}"
+            c_clean = f"KUPON: {coupon_text.upper()}"
             c_w = draw.textlength(c_clean, font=f_savings)
-            pill_w = c_w + 48
-            pill_x = box_center_x - pill_w // 2
-            pill_y1 = 718
-            pill_y2 = 752
-            draw.rounded_rectangle((pill_x, pill_y1, pill_x + pill_w, pill_y2), radius=12, fill=(245, 158, 11))
-            draw.text((pill_x + 24, pill_y1 + 7), c_clean, font=f_savings, fill=(255, 255, 255))
+            pill_w = int(c_w + 48)
+            pill_x1 = box_center_x - pill_w // 2
+            pill_y1, pill_y2 = 716, 750
+            draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
+            draw.text((box_center_x, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
 
     else:
         # Tek Büyük ve Geniş Hero Kutu (Tam Ortalanmış)
-        new_box = (40, 750, W - 40, 892)
-        draw.rounded_rectangle((new_box[0]+4, new_box[1]+5, new_box[2]+4, new_box[3]+5), radius=18, fill=(185, 235, 210))
-        draw.rounded_rectangle((new_box[0]+2, new_box[1]+2, new_box[2]+2, new_box[3]+2), radius=18, fill=(210, 245, 225))
-        draw.rounded_rectangle(new_box, radius=18, fill=(236, 253, 245), outline=(16, 185, 129), width=3)
-
+        new_box = (40, 746, W - 40, 888)
+        draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
-        lbl = "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
-        lbl_w = draw.textlength(lbl, font=f_new_label)
-        dot_r = 4
-        spacing = 8
-        total_lbl_w = (dot_r * 2) + spacing + lbl_w
-        lbl_start_x = box_center_x - total_lbl_w // 2
-        draw.ellipse((lbl_start_x, 769 - dot_r, lbl_start_x + dot_r * 2, 769 + dot_r), fill=(5, 150, 105))
-        draw.text((lbl_start_x + (dot_r * 2) + spacing, 760), lbl_text, font=f_new_label, fill=(4, 120, 87))
+        lbl_single = "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
+        draw.text((box_center_x, 770), lbl_single, font=f_new_label, fill=theme["new_label_col"], anchor="mm")
 
-        pw = draw.textlength(new_str, font=f_new_price)
-        price_x = box_center_x - pw // 2
-        price_y = 780 if sub_str else 794
-        draw.text((price_x, price_y), new_str, font=f_new_price, fill=(5, 150, 105))
+        price_cy = 818 if sub_str else 828
+        draw.text((box_center_x, price_cy), new_str, font=f_new_price, fill=theme["new_price_col"], anchor="mm")
 
         if sub_str:
-            sw = draw.textlength(sub_str, font=f_net)
-            draw.text((box_center_x - sw // 2, 858), sub_str, font=f_net, fill=(4, 120, 87))
+            draw.text((box_center_x, 864), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
 
-    # 7. Etkileşim & DM / BİO CTA Bandı (Platforma Özel: Instagram vs YouTube) + #işbirliği
+    # 7. Etkileşim & Anti-Spam DM / BİO CTA Bandı (Platforma Özel: Instagram vs YouTube) + #işbirliği
     cta_box = (0, 898, W, 960)
-    draw.rectangle(cta_box, fill=(15, 23, 42))
-    draw.line((0, 898, W, 898), fill=(245, 158, 11), width=3)
+    draw.rectangle(cta_box, fill=theme["cta_bg"])
+    draw.line((0, 898, W, 898), fill=theme["cta_line"], width=4)
 
-    f_cta_bold = get_font("segoeuib", 25)
+    f_cta_bold = get_font("segoeuib", 24)
+    cy_cta = 929
 
     if str(cta_type).strip().lower() == "youtube":
         cta_prefix = "İndirim linkine "
@@ -651,74 +814,56 @@ def create_product_banner(
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)
         s_w = draw.textlength(cta_suffix, font=f_cta_bold)
 
-        pill_w = h_w + 22
-        total_cta_w = 34 + p_w + 8 + pill_w + 10 + s_w + 34
+        pill_w = int(h_w + 26)
+        total_cta_w = int(34 + p_w + 8 + pill_w + 10 + s_w + 34)
         start_x = (W - total_cta_w) // 2
 
-        # Vector Link İkonu
-        draw_vector_link(draw, start_x + 14, 929, (251, 191, 36))
-        text_x = start_x + 36
+        draw_vector_link(draw, start_x + 14, cy_cta, theme["cta_line"])
+        text_x = int(start_x + 36)
 
-        # "İndirim linkine "
-        draw.text((text_x, 915), cta_prefix, font=f_cta_bold, fill=(241, 245, 249))
-        text_x += p_w + 6
+        draw.text((text_x, cy_cta), cta_prefix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
+        text_x += int(p_w + 6)
 
-        # "BİO'DAN" Vurgu Hapı
-        pill_x1 = text_x
-        pill_y1 = 911
-        pill_x2 = text_x + pill_w
-        pill_y2 = 947
-        draw.rounded_rectangle((pill_x1, pill_y1, pill_x2, pill_y2), radius=8, fill=(245, 158, 11))
-        draw.text((pill_x1 + 11, 915), cta_highlight, font=f_cta_bold, fill=(15, 23, 42))
+        draw.rounded_rectangle((text_x, 910, text_x + pill_w, 948), radius=8, fill=theme["cta_pill_bg"])
+        draw.text((text_x + pill_w // 2, cy_cta), cta_highlight, font=f_cta_bold, fill=theme["cta_pill_fg"], anchor="mm")
         text_x += pill_w + 10
 
-        # " ulaşabilirsiniz!"
-        draw.text((text_x, 915), cta_suffix, font=f_cta_bold, fill=(241, 245, 249))
-        text_x += s_w + 16
+        draw.text((text_x, cy_cta), cta_suffix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
+        text_x += int(s_w + 18)
 
-        # Vector Küre (Web/Bio) İkonu
-        draw_vector_globe(draw, text_x, 928, (251, 191, 36))
+        draw_vector_globe(draw, text_x, cy_cta, theme["cta_line"])
     else:
         cta_prefix = "Yoruma "
-        cta_highlight = "LİNK"
+        cta_highlight = "LİNK GÖNDER"
         cta_suffix = " yazın, DM ile iletelim!"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)
         s_w = draw.textlength(cta_suffix, font=f_cta_bold)
 
-        pill_w = h_w + 22
-        total_cta_w = 34 + p_w + 8 + pill_w + 10 + s_w + 34
-        start_x = (W - total_cta_w) // 2
+        pill_w = int(h_w + 26)
+        total_cta_w = int(34 + p_w + 8 + pill_w + 10 + s_w + 34)
+        start_x = (W - total_cta_w) // 2 - 20
 
-        # Vector Chat Balonu
-        draw_vector_chat_bubble(draw, start_x + 14, 929, (251, 191, 36))
-        text_x = start_x + 36
+        draw_vector_chat_bubble(draw, start_x + 14, cy_cta, theme["cta_line"])
+        text_x = int(start_x + 36)
 
-        # "Yoruma "
-        draw.text((text_x, 915), cta_prefix, font=f_cta_bold, fill=(241, 245, 249))
-        text_x += p_w + 6
+        draw.text((text_x, cy_cta), cta_prefix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
+        text_x += int(p_w + 6)
 
-        # "LİNK" Vurgu Hapı
-        pill_x1 = text_x
-        pill_y1 = 911
-        pill_x2 = text_x + pill_w
-        pill_y2 = 947
-        draw.rounded_rectangle((pill_x1, pill_y1, pill_x2, pill_y2), radius=8, fill=(245, 158, 11))
-        draw.text((pill_x1 + 11, 915), cta_highlight, font=f_cta_bold, fill=(15, 23, 42))
+        draw.rounded_rectangle((text_x, 910, text_x + pill_w, 948), radius=8, fill=theme["cta_pill_bg"])
+        draw.text((text_x + pill_w // 2, cy_cta), cta_highlight, font=f_cta_bold, fill=theme["cta_pill_fg"], anchor="mm")
         text_x += pill_w + 10
 
-        # " yazın, DM ile iletelim!"
-        draw.text((text_x, 915), cta_suffix, font=f_cta_bold, fill=(241, 245, 249))
-        text_x += s_w + 16
+        draw.text((text_x, cy_cta), cta_suffix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
+        text_x += int(s_w + 18)
 
-        # Vector DM Uçağı İkonu
-        draw_vector_dm_plane(draw, text_x, 928, (251, 191, 36))
+        draw_vector_dm_plane(draw, text_x, cy_cta, theme["cta_line"])
 
     # Yasal Uyum Etiketi (#işbirliği)
-    draw.text((W - 24, 936), "#işbirliği #reklam", font=f_tiny, fill=(148, 163, 184), anchor="rm")
+    draw.text((W - 20, 930), "#işbirliği #reklam", font=f_tiny, fill=(148, 163, 184), anchor="rm")
 
-    img.save(output_path, "PNG")
+    img.convert("RGB").save(output_path, "PNG")
     return output_path
 
 # ==========================================

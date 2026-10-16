@@ -717,7 +717,9 @@ def create_product_banner(
 
     # 📦 Ürünün Can Alıcı Killer Hook / Özellik Rozeti (Varsa)
     if feature_text and len(feature_text.strip()) > 3:
-        clean_feat = feature_text.strip().upper()
+        # Standart PIL TTF fontları için emoji karakterlerini temizle (Vector bolt zaten çiziliyor)
+        clean_feat = re.sub(r'[\U00010000-\U0010ffff]', '', feature_text)
+        clean_feat = re.sub(r'[\u2600-\u27BF]', '', clean_feat).strip().upper()
         f_killer = get_font("segoeuib", 24)
         feat_w = draw.textlength(clean_feat, font=f_killer)
         feat_box_w = min(W - 80, int(feat_w + 64))

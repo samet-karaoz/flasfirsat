@@ -715,37 +715,40 @@ def create_product_banner(
         except Exception as e:
             print(f"[Banner] Görsel yükleme uyarısı: {e}")
 
-    # 📦 Ürünün Can Alıcı Özellik Rozeti (Varsa)
+    # 📦 Ürünün Can Alıcı Killer Hook / Özellik Rozeti (Varsa)
     if feature_text and len(feature_text.strip()) > 3:
-        clean_feat = feature_text.strip()
-        feat_w = draw.textlength(clean_feat, font=f_feature)
-        feat_box_w = int(feat_w + 52)
+        clean_feat = feature_text.strip().upper()
+        f_killer = get_font("segoeuib", 24)
+        feat_w = draw.textlength(clean_feat, font=f_killer)
+        feat_box_w = min(W - 80, int(feat_w + 64))
+        feat_box_h = 50
         feat_x = (W - feat_box_w) // 2
-        feat_y = card_box[3] - 90
-        draw.rounded_rectangle((feat_x, feat_y, feat_x + feat_box_w, feat_y + 34), radius=17, fill=(241, 245, 249), outline=(203, 213, 225), width=1)
-        draw_vector_bolt(draw, feat_x + 18, feat_y + 17, (234, 88, 12))
-        draw.text((feat_x + 32 + feat_w // 2, feat_y + 17), clean_feat, font=f_feature, fill=(51, 65, 85), anchor="mm")
+        feat_y = card_box[3] - 58
+        # Derin obsidian zemin ve altın/parlak sarı çerçeve
+        draw.rounded_rectangle((feat_x, feat_y, feat_x + feat_box_w, feat_y + feat_box_h), radius=16, fill=(15, 23, 42, 245), outline=(250, 204, 21), width=2)
+        draw_vector_bolt(draw, feat_x + 22, feat_y + feat_box_h // 2, (250, 204, 21))
+        draw.text((feat_x + 36 + feat_w // 2, feat_y + feat_box_h // 2), clean_feat, font=f_killer, fill=(254, 240, 138), anchor="mm")
+    else:
+        # Kart İçi Dinamik Mağaza Rozeti (Sağ Alt Köşe)
+        store_styles = {
+            "Trendyol": {"name": "TRENDYOL", "bg": (242, 122, 26), "fg": (255, 255, 255)},
+            "Hepsiburada": {"name": "HEPSİBURADA", "bg": (255, 96, 0), "fg": (255, 255, 255)},
+            "Amazon TR": {"name": "AMAZON TÜRKİYE", "bg": (15, 23, 42), "fg": (255, 255, 255)},
+            "Amazon": {"name": "AMAZON TÜRKİYE", "bg": (15, 23, 42), "fg": (255, 255, 255)},
+        }
+        st_info = store_styles.get(store_name, {"name": store_name.upper(), "bg": (15, 23, 42), "fg": (255, 255, 255)})
+        tag_text = f"{st_info['name']}  •  @flasfirsat"
+        t_w = draw.textlength(tag_text, font=f_label)
+        sx1 = int(card_box[2] - t_w - 40)
+        draw.rounded_rectangle((sx1, card_box[3] - 48, card_box[2] - 16, card_box[3] - 14), radius=9, fill=st_info["bg"])
+        draw.text(((sx1 + card_box[2] - 16) // 2, card_box[3] - 31), tag_text, font=f_label, fill=st_info["fg"], anchor="mm")
 
-    # Kart İçi Dinamik Mağaza Rozeti (Sağ Alt Köşe)
-    store_styles = {
-        "Trendyol": {"name": "TRENDYOL", "bg": (242, 122, 26), "fg": (255, 255, 255)},
-        "Hepsiburada": {"name": "HEPSİBURADA", "bg": (255, 96, 0), "fg": (255, 255, 255)},
-        "Amazon TR": {"name": "AMAZON TÜRKİYE", "bg": (15, 23, 42), "fg": (255, 255, 255)},
-        "Amazon": {"name": "AMAZON TÜRKİYE", "bg": (15, 23, 42), "fg": (255, 255, 255)},
-    }
-    st_info = store_styles.get(store_name, {"name": store_name.upper(), "bg": (15, 23, 42), "fg": (255, 255, 255)})
-    tag_text = f"{st_info['name']}  •  @flasfirsat"
-    t_w = draw.textlength(tag_text, font=f_label)
-    sx1 = int(card_box[2] - t_w - 40)
-    draw.rounded_rectangle((sx1, card_box[3] - 48, card_box[2] - 16, card_box[3] - 14), radius=9, fill=st_info["bg"])
-    draw.text(((sx1 + card_box[2] - 16) // 2, card_box[3] - 31), tag_text, font=f_label, fill=st_info["fg"], anchor="mm")
-
-    # Kart İçi Dinamik Taksit Rozeti (Sol Alt Köşe)
-    clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip() if installment else "Peşin Fiyatına 3 Taksit"
-    it_w = draw.textlength(clean_inst, font=f_label)
-    ix2 = int(card_box[0] + 44 + it_w)
-    draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 48, ix2, card_box[3] - 14), radius=9, fill=theme["inst_bg"], outline=(16, 185, 129), width=1)
-    draw.text(((card_box[0] + 16 + ix2) // 2, card_box[3] - 31), clean_inst, font=f_label, fill=theme["inst_fg"], anchor="mm")
+        # Kart İçi Dinamik Taksit Rozeti (Sol Alt Köşe)
+        clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip() if installment else "Peşin Fiyatına 3 Taksit"
+        it_w = draw.textlength(clean_inst, font=f_label)
+        ix2 = int(card_box[0] + 44 + it_w)
+        draw.rounded_rectangle((card_box[0] + 16, card_box[3] - 48, ix2, card_box[3] - 14), radius=9, fill=theme["inst_bg"], outline=(16, 185, 129), width=1)
+        draw.text(((card_box[0] + 16 + ix2) // 2, card_box[3] - 31), clean_inst, font=f_label, fill=theme["inst_fg"], anchor="mm")
 
     # 5. DÜRÜST FİYAT MİMARİSİ: Doğrulanmış Eski Fiyat Varsa İki Kutu, Yoksa Tek Büyük Hero Kutu
     old_val = parse_price_to_float(old_price) if (old_price and str(old_price).strip()) else 0

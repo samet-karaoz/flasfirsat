@@ -5,6 +5,54 @@ from bs4 import BeautifulSoup
 from config import BASE_DIR, TEMP_DIR, get_curl_cmd
 from price_tracker import record_price, check_if_lowest_30d
 
+def extract_product_killer_hook(
+    title: str,
+    new_price: str,
+    old_price: str = "",
+    discount_pct: str = "",
+    raw_specs: str = ""
+) -> str:
+    """
+    Verilen indirimli e-ticaret ürününün o anki GERÇEK teknik/fiziksel özelliklerini ve satış fiyatını inceleyerek,
+    kısa videoda izleyiciyi hemen yakalayacak, o ürüne ÖZGÜ tek satırlık VURUCU 'Killer Feature / Hook' üretir.
+    Örn: '4.449 TL'YE 200Hz 0.5ms FAST IPS!' veya '1.000 TL ALTINA 2K 360° KAMERA!'
+    """
+    from deal_hunter import call_gemini
+    prompt = f"""Sen viral kısa video (Reels, TikTok, Shorts) içerik üreticisisin.
+Verilen indirimli e-ticaret ürününün o anki GERÇEK teknik/fiziksel özelliklerini ve satış fiyatını incele.
+İzleyicinin videoda ilk saniyede görüp "Bu fiyata bu özellik inanılmaz!" diyerek dikkatini çekecek, o ürüne ÖZGÜ, EN VURUCU tek satırlık dikkat çekici başlığı yaz.
+
+ZORUNLU KURALLAR:
+1. YALNIZCA bu ürünün gerçek özelliklerini kullan (Asla başka bir ürünün özelliğini uydurma veya yazma!).
+2. Ürünün en can alıcı 1 veya 2 teknik özelliğini, varsa fiyat avantajıyla vurucu şekilde birleştir.
+3. Maksimum 35 karakter uzunluğunda olsun. Kısa, tok ve büyük harflerle vurucu olsun.
+4. Başında veya sonunda gereksiz tırnak, emoji, ön ek veya açıklama olmasın. Sadece tek satır metni döndür.
+
+Örnek Çıktılar:
+- Kamera (999 TL): 1.000 TL ALTINA 2K 360° KAMERA!
+- Monitör (4.449 TL): 4.449 TL'YE 200Hz 0.5ms FAST IPS!
+- Mousepad (659 TL): 90x40 CM SU GEÇİRMEZ MİKRO DOKUMA!
+- Airfryer (1.399 TL): 1.400 TL ALTINA 8L DİJİTAL AİRFRYER!
+
+Ürün Başlığı: {title}
+Satış Fiyatı: {new_price}
+Eski Fiyat: {old_price}
+İndirim Oranı: {discount_pct}
+Ürün Detayları/Teknik Veriler:
+{raw_specs[:600]}
+
+SADECE tek satırlık vurucu başlığı döndür:"""
+    try:
+        summary = call_gemini(prompt, json_mode=False)
+        if isinstance(summary, str) and summary.strip():
+            clean = summary.strip().replace('"', '').replace("'", "").replace("\n", " ").strip()
+            clean = re.sub(r'^[^\w\s%.,+/\-]+', '', clean).strip()
+            if 5 <= len(clean) <= 45:
+                return clean.upper()
+    except Exception as e:
+        print(f"[Verifier] Gemini killer hook üretme uyarısı: {e}")
+    return ""
+
 def verify_amazon_product(asin_or_url: str) -> dict:
     """
     Amazon TR ürün sayfasını canlı olarak sorgular:
@@ -35,7 +83,6 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         "girdiğiniz karakterleri doğrulayın" in out_low or
         "automated access" in out_low
     ):
-        # 2. Deneme: Mobil Android Chrome User-Agent ile tekrar dene
         mobile_cmd = get_curl_cmd([
             "-s", "-L",
             "-H", "User-Agent: Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.113 Mobile Safari/537.36",
@@ -60,7 +107,8 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             "in_stock": False,
             "is_captcha": True,
             "reason": "Amazon Bot Koruması / CAPTCHA",
-            "feature_pill": ""
+            "feature_pill": "",
+            "killer_hook": ""
         }
 
     if res.returncode != 0 or len(res.stdout) < 8000:
@@ -68,7 +116,8 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             "success": False,
             "in_stock": False,
             "reason": "Sayfa yüklenemedi / Boş yanıt",
-            "feature_pill": ""
+            "feature_pill": "",
+            "killer_hook": ""
         }
 
     soup = BeautifulSoup(res.stdout, "html.parser")
@@ -88,44 +137,29 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     # Gerçek üstü çizili fiyat (Amazon'daki gerçek liste fiyatı)
     strike_el = (
         soup.select_one("#corePriceDisplay_desktop_feature_div .basisPrice .a-offscreen") or
-        soup.select_one("#corePriceDisplay_desktop_feature_div .a-text-price .a-offscreen") or
-        soup.select_one("span.priceBlockStrikePriceString") or
-        soup.select_one("span.a-text-strike")
+        soup.select_one(".basisPrice .a-offscreen") or
+        soup.select_one("#corePrice_desktop .basisPrice .a-offscreen")
     )
-    real_strike_str = strike_el.text.strip().replace("\n", "").replace(" ", "") if strike_el else ""
-    real_strike_val = parse_price_to_float(real_strike_str)
+    real_strike_val = parse_price_to_float(strike_el.text) if strike_el else 0.0
 
-    # 3. GERÇEK SATICI DOĞRULAMASI (Amazon TR Resmi mi, Pazaryeri mi?)
-    is_sold_by_amazon = bool(re.search(r"Amazon\.com\.tr tarafından satılır", res.stdout, re.IGNORECASE))
-    is_shipped_by_amazon = bool(re.search(r"(?:ve gönderilir|Amazon tarafından gönderilir)", res.stdout, re.IGNORECASE))
-
+    # 3. RESMİ SATICI / AMAZON TR ROZETİ KONTROLÜ
+    merchant_el = soup.select_one("#merchant-info")
+    merchant_text = merchant_el.text.lower() if merchant_el else ""
+    is_sold_by_amazon = "amazon tarafından satılır" in merchant_text or "amazon.com.tr" in merchant_text
+    
     if is_sold_by_amazon:
         seller_badge = "AMAZON TR RESMİ SATICI"
-    elif is_shipped_by_amazon:
-        seller_badge = "AMAZON TR GÖNDERİMLİ"
+    elif "tarafından gönderilir" in merchant_text:
+        seller_badge = "AMAZON GÖNDERİSİ GÜVENLİ SATICI"
     else:
-        seller_badge = "AMAZON PAZARYERİ"
+        seller_badge = "AMAZON TR"
 
-    # 4. KUPON TESPİTİ VE NET İNDİRİM TL HESAPLAMA
+    # 4. KUPON İNDİRİMİ KONTROLÜ (Coupon Badge & Voucher)
     coupon_text = ""
     coupon_amount_tl = 0.0
-    coupon_el = soup.select_one("span.couponBadge") or soup.select_one("label[for*='coupon']") or soup.select_one("#couponBadge") or soup.select_one("#promoPriceBlockMessage_feature_div")
-    raw_coupon = coupon_el.text.strip() if coupon_el else ""
-    c_m = re.search(r"(%?\s*\d+[\.,]?\d*)\s*(TL|%|₺)?\s*(?:değerinde\s*|indirim\s*)?kupon", raw_coupon or res.stdout, re.IGNORECASE)
-    if c_m:
-        val_part = c_m.group(1).strip()
-        unit_part = (c_m.group(2) or "").strip().upper()
-        if "%" in val_part or unit_part == "%":
-            num_only = re.sub(r"[^\d]", "", val_part)
-            coupon_text = f"%{num_only} İndirim Kuponu"
-        else:
-            coupon_text = f"{val_part} TL İndirim Kuponu"
-    elif raw_coupon and "kupon" in raw_coupon.lower():
-        cleaned_c = re.sub(r"(?i)(şartlar|kuponu uygula|uygulayın|detaylar)", "", raw_coupon)
-        cleaned_c = re.sub(r"\s+", " ", cleaned_c).strip(" -•:.,")
-        coupon_text = cleaned_c[:30]
-
-    if coupon_text and price_val > 0:
+    coupon_badge = soup.select_one(".promoPriceBlockMessage, #couponBadge, .couponBadge, span[id*='coupon']")
+    if coupon_badge:
+        coupon_text = coupon_badge.text.strip().replace("\n", " ")
         pct_m = re.search(r"%(\d+)", coupon_text)
         tl_m = re.search(r"(\d+[\.,]?\d*)\s*TL", coupon_text, re.IGNORECASE)
         if pct_m:
@@ -147,26 +181,18 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         if k and v:
             overview.append(f"{k.text.strip()}: {v.text.strip()}")
 
-    # 6. GERÇEK VERİLERDEN TEK SATIRLIK ÖZET (Gemini)
+    # 6. GERÇEK VERİLERDEN TEK SATIRLIK VURUCU ÖZELLİK (Gemini)
     feature_pill = ""
     raw_specs = "\n".join(bullets[:4] + overview[:4])
-    if raw_specs:
-        from deal_hunter import call_gemini
-        prompt = f"""Şu gerçek e-ticaret ürün bilgilerinden, sosyal medya reels videosu için EN VURUCU tek satırlık Türkçe hap özelliği çıkar.
-Maksimum 35 karakter olsun, boş ve gereksiz laf olmasın.
-Örnek: 240Hz Yenileme • 0.5ms Tepki veya 1.18L Çelik • 11s Soğuk veya 13.500A Gerilim Koruması
-
-Ürün Başlığı: {soup.title.text if soup.title else ''}
-Gerçek Özellikler:
-{raw_specs[:600]}
-
-SADECE tek satırlık özeti döndür (ek açıklama veya tırnak koyma):"""
-        try:
-            summary = call_gemini(prompt, json_mode=False)
-            if isinstance(summary, str) and summary.strip() and len(summary.strip()) <= 45:
-                feature_pill = summary.strip().replace('"', '').replace("'", "")
-        except Exception as e:
-            print(f"[Verifier] Gemini özetleme uyarısı: {e}")
+    prod_title = soup.title.text if soup.title else ""
+    if raw_specs or prod_title:
+        feature_pill = extract_product_killer_hook(
+            title=prod_title,
+            new_price=live_price_str,
+            old_price=f"{int(real_strike_val):,} TL".replace(',', '.') if real_strike_val else "",
+            discount_pct="",
+            raw_specs=raw_specs
+        )
 
     # 7. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
     is_lowest_30d = False
@@ -188,6 +214,7 @@ SADECE tek satırlık özeti döndür (ek açıklama veya tırnak koyma):"""
         "coupon_text": coupon_text,
         "coupon_amount_tl": coupon_amount_tl,
         "feature_pill": feature_pill,
+        "killer_hook": feature_pill,
         "is_lowest_30d": is_lowest_30d
     }
 
@@ -209,6 +236,16 @@ def verify_deal_before_publish(deal: dict) -> dict:
             if v_res.get("is_captcha") and deal.get("new_price") and deal.get("image_path") and os.path.exists(deal.get("image_path")):
                 print(f"[Doğrulama] ⚠️ Amazon Datacenter CAPTCHA algılandı ancak fırsat verisi taranan kaynaktan teyitli ({deal.get('title')}). Taranan veriyle devam ediliyor.")
                 deal["seller_badge"] = deal.get("seller_badge") or "AMAZON TR"
+                if not deal.get("killer_hook"):
+                    k_hook = extract_product_killer_hook(
+                        title=deal.get("title", ""),
+                        new_price=deal.get("new_price", ""),
+                        old_price=deal.get("old_price", ""),
+                        discount_pct=deal.get("discount_pct", "")
+                    )
+                    if k_hook:
+                        deal["killer_hook"] = k_hook
+                        deal["feature_pill"] = k_hook
                 return {"valid": True, "verified": True, "deal": deal}
 
             print(f"[Doğrulama] ❌ ÜRÜN YAYINA UYGUN DEĞİL! ({reason}). Paylaşım iptal ediliyor.")
@@ -274,10 +311,23 @@ def verify_deal_before_publish(deal: dict) -> dict:
         elif deal.get("coupon_info"):
             print(f"[Doğrulama] 🎟️ Kupon Bilgilendirmesi: {deal.get('coupon_info')}")
 
-        # Canlı özellik özeti varsa ekle
-        if v_res.get("feature_pill"):
-            deal["feature_pill"] = v_res["feature_pill"]
-            print(f"[Doğrulama] ✨ Gerçek Ürün Özelliği: {v_res['feature_pill']}")
+        # Canlı özellik özeti / Killer Hook varsa ekle
+        if v_res.get("killer_hook") or v_res.get("feature_pill"):
+            hook = v_res.get("killer_hook") or v_res.get("feature_pill")
+            deal["feature_pill"] = hook
+            deal["killer_hook"] = hook
+            print(f"[Doğrulama] ✨ Gerçek Ürün Özelliği / Killer Hook: {hook}")
+        elif not deal.get("killer_hook"):
+            k_hook = extract_product_killer_hook(
+                title=deal.get("title", ""),
+                new_price=deal.get("new_price", ""),
+                old_price=deal.get("old_price", ""),
+                discount_pct=deal.get("discount_pct", "")
+            )
+            if k_hook:
+                deal["killer_hook"] = k_hook
+                deal["feature_pill"] = k_hook
+                print(f"[Doğrulama] ✨ Dinamik Killer Hook Üretildi: {k_hook}")
 
         # 30 günün en düşüğü kontrolü
         deal["is_lowest_30d"] = v_res.get("is_lowest_30d", False)

@@ -154,6 +154,9 @@ def send_telegram_deal_for_approval(
             {"text": "🟢 WhatsApp Kanalına At (Oto)", "callback_data": f"approve_wp:{deal_id}"}
         ],
         [
+            {"text": "🚨 Fiyat Hatası / Acil Modu (Aç/Kapa)", "callback_data": f"toggle_urgent:{deal_id}"}
+        ],
+        [
             {"text": "📲 WhatsApp Paylaş (Mobil)", "url": wp_share_url},
             {"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}
         ]

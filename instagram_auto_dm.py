@@ -47,7 +47,8 @@ def send_admin_dm_report(username: str, product_name: str, target_link: str, sou
 DM_KEYWORDS = [
     "link", "linki", "linkini", "link lütfen", "link at", "link atar mısın", "link atarmısınız",
     "link atabilir misiniz", "link verir misiniz", "linki gönder", "link atar msn",
-    "linkk", "linkkk", "link pls", "link please",
+    "linkk", "linkkk", "link pls", "link please", "link alayim", "link alayım",
+    "bana da", "bana da at", "bana da gonder", "bana da gönder", "firsat linki", "fırsat linki",
     "fiyat", "fiyatı", "fiyat nedir", "fiyatı ne", "fiyat alabilir miyim",
     "dm", "dm lütfen", "dm at", "dm atar mısın", "dm bakar mısınız",
     "istiyorum", "almak istiyorum", "alabilir miyim", "nasıl alırım", "nereden alırım",
@@ -82,11 +83,12 @@ CLOSINGS = [
     "Tüm anlık sıcak indirimler için bildirimlerimizi açık tutmayı unutma! 🔔"
 ]
 
+# 💬 Algoritma Katlayıcı: Kullanıcıyı tekrar cevap vermeye teşvik eden soru kancalı yanıtlar
 COMMENT_REPLIES_SUCCESS = [
-    "@{user} Linki DM kutuna ilettik! 📩 (İstekler / Gizli İstekler kutuna bakmayı unutma)",
-    "@{user} İndirimli ürün linkini özel mesaj (DM) olarak gönderdik! 🚀",
-    "@{user} Link DM'den iletildi! 🛍️ Gelen kutundaki Mesaj İstekleri sekmesini kontrol edebilirsin.",
-    "@{user} Fırsat linkini DM olarak gönderdik, şimdiden keyifli alışverişler! ✨"
+    "@{user} Linki DM kutuna gönderdim bile! 📩 (İstekler kutuna bakmayı unutma) ✨ Sence bu fiyata değer mi?",
+    "@{user} İndirimli satın alma linkini DM'den ilettim! 🚀 Bu fırsat bu fiyata kaçmaz, sence nasıl?",
+    "@{user} Fırsat linkini DM kutuna bıraktım! 🛍️ Mesaj isteklerini kontrol et. Daha önce bu ürünü denedin mi?",
+    "@{user} Link DM'de! 📩 Arkadaşına da haber vermeyi unutma, fiyat sence nasıl?"
 ]
 
 COMMENT_REPLIES_ALREADY_SENT = [

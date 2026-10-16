@@ -630,6 +630,47 @@ def handle_callback_query(cq: dict):
                 }
                 edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
 
+    # T) Fiyat Hatası / Acil Stok Modu Aç/Kapa
+    elif action == "toggle_urgent":
+        is_urgent = not item.get("is_urgent", False)
+        item["is_urgent"] = is_urgent
+        orig_caption = item.get("orig_caption_text") or item.get("caption_text", "")
+        if "orig_caption_text" not in item:
+            item["orig_caption_text"] = orig_caption
+
+        if is_urgent:
+            urgent_banner = "🚨 DİKKAT: FİYAT HATASI ŞÜPHESİ! Stoklar her an tükenebilir!\n\n"
+            if not item["caption_text"].startswith("🚨 DİKKAT: FİYAT HATASI"):
+                item["caption_text"] = urgent_banner + item["caption_text"]
+            answer_telegram_callback_query(cq_id, text="🚨 Fiyat Hatası Modu AÇILDI! Paylaşım metnine aciliyet uyarısı eklendi.", show_alert=True)
+            status_tag = "🚨 <b>[FİYAT HATASI / ACİL MOD AKTİF!]</b>\n\n"
+        else:
+            item["caption_text"] = item.get("orig_caption_text", item["caption_text"])
+            answer_telegram_callback_query(cq_id, text="✅ Normal Fırsat Moduna Döndürüldü.", show_alert=False)
+            status_tag = ""
+
+        save_pending_deals(pending)
+
+        # Mesaj önizlemesini güncelle
+        deal = item.get("deal", {})
+        title = deal.get("title", "Fırsat")
+        updated_prev = (
+            f"{status_tag}🎬 <b>YENİ FIRSAT ONAY BEKLİYOR!</b>\n\n"
+            f"📦 <b>Ürün:</b> {title}\n"
+            f"💰 <b>Fiyat:</b> <s>{deal.get('old_price')}</s> ➔ <b>{deal.get('new_price')}</b> ({deal.get('discount_pct')})\n"
+        )
+        if deal.get("net_cost"):
+            updated_prev += f"💳 <b>Net:</b> {deal.get('net_cost')} ({deal.get('bank_campaign')})\n"
+        updated_prev += f"🏪 <b>Mağaza:</b> {deal.get('store_name', 'Amazon TR')}\n\n"
+        updated_prev += "👇 <i>Yayınlamak istediğiniz platformu seçin:</i>"
+
+        try:
+            curr_markup = message.get("reply_markup")
+            edit_telegram_message_caption(chat_id, msg_id, updated_prev, reply_markup=curr_markup)
+        except Exception:
+            pass
+        return
+
     # E) İptal Et
     elif action == "reject":
         answer_telegram_callback_query(cq_id, text="❌ Fırsat iptal edildi.")

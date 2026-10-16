@@ -1,9 +1,10 @@
 name: 💬 Instagram Auto-DM Radarı (24/7 Bulut)
 
+# 🛡️ HESAP GÜVEN PUANI & İMKANSIZ SEYAHAT (IMPOSSIBLE TRAVEL) KORUMASI:
+# Otomatik Auto-DM taramaları yerel bilgisayardaki Türk IP adresinden 3 dakikada bir yürütülmektedir.
+# ABD/Azure veri merkezinden sürekli eşzamanlı oturum açılması Instagram'ın yorum spam filtrelerini
+# tetiklediği için bulut tarayıcısı yalnızca manuel yedek (workflow_dispatch) olarak hazır tutulur.
 on:
-  schedule:
-    # Her 20 dakikada bir otomatik tara (UTC)
-    - cron: '*/20 * * * *'
   workflow_dispatch:
     inputs:
       manual_trigger:

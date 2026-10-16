@@ -116,7 +116,7 @@ def get_instagrapi_client(force_refresh: bool = False):
     except Exception as ex:
         raise RuntimeError(f"Instagram giriş hatası: {ex}")
 
-def publish_reel_via_instagrapi(video_path: str, caption: str) -> dict:
+def publish_reel_via_instagrapi(video_path: str, caption: str, first_comment: str = None) -> dict:
     """
     Yerel MP4 videosunu instagrapi üzerinden doğrudan Instagram Reels olarak yükler.
     Herhangi bir genel internet URL'si veya Facebook sayfası gerektirmez.
@@ -159,6 +159,16 @@ def publish_reel_via_instagrapi(video_path: str, caption: str) -> dict:
         print(f"\n🎉 [Instagram Publisher] Reels başarıyla yayınlandı!")
         print(f"🔗 Instagram Reels Linki: {reel_url}")
 
+        # 🚀 Algoritma & Keşfet Kancası: Otomatik İlk Yorum (Auto-First Comment)
+        if media_pk:
+            try:
+                time.sleep(3)
+                fc_text = first_comment or "📌 Fırsat ve indirim şu an aktif! Doğrudan satın alma linkini DM'den almak için yoruma 'Link gönder' veya 'Bana da at' yazabilirsiniz 👇 Sizce fiyat nasıl?"
+                cl.media_comment(media_pk, fc_text)
+                print("💬 [Instagram Publisher] ✅ Otomatik ilk kanca yorumu başarıyla paylaşıldı!")
+            except Exception as efc:
+                print(f"[Instagram Publisher] ⚠️ İlk yorum paylaşılamadı: {efc}")
+
         return {
             "success": True,
             "media_id": str(media_pk),
@@ -170,7 +180,17 @@ def publish_reel_via_instagrapi(video_path: str, caption: str) -> dict:
         print(f"[Instagram Publisher] ❌ Reels yükleme hatası: {e}")
         return {"success": False, "error": str(e)}
 
-def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bool = True) -> dict:
+def post_reel_first_comment(media_id: str, comment_text: str) -> bool:
+    """Yayınlanmış bir Reels'e ilk kanca yorumunu ekler."""
+    try:
+        cl = get_instagrapi_client()
+        cl.media_comment(media_id, comment_text)
+        return True
+    except Exception as e:
+        print(f"[Instagram Publisher] İlk yorum ekleme hatası: {e}")
+        return False
+
+def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bool = True, first_comment: str = None) -> dict:
     """
     Instagram'da Reels paylaşımı için ana fonksiyon.
     .env'de INSTAGRAM_USERNAME ve INSTAGRAM_PASSWORD varsa instagrapi ile doğrudan yükler.
@@ -200,7 +220,7 @@ def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bo
 
         if os.path.exists(local_path):
             try:
-                return publish_reel_via_instagrapi(local_path, caption)
+                return publish_reel_via_instagrapi(local_path, caption, first_comment=first_comment)
             finally:
                 if is_temp_file and os.path.exists(local_path):
                     try:

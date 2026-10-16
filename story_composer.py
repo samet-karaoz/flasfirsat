@@ -131,13 +131,16 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
         draw.rounded_rectangle([200, 1420, 880, 1490], radius=20, fill=(30, 41, 59, 220), outline=(56, 189, 248), width=2)
         draw.text((width // 2, 1455), camp_text, font=bank_font, fill=(56, 189, 248), anchor="mm")
 
-    # 6. Tıklanabilir Link Çıkartması Hedef Alanı (En Kritik Çağrı)
-    sticker_y1, sticker_y2 = 1550, 1750
-    draw.rounded_rectangle([120, sticker_y1, 960, sticker_y2], radius=35, fill=(234, 179, 8, 30), outline=(250, 204, 21), width=4)
-    cta_title_font = get_font(46, bold=True)
-    cta_sub_font = get_font(34, bold=False)
-    draw.text((width // 2, sticker_y1 + 55), "LİNKE TIKLAYARAK SATIN ALIN", font=cta_title_font, fill=(255, 255, 255), anchor="mm")
-    draw.text((width // 2, sticker_y1 + 125), "Doğrudan indirimli resmi mağaza sayfası açılır", font=cta_sub_font, fill=(253, 224, 71), anchor="mm")
+    # 6. Tıklanabilir Link Çıkartması Hedef Alanı (En Yüksek Dönüşüm & Tıklama Oranı)
+    sticker_y1, sticker_y2 = 1520, 1750
+    draw.rounded_rectangle([100, sticker_y1, 980, sticker_y2], radius=35, fill=(234, 179, 8, 40), outline=(250, 204, 21), width=4)
+    cta_title_font = get_font(44, bold=True)
+    cta_sub_font = get_font(32, bold=False)
+    cta_urg_font = get_font(30, bold=True)
+
+    draw.text((width // 2, sticker_y1 + 45), "👇 BURAYA TIKLA & ÜRÜNE GİT 👇", font=cta_title_font, fill=(255, 255, 255), anchor="mm")
+    draw.text((width // 2, sticker_y1 + 110), "Doğrudan indirimli resmi mağaza sayfası açılır", font=cta_sub_font, fill=(253, 224, 71), anchor="mm")
+    draw.text((width // 2, sticker_y1 + 175), "🔥 FIRSATI KAÇIRMA • STOKLAR TÜKENEBİLİR", font=cta_urg_font, fill=(248, 113, 113), anchor="mm")
 
     # En Alt Dipnot
     draw.text((width // 2, 1840), "Flaş Fırsat • #işbirliği #reklam", font=get_font(28, bold=False), fill=(100, 116, 139), anchor="mm")

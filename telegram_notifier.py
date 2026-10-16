@@ -140,13 +140,13 @@ def send_telegram_deal_for_approval(
 
     wp_share_url = generate_whatsapp_share_url(deal, product_url)
 
-    # Butonlar
+    # Butonlar (%100 Organik Instagram Stüdyo Paketi & Resmi API Dağıtımı)
     inline_keyboard = [
         [
-            {"text": "🚀 TÜM PLATFORMLARA YAYINLA (Tek Tık)", "callback_data": f"approve_all:{deal_id}"}
+            {"text": "🚀 TÜMÜNE YAYINLA (YT + Kanal + Web + IG Paketi)", "callback_data": f"approve_all:{deal_id}"}
         ],
         [
-            {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
+            {"text": "📲 IG Stüdyo Paketi (Story + Kopyala)", "callback_data": f"approve_ig:{deal_id}"},
             {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
         ],
         [

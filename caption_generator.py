@@ -25,13 +25,11 @@ Açıklama Kuralları:
 1. İlk satır: Dikkat çekici bir soru veya iddialı bir hook (Örn: "DDR5 sistem bedavaya mı geliyor?!", "Bu fiyata alan yaşadı!", "🚨 FİYAT HATASI MI?!").
 2. Fiyat avantajını açıkça göster (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve İndirim Oranı).
 3. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
-4. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
-5. Eylem Çağrısı (Anti-Spam & Keşfet Çarpanı): Asla izleyiciden tek kelimelik 'LİNK' isteme (Instagram tek kelimelik yorumları spam sanıp gizliyor). Bunun yerine doğal 2-3 kelimelik ifade iste:
-   "👉 Yoruma 'Link gönder' veya 'Bana da at' yaz, satın alma linkini saniyeler içinde doğrudan DM kutuna iletelim! 📩"
-   veya "👉 'Fırsat linki' yazan herkese anında DM'den gönderiyorum! 👇"
+    4. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
+5. Eylem Çağrısı (Anti-Spam, Reklam & ManyChat Uyumlu): Asla izleyiciden tek kelimelik 'LİNK' isteme (Instagram 'link' kelimesini spam filtresine takıyor). Bunun yerine hem profildeki siteyi hem de doğal anahtar kelimeyi birlikte sun:
+   "🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)"
 6. Algoritma Tetikleyicisi (Kaydet & Paylaş): Instagram algoritmasında öne çıkmak için kaydetme ve paylaşma çağrısı ekle:
    "📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️"
-   "🔗 Tüm indirimli linkler profilimizdeki sitemizde ve Telegram'da!"
 7. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #kampanya #keşfet).
 
 Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
@@ -89,10 +87,9 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{net_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
-        f"👉 Yoruma 'Link gönder' veya 'Bana da at' yaz, satın alma linkini saniyeler içinde doğrudan DM kutuna iletelim! 📩\n"
+        f"🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (DM'den isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)\n"
         f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n"
-        f"🔗 Canlı Vitrin & Fırsatlar: {SITE_URL}?utm_source=instagram&utm_medium=reels\n"
-        f"📢 Telegram Kanalımız: @flasfirsat\n\n"
+        f"🌐 Canlı Vitrin: {SITE_URL}?utm_source=instagram&utm_medium=reels\n\n"
         f"#işbirliği #reklam #indirim #fırsat #teknoloji"
     )
     return sanitize_caption(fallback)

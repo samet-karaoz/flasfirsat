@@ -137,13 +137,62 @@ def handle_callback_query(cq: dict):
     product_url = item.get("product_url", "") or deal.get("affiliate_url", "")
     target_video = ensure_local_video(item)
 
+    # Yardımcı: %100 Organik Instagram Stüdyo Paketi Gönderici (Sıfır Bot İzi / Telefona Hazır Paket)
+    def _deliver_ig_studio_package():
+        import html as _html
+        story_img = item.get("story_image_path")
+        if not (story_img and os.path.exists(story_img)):
+            try:
+                from story_composer import create_story_card
+                story_img = create_story_card(deal)
+            except Exception as es:
+                print(f"[Telegram Service] Story kartı üretilemedi: {es}")
+                story_img = None
+
+        # 1. Story görselini fotoğraf olarak gönder (Telefona tek tıkla kaydetmelik)
+        if story_img and os.path.exists(story_img):
+            try:
+                with open(story_img, "rb") as sf:
+                    requests.post(
+                        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+                        data={
+                            "chat_id": chat_id,
+                            "caption": (
+                                f"📸 <b>1080x1920 HİKAYE (STORY) KARTI HAZIR!</b>\n\n"
+                                f"1️⃣ Bu görseli telefonuna kaydet ve Hikayene ekle.\n"
+                                f"2️⃣ Instagram'ın <b>'Bağlantı' (Link)</b> çıkartmasına dokunup aşağıdaki linki yapıştır:\n\n"
+                                f"<code>{_html.escape(product_url or '')}</code>"
+                            ),
+                            "parse_mode": "HTML"
+                        },
+                        files={"photo": sf},
+                        timeout=45
+                    )
+            except Exception as ep:
+                print(f"[Telegram Service] Story fotoğraf gönderim hatası: {ep}")
+
+        # 2. Tek Dokunuşla Kopyalanabilir (Tap-to-Copy) Reels Açıklaması & İlk Yorum & ManyChat Paketi
+        first_comment_str = "📌 Fırsat şu an aktif! Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)"
+        studio_msg = (
+            f"📲 <b>%100 ORGANİK INSTAGRAM STÜDYO PAKETİ</b>\n"
+            f"<i>(Üzerine bir kez dokunduğunuz metin otomatik kopyalanır)</i>\n\n"
+            f"📋 <b>1. REELS AÇIKLAMASI (Dokun & Kopyala):</b>\n"
+            f"<code>{_html.escape(caption_text)}</code>\n\n"
+            f"💬 <b>2. BAŞA TUTTURULACAK İLK YORUM (Dokun & Kopyala):</b>\n"
+            f"<code>{_html.escape(first_comment_str)}</code>\n\n"
+            f"🔗 <b>3. MANYCHAT / STORY LİNKİ (Dokun & Kopyala):</b>\n"
+            f"<code>{_html.escape(product_url or '')}</code>\n\n"
+            f"💡 <b>Keşfet İpucu:</b> Yukarıdaki videoyu telefonuna kaydet, Instagram'dan Reels olarak yüklerken <i>'Ses Ekle'</i> kısmından popüler bir müziği <b>%5-10 ses</b> seviyesinde arkaya ekle!"
+        )
+        send_telegram_text(chat_id, studio_msg)
+        return True
+
     # 0) TÜM PLATFORMLARA YAYINLA (approve_all)
     if action == "approve_all":
-        answer_telegram_callback_query(cq_id, text="🚀 Tüm platformlara yayın başlatılıyor...")
-        edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Tüm Platformlara Dağıtılıyor...</b>\n\n📦 {title}\nYouTube, Instagram, Telegram ve WhatsApp'a aktarılıyor...")
+        answer_telegram_callback_query(cq_id, text="🚀 Tüm platformlara yayın ve IG Stüdyo Paketi hazırlanıyor...")
+        edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Tüm Platformlara Dağıtılıyor...</b>\n\n📦 {title}\nYouTube, Telegram, Web Vitrini ve Organik IG Paketi hazırlanıyor...")
 
         statuses = []
-        ig_media_id = None
         yt_url = None
 
         # 1. YouTube Shorts
@@ -163,36 +212,12 @@ def handle_callback_query(cq: dict):
         except Exception as ey:
             statuses.append(f"• 📺 YouTube Shorts: ❌ {ey}")
 
-        # 2. Instagram Reels
+        # 2. Organik Instagram Stüdyo Paketi (Bot Girişi Yok - %0 Ban Riski)
         try:
-            from instagram_publisher import publish_reel_to_instagram
-            if not target_video or not os.path.exists(target_video):
-                statuses.append("• 🎬 Instagram Reels: ❌ Video dosyası bulunamadı")
-            else:
-                ig_res = publish_reel_to_instagram(target_video, caption_text)
-                if ig_res.get("success"):
-                    ig_media_id = ig_res.get("media_id")
-                    statuses.append("• 🎬 Instagram Reels: ✅ Yayında")
-                else:
-                    statuses.append(f"• 🎬 Instagram Reels: ❌ {ig_res.get('error', 'Hata')}")
+            _deliver_ig_studio_package()
+            statuses.append("• 📲 Instagram Paketi: ✅ Story + Kopyalanabilir Metin Gönderildi")
         except Exception as ei:
-            statuses.append(f"• 🎬 Instagram Reels: ❌ {ei}")
-
-        # 2b. Instagram Story (Tıklanabilir Link Çıkartmalı)
-        try:
-            story_img = item.get("story_image_path")
-            if not (story_img and os.path.exists(story_img)):
-                from story_composer import create_story_card
-                story_img = create_story_card(deal)
-            if story_img and os.path.exists(story_img):
-                from instagram_publisher import publish_story_with_link
-                st_res = publish_story_with_link(story_img, link_url=product_url or deal.get("affiliate_url", ""))
-                if st_res.get("success"):
-                    statuses.append("• 📸 Instagram Story: ✅ Link Çıkartmalı")
-                else:
-                    statuses.append(f"• 📸 Instagram Story: ⚠️ {st_res.get('error', 'Hata')}")
-        except Exception as es:
-            statuses.append(f"• 📸 Instagram Story: ⚠️ {es}")
+            statuses.append(f"• 📲 Instagram Paketi: ❌ {ei}")
 
         # 3. Telegram Kanalı (channel_only=True: Admin'e mükerrer video gitmesini önler)
         tg_ok = False
@@ -225,11 +250,11 @@ def handle_callback_query(cq: dict):
         try:
             from web_showcase import add_deal_to_web
             add_deal_to_web(deal)
-            statuses.append("• 🌐 Web Vitrini: ✅ Güncellendi")
+            statuses.append("• 🌐 Web Vitrini: ✅ Güncellendi (#1 Sıra)")
         except Exception as e_web:
             print(f"[Telegram Service] Web vitrin hatası: {e_web}")
 
-        # 6. Otopilot Geçmiş Kaydı (Auto-DM'in Reels'e yazılan link yorumlarına doğru link göndermesi için şart!)
+        # 6. Otopilot Geçmiş Kaydı
         try:
             from autopilot_engine import record_autopilot_run
             auto_rec = {
@@ -238,7 +263,7 @@ def handle_callback_query(cq: dict):
                 "success": True,
                 "deal": deal,
                 "platforms": {
-                    "instagram": {"status": "ok" if ig_media_id else "error", "media_id": str(ig_media_id or "")},
+                    "instagram": {"status": "organic_studio_package"},
                     "youtube": {"status": "ok" if yt_url else "error", "url": yt_url or ""},
                     "telegram": {"status": "ok" if tg_ok else "error", "channel": TELEGRAM_CHANNEL_ID}
                 }
@@ -247,7 +272,7 @@ def handle_callback_query(cq: dict):
         except Exception as eh:
             print(f"[Telegram Service] autopilot_history kayıt hatası: {eh}")
 
-        # 7. Ürün Geçmiş Kaydı (Tekrar aynı ürünün taranmaması için)
+        # 7. Ürün Geçmiş Kaydı
         try:
             from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
             history = load_history()
@@ -264,7 +289,7 @@ def handle_callback_query(cq: dict):
         save_pending_deals(pending)
 
         final_caption = (
-            f"🎉 <b>TÜM PLATFORMLARDA YAYINLANDI!</b>\n\n"
+            f"🎉 <b>RESMİ KANALLARDA YAYINLANDI & IG PAKETİ HAZIR!</b>\n\n"
             f"📦 <b>Ürün:</b> {title}\n"
             f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
             f"<b>Platform Durumları:</b>\n" + "\n".join(statuses)
@@ -281,116 +306,47 @@ def handle_callback_query(cq: dict):
         edit_telegram_message_caption(chat_id, msg_id, final_caption, reply_markup=markup)
         return
 
-    # A) Instagram Reels Paylaş
+    # A) Organik Instagram Stüdyo Paketi Hazırla (approve_ig)
     if action == "approve_ig":
-        answer_telegram_callback_query(cq_id, text="🚀 Instagram Reels yayını başlatılıyor...")
-        edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Instagram Reels Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
+        answer_telegram_callback_query(cq_id, text="📲 Organik Instagram Stüdyo Paketi gönderiliyor...")
 
-        from instagram_publisher import publish_reel_to_instagram
+        # Web vitrinine ekle ki profildeki linkte ürün en üstte hazır dursun
+        try:
+            from web_showcase import add_deal_to_web
+            add_deal_to_web(deal)
+        except Exception as e_web:
+            print(f"[Telegram Service] Web vitrin hatası: {e_web}")
 
-        if not target_video or not os.path.exists(target_video):
-            res_ig = {"success": False, "error": "Videonun dosyası bulunamadı ve indirilemedi."}
-        else:
-            res_ig = publish_reel_to_instagram(target_video, caption_text)
+        _deliver_ig_studio_package()
+        item["status"] = "prepared_instagram_organic"
+        save_pending_deals(pending)
 
-        if res_ig.get("success"):
-            media_id = str(res_ig.get("media_id", ""))
-            item["status"] = "published_instagram"
-            save_pending_deals(pending)
-
-            # Story paylaş
-            st_text = ""
-            try:
-                story_img = item.get("story_image_path")
-                if not (story_img and os.path.exists(story_img)):
-                    from story_composer import create_story_card
-                    story_img = create_story_card(deal)
-                if story_img and os.path.exists(story_img):
-                    from instagram_publisher import publish_story_with_link
-                    st_res = publish_story_with_link(story_img, link_url=product_url or deal.get("affiliate_url", ""))
-                    if st_res.get("success"):
-                        st_text = "\n📸 <b>Story:</b> ✅ Link çıkartmalı paylaşıldı"
-            except Exception as es:
-                print(f"[Telegram Service] Story hatası: {es}")
-
-            # Web vitrinine ekle
-            try:
-                from web_showcase import add_deal_to_web
-                add_deal_to_web(deal)
-            except Exception as e_web:
-                print(f"[Telegram Service] Web vitrin hatası: {e_web}")
-
-            # autopilot_history.json kaydet (Auto-DM eşleştirmesi için kritik önemde!)
-            try:
-                from autopilot_engine import record_autopilot_run
-                auto_rec = {
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                    "slot": item.get("slot", "Telegram Onaylı Reels"),
-                    "success": True,
-                    "deal": deal,
-                    "platforms": {
-                        "instagram": {"status": "ok", "media_id": media_id}
-                    }
-                }
-                record_autopilot_run(auto_rec)
-            except Exception as eh:
-                print(f"[Telegram Service] autopilot_history kayıt hatası: {eh}")
-
-            # history_deals.json kaydet
-            try:
-                from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
-                history = load_history()
-                deal_sig = deal.get("store_url") or deal.get("url") or title
-                if deal_sig:
-                    history.add(deal_sig)
-                    save_history(history)
-                set_last_product(title)
-                set_last_subtype(get_product_subtype(title))
-            except Exception as ed:
-                print(f"[Telegram Service] history_deals kayıt hatası: {ed}")
-
-            new_caption = (
-                f"✅ <b>INSTAGRAM'DA YAYINLANDI! 🎉</b>\n\n"
-                f"📦 <b>Ürün:</b> {title}\n"
-                f"🆔 <b>Medya ID:</b> {media_id}"
-                f"{st_text}\n"
-                f"🌐 <b>Web Vitrini:</b> ✅ Eklendi\n\n"
-                f"Diğer kanallara da göndermek ister misiniz?"
-            )
-            from config import SITE_URL
-            wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
-            markup_buttons = [
-                [
-                    {"text": "📢 Kanala da At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
-                    {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
-                ],
-                [
-                    {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
-                ]
+        new_caption = (
+            f"✅ <b>ORGANİK INSTAGRAM PAKETİ GÖNDERİLDİ! 🎉</b>\n\n"
+            f"📦 <b>Ürün:</b> {title}\n"
+            f"📸 <b>Story Kartı:</b> ✅ Aşağıda gönderildi\n"
+            f"📋 <b>Tek Tık Kopyala Metinler:</b> ✅ Aşağıda gönderildi\n"
+            f"🌐 <b>Web Vitrini:</b> ✅ Eklendi (#1 Sıra)\n\n"
+            f"Diğer kanallara da göndermek ister misiniz?"
+        )
+        from config import SITE_URL
+        wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
+        markup_buttons = [
+            [
+                {"text": "📢 Kanala da At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
+                {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
+            ],
+            [
+                {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
             ]
-            row_links = []
-            if product_url:
-                row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
-            row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=instagram&utm_medium=reels"})
-            markup_buttons.append(row_links)
-            markup = {"inline_keyboard": markup_buttons}
-            edit_telegram_message_caption(chat_id, msg_id, new_caption, reply_markup=markup)
-        else:
-            err = res_ig.get("error", "Bilinmeyen hata")
-            fail_caption = (
-                f"❌ <b>INSTAGRAM YAYIN HATASI:</b>\n{err}\n\n"
-                f"📦 <b>Ürün:</b> {title}\nTekrar denemek için butona basabilirsiniz:"
-            )
-            markup = {
-                "inline_keyboard": [
-                    [
-                        {"text": "🔄 Tekrar Dene (Instagram)", "callback_data": f"approve_ig:{deal_id}"},
-                        {"text": "📢 Kanala At", "callback_data": f"approve_ch:{deal_id}"}
-                    ],
-                    [{"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}]
-                ]
-            }
-            edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
+        ]
+        row_links = []
+        if product_url:
+            row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
+        row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=instagram&utm_medium=reels"})
+        markup_buttons.append(row_links)
+        markup = {"inline_keyboard": markup_buttons}
+        edit_telegram_message_caption(chat_id, msg_id, new_caption, reply_markup=markup)
 
     # B) Kanala Paylaş (@flasfirsat)
     elif action == "approve_ch":
@@ -977,8 +933,9 @@ def run_telegram_service():
         return
 
     print("=======================================================")
-    print("🤖 [TELEGRAM INTERAKTIF YÖNETİM & ALARM SERVİSİ BAŞLADI]")
-    print("• Yönetici Onay Butonları: Aktif (Instagram, YouTube, Kanal)")
+    print("🤖 [TELEGRAM INTERAKTIF YÖNETİM & STÜDYO SERVİSİ BAŞLADI]")
+    print("• Yönetici Onay Butonları: Aktif (YouTube, Kanal, Web, Organik IG Paketi)")
+    print("• Instagram Modu: %100 Organik Stüdyo (Bot Girişi Kapalı - Sıfır Ban Riski)")
     print("• Kişisel Fiyat Takip Botu (/takip, /listem): Aktif")
     print("• 24/7 Otopilot Zamanlayıcı: Aktif (12:30 & 20:00)")
     print("Durdurmak için Ctrl+C basabilirsiniz.")
@@ -999,12 +956,8 @@ def run_telegram_service():
     else:
         print("☁️ [BULUT OTOPİLOTU AKTİF] 12:30 & 20:00 kuşakları GitHub Actions bulut sunucusu tarafından 7/24 kesintisiz yönetilmektedir (Çift paylaşım koruması devrede).\n")
 
-    global IS_DM_SCANNING
     offset = None
     last_alarm_check = time.time()
-    last_dm_check = time.time() - 150  # İlk kontrole 30 saniye sonra başla
-
-    IS_DM_SCANNING = False
 
     while True:
         try:
@@ -1033,26 +986,6 @@ def run_telegram_service():
                 print("[Telegram Service] ⏰ Takip edilen ürünlerin fiyatları kontrol ediliyor...")
                 check_user_price_alarms()
                 last_alarm_check = time.time()
-
-            # 3 dakikada bir Instagram Reels yorumlarını tara ve Auto-DM gönder (Eşzamanlı kilit ile)
-            if time.time() - last_dm_check > 180 and not IS_DM_SCANNING:
-                last_dm_check = time.time()
-                IS_DM_SCANNING = True
-                try:
-                    def _periodic_dm():
-                        global IS_DM_SCANNING
-                        try:
-                            from instagram_auto_dm import check_and_reply_comments
-                            check_and_reply_comments()
-                        except Exception as e_dm_run:
-                            print(f"[Telegram Service] Periyodik Auto-DM hatası: {e_dm_run}")
-                        finally:
-                            IS_DM_SCANNING = False
-                    import threading
-                    threading.Thread(target=_periodic_dm, daemon=True).start()
-                except Exception as e_dm:
-                    IS_DM_SCANNING = False
-                    print(f"[Telegram Service] Auto-DM iş parçacığı hatası: {e_dm}")
 
         except requests.exceptions.RequestException:
             time.sleep(3)

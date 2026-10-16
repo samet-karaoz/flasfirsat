@@ -865,9 +865,9 @@ def create_product_banner(
 
         draw_vector_globe(draw, text_x, cy_cta, theme["cta_line"])
     else:
-        cta_prefix = "Yoruma "
-        cta_highlight = "LİNK GÖNDER"
-        cta_suffix = " yazın, DM ile iletelim!"
+        cta_prefix = "Ürün linki "
+        cta_highlight = "PROFİLDE & HİKAYEDE"
+        cta_suffix = " • Yorum: 'DETAY'"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)
@@ -877,7 +877,7 @@ def create_product_banner(
         total_cta_w = int(34 + p_w + 8 + pill_w + 10 + s_w + 34)
         start_x = (W - total_cta_w) // 2 - 20
 
-        draw_vector_chat_bubble(draw, start_x + 14, cy_cta, theme["cta_line"])
+        draw_vector_link(draw, start_x + 14, cy_cta, theme["cta_line"])
         text_x = int(start_x + 36)
 
         draw.text((text_x, cy_cta), cta_prefix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
@@ -1084,18 +1084,27 @@ def build_split_screen_video(
         f"{audio_filter_str}"
     )
 
+    import datetime as _dt
+    iso_now = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     cmd += [
         "-filter_complex", filter_complex,
         "-map", "[v]", "-map", "[a]",
+        "-map_metadata", "-1",
+        "-metadata", "make=Apple",
+        "-metadata", "model=iPhone 16 Pro",
+        "-metadata", "software=18.3.1",
+        "-metadata", f"creation_time={iso_now}",
+        "-movflags", "+faststart",
         "-t", str(duration),
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k",
         output_path
     ]
 
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
-        print(f"[Montaj] Video başarıyla oluşturuldu: {output_path}")
+        print(f"[Montaj] Video başarıyla oluşturuldu (iPhone Metadata & Clean Header): {output_path}")
         return output_path
     else:
         print("[Montaj] Hata:", res.stderr[-500:])

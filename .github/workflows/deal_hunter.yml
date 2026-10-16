@@ -45,11 +45,10 @@ jobs:
           sudo apt-get install -y --no-install-recommends ffmpeg
           ffmpeg -version | head -n 1
 
-      - name: 🔑 YouTube ve Instagram Bulut Oturumlarını Yapılandır
+      - name: 🔑 YouTube Bulut Oturumunu Yapılandır
         env:
           YT_TOKEN: ${{ secrets.YOUTUBE_TOKEN_JSON }}
           YT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
-          IG_SESSION: ${{ secrets.INSTAGRAM_SESSION_JSON }}
         run: |
           mkdir -p data
           python -c "
@@ -64,14 +63,9 @@ jobs:
               with open('client_secrets.json', 'w', encoding='utf-8') as f:
                   f.write(sec)
               print('✅ YouTube Client Secrets yüklendi.')
-          ig = os.getenv('IG_SESSION')
-          if ig:
-              with open('data/instagram_session.json', 'w', encoding='utf-8') as f:
-                  f.write(ig)
-              print('✅ Instagram Session dosyası yüklendi.')
           "
 
-      - name: 🚀 4 Platformlu Bulut Otopilotunu Çalıştır
+      - name: 🚀 Yarı Otomatik Bulut Stüdyosunu Çalıştır
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -80,8 +74,6 @@ jobs:
           AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
           TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
           HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
-          INSTAGRAM_USERNAME: ${{ secrets.INSTAGRAM_USERNAME }}
-          INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
         run: |
           SLOT="${{ inputs.slot_name }}"
           [ -z "$SLOT" ] && SLOT="Bulut Otopilotu (12:30 / 20:00)"

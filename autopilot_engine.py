@@ -258,7 +258,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 video_path,
                 caption_text,
                 product_url=aff_url,
-                youtube_video_path=youtube_video_path
+                youtube_video_path=youtube_video_path,
+                story_image_path=story_img
             )
             result["mode"] = "semi_automatic_approval"
             result["approval"] = approval_res

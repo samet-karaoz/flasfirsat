@@ -98,7 +98,8 @@ def send_telegram_deal_for_approval(
     product_url: str = None,
     chat_id: str = None,
     bot_token: str = None,
-    youtube_video_path: str = None
+    youtube_video_path: str = None,
+    story_image_path: str = None
 ) -> dict:
     """
     Üretilen videoyu doğrudan yöneticiye (chat_id) interaktif onay butonlarıyla gönderir.
@@ -200,6 +201,7 @@ def send_telegram_deal_for_approval(
             "deal": deal,
             "video_path": video_path,
             "youtube_video_path": youtube_video_path,
+            "story_image_path": story_image_path,
             "caption_text": caption_text,
             "product_url": product_url,
             "whatsapp_share_url": wp_share_url,
@@ -250,9 +252,10 @@ def answer_telegram_callback_query(callback_query_id: str, text: str = "", show_
     except Exception:
         return False
 
-def send_telegram_deal(video_path: str, caption_text: str, product_url: str = None, chat_id: str = None, bot_token: str = None) -> bool:
+def send_telegram_deal(video_path: str, caption_text: str, product_url: str = None, chat_id: str = None, bot_token: str = None, channel_only: bool = False) -> bool:
     """
-    Üretilen MP4 videosunu doğrudan kanala ve telefona yayınlar (Otomatik doğrudan mod).
+    Üretilen MP4 videosunu kanala ve/veya telefona yayınlar.
+    channel_only=True ise sadece TELEGRAM_CHANNEL_ID kanalına atar (onay sonrasında admin'e çift video gitmesini önler).
     """
     token = bot_token or TELEGRAM_BOT_TOKEN
     cid = chat_id or TELEGRAM_CHAT_ID
@@ -262,10 +265,14 @@ def send_telegram_deal(video_path: str, caption_text: str, product_url: str = No
         return False
 
     targets = []
-    if cid:
-        targets.append(cid)
-    if TELEGRAM_CHANNEL_ID and TELEGRAM_CHANNEL_ID not in targets:
-        targets.append(TELEGRAM_CHANNEL_ID)
+    if channel_only:
+        if TELEGRAM_CHANNEL_ID:
+            targets.append(TELEGRAM_CHANNEL_ID)
+    else:
+        if cid:
+            targets.append(cid)
+        if TELEGRAM_CHANNEL_ID and TELEGRAM_CHANNEL_ID not in targets:
+            targets.append(TELEGRAM_CHANNEL_ID)
 
     if not targets or not os.path.exists(video_path):
         return False

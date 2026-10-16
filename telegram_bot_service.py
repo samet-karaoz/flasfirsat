@@ -4,6 +4,7 @@ import time
 import json
 import re
 import requests
+from datetime import datetime
 from dotenv import load_dotenv
 
 from config import BASE_DIR
@@ -66,6 +67,40 @@ def send_telegram_text(chat_id: str or int, text: str, reply_markup: dict = None
 # 1. ADIM: ONAY BUTONU İŞLEYİCİSİ (INSTAGRAM / YOUTUBE / TELEGRAM KANALI)
 # ==============================================================================
 
+def ensure_local_video(item: dict) -> str:
+    """
+    Videonun yerel dosyasını doğrular.
+    Eğer yerel dosya silinmişse veya GitHub Actions (bulut) tarafından üretilmişse,
+    Telegram file_id üzerinden doğrudan temp/ klasörüne indirir.
+    """
+    v_path = item.get("video_path", "")
+    if v_path and os.path.exists(v_path) and os.path.getsize(v_path) > 1000:
+        return v_path
+
+    file_id = item.get("file_id")
+    if file_id:
+        try:
+            from telegram_notifier import get_telegram_file_url
+            file_url = get_telegram_file_url(file_id)
+            if file_url:
+                dl_dir = os.path.join(BASE_DIR, "temp")
+                os.makedirs(dl_dir, exist_ok=True)
+                deal_id = item.get("deal_id", f"video_{int(time.time())}")
+                dl_path = os.path.join(dl_dir, f"dl_{deal_id}.mp4")
+                print(f"[Telegram Service] 📥 Video Telegram sunucusundan indiriliyor (file_id: {file_id[:15]}...)...")
+                r = requests.get(file_url, stream=True, timeout=60)
+                if r.status_code == 200:
+                    with open(dl_path, "wb") as f:
+                        for chunk in r.iter_content(chunk_size=65536):
+                            f.write(chunk)
+                    if os.path.exists(dl_path) and os.path.getsize(dl_path) > 1000:
+                        print(f"✅ [Telegram Service] Video başarıyla indirildi: {dl_path}")
+                        item["video_path"] = dl_path
+                        return dl_path
+        except Exception as e_dl:
+            print(f"[Telegram Service] ❌ Video indirme hatası: {e_dl}")
+    return v_path
+
 def handle_callback_query(cq: dict):
     cq_id = cq.get("id")
     data = cq.get("data", "")
@@ -82,32 +117,47 @@ def handle_callback_query(cq: dict):
     pending = load_pending_deals()
     item = pending.get(deal_id)
 
+    # Buluttan yeni bir fırsat push edilmiş olabilir, bulamazsa git rebase çekip tekrar dene
+    if not item:
+        try:
+            import subprocess
+            subprocess.run(["git", "pull", "--rebase", "origin", "main"], timeout=15, capture_output=True)
+            pending = load_pending_deals()
+            item = pending.get(deal_id)
+        except Exception:
+            pass
+
     if not item:
         answer_telegram_callback_query(cq_id, text="⚠️ Fırsat kaydı bulunamadı veya süresi doldu.", show_alert=True)
         return
 
     deal = item.get("deal", {})
     title = deal.get("title", "Fırsat")
-    video_path = item.get("video_path", "")
     caption_text = item.get("caption_text", "")
-    product_url = item.get("product_url", "")
+    product_url = item.get("product_url", "") or deal.get("affiliate_url", "")
+    target_video = ensure_local_video(item)
+
     # 0) TÜM PLATFORMLARA YAYINLA (approve_all)
     if action == "approve_all":
         answer_telegram_callback_query(cq_id, text="🚀 Tüm platformlara yayın başlatılıyor...")
         edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Tüm Platformlara Dağıtılıyor...</b>\n\n📦 {title}\nYouTube, Instagram, Telegram ve WhatsApp'a aktarılıyor...")
 
         statuses = []
+        ig_media_id = None
+        yt_url = None
+
         # 1. YouTube Shorts
         try:
             from youtube_publisher import publish_shorts_to_youtube
             yt_target = item.get("youtube_video_path")
-            yt_upload = yt_target if (yt_target and os.path.exists(yt_target)) else video_path
+            yt_upload = yt_target if (yt_target and os.path.exists(yt_target)) else target_video
             yt_desc = caption_text
             if "BİO" not in yt_desc and "bio" not in yt_desc:
                 yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
             yt_res = publish_shorts_to_youtube(yt_upload, title=title, description=yt_desc)
             if yt_res.get("success"):
-                statuses.append(f"• 📺 YouTube Shorts: <a href=\"{yt_res.get('url')}\">İzle</a>")
+                yt_url = yt_res.get("url")
+                statuses.append(f"• 📺 YouTube Shorts: <a href=\"{yt_url}\">İzle</a>")
             else:
                 statuses.append(f"• 📺 YouTube Shorts: ❌ {yt_res.get('error', 'Hata')}")
         except Exception as ey:
@@ -116,18 +166,39 @@ def handle_callback_query(cq: dict):
         # 2. Instagram Reels
         try:
             from instagram_publisher import publish_reel_to_instagram
-            ig_res = publish_reel_to_instagram(video_path, caption_text)
-            if ig_res.get("success"):
-                statuses.append("• 🎬 Instagram Reels: ✅ Yayında")
+            if not target_video or not os.path.exists(target_video):
+                statuses.append("• 🎬 Instagram Reels: ❌ Video dosyası bulunamadı")
             else:
-                statuses.append(f"• 🎬 Instagram Reels: ❌ {ig_res.get('error', 'Hata')}")
+                ig_res = publish_reel_to_instagram(target_video, caption_text)
+                if ig_res.get("success"):
+                    ig_media_id = ig_res.get("media_id")
+                    statuses.append("• 🎬 Instagram Reels: ✅ Yayında")
+                else:
+                    statuses.append(f"• 🎬 Instagram Reels: ❌ {ig_res.get('error', 'Hata')}")
         except Exception as ei:
             statuses.append(f"• 🎬 Instagram Reels: ❌ {ei}")
 
-        # 3. Telegram Kanalı
+        # 2b. Instagram Story (Tıklanabilir Link Çıkartmalı)
+        try:
+            story_img = item.get("story_image_path")
+            if not (story_img and os.path.exists(story_img)):
+                from story_composer import create_story_card
+                story_img = create_story_card(deal)
+            if story_img and os.path.exists(story_img):
+                from instagram_publisher import publish_story_with_link
+                st_res = publish_story_with_link(story_img, link_url=product_url or deal.get("affiliate_url", ""))
+                if st_res.get("success"):
+                    statuses.append("• 📸 Instagram Story: ✅ Link Çıkartmalı")
+                else:
+                    statuses.append(f"• 📸 Instagram Story: ⚠️ {st_res.get('error', 'Hata')}")
+        except Exception as es:
+            statuses.append(f"• 📸 Instagram Story: ⚠️ {es}")
+
+        # 3. Telegram Kanalı (channel_only=True: Admin'e mükerrer video gitmesini önler)
+        tg_ok = False
         try:
             from telegram_notifier import send_telegram_deal
-            tg_ok = send_telegram_deal(video_path, caption_text, product_url=product_url)
+            tg_ok = send_telegram_deal(target_video, caption_text, product_url=product_url, channel_only=True)
             if tg_ok:
                 statuses.append(f"• 📢 Telegram Kanalı: ✅ {TELEGRAM_CHANNEL_ID}")
             else:
@@ -137,14 +208,57 @@ def handle_callback_query(cq: dict):
 
         # 4. WhatsApp Kanalı
         try:
-            from whatsapp_publisher import publish_deal_to_whatsapp_channel
-            wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path"))
-            if wp_res.get("success"):
-                statuses.append("• 🟢 WhatsApp Kanalı: ✅ Flaş Fırsat ⚡")
+            from whatsapp_publisher import publish_deal_to_whatsapp_channel, check_whatsapp_ready
+            chk = check_whatsapp_ready()
+            if chk.get("ready"):
+                wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path") or item.get("image_path"))
+                if wp_res.get("success"):
+                    statuses.append("• 🟢 WhatsApp Kanalı: ✅ Flaş Fırsat ⚡")
+                else:
+                    statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {wp_res.get('error', 'Hata')}")
             else:
-                statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {wp_res.get('error', 'Hata')}")
+                statuses.append("• 🟢 WhatsApp: ℹ️ Mobil butondan paylaşılabilir")
         except Exception as ew:
             statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {ew}")
+
+        # 5. Web Vitrini Güncellemesi
+        try:
+            from web_showcase import add_deal_to_web
+            add_deal_to_web(deal)
+            statuses.append("• 🌐 Web Vitrini: ✅ Güncellendi")
+        except Exception as e_web:
+            print(f"[Telegram Service] Web vitrin hatası: {e_web}")
+
+        # 6. Otopilot Geçmiş Kaydı (Auto-DM'in Reels'e yazılan link yorumlarına doğru link göndermesi için şart!)
+        try:
+            from autopilot_engine import record_autopilot_run
+            auto_rec = {
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                "slot": item.get("slot", "Telegram Onaylı Yayın"),
+                "success": True,
+                "deal": deal,
+                "platforms": {
+                    "instagram": {"status": "ok" if ig_media_id else "error", "media_id": str(ig_media_id or "")},
+                    "youtube": {"status": "ok" if yt_url else "error", "url": yt_url or ""},
+                    "telegram": {"status": "ok" if tg_ok else "error", "channel": TELEGRAM_CHANNEL_ID}
+                }
+            }
+            record_autopilot_run(auto_rec)
+        except Exception as eh:
+            print(f"[Telegram Service] autopilot_history kayıt hatası: {eh}")
+
+        # 7. Ürün Geçmiş Kaydı (Tekrar aynı ürünün taranmaması için)
+        try:
+            from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
+            history = load_history()
+            deal_sig = deal.get("store_url") or deal.get("url") or title
+            if deal_sig:
+                history.add(deal_sig)
+                save_history(history)
+            set_last_product(title)
+            set_last_subtype(get_product_subtype(title))
+        except Exception as ed:
+            print(f"[Telegram Service] history_deals kayıt hatası: {ed}")
 
         item["status"] = "published_all"
         save_pending_deals(pending)
@@ -173,28 +287,74 @@ def handle_callback_query(cq: dict):
         edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>Instagram Reels Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
 
         from instagram_publisher import publish_reel_to_instagram
-        
-        target_video = video_path if (video_path and os.path.exists(video_path)) else None
-        if not target_video:
-            if not public_video_url and item.get("file_id"):
-                from telegram_notifier import get_telegram_file_url
-                public_video_url = get_telegram_file_url(item["file_id"])
-            target_video = public_video_url
 
-        if not target_video:
-            res_ig = {"success": False, "error": "Videonun dosyası veya genel linki bulunamadı."}
+        if not target_video or not os.path.exists(target_video):
+            res_ig = {"success": False, "error": "Videonun dosyası bulunamadı ve indirilemedi."}
         else:
             res_ig = publish_reel_to_instagram(target_video, caption_text)
 
         if res_ig.get("success"):
-            media_id = res_ig.get("media_id", "")
+            media_id = str(res_ig.get("media_id", ""))
             item["status"] = "published_instagram"
             save_pending_deals(pending)
+
+            # Story paylaş
+            st_text = ""
+            try:
+                story_img = item.get("story_image_path")
+                if not (story_img and os.path.exists(story_img)):
+                    from story_composer import create_story_card
+                    story_img = create_story_card(deal)
+                if story_img and os.path.exists(story_img):
+                    from instagram_publisher import publish_story_with_link
+                    st_res = publish_story_with_link(story_img, link_url=product_url or deal.get("affiliate_url", ""))
+                    if st_res.get("success"):
+                        st_text = "\n📸 <b>Story:</b> ✅ Link çıkartmalı paylaşıldı"
+            except Exception as es:
+                print(f"[Telegram Service] Story hatası: {es}")
+
+            # Web vitrinine ekle
+            try:
+                from web_showcase import add_deal_to_web
+                add_deal_to_web(deal)
+            except Exception as e_web:
+                print(f"[Telegram Service] Web vitrin hatası: {e_web}")
+
+            # autopilot_history.json kaydet (Auto-DM eşleştirmesi için kritik önemde!)
+            try:
+                from autopilot_engine import record_autopilot_run
+                auto_rec = {
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "slot": item.get("slot", "Telegram Onaylı Reels"),
+                    "success": True,
+                    "deal": deal,
+                    "platforms": {
+                        "instagram": {"status": "ok", "media_id": media_id}
+                    }
+                }
+                record_autopilot_run(auto_rec)
+            except Exception as eh:
+                print(f"[Telegram Service] autopilot_history kayıt hatası: {eh}")
+
+            # history_deals.json kaydet
+            try:
+                from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
+                history = load_history()
+                deal_sig = deal.get("store_url") or deal.get("url") or title
+                if deal_sig:
+                    history.add(deal_sig)
+                    save_history(history)
+                set_last_product(title)
+                set_last_subtype(get_product_subtype(title))
+            except Exception as ed:
+                print(f"[Telegram Service] history_deals kayıt hatası: {ed}")
 
             new_caption = (
                 f"✅ <b>INSTAGRAM'DA YAYINLANDI! 🎉</b>\n\n"
                 f"📦 <b>Ürün:</b> {title}\n"
-                f"🆔 <b>Medya ID:</b> {media_id}\n\n"
+                f"🆔 <b>Medya ID:</b> {media_id}"
+                f"{st_text}\n"
+                f"🌐 <b>Web Vitrini:</b> ✅ Eklendi\n\n"
                 f"Diğer kanallara da göndermek ister misiniz?"
             )
             from config import SITE_URL
@@ -245,15 +405,22 @@ def handle_callback_query(cq: dict):
         extras.append(f"🌐 Tüm Fırsatlar: {site_link}")
         ch_caption += "\n\n" + "\n".join(extras)
 
-        # Telegram sendVideo to channel
         ch_ok = False
         try:
-            with open(video_path, "rb") as vf:
+            if target_video and os.path.exists(target_video):
+                with open(target_video, "rb") as vf:
+                    c_res = requests.post(
+                        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendVideo",
+                        data={"chat_id": target_ch, "caption": ch_caption, "supports_streaming": "true"},
+                        files={"video": vf},
+                        timeout=120
+                    )
+                    ch_ok = c_res.json().get("ok", False)
+            elif item.get("file_id"):
                 c_res = requests.post(
                     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendVideo",
-                    data={"chat_id": target_ch, "caption": ch_caption, "supports_streaming": "true"},
-                    files={"video": vf},
-                    timeout=120
+                    data={"chat_id": target_ch, "video": item["file_id"], "caption": ch_caption, "supports_streaming": "true"},
+                    timeout=30
                 )
                 ch_ok = c_res.json().get("ok", False)
         except Exception as e:
@@ -295,24 +462,55 @@ def handle_callback_query(cq: dict):
         edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>YouTube Shorts Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
 
         yt_custom_video = item.get("youtube_video_path")
-        target_video = yt_custom_video if (yt_custom_video and os.path.exists(yt_custom_video)) else (video_path if (video_path and os.path.exists(video_path)) else None)
-        if not target_video:
-            if not public_video_url and item.get("file_id"):
-                from telegram_notifier import get_telegram_file_url
-                public_video_url = get_telegram_file_url(item["file_id"])
-            target_video = public_video_url
+        upload_video = yt_custom_video if (yt_custom_video and os.path.exists(yt_custom_video)) else target_video
 
         yt_desc = caption_text
         if "BİO" not in yt_desc and "bio" not in yt_desc:
             yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
 
         from youtube_publisher import publish_shorts_to_youtube
-        yt_res = publish_shorts_to_youtube(target_video or video_path, title=title, description=yt_desc)
+        yt_res = publish_shorts_to_youtube(upload_video, title=title, description=yt_desc)
 
         if yt_res.get("success"):
             yt_url = yt_res.get("url", "")
             item["status"] = "published_youtube"
             save_pending_deals(pending)
+
+            # Web vitrinine ekle
+            try:
+                from web_showcase import add_deal_to_web
+                add_deal_to_web(deal)
+            except Exception as e_web:
+                print(f"[Telegram Service] Web vitrin hatası: {e_web}")
+
+            # autopilot_history.json kaydet
+            try:
+                from autopilot_engine import record_autopilot_run
+                auto_rec = {
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "slot": item.get("slot", "Telegram Onaylı YouTube"),
+                    "success": True,
+                    "deal": deal,
+                    "platforms": {
+                        "youtube": {"status": "ok", "url": yt_url}
+                    }
+                }
+                record_autopilot_run(auto_rec)
+            except Exception as eh:
+                print(f"[Telegram Service] autopilot_history kayıt hatası: {eh}")
+
+            # history_deals.json kaydet
+            try:
+                from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
+                history = load_history()
+                deal_sig = deal.get("store_url") or deal.get("url") or title
+                if deal_sig:
+                    history.add(deal_sig)
+                    save_history(history)
+                set_last_product(title)
+                set_last_subtype(get_product_subtype(title))
+            except Exception as ed:
+                print(f"[Telegram Service] history_deals kayıt hatası: {ed}")
 
             updated_caption = (
                 f"✅ <b>YOUTUBE SHORTS OLARAK YAYINLANDI! 🎉</b>\n\n"
@@ -383,6 +581,13 @@ def handle_callback_query(cq: dict):
             if wp_res.get("success"):
                 item["status"] = "published_whatsapp"
                 save_pending_deals(pending)
+
+                # Web vitrinine ekle
+                try:
+                    from web_showcase import add_deal_to_web
+                    add_deal_to_web(deal)
+                except Exception as e_web:
+                    print(f"[Telegram Service] Web vitrin hatası: {e_web}")
 
                 updated_caption = (
                     f"✅ <b>WHATSAPP KANALINDA YAYINLANDI! 🎉</b>\n\n"

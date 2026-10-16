@@ -67,8 +67,21 @@ def add_deal_to_web(deal: dict):
     from campaign_calculator import calculate_campaign_and_net_cost
     camp_info = calculate_campaign_and_net_cost(deal.get("new_price", ""), deal.get("store_name", "Amazon TR"))
     bank_camp = deal.get("bank_campaign") or camp_info["bank_campaign"]
-    net_cost = deal.get("net_cost") or camp_info["net_cost"]
-    installment = deal.get("installment") or camp_info.get("installment", "")
+    installment = deal.get("installment") or camp_info.get("installment", "Peşin Fiyatına 3 Taksit")
+    coupon_info = deal.get("coupon_info", "")
+
+    # Otomatik Kategori Sınıflandırması
+    t_low = (deal.get("title", "")).lower()
+    if 'monitör' in t_low or 'monitor' in t_low:
+        cat = 'monitor'
+    elif any(k in t_low for k in ['mouse', 'fare', 'kulakl', 'headset', 'gamepad', 'kol', 'mousepad', 'espor', 'gaming', 'oyuncu']):
+        cat = 'gaming'
+    elif any(k in t_low for k in ['bellek', 'usb', 'ssd', 'ram', 'playstation', 'ps5', 'konsol']):
+        cat = 'hardware'
+    elif any(k in t_low for k in ['termos', 'stanley', 'kahve', 'filtre', 'mutfak', 'kolu', 'f80']):
+        cat = 'lifestyle'
+    else:
+        cat = 'general'
 
     deal_item = {
         "id": f"deal_{int(datetime.now().timestamp())}_{len(deals)}",
@@ -79,8 +92,10 @@ def add_deal_to_web(deal: dict):
         "store_name": deal.get("store_name", "Amazon TR"),
         "store_url": deal.get("affiliate_url") or deal.get("store_url", "#"),
         "bank_campaign": bank_camp,
-        "net_cost": net_cost,
+        "net_cost": "",
         "installment": installment,
+        "coupon_info": coupon_info,
+        "category": cat,
         "image_url": web_img_rel,
         "is_expired": False,
         "expired_reason": "",
@@ -269,11 +284,21 @@ def render_web_html(deals: list = None):
             url = d.get("store_url", "#")
             deal_id = d.get("id", "")
 
-            # Banka Kampanyası ve Net Maliyet
+            # Kategori & Kupon (Nays tamamen kaldırıldı)
+            category = d.get("category") or "general"
+            coupon_info = d.get("coupon_info", "")
+
+            coupon_html = f"""
+                        <div class="advantage-row coupon-highlight">
+                            <span class="advantage-icon">🎟️</span>
+                            <span class="advantage-txt"><strong>Kupon:</strong> {coupon_info} (Sayfada Aktif Edin)</span>
+                        </div>
+            """ if coupon_info else ""
+
+            # Teslimat & Taksit Bilgisi
             camp_info = calculate_campaign_and_net_cost(new_p, store)
             bank_camp = d.get("bank_campaign") or camp_info["bank_campaign"]
-            net_cost = d.get("net_cost") or camp_info["net_cost"]
-            installment = d.get("installment") or camp_info.get("installment", "")
+            installment = d.get("installment") or camp_info.get("installment", "Peşin Fiyatına 3 Taksit")
 
             # Mağaza Rozet Rengi
             store_low = store.lower()
@@ -302,7 +327,7 @@ def render_web_html(deals: list = None):
             )
 
             cards_html += f"""
-            <div class="{card_class}" data-status="{status_attr}" data-title="{title.lower()} {store.lower()}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
+            <div class="{card_class}" data-status="{status_attr}" data-category="{category}" data-title="{title.lower()} {store.lower()} {category}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
                 <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="{safe_title}">
                     <div class="card-img-wrap">
                         <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
@@ -321,16 +346,14 @@ def render_web_html(deals: list = None):
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">{bank_camp}</span>
+                        {coupon_html}
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">{installment}</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">{net_cost}</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ {installment}</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">{bank_camp}</span>
                         </div>
                     </div>
 
@@ -696,78 +719,90 @@ def render_web_html(deals: list = None):
             font-weight: 800;
         }
 
-        /* Banka & Net Maliyet Hesaplayıcı Kutusu */
+        /* Avantaj & Taksit Kutusu */
         .campaign-box {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.04) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
             border-radius: 14px;
             padding: 12px 14px;
             margin-bottom: 18px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 7px;
             transition: all 0.2s ease;
         }
 
         .campaign-box:hover {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%);
-            border-color: rgba(16, 185, 129, 0.45);
-            transform: translateY(-1px);
+            border-color: rgba(255, 193, 7, 0.35);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .campaign-header {
+        .advantage-row {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.78rem;
-        }
-
-        .campaign-tag {
-            background: #10B981;
-            color: #064E3B;
-            font-weight: 800;
-            padding: 2px 7px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            letter-spacing: 0.3px;
-        }
-
-        .campaign-name {
-            color: #A7F3D0;
-            font-weight: 600;
-            font-size: 0.82rem;
-        }
-
-        .net-cost-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-top: 2px;
-        }
-
-        .net-cost-lbl {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: #CBD5E1;
+        }
+
+        .advantage-row.coupon-highlight {
+            color: #FDE047;
+            background: rgba(250, 204, 21, 0.1);
+            border: 1px dashed rgba(250, 204, 21, 0.4);
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+
+        .advantage-icon {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .advantage-txt {
+            line-height: 1.3;
             font-weight: 500;
         }
 
-        .net-cost-val {
-            font-size: 1.25rem;
+        /* Category Filter Tabs */
+        .category-tabs-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+        }
+
+        .category-tabs-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .category-tab:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, #FFC107, #FF5722);
+            color: #0B0D12;
             font-weight: 800;
-            color: #34D399;
-            text-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
-        }
-
-        .installment-row {
-            font-size: 0.75rem;
-            color: #94A3B8;
-            border-top: 1px dashed rgba(255, 255, 255, 0.08);
-            padding-top: 6px;
-            margin-top: 2px;
-        }
-
-        .installment-txt {
-            color: #CBD5E1;
+            border-color: #FFC107;
+            box-shadow: 0 4px 14px rgba(255, 193, 7, 0.35);
         }
 
         .buy-btn {
@@ -1331,8 +1366,27 @@ def render_web_html(deals: list = None):
 
         <div class="controls-bar">
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün veya mağaza ara (kulaklık, mouse, monitör, amazon...)" onkeyup="filterDeals()">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün veya marka ara (kulaklık, mouse, monitör, stanley, amazon...)" onkeyup="filterDeals()">
             </div>
+        </div>
+
+        <!-- Kategori Filtre Sekmeleri -->
+        <div class="category-tabs-wrapper">
+            <button class="category-tab active" data-cat="all" onclick="setCategoryFilter('all', this)">
+                🔥 Tümü
+            </button>
+            <button class="category-tab" data-cat="gaming" onclick="setCategoryFilter('gaming', this)">
+                🎮 Oyuncu & Gaming
+            </button>
+            <button class="category-tab" data-cat="monitor" onclick="setCategoryFilter('monitor', this)">
+                🖥️ Monitör
+            </button>
+            <button class="category-tab" data-cat="hardware" onclick="setCategoryFilter('hardware', this)">
+                💻 Bilgisayar & Donanım
+            </button>
+            <button class="category-tab" data-cat="lifestyle" onclick="setCategoryFilter('lifestyle', this)">
+                ☕ Ev & Yaşam
+            </button>
         </div>
 
         <div class="filter-tabs-wrapper">
@@ -1383,12 +1437,20 @@ def render_web_html(deals: list = None):
     </dialog>
 
     <script>
-        // --- 1. ARAMA VE KATEGORİ FİLTRELEME MOTORU (Aktif / Bitenler) ---
+        // --- 1. ARAMA VE KATEGORİ FİLTRELEME MOTORU ---
         let currentStatusFilter = 'all';
+        let currentCategoryFilter = 'all';
 
         function setStatusFilter(status, btn) {
             currentStatusFilter = status;
             document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            filterDeals();
+        }
+
+        function setCategoryFilter(cat, btn) {
+            currentCategoryFilter = cat;
+            document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
             filterDeals();
         }
@@ -1421,11 +1483,13 @@ def render_web_html(deals: list = None):
             cards.forEach(card => {
                 const title = (card.getAttribute('data-title') || '').toLowerCase();
                 const cardStatus = card.getAttribute('data-status') || 'active';
+                const cardCat = card.getAttribute('data-category') || 'general';
 
                 const matchesSearch = !input || title.includes(input);
                 const matchesStatus = (currentStatusFilter === 'all') || (cardStatus === currentStatusFilter);
+                const matchesCategory = (currentCategoryFilter === 'all') || (cardCat === currentCategoryFilter);
 
-                if (matchesSearch && matchesStatus) {
+                if (matchesSearch && matchesStatus && matchesCategory) {
                     card.style.display = 'flex';
                     visibleCount++;
                 } else {

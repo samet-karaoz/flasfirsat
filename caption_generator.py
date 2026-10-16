@@ -26,7 +26,7 @@ Açıklama Kuralları:
 1. İlk satır: Dikkat çekici bir soru veya iddialı bir hook (Örn: "DDR5 sistem bedavaya mı geliyor?!", "Bu fiyata alan yaşadı!", "🚨 FİYAT HATASI MI?!").
 2. Fiyat avantajını açıkça göster (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve İndirim Oranı).
 3. Varsa Kupon Bilgilendirmesi (ÖNEMLİ): Eğer üründe kupon indirimi varsa mutlaka açıkça belirt: "🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki kupon kutucuğunu işaretlemeyi / kuponu aktif etmeyi unutmayın!"
-4. Varsa Banka/İade Kampanyası ile Net Maliyeti vurgula (Örn: "💳 Nays ile %10 iadeyle Net 1.097 TL!").
+4. Varsa Taksit İmkanı: Varsa taksit imkanını belirt (Örn: "💳 Peşin fiyatına 3 taksit imkanıyla!").
 5. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
 6. Eylem Çağrısı (Anti-Spam, Reklam & ManyChat Uyumlu): Asla izleyiciden tek kelimelik 'LİNK' isteme (Instagram 'link' kelimesini spam filtresine takıyor). Bunun yerine hem profildeki siteyi hem de doğal anahtar kelimeyi birlikte sun:
    "🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)"
@@ -37,7 +37,7 @@ Açıklama Kuralları:
 Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
 
-    extra_info = f"\nBanka Kampanyası: {bank_campaign}\nNet Maliyet: {net_cost}" if net_cost else ""
+    extra_info = ""
     if coupon_clean:
         extra_info += f"\nKupon Bilgilendirmesi (Zorunlu Vurgula): {coupon_clean} (İzleyiciye ürün sayfasındaki kuponu aktif etmesi gerektiğini açıkça yaz)"
     price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
@@ -89,7 +89,6 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
             continue
 
     # Fallback Caption if all API models fail
-    net_line = f"💳 {bank_campaign} ile Net Maliyet: {net_cost}\n" if net_cost else ""
     coupon_line = f"🎟️ KUPON BİLGİSİ: Ürün sayfasındaki '{coupon_clean}' kuponunu aktif etmeyi unutmayın!\n" if coupon_clean else ""
     old_line = f"❌ Eski Fiyat: {old_price}\n" if old_price else ""
     pct_line = f" ({discount_pct} İndirim)" if discount_pct and discount_pct != "0%" else ""
@@ -99,7 +98,6 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"{old_line}"
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{coupon_line}"
-        f"{net_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
         f"🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (DM'den isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)\n"
         f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n"

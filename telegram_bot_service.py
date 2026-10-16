@@ -160,7 +160,11 @@ def handle_callback_query(cq: dict):
                             "caption": (
                                 f"📸 <b>1080x1920 HİKAYE (STORY) KARTI HAZIR!</b>\n\n"
                                 f"1️⃣ Bu görseli telefonuna kaydet ve Hikayene ekle.\n"
-                                f"2️⃣ Instagram'ın <b>'Bağlantı' (Link)</b> çıkartmasına dokunup aşağıdaki linki yapıştır:\n\n"
+                                f"2️⃣ <b>🗳️ Anket Çıkartması (Etkileşim Hilesi):</b>\n"
+                                f"Soru: <i>'Sizce bu fiyata değer mi?'</i>\n"
+                                f"Seçenekler: [🔥 Alınır] / [😴 Değmez]\n"
+                                f"3️⃣ <b>🔗 Bağlantı (Link) Çıkartması:</b>\n"
+                                f"En alttaki kutucuğa dokunup bu linki yapıştır:\n"
                                 f"<code>{_html.escape(product_url or '')}</code>"
                             ),
                             "parse_mode": "HTML"

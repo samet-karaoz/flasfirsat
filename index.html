@@ -363,78 +363,90 @@
             font-weight: 800;
         }
 
-        /* Banka & Net Maliyet Hesaplayıcı Kutusu */
+        /* Avantaj & Taksit Kutusu (Nays kaldırıldı) */
         .campaign-box {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.04) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
             border-radius: 14px;
             padding: 12px 14px;
             margin-bottom: 18px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 7px;
             transition: all 0.2s ease;
         }
 
         .campaign-box:hover {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%);
-            border-color: rgba(16, 185, 129, 0.45);
-            transform: translateY(-1px);
+            border-color: rgba(255, 193, 7, 0.35);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .campaign-header {
+        .advantage-row {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.78rem;
-        }
-
-        .campaign-tag {
-            background: #10B981;
-            color: #064E3B;
-            font-weight: 800;
-            padding: 2px 7px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            letter-spacing: 0.3px;
-        }
-
-        .campaign-name {
-            color: #A7F3D0;
-            font-weight: 600;
-            font-size: 0.82rem;
-        }
-
-        .net-cost-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-top: 2px;
-        }
-
-        .net-cost-lbl {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: #CBD5E1;
+        }
+
+        .advantage-row.coupon-highlight {
+            color: #FDE047;
+            background: rgba(250, 204, 21, 0.1);
+            border: 1px dashed rgba(250, 204, 21, 0.4);
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+
+        .advantage-icon {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .advantage-txt {
+            line-height: 1.3;
             font-weight: 500;
         }
 
-        .net-cost-val {
-            font-size: 1.25rem;
+        /* Category Filter Tabs */
+        .category-tabs-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+        }
+
+        .category-tabs-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .category-tab:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, #FFC107, #FF5722);
+            color: #0B0D12;
             font-weight: 800;
-            color: #34D399;
-            text-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
-        }
-
-        .installment-row {
-            font-size: 0.75rem;
-            color: #94A3B8;
-            border-top: 1px dashed rgba(255, 255, 255, 0.08);
-            padding-top: 6px;
-            margin-top: 2px;
-        }
-
-        .installment-txt {
-            color: #CBD5E1;
+            border-color: #FFC107;
+            box-shadow: 0 4px 14px rgba(255, 193, 7, 0.35);
         }
 
         .buy-btn {
@@ -998,8 +1010,27 @@
 
         <div class="controls-bar">
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün veya mağaza ara (kulaklık, mouse, monitör, amazon...)" onkeyup="filterDeals()">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün veya marka ara (kulaklık, mouse, monitör, stanley, amazon...)" onkeyup="filterDeals()">
             </div>
+        </div>
+
+        <!-- Kategori Filtre Sekmeleri -->
+        <div class="category-tabs-wrapper">
+            <button class="category-tab active" data-cat="all" onclick="setCategoryFilter('all', this)">
+                🔥 Tümü
+            </button>
+            <button class="category-tab" data-cat="gaming" onclick="setCategoryFilter('gaming', this)">
+                🎮 Oyuncu & Gaming
+            </button>
+            <button class="category-tab" data-cat="monitor" onclick="setCategoryFilter('monitor', this)">
+                🖥️ Monitör
+            </button>
+            <button class="category-tab" data-cat="hardware" onclick="setCategoryFilter('hardware', this)">
+                💻 Bilgisayar & Donanım
+            </button>
+            <button class="category-tab" data-cat="lifestyle" onclick="setCategoryFilter('lifestyle', this)">
+                ☕ Ev & Yaşam
+            </button>
         </div>
 
         <div class="filter-tabs-wrapper">
@@ -1016,7 +1047,7 @@
 
         <div class="deals-grid" id="dealsGrid">
 
-            <div class="deal-card" data-status="active" data-title="logitech g102 lightsync rgb oyuncu mouse amazon tr" data-deal-id="deal_1792144968_21" data-deal-title="Logitech G102 Lightsync RGB Oyuncu Mouse" data-store="Amazon TR" data-price="389 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="logitech g102 lightsync rgb oyuncu mouse amazon tr gaming" data-deal-id="deal_1792144968_21" data-deal-title="Logitech G102 Lightsync RGB Oyuncu Mouse" data-store="Amazon TR" data-price="389 TL">
                 <a href="https://www.amazon.com.tr/dp/B07W4DH8JW?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Logitech G102 Lightsync RGB Oyuncu Mouse">
                     <div class="card-img-wrap">
                         <img src="assets/products/logitech_g102_lightsync_r_e25b0150.jpg" alt="Logitech G102 Lightsync RGB Oyuncu Mouse" class="card-img" loading="lazy">
@@ -1035,16 +1066,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (39 TL)</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">350 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1052,7 +1081,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="asus tuf 27" 165hz monitör amazon tr" data-deal-id="deal_1792095414_20" data-deal-title="Asus TUF 27&quot; 165Hz Monitör" data-store="Amazon TR" data-price="7.733,01 TL">
+            <div class="deal-card" data-status="active" data-category="monitor" data-title="asus tuf 27" 165hz monitör amazon tr monitor" data-deal-id="deal_1792095414_20" data-deal-title="Asus TUF 27&quot; 165Hz Monitör" data-store="Amazon TR" data-price="7.733,01 TL">
                 <a href="https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Asus TUF 27&quot; 165Hz Monitör">
                     <div class="card-img-wrap">
                         <img src="assets/products/asus_tuf_27__165hz_monit__543719e7.jpg" alt="Asus TUF 27&quot; 165Hz Monitör" class="card-img" loading="lazy">
@@ -1071,16 +1100,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 2.578 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">7.483 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 2.578 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1088,7 +1115,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="lenovo legion 240hz gaming monitör amazon tr" data-deal-id="deal_1792089571_20" data-deal-title="Lenovo Legion 240Hz Gaming Monitör" data-store="Amazon TR" data-price="5.879,02 TL">
+            <div class="deal-card" data-status="active" data-category="monitor" data-title="lenovo legion 240hz gaming monitör amazon tr monitor" data-deal-id="deal_1792089571_20" data-deal-title="Lenovo Legion 240Hz Gaming Monitör" data-store="Amazon TR" data-price="5.879,02 TL">
                 <a href="https://www.amazon.com.tr/dp/B0GRWGJS54?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Lenovo Legion 240Hz Gaming Monitör">
                     <div class="card-img-wrap">
                         <img src="assets/products/lenovo_legion_240hz_gamin_a4fecd19.jpg" alt="Lenovo Legion 240Hz Gaming Monitör" class="card-img" loading="lazy">
@@ -1107,16 +1134,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + 3 Taksit</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit x 1.959 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">5.629 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit x 1.959 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1124,7 +1149,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="sandisk 64gb usb bellek amazon tr" data-deal-id="deal_1792088228_18" data-deal-title="SanDisk 64GB USB Bellek" data-store="Amazon TR" data-price="425,79 TL">
+            <div class="deal-card" data-status="active" data-category="hardware" data-title="sandisk 64gb usb bellek amazon tr hardware" data-deal-id="deal_1792088228_18" data-deal-title="SanDisk 64GB USB Bellek" data-store="Amazon TR" data-price="425,79 TL">
                 <a href="https://www.amazon.com.tr/dp/B017RD10X8?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="SanDisk 64GB USB Bellek">
                     <div class="card-img-wrap">
                         <img src="assets/products/sandisk_64gb_usb_bellek_22ab7a43.jpg" alt="SanDisk 64GB USB Bellek" class="card-img" loading="lazy">
@@ -1143,16 +1168,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (43 TL)</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">383 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1160,7 +1183,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="playstation 5 pro amazon tr" data-deal-id="deal_1792056993_18" data-deal-title="PlayStation 5 Pro" data-store="Amazon TR" data-price="72.999 TL">
+            <div class="deal-card" data-status="active" data-category="hardware" data-title="playstation 5 pro amazon tr hardware" data-deal-id="deal_1792056993_18" data-deal-title="PlayStation 5 Pro" data-store="Amazon TR" data-price="72.999 TL">
                 <a href="https://www.amazon.com.tr/dp/B0DJH2NS6R?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="PlayStation 5 Pro">
                     <div class="card-img-wrap">
                         <img src="assets/products/playstation_5_pro_2efbc8f3.jpg" alt="PlayStation 5 Pro" class="card-img" loading="lazy">
@@ -1179,16 +1202,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 24.333 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">72.749 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 24.333 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1196,7 +1217,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="sandisk 128gb type-c bellek amazon tr" data-deal-id="deal_1792052960_16" data-deal-title="SanDisk 128GB Type-C Bellek" data-store="Amazon TR" data-price="899 TL">
+            <div class="deal-card" data-status="active" data-category="hardware" data-title="sandisk 128gb type-c bellek amazon tr hardware" data-deal-id="deal_1792052960_16" data-deal-title="SanDisk 128GB Type-C Bellek" data-store="Amazon TR" data-price="899 TL">
                 <a href="https://www.amazon.com.tr/dp/B07YYJRXQR?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="SanDisk 128GB Type-C Bellek">
                     <div class="card-img-wrap">
                         <img src="assets/products/sandisk_128gb_type_c_bell_ad87d234.jpg" alt="SanDisk 128GB Type-C Bellek" class="card-img" loading="lazy">
@@ -1215,16 +1236,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (90 TL)</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">809 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1232,43 +1251,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="logitech g102 lightsync amazon tr" data-deal-id="deal_1791991202_15" data-deal-title="Logitech G102 Lightsync" data-store="Amazon TR" data-price="802 TL">
-                <a href="https://www.amazon.com.tr/dp/B07W4DH8JW?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Logitech G102 Lightsync">
-                    <div class="card-img-wrap">
-                        <img src="assets/products/logitech_g102_lightsync_789fad81.jpg" alt="Logitech G102 Lightsync" class="card-img" loading="lazy">
-                        <span class="badge-store store-amazon">Amazon TR</span>
-                        <span class="badge-discount">-38%</span>
-                        
-                    </div>
-                </a>
-                <div class="card-content">
-                    <a href="https://www.amazon.com.tr/dp/B07W4DH8JW?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-title-link" title="Logitech G102 Lightsync">
-                        <h3 class="card-title">Logitech G102 Lightsync</h3>
-                    </a>
-                    <div class="price-section">
-                        <span class="old-price">1.299 TL</span>
-                        <span class="new-price">802 TL</span>
-                    </div>
-
-                    <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (80 TL)</span>
-                        </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">722 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
-                        </div>
-                    </div>
-
-                    <a href="https://www.amazon.com.tr/dp/B07W4DH8JW?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="deal_1791991202_15" data-title="Logitech G102 Lightsync" data-store="Amazon TR" data-price="802 TL">🔥 Fırsata Git & Satın Al</a>
-                </div>
-            </div>
-
-            <div class="deal-card" data-status="active" data-title="razer kraken x lite amazon tr" data-deal-id="deal_1791987866_14" data-deal-title="Razer Kraken X Lite" data-store="Amazon TR" data-price="1.229 TL">
+            <div class="deal-card" data-status="active" data-category="general" data-title="razer kraken x lite amazon tr general" data-deal-id="deal_1791987866_14" data-deal-title="Razer Kraken X Lite" data-store="Amazon TR" data-price="1.229 TL">
                 <a href="https://www.amazon.com.tr/dp/B07XC936P8?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Razer Kraken X Lite">
                     <div class="card-img-wrap">
                         <img src="assets/products/razer_kraken_x_lite_e8a6479f.jpg" alt="Razer Kraken X Lite" class="card-img" loading="lazy">
@@ -1287,16 +1270,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 123 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 410 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.106 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 410 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1304,7 +1285,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="asus tuf 240hz gaming monitör amazon tr" data-deal-id="deal_1791956154_13" data-deal-title="Asus TUF 240Hz Gaming Monitör" data-store="Amazon TR" data-price="7.897,82 TL">
+            <div class="deal-card" data-status="active" data-category="monitor" data-title="asus tuf 240hz gaming monitör amazon tr monitor" data-deal-id="deal_1791956154_13" data-deal-title="Asus TUF 240Hz Gaming Monitör" data-store="Amazon TR" data-price="7.897,82 TL">
                 <a href="https://www.amazon.com.tr/dp/B0DQ8PFWNR?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Asus TUF 240Hz Gaming Monitör">
                     <div class="card-img-wrap">
                         <img src="assets/products/asus_tuf_240hz_gaming_mon_56a23024.jpg" alt="Asus TUF 240Hz Gaming Monitör" class="card-img" loading="lazy">
@@ -1323,16 +1304,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 2.633 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">7.648 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 2.633 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1340,7 +1319,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="stanley transit termos amazon tr" data-deal-id="deal_1791955175_12" data-deal-title="Stanley Transit Termos" data-store="Amazon TR" data-price="1.568,99 TL">
+            <div class="deal-card" data-status="active" data-category="lifestyle" data-title="stanley transit termos amazon tr lifestyle" data-deal-id="deal_1791955175_12" data-deal-title="Stanley Transit Termos" data-store="Amazon TR" data-price="1.568,99 TL">
                 <a href="https://www.amazon.com.tr/dp/B0FZVSKD5C?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Stanley Transit Termos">
                     <div class="card-img-wrap">
                         <img src="assets/products/stanley_transit_termos_88819170.jpg" alt="Stanley Transit Termos" class="card-img" loading="lazy">
@@ -1359,16 +1338,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 157 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 523 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.412 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 523 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1376,7 +1353,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="stanley quencher 1.18 l amazon tr" data-deal-id="deal_1791954802_11" data-deal-title="Stanley Quencher 1.18 L" data-store="Amazon TR" data-price="1.694,90 TL">
+            <div class="deal-card" data-status="active" data-category="lifestyle" data-title="stanley quencher 1.18 l amazon tr lifestyle" data-deal-id="deal_1791954802_11" data-deal-title="Stanley Quencher 1.18 L" data-store="Amazon TR" data-price="1.694,90 TL">
                 <a href="https://www.amazon.com.tr/dp/B0F8C5XZLK?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Stanley Quencher 1.18 L">
                     <div class="card-img-wrap">
                         <img src="assets/products/stanley_quencher_1_18_l_2df7cbbd.jpg" alt="Stanley Quencher 1.18 L" class="card-img" loading="lazy">
@@ -1395,16 +1372,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 169 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 565 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.525 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 565 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1412,7 +1387,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="north bayou f80 monitör kolu amazon tr" data-deal-id="deal_1791954453_10" data-deal-title="North Bayou F80 Monitör Kolu" data-store="Amazon TR" data-price="1.053,00 TL">
+            <div class="deal-card" data-status="active" data-category="monitor" data-title="north bayou f80 monitör kolu amazon tr monitor" data-deal-id="deal_1791954453_10" data-deal-title="North Bayou F80 Monitör Kolu" data-store="Amazon TR" data-price="1.053,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B01AI2YGK4?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="North Bayou F80 Monitör Kolu">
                     <div class="card-img-wrap">
                         <img src="assets/products/north_bayou_f80_monit_r_k_a6d288ef.jpg" alt="North Bayou F80 Monitör Kolu" class="card-img" loading="lazy">
@@ -1431,16 +1406,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 105 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 351 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">948 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 351 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1448,7 +1421,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="philips sessiz kablosuz mouse amazon tr" data-deal-id="deal_1791929364_9" data-deal-title="Philips Sessiz Kablosuz Mouse" data-store="Amazon TR" data-price="549,00 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="philips sessiz kablosuz mouse amazon tr gaming" data-deal-id="deal_1791929364_9" data-deal-title="Philips Sessiz Kablosuz Mouse" data-store="Amazon TR" data-price="549,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B0FBGV2H7P?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Philips Sessiz Kablosuz Mouse">
                     <div class="card-img-wrap">
                         <img src="assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg" alt="Philips Sessiz Kablosuz Mouse" class="card-img" loading="lazy">
@@ -1467,16 +1440,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (55 TL)</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">494 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1484,7 +1455,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="jbl c100si kulaklık amazon tr" data-deal-id="deal_1791923021_8" data-deal-title="JBL C100SI Kulaklık" data-store="Amazon TR" data-price="499,00 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="jbl c100si kulaklık amazon tr gaming" data-deal-id="deal_1791923021_8" data-deal-title="JBL C100SI Kulaklık" data-store="Amazon TR" data-price="499,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B01DEWVZ2C?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="JBL C100SI Kulaklık">
                     <div class="card-img-wrap">
                         <img src="assets/products/jbl_c100si_kulakl_k_1e3b79e4.jpg" alt="JBL C100SI Kulaklık" class="card-img" loading="lazy">
@@ -1503,16 +1474,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (50 TL)</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">449 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1520,7 +1489,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="steelseries rival 3 wireless gen 2 mouse amazon tr" data-deal-id="deal_1791918693_7" data-deal-title="SteelSeries Rival 3 Wireless Gen 2 Mouse" data-store="Amazon TR" data-price="1.949,00 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="steelseries rival 3 wireless gen 2 mouse amazon tr gaming" data-deal-id="deal_1791918693_7" data-deal-title="SteelSeries Rival 3 Wireless Gen 2 Mouse" data-store="Amazon TR" data-price="1.949,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B0F5QF2JQQ?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="SteelSeries Rival 3 Wireless Gen 2 Mouse">
                     <div class="card-img-wrap">
                         <img src="assets/products/steelseries_rival_3_wirel_6f1c7c69.jpg" alt="SteelSeries Rival 3 Wireless Gen 2 Mouse" class="card-img" loading="lazy">
@@ -1539,16 +1508,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 195 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 650 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.754 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 650 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1556,7 +1523,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="sony ps5 dualsense v2 kol amazon tr" data-deal-id="deal_1791917454_7" data-deal-title="Sony PS5 DualSense v2 Kol" data-store="Amazon TR" data-price="4.799,00 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="sony ps5 dualsense v2 kol amazon tr gaming" data-deal-id="deal_1791917454_7" data-deal-title="Sony PS5 DualSense v2 Kol" data-store="Amazon TR" data-price="4.799,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B0GGB35CR8?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Sony PS5 DualSense v2 Kol">
                     <div class="card-img-wrap">
                         <img src="assets/products/sony_ps5_dualsense_v2_kol_9195e4ee.jpg" alt="Sony PS5 DualSense v2 Kol" class="card-img" loading="lazy">
@@ -1575,16 +1542,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 1.600 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">4.549 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 1.600 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1592,7 +1557,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="razer blackshark v2 x amazon tr" data-deal-id="deal_1791910189_6" data-deal-title="Razer BlackShark V2 X" data-store="Amazon TR" data-price="1.799,00 TL">
+            <div class="deal-card" data-status="active" data-category="general" data-title="razer blackshark v2 x amazon tr general" data-deal-id="deal_1791910189_6" data-deal-title="Razer BlackShark V2 X" data-store="Amazon TR" data-price="1.799,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B09BD75Y21?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Razer BlackShark V2 X">
                     <div class="card-img-wrap">
                         <img src="assets/products/razer_blackshark_v2_x_25493bcb.jpg" alt="Razer BlackShark V2 X" class="card-img" loading="lazy">
@@ -1611,16 +1576,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 180 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 600 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.619 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 600 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1628,7 +1591,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="razer deathadder essential mouse amazon tr" data-deal-id="deal_1791840416_4" data-deal-title="Razer DeathAdder Essential Mouse" data-store="Amazon TR" data-price="1.140,00 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="razer deathadder essential mouse amazon tr gaming" data-deal-id="deal_1791840416_4" data-deal-title="Razer DeathAdder Essential Mouse" data-store="Amazon TR" data-price="1.140,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B092R71V77?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Razer DeathAdder Essential Mouse">
                     <div class="card-img-wrap">
                         <img src="assets/products/razer_deathadder_essentia_f4fcbf5e.jpg" alt="Razer DeathAdder Essential Mouse" class="card-img" loading="lazy">
@@ -1647,16 +1610,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 114 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 380 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.026 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 380 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1664,7 +1625,7 @@
                 </div>
             </div>
 
-            <div class="deal-card expired-card" data-status="expired" data-title="hyperx cloud iii oyuncu kulaklık amazon tr" data-deal-id="deal_1791839926_3" data-deal-title="HyperX Cloud III Oyuncu Kulaklık" data-store="Amazon TR" data-price="3.499,00 TL">
+            <div class="deal-card expired-card" data-status="expired" data-category="gaming" data-title="hyperx cloud iii oyuncu kulaklık amazon tr gaming" data-deal-id="deal_1791839926_3" data-deal-title="HyperX Cloud III Oyuncu Kulaklık" data-store="Amazon TR" data-price="3.499,00 TL">
                 <a href="https://www.amazon.com.tr/dp/B0C3BSZ56D?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="HyperX Cloud III Oyuncu Kulaklık">
                     <div class="card-img-wrap">
                         <img src="assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.jpg" alt="HyperX Cloud III Oyuncu Kulaklık" class="card-img" loading="lazy">
@@ -1683,16 +1644,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 1.166 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">3.249 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 1.166 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1700,7 +1659,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="steelseries qck+ large espor gaming mousepad amazon tr" data-deal-id="deal_steelseries_qck" data-deal-title="SteelSeries Qck+ Large Espor Gaming Mousepad" data-store="Amazon TR" data-price="1.219 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="steelseries qck+ large espor gaming mousepad amazon tr gaming" data-deal-id="deal_steelseries_qck" data-deal-title="SteelSeries Qck+ Large Espor Gaming Mousepad" data-store="Amazon TR" data-price="1.219 TL">
                 <a href="https://www.amazon.com.tr/dp/B000UVRU6G?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="SteelSeries Qck+ Large Espor Gaming Mousepad">
                     <div class="card-img-wrap">
                         <img src="assets/products/steelseries_qck.jpg" alt="SteelSeries Qck+ Large Espor Gaming Mousepad" class="card-img" loading="lazy">
@@ -1719,16 +1678,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 122 TL Nakit İade</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 406 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">1.097 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 406 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1736,7 +1693,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-title="razer viper v3 pro ultralight kablosuz espor faresi amazon tr" data-deal-id="deal_razer_viper_v3" data-deal-title="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" data-store="Amazon TR" data-price="4.857 TL">
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="razer viper v3 pro ultralight kablosuz espor faresi amazon tr gaming" data-deal-id="deal_razer_viper_v3" data-deal-title="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" data-store="Amazon TR" data-price="4.857 TL">
                 <a href="https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi">
                     <div class="card-img-wrap">
                         <img src="assets/products/razer_viper_v3_pro.jpg" alt="Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi" class="card-img" loading="lazy">
@@ -1755,16 +1712,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile 250 TL İade + Prime Kargo</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">3 Taksit x 1.619 TL</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">4.607 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ 3 Taksit x 1.619 TL</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1772,7 +1727,7 @@
                 </div>
             </div>
 
-            <div class="deal-card expired-card" data-status="expired" data-title="logitech g305 lightspeed 12.000 dpi kablosuz gaming mouse amazon tr" data-deal-id="deal_logitech_g305" data-deal-title="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" data-store="Amazon TR" data-price="899 TL">
+            <div class="deal-card expired-card" data-status="expired" data-category="gaming" data-title="logitech g305 lightspeed 12.000 dpi kablosuz gaming mouse amazon tr gaming" data-deal-id="deal_logitech_g305" data-deal-title="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" data-store="Amazon TR" data-price="899 TL">
                 <a href="https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse">
                     <div class="card-img-wrap">
                         <img src="assets/products/logitech_g305.jpg" alt="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" class="card-img" loading="lazy">
@@ -1791,16 +1746,14 @@
                     </div>
 
                     <div class="campaign-box">
-                        <div class="campaign-header">
-                            <span class="campaign-tag">💳 EK AVANTAJ</span>
-                            <span class="campaign-name">Nays ile %10 İade (90 TL)</span>
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit</span>
                         </div>
-                        <div class="net-cost-row">
-                            <span class="net-cost-lbl">Net Fırsat Maliyeti:</span>
-                            <span class="net-cost-val">809 TL</span>
-                        </div>
-                        <div class="installment-row">
-                            <span class="installment-txt">⚡ Peşin Fiyatına 3 Taksit</span>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
                         </div>
                     </div>
 
@@ -1842,12 +1795,20 @@
     </dialog>
 
     <script>
-        // --- 1. ARAMA VE KATEGORİ FİLTRELEME MOTORU (Aktif / Bitenler) ---
+        // --- 1. ARAMA VE KATEGORİ FİLTRELEME MOTORU ---
         let currentStatusFilter = 'all';
+        let currentCategoryFilter = 'all';
 
         function setStatusFilter(status, btn) {
             currentStatusFilter = status;
             document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            filterDeals();
+        }
+
+        function setCategoryFilter(cat, btn) {
+            currentCategoryFilter = cat;
+            document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
             filterDeals();
         }
@@ -1880,11 +1841,13 @@
             cards.forEach(card => {
                 const title = (card.getAttribute('data-title') || '').toLowerCase();
                 const cardStatus = card.getAttribute('data-status') || 'active';
+                const cardCat = card.getAttribute('data-category') || 'general';
 
                 const matchesSearch = !input || title.includes(input);
                 const matchesStatus = (currentStatusFilter === 'all') || (cardStatus === currentStatusFilter);
+                const matchesCategory = (currentCategoryFilter === 'all') || (cardCat === currentCategoryFilter);
 
-                if (matchesSearch && matchesStatus) {
+                if (matchesSearch && matchesStatus && matchesCategory) {
                     card.style.display = 'flex';
                     visibleCount++;
                 } else {

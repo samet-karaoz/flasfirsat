@@ -73,8 +73,9 @@ def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
     if coupon_info:
         msg_lines.append(f"🎟️ Kupon: *{coupon_info}* (Sayfada Aktif Edin)")
 
-    if net_cost:
-        msg_lines.append(f"💳 {bank_camp} ➔ *Net: {net_cost}*")
+    installment = deal.get("installment", "")
+    if installment:
+        msg_lines.append(f"💳 Taksit: *{installment}*")
 
     if seller_badge:
         msg_lines.append(f"🏢 Satıcı: {seller_badge}")
@@ -128,8 +129,7 @@ def send_telegram_deal_for_approval(
     old_price = deal.get("old_price", "")
     discount_pct = deal.get("discount_pct", "")
     store = deal.get("store_name", "Amazon TR")
-    net_cost = deal.get("net_cost", "")
-    bank_camp = deal.get("bank_campaign", "")
+    installment = deal.get("installment", "")
     coupon_info = str(deal.get("coupon_info", "")).strip()
 
     # Yönetici Önizleme Mesajı
@@ -140,8 +140,8 @@ def send_telegram_deal_for_approval(
     )
     if coupon_info:
         approval_caption += f"🎟️ <b>Kupon:</b> {coupon_info} (Sayfada Aktif Et)\n"
-    if net_cost:
-        approval_caption += f"💳 <b>Net Maliyet:</b> {net_cost} ({bank_camp})\n"
+    if installment:
+        approval_caption += f"💳 <b>Ödeme:</b> {installment}\n"
     approval_caption += f"🏪 <b>Mağaza:</b> {store}\n\n"
     approval_caption += "👇 <i>Yayınlamak istediğiniz platformu seçin:</i>"
 

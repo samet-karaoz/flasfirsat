@@ -756,13 +756,13 @@ def create_product_banner(
     sub_parts = []
     clean_coupon = re.sub(r'[^\w\s.,xX+\-/%]', '', str(coupon_text)).strip() if coupon_text else ""
     if clean_coupon:
-        sub_parts.append("Sayfadaki Kuponu Aktif Et")
-    if net_cost:
-        clean_net = re.sub(r'[^\w\s.,xX+\-/%]', '', net_cost).strip()
-        sub_parts.append(f"Nays ile Net: {clean_net}")
-    if installment and not clean_coupon:
+        sub_parts.append("🎟️ Sayfadaki Kuponu Aktif Et")
+    if installment:
         clean_inst_s = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
         sub_parts.append(clean_inst_s)
+    elif savings > 0 and not clean_coupon:
+        sav_fmt = f"{int(savings):,} TL".replace(',', '.')
+        sub_parts.append(f"Net Tasarruf: {sav_fmt}")
     sub_str = "  •  ".join(sub_parts) if sub_parts else ""
     new_str = new_price if new_price else "Fırsat Fiyatı"
 

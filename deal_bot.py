@@ -199,14 +199,8 @@ def process_deal_to_reel(
     deal["net_cost"] = deal.get("net_cost") or camp_info["net_cost"]
     deal["installment"] = deal.get("installment") or camp_info.get("installment", "")
 
-    # Kupon varsa net maliyetten düş
-    if deal.get("coupon_amount_tl", 0) > 0 and deal.get("net_cost"):
-        from deal_hunter import parse_price_to_float
-        net_val = parse_price_to_float(deal["net_cost"])
-        final_net = max(0.0, net_val - deal["coupon_amount_tl"])
-        deal["net_cost"] = f"{int(final_net):,} TL".replace(",", ".")
-
-    print(f"💳 Banka/Nays Avantajı: {deal['bank_campaign']} -> Net: {deal['net_cost']}")
+    if deal.get("installment"):
+        print(f"💳 Ödeme/Taksit Avantajı: {deal.get('installment')} • 📦 {deal.get('bank_campaign')}")
 
     # Piyasa En Ucuz Fiyat Doğrulaması (Akakçe / Piyasa Teyidi)
     try:

@@ -7,13 +7,14 @@
     "discount_pct": "-%61",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B07W4DH8JW?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile %10 İade (39 TL)",
-    "net_cost": "350 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/logitech_g102_lightsync_r_e25b0150.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "16.10.2026 13:02"
+    "date_added": "16.10.2026 13:02",
+    "category": "gaming"
   },
   {
     "id": "deal_1792095414_20",
@@ -23,13 +24,14 @@
     "discount_pct": "-33%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
-    "net_cost": "7.483 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 2.578 TL",
     "image_url": "assets/products/asus_tuf_27__165hz_monit__543719e7.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "15.10.2026 20:16"
+    "date_added": "15.10.2026 20:16",
+    "category": "monitor"
   },
   {
     "id": "deal_1792089571_20",
@@ -39,13 +41,14 @@
     "discount_pct": "-35%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0GRWGJS54?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 250 TL İade + 3 Taksit",
-    "net_cost": "5.629 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit x 1.959 TL",
     "image_url": "assets/products/lenovo_legion_240hz_gamin_a4fecd19.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "15.10.2026 21:39"
+    "date_added": "15.10.2026 21:39",
+    "category": "monitor"
   },
   {
     "id": "deal_1792088228_18",
@@ -55,13 +58,14 @@
     "discount_pct": "-39%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B017RD10X8?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile %10 İade (43 TL)",
-    "net_cost": "383 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_64gb_usb_bellek_22ab7a43.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "15.10.2026 21:17"
+    "date_added": "15.10.2026 21:17",
+    "category": "hardware"
   },
   {
     "id": "deal_1792056993_18",
@@ -71,13 +75,14 @@
     "discount_pct": "-4%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0DJH2NS6R?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
-    "net_cost": "72.749 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 24.333 TL",
     "image_url": "assets/products/playstation_5_pro_2efbc8f3.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "15.10.2026 12:36"
+    "date_added": "15.10.2026 12:36",
+    "category": "hardware"
   },
   {
     "id": "deal_1792052960_16",
@@ -87,13 +92,14 @@
     "discount_pct": "-36%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B07YYJRXQR?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile %10 İade (90 TL)",
-    "net_cost": "809 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_128gb_type_c_bell_ad87d234.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "15.10.2026 11:29"
+    "date_added": "15.10.2026 11:29",
+    "category": "hardware"
   },
   {
     "id": "deal_1791987866_14",
@@ -103,13 +109,14 @@
     "discount_pct": "-15%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B07XC936P8?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 123 TL Nakit İade",
-    "net_cost": "1.106 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 410 TL",
     "image_url": "assets/products/razer_kraken_x_lite_e8a6479f.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "14.10.2026 17:24"
+    "date_added": "14.10.2026 17:24",
+    "category": "general"
   },
   {
     "id": "deal_1791956154_13",
@@ -119,11 +126,12 @@
     "discount_pct": "-25%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0DQ8PFWNR?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
-    "net_cost": "7.648 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 2.633 TL",
     "image_url": "assets/products/asus_tuf_240hz_gaming_mon_56a23024.jpg",
-    "date_added": "14.10.2026 08:35"
+    "date_added": "14.10.2026 08:35",
+    "category": "monitor"
   },
   {
     "id": "deal_1791955175_12",
@@ -133,11 +141,12 @@
     "discount_pct": "-21%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0FZVSKD5C?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 157 TL Nakit İade",
-    "net_cost": "1.412 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 523 TL",
     "image_url": "assets/products/stanley_transit_termos_88819170.jpg",
-    "date_added": "14.10.2026 08:19"
+    "date_added": "14.10.2026 08:19",
+    "category": "lifestyle"
   },
   {
     "id": "deal_1791954802_11",
@@ -147,11 +156,12 @@
     "discount_pct": "-39%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0F8C5XZLK?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 169 TL Nakit İade",
-    "net_cost": "1.525 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 565 TL",
     "image_url": "assets/products/stanley_quencher_1_18_l_2df7cbbd.jpg",
-    "date_added": "14.10.2026 08:13"
+    "date_added": "14.10.2026 08:13",
+    "category": "lifestyle"
   },
   {
     "id": "deal_1791954453_10",
@@ -161,11 +171,12 @@
     "discount_pct": "-%36",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B01AI2YGK4?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 105 TL Nakit İade",
-    "net_cost": "948 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 351 TL",
     "image_url": "assets/products/north_bayou_f80_monit_r_k_a6d288ef.jpg",
-    "date_added": "14.10.2026 08:07"
+    "date_added": "14.10.2026 08:07",
+    "category": "monitor"
   },
   {
     "id": "deal_1791929364_9",
@@ -175,11 +186,12 @@
     "discount_pct": "-31%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0FBGV2H7P?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile %10 İade (55 TL)",
-    "net_cost": "494 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg",
-    "date_added": "13.10.2026 22:09"
+    "date_added": "13.10.2026 22:09",
+    "category": "gaming"
   },
   {
     "id": "deal_1791923021_8",
@@ -189,11 +201,12 @@
     "discount_pct": "-33%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B01DEWVZ2C?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile %10 İade (50 TL)",
-    "net_cost": "449 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/jbl_c100si_kulakl_k_1e3b79e4.jpg",
-    "date_added": "13.10.2026 20:23"
+    "date_added": "13.10.2026 20:23",
+    "category": "gaming"
   },
   {
     "id": "deal_1791918693_7",
@@ -203,11 +216,12 @@
     "discount_pct": "-35%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0F5QF2JQQ?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 195 TL Nakit İade",
-    "net_cost": "1.754 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 650 TL",
     "image_url": "assets/products/steelseries_rival_3_wirel_6f1c7c69.jpg",
-    "date_added": "13.10.2026 22:11"
+    "date_added": "13.10.2026 22:11",
+    "category": "gaming"
   },
   {
     "id": "deal_1791917454_7",
@@ -217,11 +231,12 @@
     "discount_pct": "-29%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0GGB35CR8?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
-    "net_cost": "4.549 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 1.600 TL",
     "image_url": "assets/products/sony_ps5_dualsense_v2_kol_9195e4ee.jpg",
-    "date_added": "13.10.2026 21:50"
+    "date_added": "13.10.2026 21:50",
+    "category": "gaming"
   },
   {
     "id": "deal_1791910189_6",
@@ -231,11 +246,12 @@
     "discount_pct": "-33%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B09BD75Y21?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 180 TL Nakit İade",
-    "net_cost": "1.619 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 600 TL",
     "image_url": "assets/products/razer_blackshark_v2_x_25493bcb.jpg",
-    "date_added": "13.10.2026 19:49"
+    "date_added": "13.10.2026 19:49",
+    "category": "general"
   },
   {
     "id": "deal_1791840416_4",
@@ -245,11 +261,12 @@
     "discount_pct": "-33%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B092R71V77?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 114 TL Nakit İade",
-    "net_cost": "1.026 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 380 TL",
     "image_url": "assets/products/razer_deathadder_essentia_f4fcbf5e.jpg",
-    "date_added": "12.10.2026 21:26"
+    "date_added": "12.10.2026 21:26",
+    "category": "gaming"
   },
   {
     "id": "deal_1791839926_3",
@@ -259,13 +276,14 @@
     "discount_pct": "-30%",
     "store_name": "Amazon TR",
     "store_url": "https://www.amazon.com.tr/dp/B0C3BSZ56D?tag=flasfirsat04-21",
-    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
-    "net_cost": "3.249 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "3 Taksit x 1.166 TL",
     "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.jpg",
     "date_added": "12.10.2026 21:18",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti"
+    "expired_reason": "İndirim Bitti",
+    "category": "gaming"
   },
   {
     "id": "deal_steelseries_qck",
@@ -277,11 +295,10 @@
     "store_url": "https://www.amazon.com.tr/dp/B000UVRU6G?tag=flasfirsat04-21",
     "image_url": "assets/products/steelseries_qck.jpg",
     "date_added": "12.10.2026 17:58",
-    "bank_campaign": "Nays ile 122 TL Nakit İade",
-    "net_cost": "1.097 TL",
-    "benefit_text": "💳 Net Maliyet: 1.097 TL (Nays ile 122 TL Nakit İade)",
-    "savings": "122 TL",
-    "installment": "3 Taksit x 406 TL"
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "3 Taksit x 406 TL",
+    "category": "gaming"
   },
   {
     "id": "deal_razer_viper_v3",
@@ -293,11 +310,10 @@
     "store_url": "https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21",
     "image_url": "assets/products/razer_viper_v3_pro.jpg",
     "date_added": "12.10.2026 17:48",
-    "bank_campaign": "Nays ile 250 TL İade + Prime Kargo",
-    "net_cost": "4.607 TL",
-    "benefit_text": "💳 Net Maliyet: 4.607 TL (Nays ile 250 TL İade + Prime Kargo)",
-    "savings": "250 TL",
-    "installment": "3 Taksit x 1.619 TL"
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "3 Taksit x 1.619 TL",
+    "category": "gaming"
   },
   {
     "id": "deal_logitech_g305",
@@ -309,12 +325,11 @@
     "store_url": "https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat04-21",
     "image_url": "assets/products/logitech_g305.jpg",
     "date_added": "12.10.2026 16:12",
-    "bank_campaign": "Nays ile %10 İade (90 TL)",
-    "net_cost": "809 TL",
-    "benefit_text": "💳 Net Maliyet: 809 TL (Nays ile %10 İade (90 TL))",
-    "savings": "90 TL",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti"
+    "expired_reason": "İndirim Bitti",
+    "category": "gaming"
   }
 ]

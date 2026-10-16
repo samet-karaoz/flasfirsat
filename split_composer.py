@@ -291,6 +291,7 @@ def select_smart_reaction_hook(discount_pct: str = "", product_title: str = "", 
 def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) -> str:
     """
     Alt meme videosunun üstüne binecek şeffaf, modern glassmorphic ve büyük reaksiyon başlığı üretir.
+    Pilmoji ile gerçek renkli emojileri destekler, font uyumsuzluğunda tofu (▢) kutuları engeller.
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
@@ -302,27 +303,58 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
 
     f_hook = get_font("segoeuib", 32)  # 32px Büyütülmüş font
     clean_text = reaction_text.strip()
-    text_w = draw.textlength(clean_text, font=f_hook)
 
-    box_w = min(W - 40, text_w + 64)
-    box_h = 68  # 68px Konforlu kapsül yüksekliği
-    box_x = (W - box_w) // 2
-    box_y = 22  # Meme videosunun tam üst kenarında
+    try:
+        from pilmoji import Pilmoji
+        has_pilmoji = True
+    except ImportError:
+        has_pilmoji = False
 
-    # Koyu füme yarı saydam arka plan kapsülü
-    draw.rounded_rectangle(
-        (box_x, box_y, box_x + box_w, box_y + box_h),
-        radius=16,
-        fill=(15, 23, 42, 230),
-        outline=(255, 255, 255, 100),
-        width=2
-    )
+    if has_pilmoji:
+        with Pilmoji(img) as p:
+            text_w, text_h = p.getsize(clean_text, font=f_hook)
+            box_w = min(W - 40, text_w + 64)
+            box_h = 68
+            box_x = (W - box_w) // 2
+            box_y = 22
 
-    t_bbox = draw.textbbox((0, 0), clean_text, font=f_hook)
-    t_h = t_bbox[3] - t_bbox[1]
-    tx = (W - text_w) // 2
-    ty = box_y + (box_h - t_h) // 2 - t_bbox[1]
-    draw.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255, 255))
+            draw.rounded_rectangle(
+                (box_x, box_y, box_x + box_w, box_y + box_h),
+                radius=18,
+                fill=(15, 23, 42, 230),
+                outline=(255, 255, 255, 110),
+                width=2
+            )
+            tx = (W - text_w) // 2
+            ty = box_y + (box_h - text_h) // 2
+            p.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255))
+    else:
+        # Pilmoji yoksa emoji kaynaklı tofu (▢) kutucukları temizle
+        try:
+            import emoji
+            safe_text = emoji.replace_emoji(clean_text, replace="").strip()
+        except ImportError:
+            import re
+            safe_text = re.sub(r'[\U00010000-\U0010ffff]', '', clean_text).strip()
+
+        text_w = draw.textlength(safe_text, font=f_hook)
+        box_w = min(W - 40, text_w + 64)
+        box_h = 68
+        box_x = (W - box_w) // 2
+        box_y = 22
+
+        draw.rounded_rectangle(
+            (box_x, box_y, box_x + box_w, box_y + box_h),
+            radius=18,
+            fill=(15, 23, 42, 230),
+            outline=(255, 255, 255, 110),
+            width=2
+        )
+        t_bbox = draw.textbbox((0, 0), safe_text, font=f_hook)
+        t_h = t_bbox[3] - t_bbox[1]
+        tx = (W - text_w) // 2
+        ty = box_y + (box_h - t_h) // 2 - t_bbox[1]
+        draw.text((tx, ty), safe_text, font=f_hook, fill=(255, 255, 255, 255))
 
     img.save(output_path, "PNG")
     return output_path

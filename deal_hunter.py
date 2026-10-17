@@ -24,7 +24,7 @@ DEFAULT_CHANNELS = [
 
 BORING_REGEX = re.compile(
     r"(şarj\s*aleti|şarj\s*cihazı|şarj\s*kablosu|şarj\s*kiti|şarj\s*istasyonu|\bşarj\b|\bkablo(su)?\b(?!lu)|"
-    r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı|tutucu|"
+    r"adaptör[üu]?|kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme|temizleyici|çorap|askı(lık)?|tutucu|"
     r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık|yumuşatıcı|şampuan|diş\s*fırçası|mendil|pijama|çanta(sı)?|"
     r"tartı(sı)?|terazi(si)?|baskül|ölçüm|termometre|ateş\s*ölçer|"
@@ -35,7 +35,10 @@ BORING_REGEX = re.compile(
     r"motosiklet|lastik|kask(ı)?|disk\s*kilidi|saç\s*toniği|sabun|"
     r"tencere|tava|yastık|çarşaf|nevresim|ayakkabı|terlik|bot|parfüm|kolonya|güneş\s*kremi|serum|makyaj|"
     r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|"
-    r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|aparat[ıi]?|"
+    r"kartuş|toner|koli|kutu|folyo|termal|termal\s*macun|vida|dübel|somun|aparat[ıi]?|"
+    r"musluk|duş\s*başlığı|hortum|gider|paspas|fırça|mandal|priz|uzatma\s*kablosu|ampul|duy|bant|yapıştırıcı|silikon|"
+    r"defter|kalem|dosya|klasör|zarf|\bkitap\b|roman|dergi|kedi\s*kumu|köpek|tasma|külot|boxer|atlet|eldiven|bere|şemsiye|"
+    r"oto\s*kokusu|silecek|bijon|kordon|kayış|"
     r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
     r"tıraş\s*başlığı|conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
@@ -75,6 +78,25 @@ def is_vague_deal(title: str, text: str = "") -> bool:
 
     return False
 
+# Türkiye'de insanların görünce tereddütsüz tıkladığı A-Sınıfı Dev Markalar (Brand Authority Whitelist)
+TIER_1_BRANDS = [
+    "apple", "samsung", "sony", "asus", "rog", "tuf", "msi", "dell", "alienware", "lg", "lenovo", "hp", "victus",
+    "acer", "nitro", "benq", "viewsonic", "aoc", "gigabyte", "logitech", "razer", "steelseries", "hyperx", "corsair",
+    "jbl", "anker", "soundcore", "sennheiser", "marshall", "bose", "edifier", "nothing", "philips", "dyson",
+    "stanley", "delonghi", "nespresso", "xiaomi", "roborock", "dreame", "bosch", "einhell", "lego", "braun",
+    "oral-b", "spigen", "baseus", "ugreen", "belkin", "tp-link", "sandisk", "kingston", "crucial", "wd", "seagate",
+    "nintendo", "playstation", "dualsense", "xbox", "casio", "garmin", "huawei", "honor", "anker", "north bayou",
+    "keychron", "epomaker", "ajazz", "attack shark", "wraith", "aula", "fifine", "elgato", "rode", "shure"
+]
+
+def has_tier1_brand(title: str) -> bool:
+    """Ürünün Türkiye'de yüksek güven ve talep gören A-sınıfı bir markaya ait olup olmadığını kontrol eder."""
+    t_low = (title or "").lower()
+    for b in TIER_1_BRANDS:
+        if re.search(r"\b" + re.escape(b) + r"\b", t_low):
+            return True
+    return False
+
 HIGH_DEMAND_KEYWORDS = [
     # Konsol & Gaming Donanım
     "playstation", "ps5", "ps4", "xbox", "nintendo", "switch",
@@ -86,7 +108,7 @@ HIGH_DEMAND_KEYWORDS = [
     # Bilgisayar & Ekran
     "monitör", "monitor", "curved", "gaming laptop", "laptop", "bilgisayar", "ssd", "nvme",
     # Yaşam, Mutfak & Trend Teknolojiler
-    "stanley", "termos", "airfryer", "kahve makinesi", "oneblade", "tıraş",
+    "stanley", "termos", "airfryer", "kahve makinesi", "oneblade", "tıraş", "lego", "projeksiyon", "robot süpürge",
     # Güçlü Markalar
     "apple", "razer", "logitech", "steelseries", "hyperx", "asus", "rog", "msi", "sony", "samsung", "jbl", "corsair", "anker", "philips"
 ]
@@ -288,11 +310,16 @@ def download_file(url: str, output_path: str) -> bool:
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
 AMAZON_CATALOG_SOURCES = [
+    ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
+    ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
+    ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
     ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
     ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
     ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
     ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
-    ("AKILLI_EV", "https://www.amazon.com.tr/gp/bestsellers/electronics/13735824031")
+    ("KULAKLIK_SES", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709880031"),
+    ("PATLAYAN_MUTFAK", "https://www.amazon.com.tr/gp/movers-and-shakers/kitchen"),
+    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")
 ]
 
 CAT_ROTATION_FILE = os.path.join(TEMP_DIR, "amazon_cat_rot.txt")
@@ -320,7 +347,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
     """
     Doğrudan amazon.com.tr üzerinden yüksek talep gören viral Gaming, PC, Donanım, Ses ve Trend Yaşam ürünlerini çeker.
     Sıkıcı aksesuarları filtreler, ürünün gerçek Türkiye piyasa fiyatını ve indirimini analiz eder.
-    Sadece belirlenen minimum indirim oranını (min_discount) karşılayan ürünleri seçer.
+    Sadece belirlenen minimum indirim oranını (min_discount) ve AI Arzu Testini (8+/10) karşılayan ürünleri seçer.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
     
@@ -376,6 +403,32 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             if BORING_REGEX.search(raw_title):
                 continue
 
+            # 1.5 Halk Onayı (Social Proof): Yıldız Puanı ve Yorum Sayısı Kontrolü
+            card_text = it.get_text(" ", strip=True)
+            rating_val = 0.0
+            review_count = 0
+            r_match = re.search(r"([12345][.,]\d)\s*(?:/\s*5|yıldız)", card_text)
+            if r_match:
+                try:
+                    rating_val = float(r_match.group(1).replace(",", "."))
+                except Exception:
+                    pass
+            rev_el = it.find("span", class_=re.compile(r"a-size-small"))
+            if rev_el:
+                rev_digits = re.sub(r"[^\d]", "", rev_el.text)
+                if rev_digits:
+                    try:
+                        review_count = int(rev_digits)
+                    except Exception:
+                        pass
+
+            if rating_val > 0 and rating_val < 4.1:
+                print(f"[Deal Hunter] ⏭️ Düşük Yıldız Puanı Elendi ({rating_val}⭐ < 4.1): {raw_title[:38]}")
+                continue
+            if 0 < review_count < 20 and not has_tier1_brand(raw_title):
+                print(f"[Deal Hunter] ⏭️ Yetersiz Yorumlu Fason Ürün Elendi ({review_count} yorum): {raw_title[:38]}")
+                continue
+
             # 2. Alt tip anti-tekrar koruması (örn: peş peşe 2 kol/gamepad veya 2 fare gelmez)
             raw_subtype = get_product_subtype(raw_title)
             if raw_subtype != "general" and raw_subtype in seen_subtypes:
@@ -411,14 +464,14 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
 
             print(f"[Deal Hunter] Aday Ürün Analiz Ediliyor ({cat_name}): {raw_title[:45]} | {raw_price}")
 
-            prompt = f"""Şu popüler Amazon Türkiye ürününün gerçek piyasa değerini ve indirimini analiz et:
+            prompt = f"""Şu popüler Amazon Türkiye ürününün gerçek piyasa değerini, indirimini ve sosyal medyada satın alınma cazibesini analiz et:
 Ürün: {raw_title}
 Amazon Satış Fiyatı: {raw_price}
 
 GÖREV:
 1. Bu ürünün Türkiye teknoloji/perakende pazarındaki gerçek piyasa / tavsiye edilen liste satış fiyatını (MSRP) belirle.
-2. Amazon fiyatı ({raw_price}) ile piyasa liste fiyatı arasındaki indirim oranını hesapla.
-3. Gerçekçi hesapla (örn: Piyasa 2.499 TL, Amazon 1.499 TL ise -%40).
+2. Amazon fiyatı ({raw_price}) ile piyasa liste fiyatı arasındaki indirim oranını gerçekçi hesapla.
+3. VİTRİN & ARZU TESTİ (desirability_score: 1-10): Bu ürün Instagram Reels'te paylaşıldığında insanların "Oha çok iyi ürün/marka, bu fiyata kaçmaz!" deyip satın almak isteyeceği arzu edilen, havalı ve popüler bir ürün mü? Yoksa kimsenin heyecanlanmayacağı sıkıcı, tuhaf, niş veya sıradan bir ürün mü? (Sadece gerçek anlamda ilgi çekici, insanların görünce almak isteyeceği ürünlere 8, 9 veya 10 puan ver; sıradan/saçma ürünlere 1-6 ver!)
 
 Şu JSON formatında döndür:
 {{
@@ -426,12 +479,27 @@ GÖREV:
   "old_price": "Türkiye piyasa/liste fiyatı (örn: 2.499 TL)",
   "new_price": "{raw_price}",
   "discount_pct": "Hesaplanan indirim yüzdesi (örn: -38% veya -45%)",
+  "desirability_score": 9,
   "badge": "İndirim %45 üzeriyse 'DİP FİYAT', %35 üzeriyse 'DEV İNDİRİM', diğerinde 'AMAZON FIRSATI'",
   "hook": "Kullanıcıların neden bu ürüne akın ettiğini anlatan tek cümle"
 }}
 """
             deal_data = call_gemini(prompt, json_mode=True)
             if not deal_data or not deal_data.get("title"):
+                continue
+
+            desirability = 8
+            try:
+                desirability = int(deal_data.get("desirability_score", 8))
+            except Exception:
+                desirability = 8
+            deal_data["desirability_score"] = desirability
+            deal_data["rating"] = rating_val
+            deal_data["review_count"] = review_count
+            deal_data["is_mover_shaker"] = ("PATLAYAN" in cat_name)
+
+            if desirability < 8:
+                print(f"[Deal Hunter] ⏭️ Yapay Zeka Vitrin Testinden Geçemedi (Arzu Puanı: {desirability}/10 < 8): {deal_data.get('title')}")
                 continue
 
             if is_deal_already_shared(deal_data.get("title", ""), prod_url, exclude_urls):
@@ -594,10 +662,14 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
 2. Eğer genel bir kategori, birden fazla ürün veya belirsiz bir kampanya ise "is_specific_product" alanını false yap!
 3. Belirli tek bir ürünse "title" alanına NET marka ve model adını yaz (maksimum 30 karakter).
 4. Eğer mesajda kupon indirimi, kupon kodu veya sepette kupon şartı belirtilmişse "coupon_info" alanına kısa ve net yaz (örn: "200 TL Kuponu Aktif Et", "Kupon Kodu: FIRSAT100"). Kupon yoksa "" bırak.
+5. "desirability_score" (1 ile 10 arası tam sayı): Bu ürün Instagram Reels'te karşısına çıkan birinin HEYECANLANIP ALMAK İSTEYECEĞİ, popüler, arzu edilen ve bilinen bir ürün mü?
+   - Oyuncu ekipmanı, kulaklık, monitör, akıllı saat, kahve makinesi, termos, airfryer, Lego, güçlü powerbank/şarj, bilinen marka elektronik veya çok popüler ev aleti ise 8-10 ver.
+   - Kimsenin bilmediği fason marka, yedek parça, tesisat malzemesi, kırtasiye, basit kablo/kılıf veya sıkıcı/alakasız bir ürünse 1-5 ver.
 
 Şu JSON formatında döndür:
 {{
   "is_specific_product": true,
+  "desirability_score": 9,
   "title": "Ürünün net marka ve model adı (Örn: Razer DeathAdder V2)",
   "old_price": "Varsa eski veya normal piyasa fiyatı (örn: 1.499 TL)",
   "new_price": "İndirimli satış fiyatı (örn: 799 TL)",
@@ -620,6 +692,16 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             # Genel kategori veya belirsiz başlık filtresi
             if not deal_data.get("is_specific_product", True):
                 print(f"[Deal Hunter] ⏭️ Genel/Belirsiz Kategori Duyurusu Elendi: {deal_data.get('title')}")
+                continue
+
+            # AI Arzu Edilebilirlik (Desirability) Barajı (En az 8/10 olmalı)
+            try:
+                des_score = int(deal_data.get("desirability_score", 8))
+            except Exception:
+                des_score = 8
+            deal_data["desirability_score"] = des_score
+            if des_score < 8:
+                print(f"[Deal Hunter] ⏭️ Düşük Cazibe / Sıradan Ürün Elendi (Puan: {des_score}/10): {deal_data.get('title')}")
                 continue
 
             if is_vague_deal(deal_data.get("title", ""), raw_text):
@@ -657,6 +739,7 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             deal_data["source_channel"] = ch
             deal_data["store_url"] = store_url
             deal_data["store_name"] = store_name
+            deal_data["is_tier1_brand"] = has_tier1_brand(deal_data.get("title", "")) or has_tier1_brand(raw_text)
 
             # Amazon linki ise ASIN çıkar ve fiyat geçmişine kaydet
             asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", store_url, re.IGNORECASE)
@@ -679,20 +762,19 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
                 deal_data["badge"] = f"{store_name.upper()} FIRSATI"
 
             collected_deals.append(deal_data)
-            print(f"[Deal Hunter] 🔥 [{store_name}] Fırsat Yakalandı: {deal_data['title']} | {deal_data['new_price']} (-%{pct_val}, Net: {camp['net_cost']})")
+            print(f"[Deal Hunter] 🔥 [{store_name}] Fırsat Yakalandı: {deal_data['title']} | {deal_data['new_price']} (-%{pct_val}, Cazibe: {des_score}/10, Net: {camp['net_cost']})")
 
     return collected_deals
 
 def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, min_discount: int = 25) -> list:
     """
-    Amazon TR, Hepsiburada ve Trendyol üzerindeki EN YÜKSEK İNDİRİMLİ fırsatları avlar.
-    Hem Amazon kataloglarını hem de Telegram sıcak fırsat kanallarını eş zamanlı tarar.
-    Tüm adayları indirim oranına ve net TL tasarrufuna göre puanlayıp en yüksek indirimi en tepeye koyar.
+    Amazon TR, Hepsiburada ve Trendyol üzerindeki EN ARZU EDİLEN ve EN YÜKSEK İNDİRİMLİ fırsatları avlar.
+    6 Katmanlı Akıllı Keşif Motoru ile saçma/fason ürünleri eler, A-Sınıfı marka ve çok satan fırsatları zirveye taşır.
     """
     candidates = []
-    print(f"\n[Deal Hunter] 🔍 En Yüksek İndirim Avı Başlatıldı (Öncelikli Mağaza: AMAZON TR, Mod: {platform.upper()}, Min İndirim: %{min_discount})...")
+    print(f"\n[Deal Hunter] 🔍 6 Katmanlı Akıllı İndirim Avı Başlatıldı (Öncelikli Mağaza: AMAZON TR, Mod: {platform.upper()}, Min İndirim: %{min_discount})...")
 
-    # 1. Amazon TR Kataloglarından Çek (Kategoriler arası rotasyonlu)
+    # 1. Amazon TR Kataloglarından Çek (Movers & Shakers + Çok Satanlar + Fırsatlar rotasyonlu)
     if platform in ("all", "amazon"):
         amz_deals = hunt_amazon_deals(limit=limit + 5, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, min_discount=min_discount)
         for d in amz_deals:
@@ -722,52 +804,81 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
     if not candidates:
         return []
 
-    # 3. İndirim Odaklı Puanlama Motoru (En yüksek indirimli ve karlı ürünü tepeye yerleştirir)
+    # 3. 6 Katmanlı Dengeli Cazibe & İndirim Puanlama Motoru
+    # Saçma/fason ürünlerin şişirme %70 indirimle üste çıkmasını engeller;
+    # gerçek marka, yüksek yorum/yıldız ve yüksek satın alma arzusunu gerçek indirimle birleştirir.
     def score_deal(deal):
         title = deal.get("title", "").lower()
         score = 0.0
-        
-        # A. Birincil Kriter: İndirim Oranı (%1 indirim = +5 puan!)
+
+        # A. Dengeli İndirim Puanı (Tavan: %48! Böylece fason ürünlerin sahte %75 indirimi haksız avantaj sağlamaz)
         pct_val = get_deal_discount_pct(deal)
-        score += pct_val * 5.0
+        capped_pct = min(pct_val, 48)
+        score += capped_pct * 3.5
 
-        # B. Süper İndirim & Çöküş Bonusu
-        if pct_val >= 50:
-            score += 100.0  # Fiyat hatası / %50+ dev indirim
-        elif pct_val >= 40:
-            score += 50.0   # %40+ çok büyük fırsat
-        elif pct_val >= 30:
-            score += 20.0   # %30+ iyi indirim
+        # Gerçek marka + yüksek indirim sinerjisi:
+        is_tier1 = deal.get("is_tier1_brand") or has_tier1_brand(title)
+        if is_tier1:
+            score += 65.0  # A-Sınıfı Dev Marka Otorite Bonusu
+            if pct_val >= 35:
+                score += 45.0  # Bilinen markada %35+ indirim = Gerçek Fırsat!
+            elif pct_val >= 25:
+                score += 25.0
+        else:
+            # Tier-1 marka değilse ve cazibe puanı 9'un altındaysa ağır ceza uygula
+            if int(deal.get("desirability_score", 8)) < 9:
+                score -= 80.0
 
-        # C. Net TL Tasarruf Miktarı
+        # B. AI Arzu Edilebilirlik (Desirability) Puanı (8..10 -> +96..+120 Puan)
+        des_score = int(deal.get("desirability_score", 8))
+        score += des_score * 12.0
+
+        # C. Sosyal Kanıt (Yorum Sayısı & Yıldız Puanı) Bonusu
+        rev_count = int(deal.get("review_count", 0))
+        rating_val = float(deal.get("rating", 0.0))
+        if rev_count >= 500:
+            score += 45.0
+        elif rev_count >= 100:
+            score += 30.0
+        elif rev_count >= 30:
+            score += 15.0
+
+        if rating_val >= 4.6:
+            score += 25.0
+        elif rating_val >= 4.3:
+            score += 15.0
+
+        # D. Amazon Movers & Shakers (Son 24 Saatte Satışı Patlayanlar) Bonusu
+        if deal.get("is_mover_shaker"):
+            score += 35.0
+
+        # E. Net TL Tasarruf Miktarı
         savings = get_deal_savings_tl(deal)
         if savings >= 2000:
-            score += 50.0
+            score += 45.0
         elif savings >= 1000:
             score += 30.0
         elif savings >= 500:
             score += 15.0
 
-        # D. Yüksek Talep Gören Marka & Donanım Bonusu
+        # F. Yüksek Talep & Viral Tartışma Bonusu (Reels'te en çok kaydedilen/tartışılan ürünler)
         for kw in HIGH_DEMAND_KEYWORDS:
             if kw in title:
                 score += 25.0
                 break
 
-        # E. Viral Tartışma & Yüksek Etkileşim Bonusu (+25 Puan: Reels'te en çok izlenen, paylaşılan ve yorum yapılan ürünler)
         viral_engagement_kw = [
             "monitör", "monitor", "klavye", "mouse", "kulaklık", "gaming", "oyuncu", "gamepad",
             "stanley", "termos", "kahve", "airfryer", "lego", "apple", "samsung", "logitech",
-            "steelseries", "razer", "philips", "sony", "dyson", "north bayou", "dualsense"
+            "steelseries", "razer", "philips", "sony", "dyson", "north bayou", "dualsense",
+            "powerbank", "şarj", "projeksiyon", "akıllı saat", "ssd", "robot süpürge"
         ]
         if any(v in title for v in viral_engagement_kw):
             score += 25.0
 
-        # F. Kupon İndirimi Bonusu (+15 Puan: Kuponlu ürünler kullanıcılara ekstra fırsat hissi verir)
+        # G. Kupon İndirimi & Amazon TR Affiliate Önceliği
         if deal.get("coupon_info"):
             score += 15.0
-
-        # G. Mağaza Bonusu (Affiliate için Amazon TR önceliği)
         if deal.get("store_name") == "Amazon TR":
             score += 35.0
 

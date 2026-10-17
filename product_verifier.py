@@ -167,7 +167,29 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         elif tl_m:
             coupon_amount_tl = parse_price_to_float(tl_m.group(1))
 
-    # 5. GERÇEK ÜRETİCİ ÖZELLİK MADDELERİ (Bullet Points & Overview Table)
+    # 5.SOSYAL KANIT: YILDIZ PUANI, YORUM SAYISI & "GEÇEN AY X+ SATIN ALINDI" ETİKETİ
+    rating_val = 0.0
+    review_count = 0
+    bought_past_month = ""
+    try:
+        rating_el = soup.select_one("#acrPopover, span[data-hook='rating-out-of-text'], i.a-icon-star span.a-icon-alt")
+        if rating_el:
+            r_text = (rating_el.get("title") or rating_el.text or "").strip().replace(",", ".")
+            r_m = re.search(r"(\d\.\d)", r_text)
+            if r_m:
+                rating_val = float(r_m.group(1))
+        rev_el = soup.select_one("#acrCustomerReviewText, span[data-hook='total-review-count']")
+        if rev_el:
+            rev_digits = re.sub(r"[^\d]", "", rev_el.text.strip())
+            if rev_digits:
+                review_count = int(rev_digits)
+        bought_el = soup.select_one("#social-proofing-faceout-title-tk_bought span, span.social-proofing-faceout-title-text")
+        if bought_el:
+            bought_past_month = bought_el.text.strip()
+    except Exception:
+        pass
+
+    # 6. GERÇEK ÜRETİCİ ÖZELLİK MADDELERİ (Bullet Points & Overview Table)
     bullets = []
     for li in soup.select("#feature-bullets ul li"):
         txt = li.text.strip()
@@ -181,7 +203,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         if k and v:
             overview.append(f"{k.text.strip()}: {v.text.strip()}")
 
-    # 6. GERÇEK VERİLERDEN TEK SATIRLIK VURUCU ÖZELLİK (Gemini)
+    # 7. GERÇEK VERİLERDEN TEK SATIRLIK VURUCU ÖZELLİK (Gemini)
     feature_pill = ""
     raw_specs = "\n".join(bullets[:4] + overview[:4])
     prod_title = soup.title.text if soup.title else ""
@@ -194,7 +216,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             raw_specs=raw_specs
         )
 
-    # 7. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
+    # 8. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
     is_lowest_30d = False
     if asin and price_val > 0:
         record_price(asin, "Amazon TR", soup.title.text[:80] if soup.title else "", price_val)
@@ -213,6 +235,9 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         "is_sold_by_amazon": is_sold_by_amazon,
         "coupon_text": coupon_text,
         "coupon_amount_tl": coupon_amount_tl,
+        "rating": rating_val,
+        "review_count": review_count,
+        "bought_past_month": bought_past_month,
         "feature_pill": feature_pill,
         "killer_hook": feature_pill,
         "is_lowest_30d": is_lowest_30d
@@ -221,7 +246,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
 def verify_deal_before_publish(deal: dict) -> dict:
     """
     Video üretimi veya Telegram paylaşımı öncesi fırsatın son kontrolünü yapar.
-    Stok bitmişse, erişim engellenmişse veya fiyat aşırı yükselmişse paylaşımı durdurur.
+    Stok bitmişse, erişim engellenmişse, puanı düşükse veya fiyat aşırı yükselmişse paylaşımı durdurur.
     Gerçek üstü çizili fiyatı ve satıcı rozetini günceller.
     """
     store_url = deal.get("store_url", "")
@@ -250,6 +275,26 @@ def verify_deal_before_publish(deal: dict) -> dict:
 
             print(f"[Doğrulama] ❌ ÜRÜN YAYINA UYGUN DEĞİL! ({reason}). Paylaşım iptal ediliyor.")
             return {"valid": False, "verified": False, "reason": reason}
+
+        # Canlı Sosyal Kanıt & Kalite Barajı (Düşük yıldızlı veya yorumsuz fason ürünleri ele)
+        live_rating = v_res.get("rating", 0.0)
+        live_reviews = v_res.get("review_count", 0)
+        if live_rating > 0:
+            deal["rating"] = live_rating
+        if live_reviews > 0:
+            deal["review_count"] = live_reviews
+        if v_res.get("bought_past_month"):
+            deal["bought_past_month"] = v_res["bought_past_month"]
+            print(f"[Doğrulama] 🔥 Canlı Satış Hızı: {v_res['bought_past_month']}")
+
+        if live_rating > 0 and live_rating < 4.0:
+            print(f"[Doğrulama] ❌ DÜŞÜK YILDIZ PUANI ({live_rating}⭐ < 4.0⭐)! Kalitesiz ürün koruması devrede, paylaşım iptal ediliyor.")
+            return {"valid": False, "reason": f"Yıldız puanı çok düşük ({live_rating}⭐)"}
+
+        from deal_hunter import has_tier1_brand
+        if not has_tier1_brand(deal.get("title", "")) and live_reviews > 0 and live_reviews < 10:
+            print(f"[Doğrulama] ❌ YETERSİZ SOSYAL KANIT (Bilinmeyen marka ve sadece {live_reviews} yorum)! Paylaşım iptal ediliyor.")
+            return {"valid": False, "reason": f"Yetersiz yorum sayısı ({live_reviews} yorum)"}
 
         # Canlı fiyat kontrolü (İndirim bitti mi / fahiş zam geldi mi?)
         if v_res.get("live_price_val", 0) > 0:

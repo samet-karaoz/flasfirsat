@@ -12,17 +12,17 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
-    "knight_cat.mp4",           # 1. Şövalye Kedi (Zırhlı kedi viral)
-    "bicerdover_ciftetelli.mp4", # 2. Biçerdöver çiftetelli (Türk viral dans)
-    "homelander_stare.mp4",     # 3. Homelander şok / Ciddi bakış
-    "degirmenci_dayi_cj.mp4",   # 4. GTA San Andreas Değirmenci Dayı
-    "bale_nod.mp4",             # 5. Christian Bale onaylama / takdir
-    "limon_davulcu.mp4",        # 6. Limoncu Davulcu (Türk viral dans)
-    "cat_vibing.mp4",           # 7. Vibing Cat (Ritimle kafa sallayan kedi)
-    "angaraya_mi_geldin.mp4",   # 8. Angara'ya mı geldin la
-    "the_rock.mp4",             # 9. The Rock ikonik kaş kaldırma
-    "limon_halay.mp4",          # 10. Limon Halay (Türk viral halay)
-    "vince_mcmahon.mp4"         # 11. Vince McMahon para koklama / Şok sevinç
+    "degirmenci_dayi_cj.mp4",    # 1. Değirmenci Dayı (CJ)
+    "knight_cat.mp4",            # 2. Zırhlı Şövalye Kedi
+    "limon_halay.mp4",           # 3. Limon Halay
+    "bicerdover_ciftetelli.mp4",  # 4. Biçerdöver Çiftetelli
+    "homelander_stare.mp4",      # 5. Homelander (Şok / Ciddi Bakış)
+    "the_rock.mp4",              # 6. The Rock (Tek Kaş Kaldırma)
+    "vince_mcmahon.mp4",         # 7. Vince McMahon (Para / Şok Sevinç)
+    "bale_nod.mp4",              # 8. Christian Bale (Onaylama / Takdir)
+    "angaraya_mi_geldin.mp4",    # 9. Angara'ya mı geldin la
+    "cat_vibing.mp4",            # 10. Vibing Cat (Ritimle Kafa Sallayan Kedi)
+    "limon_davulcu.mp4"          # 11. Limoncu Davulcu
 ]
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 

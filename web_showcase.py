@@ -1340,7 +1340,7 @@ def render_web_html(deals: list = None):
             <a href="https://t.me/flasfirsat" target="_blank" class="social-btn" data-social="telegram">
                 <span>✈️</span> Telegram Kanalı
             </a>
-            <a href="https://instagram.com/flasfirsat" target="_blank" class="social-btn" data-social="instagram">
+            <a href="https://instagram.com/flasfirsat.tr" target="_blank" class="social-btn" data-social="instagram">
                 <span>📸</span> Instagram
             </a>
             <a href="https://www.youtube.com/@flasfirsat" target="_blank" class="social-btn" data-social="youtube">

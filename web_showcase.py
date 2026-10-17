@@ -274,7 +274,8 @@ def render_web_html(deals: list = None):
 """
     else:
         from campaign_calculator import calculate_campaign_and_net_cost
-        for d in deals:
+        first_active_featured = False
+        for idx, d in enumerate(deals):
             img_src = d.get("image_url") or "assets/logo.jpg"
             title = d.get("title", "Fırsat Ürünü")
             old_p = d.get("old_price", "")
@@ -313,7 +314,16 @@ def render_web_html(deals: list = None):
             is_expired = d.get("is_expired", False)
             expired_reason = d.get("expired_reason", "İndirim Bitti") or "İndirim Bitti"
             status_attr = "expired" if is_expired else "active"
-            card_class = "deal-card expired-card" if is_expired else "deal-card"
+            
+            # 1 Numaralı Son Paylaşılan Reels Ürünü Vurgusu
+            featured_reel_html = ""
+            card_class = "deal-card"
+            if is_expired:
+                card_class = "deal-card expired-card"
+            elif not first_active_featured:
+                first_active_featured = True
+                card_class = "deal-card featured-reel-card"
+                featured_reel_html = '<span class="badge-featured-reel">⚡ ŞU AN REELS\'TE VİRAL</span>'
 
             expired_badge_html = f'<span class="badge-expired">🔴 {expired_reason.upper()}</span>' if is_expired else ""
             buy_btn_html = (
@@ -333,6 +343,7 @@ def render_web_html(deals: list = None):
                         <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
                         <span class="badge-store {store_class}">{store}</span>
                         <span class="badge-discount">{disc}</span>
+                        {featured_reel_html}
                         {expired_badge_html}
                     </div>
                 </a>
@@ -634,6 +645,36 @@ def render_web_html(deals: list = None):
             z-index: 10;
             pointer-events: none;
             letter-spacing: 0.5px;
+        }
+
+        .badge-featured-reel {
+            position: absolute;
+            bottom: 12px;
+            left: 14px;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #0F172A;
+            font-weight: 800;
+            font-size: 0.74rem;
+            padding: 5px 11px;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+            z-index: 10;
+            letter-spacing: 0.4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: pulse-featured 2.5s infinite;
+        }
+
+        @keyframes pulse-featured {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .featured-reel-card {
+            border: 2px solid rgba(245, 158, 11, 0.6) !important;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2) !important;
         }
 
         .badge-store {

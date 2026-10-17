@@ -110,6 +110,16 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
     draw.rounded_rectangle([card_x1 + 25, card_y1 + 25, card_x1 + 25 + s_w, card_y1 + 95], radius=16, fill=(15, 23, 42, 230))
     draw_text_with_emojis(img, draw, (card_x1 + 25 + s_w // 2, card_y1 + 60), seller, font=seller_font, fill=(56, 189, 248), anchor="mm")
 
+    # Kupon Rozeti (Kart İçi Sol Alt - Varsa)
+    coupon_str = str(deal.get("coupon_info", "")).strip()
+    if coupon_str:
+        cp_font = get_font(28, bold=True)
+        cp_label = f"🎟️ {coupon_str} KUPON FIRSATI"
+        cp_bbox = cp_font.getbbox(cp_label)
+        cp_w = (cp_bbox[2] - cp_bbox[0]) + 44
+        draw.rounded_rectangle([card_x1 + 25, card_y2 - 80, card_x1 + 25 + cp_w, card_y2 - 20], radius=16, fill=(234, 179, 8, 245), outline=(255, 255, 255), width=2)
+        draw_text_with_emojis(img, draw, (card_x1 + 25 + cp_w // 2, card_y2 - 50), cp_label, font=cp_font, fill=(15, 23, 42), anchor="mm")
+
     # 4. Ürün Başlığı (Temiz 1 veya 2 Satır)
     title = deal.get("title", "Fırsat Ürünü")
     title_font = get_font(46, bold=True)
@@ -144,13 +154,12 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
         draw_text_with_emojis(img, draw, (width // 2, y_price), new_p or old_p, font=new_font, fill=(74, 222, 128), anchor="mm")
 
     # 6. Kupon veya Taksit/Kargo Bilgi Bandı (1245 - 1315, Çakışma Kesinlikle Yok!)
-    coupon_str = str(deal.get("coupon_info", "")).strip()
     inst_str = str(deal.get("installment", "")).strip()
     bank_font = get_font(32, bold=True)
 
     if coupon_str:
-        info_text = f"🎟️ Kupon: {coupon_str} (Sayfada Aktif Et)"
-        draw.rounded_rectangle([100, 1245, 980, 1315], radius=18, fill=(234, 179, 8, 30), outline=(250, 204, 21), width=2)
+        info_text = f"🎟️ {coupon_str} Kupon İndirimi • Sayfada Kuponu İşaretleyin!"
+        draw.rounded_rectangle([100, 1245, 980, 1315], radius=18, fill=(234, 179, 8, 45), outline=(250, 204, 21), width=2)
         draw_text_with_emojis(img, draw, (width // 2, 1280), info_text, font=bank_font, fill=(253, 224, 71), anchor="mm")
     elif inst_str:
         info_text = f"⚡ {inst_str} • Prime Teslimat"

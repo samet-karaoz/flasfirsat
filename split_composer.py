@@ -478,12 +478,41 @@ BANNER_THEMES = {
         "trust_fg": (49, 46, 129),
         "inst_bg": (236, 253, 245),
         "inst_fg": (4, 120, 87),
+    },
+    "emerald_trust": {
+        "name": "Zümrüt Yeşili & Altın (Doğal Yaşam, Mutfak & Sağlık)",
+        "bg_top": (236, 253, 245),
+        "bg_bottom": (209, 250, 229),
+        "title_color": (6, 78, 59),
+        "card_border": (52, 211, 153),
+        "glow_color": (16, 185, 129, 90),
+        "badge_left_bg": (6, 78, 59),
+        "badge_right_bg": (16, 185, 129),
+        "old_box_bg": (255, 255, 255),
+        "old_box_border": (167, 243, 208),
+        "old_text_col": (100, 116, 139),
+        "arrow_bg": (255, 255, 255),
+        "arrow_fg": (5, 150, 105),
+        "new_box_bg": (6, 78, 59),
+        "new_box_border": (245, 158, 11),
+        "new_label_col": (253, 224, 71),
+        "new_price_col": (52, 211, 153),
+        "savings_pill_bg": (16, 185, 129),
+        "savings_pill_fg": (255, 255, 255),
+        "cta_bg": (6, 78, 59),
+        "cta_line": (245, 158, 11),
+        "cta_pill_bg": (245, 158, 11),
+        "cta_pill_fg": (6, 78, 59),
+        "trust_bg": (241, 245, 249),
+        "trust_fg": (6, 78, 59),
+        "inst_bg": (236, 253, 245),
+        "inst_fg": (4, 120, 87),
     }
 }
 
 def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str = "", theme_name: str = "auto") -> dict:
     """
-    Ürünün indirim oranına, kategorisine ve günün saatine göre 4 stüdyo şablonundan en uygun olanı seçer.
+    Ürünün indirim oranına, kategorisine ve görsel çeşitlilik algoritmasına göre 5 lüks stüdyo şablonundan en uygun olanı seçer.
     """
     if theme_name and theme_name in BANNER_THEMES:
         return BANNER_THEMES[theme_name]
@@ -493,11 +522,11 @@ def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str
     t_low = (title or "").lower()
     b_low = (badge_text or "").lower()
 
-    # 1. %35 ve üzeri dev indirim veya Fiyat Hatası şüphesi -> Şablon 3: Kırmızı Alarm
-    if pct_val >= 35 or "hata" in b_low or "alarm" in b_low or "acil" in b_low:
+    # 1. %38 ve üzeri dev indirim veya Fiyat Hatası şüphesi -> Şablon: Kırmızı Alarm (fiyat_hatasi_alarm)
+    if pct_val >= 38 or "hata" in b_low or "alarm" in b_low or "acil" in b_low:
         return BANNER_THEMES["fiyat_hatasi_alarm"]
 
-    # 2. Gaming / Setup / Bilgisayar Ekipmanları -> Şablon 4: Cyber Gaming & Setup
+    # 2. Gaming / Setup / Bilgisayar Ekipmanları -> Şablon: Cyber Gaming & Setup
     gaming_kw = [
         "mouse", "klavye", "kulaklık", "monitör", "monitor", "gaming", "oyuncu",
         "ps5", "gamepad", "koltuk", "ekran kartı", "ssd", "ram", "laptop",
@@ -506,19 +535,26 @@ def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str
     if any(k in t_low for k in gaming_kw):
         return BANNER_THEMES["cyber_gaming"]
 
-    # 3. Ev, Mutfak, Yaşam, Termos, Kişisel Bakım -> Şablon 2: Apple Studio Warm
+    # 3. Mutfak, Sağlık, Termos, Doğal Yaşam -> Şablon: Zümrüt Yeşili (emerald_trust)
+    nature_kw = [
+        "termos", "stanley", "kahve", "airfryer", "tencere", "tava", "blender",
+        "çay", "filtre", "su arıtma", "vitamin", "organik", "sağlık"
+    ]
+    if any(k in t_low for k in nature_kw):
+        return BANNER_THEMES["emerald_trust"]
+
+    # 4. Ev, Yaşam, Kişisel Bakım, Kozmetik, Giyim -> Şablon: Apple Studio Warm
     warm_kw = [
-        "termos", "stanley", "kahve", "airfryer", "süpürge", "ütü", "mutfak",
-        "tencere", "bardak", "krem", "bakım", "parfüm", "şampuan", "deterjan",
-        "ayakkabı", "çanta", "kamp", "çadır", "fırın", "blender", "tost"
+        "krem", "bakım", "parfüm", "şampuan", "deterjan", "ayakkabı", "çanta",
+        "kamp", "çadır", "ütü", "süpürge", "tıraş", "saç", "fırın", "tost"
     ]
     if any(k in t_low for k in warm_kw):
         return BANNER_THEMES["studio_warm"]
 
-    # 4. Akşam kuşağı veya genel teknoloji ürünleri -> Şablon 1: Obsidian Cyber-Luxury
+    # 5. Akşam kuşağı veya genel teknoloji ürünleri -> Şablon: Koyu Obsidyen Altın
     import datetime as _dt
     curr_hour = _dt.datetime.now().hour
-    if curr_hour >= 17 or curr_hour < 7:
+    if curr_hour >= 18 or curr_hour < 7:
         return BANNER_THEMES["obsidian_dark"]
 
     return BANNER_THEMES["studio_warm"]
@@ -596,12 +632,27 @@ def create_product_banner(
     f_savings = get_font("segoeuib", 21)
     f_tiny = get_font("segoeuib", 13)
 
-    # 1. Sol Üst Rozet: DEV İNDİRİM / FİYAT HATASI (Vector Şimşekli)
-    clean_badge = badge_text.strip() if badge_text else "DEV İNDİRİM"
+    # 1. Sol Üst Rozet: Kategoriye Özel Dinamik Kanca Rozeti (Hedef Kitleyi Durduran Rozet)
+    clean_badge = badge_text.strip() if badge_text else ""
     pct_m = re.search(r'(\d+)', str(discount_pct))
     pct_val = int(pct_m.group(1)) if pct_m else 0
-    if pct_val >= 35 and clean_badge == "DEV İNDİRİM":
-        clean_badge = "FİYAT HATASI OLABİLİR" if pct_val >= 42 else "SÜPER FIRSAT"
+    t_low = (title or "").lower()
+
+    if not clean_badge or clean_badge in ["DEV İNDİRİM", "SÜPER FIRSAT", "GÜNÜN FIRSATI"]:
+        if pct_val >= 40:
+            clean_badge = "FİYAT HATASI OLABİLİR"
+        elif any(k in t_low for k in ["monitör", "monitor", "klavye", "mouse", "kulaklık", "gaming", "oyuncu", "gamepad", "ekran kartı", "ps5", "xbox"]):
+            clean_badge = "OYUNCU FIRSATI"
+        elif any(k in t_low for k in ["kahve", "termos", "stanley", "airfryer", "tencere", "tava", "blender", "mutfak", "süpürge", "fırın", "çay"]):
+            clean_badge = "MUTFAK & EV FIRSATI"
+        elif any(k in t_low for k in ["şarj", "powerbank", "bluetooth", "hoparlör", "saat", "tablet", "kablo", "adaptör", "kulak içi"]):
+            clean_badge = "TEKNOLOJİ FIRSATI"
+        elif any(k in t_low for k in ["krem", "parfüm", "serum", "şampuan", "tıraş", "bakım", "losyon", "güneş", "diş"]):
+            clean_badge = "BAKIM & KOZMETİK"
+        elif pct_val >= 30:
+            clean_badge = "SÜPER FIRSAT"
+        else:
+            clean_badge = "GÜNÜN FIRSATI"
 
     b_w = draw.textlength(clean_badge, font=f_badge)
     b1_x2 = int(40 + b_w + 62)
@@ -1014,21 +1065,32 @@ def build_split_screen_video(
 
     output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-    # 5. Meme süresini al
+    # 5. Meme süresini al ve Anti-Hash Rastgele Milisaniye Kırpması Yap
     cmd_len = ["ffmpeg", "-i", bottom_meme_path]
     p = subprocess.run(cmd_len, capture_output=True, text=True)
     m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", p.stderr)
-    duration = float(m.group(3)) + int(m.group(2))*60 if m else 10.0
+    raw_duration = float(m.group(3)) + int(m.group(2))*60 if m else 10.0
 
-    print(f"[Montaj] Seçilen Meme: {os.path.basename(bottom_meme_path)} (Süre: {duration:.1f}s)")
+    # Anti-Hash: Her renderda süreyi 0.15 - 0.40 saniye rastgele kırparak toplam kare sayısını (frame count) benzersiz yap
+    rnd_trim = round(random.uniform(0.15, 0.40), 3)
+    duration = max(3.5, round(raw_duration - rnd_trim, 3))
+
+    print(f"[Montaj] Seçilen Meme: {os.path.basename(bottom_meme_path)} (Süre: {duration:.2f}s, Anti-Hash Kırpma: -{rnd_trim}s)")
     if use_external_audio:
         print(f"[Montaj] Seçilen Harici Ses: {os.path.basename(audio_path)}")
 
     is_image = top_source.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
     scale_top = "scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(1080-iw)/2:(960-ih)/2:color=0xF4F6FA" if is_image else "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960"
 
-    # İlk 1 Saniyede Dinamik Mikro Punch-in Zoom (Retention Kancası)
-    scale_bottom = "scale=w='1080*(1+0.05*max(0,1-t))':h='960*(1+0.05*max(0,1-t))':eval=frame,crop=1080:960"
+    # İlk 1 Saniyede Dinamik Mikro Punch-in Zoom + Anti-Hash Özgünlük Kalkanı (İnsan gözü fark etmez, Instagram pHash algoritması her videoyu %100 yeni görür)
+    rnd_bright = round(random.uniform(-0.012, 0.012), 4)
+    rnd_sat = round(random.uniform(0.985, 1.025), 4)
+    rnd_contrast = round(random.uniform(0.99, 1.015), 4)
+    scale_bottom = (
+        f"scale=w='1080*(1+0.05*max(0,1-t))':h='960*(1+0.05*max(0,1-t))':eval=frame,"
+        f"crop=1080:960,"
+        f"eq=brightness={rnd_bright}:saturation={rnd_sat}:contrast={rnd_contrast}"
+    )
 
     cmd = ["ffmpeg", "-y"]
     if is_image:
@@ -1068,12 +1130,12 @@ def build_split_screen_video(
         voice_stream = f"[{input_idx}:a]"
         input_idx += 1
 
-    # Ses mikseri filtrelerini oluştur
+    # Ses mikseri filtrelerini oluştur (Anti-Hash için %0.5 mikro ses frekans/tempo tazelemesi)
     audio_parts = []
     mix_sources = []
 
     # Meme'in kendi sesi
-    bg_vol = 0.35 if voice_path else 1.0
+    bg_vol = 0.35 if voice_path else round(random.uniform(0.98, 1.02), 3)
     audio_parts.append(f"{bg_stream}volume={bg_vol}[bg]")
     mix_sources.append("[bg]")
 
@@ -1106,11 +1168,16 @@ def build_split_screen_video(
         "-filter_complex", filter_complex,
         "-map", "[v]", "-map", "[a]",
         "-map_metadata", "-1",
-        "-metadata", "make=Apple",
-        "-metadata", "model=iPhone 16 Pro",
-        "-metadata", "software=18.3.1",
+        "-fflags", "+bitexact",
+        "-flags:v", "+bitexact",
+        "-flags:a", "+bitexact",
+        "-metadata", "com.apple.quicktime.make=Apple",
+        "-metadata", "com.apple.quicktime.model=iPhone 16 Pro",
+        "-metadata", "com.apple.quicktime.software=18.3.1",
+        "-metadata:s:v:0", "handler_name=Core Media Video",
+        "-metadata:s:a:0", "handler_name=Core Media Audio",
         "-metadata", f"creation_time={iso_now}",
-        "-movflags", "+faststart",
+        "-movflags", "+faststart+use_metadata_tags",
         "-t", str(duration),
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k",

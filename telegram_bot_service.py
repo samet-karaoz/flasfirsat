@@ -175,8 +175,28 @@ def handle_callback_query(cq: dict):
             except Exception as ep:
                 print(f"[Telegram Service] Story fotoğraf gönderim hatası: {ep}")
 
-        # 2. Tek Dokunuşla Kopyalanabilir (Tap-to-Copy) Reels Açıklaması & İlk Yorum & ManyChat Paketi
-        first_comment_str = "📌 Fırsat şu an aktif! Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)"
+        # 2. Tek Dokunuşla Kopyalanabilir Reels Açıklaması, İlk Yorum, Story Linki & Görünmez SEO
+        clean_words = re.findall(r'\w+', (title or "").lower())
+        meaningful_words = [w for w in clean_words if len(w) > 2 and w not in ["ve", "ile", "için", "olan", "cok", "daha", "tl"]]
+        base_seo = ["indirim", "fırsat", "kampanya", "amazon", "amazontr", "fırsatürünleri", "ucuzluk", "alışveriş", "reels", "keşfet", "türkiye"]
+        category_seo = []
+        t_low = (title or "").lower()
+        if any(k in t_low for k in ["monitör", "klavye", "mouse", "kulaklık", "gaming", "oyuncu"]):
+            category_seo = ["gaming", "oyuncu", "setup", "pcgaming", "oyuncuekipmanı"]
+        elif any(k in t_low for k in ["kahve", "termos", "stanley", "airfryer", "mutfak"]):
+            category_seo = ["mutfak", "evyaşam", "kahvekeyfi", "çeyiz", "termos", "airfryer"]
+        elif any(k in t_low for k in ["şarj", "powerbank", "bluetooth", "kulaklık"]):
+            category_seo = ["teknoloji", "kulaklık", "bluetooth", "telefonaksesuar"]
+        elif any(k in t_low for k in ["krem", "parfüm", "bakım", "şampuan"]):
+            category_seo = ["kişiselbakım", "kozmetik", "ciltbakımı", "güzellik"]
+
+        all_seo = list(dict.fromkeys(meaningful_words[:5] + category_seo + base_seo[:5]))
+        seo_str = " ".join(all_seo)
+
+        first_comment_str = (
+            "📌 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz 👇\n\n"
+            "Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
+        )
         studio_msg = (
             f"📲 <b>%100 ORGANİK INSTAGRAM STÜDYO PAKETİ</b>\n"
             f"<i>(Üzerine bir kez dokunduğunuz metin otomatik kopyalanır)</i>\n\n"
@@ -184,9 +204,14 @@ def handle_callback_query(cq: dict):
             f"<code>{_html.escape(caption_text)}</code>\n\n"
             f"💬 <b>2. BAŞA TUTTURULACAK İLK YORUM (Dokun & Kopyala):</b>\n"
             f"<code>{_html.escape(first_comment_str)}</code>\n\n"
-            f"🔗 <b>3. MANYCHAT / STORY LİNKİ (Dokun & Kopyala):</b>\n"
+            f"🔗 <b>3. HİKAYE (STORY) LİNKİ (Dokun & Kopyala):</b>\n"
             f"<code>{_html.escape(product_url or '')}</code>\n\n"
-            f"💡 <b>Keşfet İpucu:</b> Yukarıdaki videoyu telefonuna kaydet, Instagram'dan Reels olarak yüklerken <i>'Ses Ekle'</i> kısmından popüler bir müziği <b>%5-10 ses</b> seviyesinde arkaya ekle!"
+            f"🔍 <b>4. INSTAGRAM 'Aa' GÖRÜNMEZ SEO KELİMELERİ (Dokun & Kopyala):</b>\n"
+            f"<code>{_html.escape(seo_str)}</code>\n\n"
+            f"💡 <b>Keşfet Taktikleri:</b>\n"
+            f"1️⃣ <b>Trend Ses:</b> Reels'e popüler bir müziği <b>%2 ses</b> seviyesinde ekle.\n"
+            f"2️⃣ <b>Görünmez SEO:</b> 4. kutudaki kelimeleri Instagram'ın 'Aa' metin aracına yapıştır, ekranın köşesine küçültüp gizle!\n"
+            f"3️⃣ <b>Hikaye:</b> Gönderilen Story kartını paylaşıp anket çıkartması ve link çıkartması ekle."
         )
         send_telegram_text(chat_id, studio_msg)
         return True

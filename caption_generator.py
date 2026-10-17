@@ -28,8 +28,9 @@ Açıklama Kuralları:
 3. Varsa Kupon Bilgilendirmesi (ÖNEMLİ): Eğer üründe kupon indirimi varsa mutlaka açıkça belirt: "🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki kupon kutucuğunu işaretlemeyi / kuponu aktif etmeyi unutmayın!"
 4. Varsa Taksit İmkanı: Varsa taksit imkanını belirt (Örn: "💳 Peşin fiyatına 3 taksit imkanıyla!").
 5. Yüksek İndirim / Aciliyet Kuralı: Eğer indirim %35 ve üzeriyse veya fiyat hatası şüphesi varsa mutlaka aciliyet ekle ("🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!").
-6. Eylem Çağrısı (Anti-Spam, Reklam & ManyChat Uyumlu): Asla izleyiciden tek kelimelik 'LİNK' isteme (Instagram 'link' kelimesini spam filtresine takıyor). Bunun yerine hem profildeki siteyi hem de doğal anahtar kelimeyi birlikte sun:
-   "🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)"
+6. Eylem Çağrısı ve Tartışma Kancası (Organik Yorum & Hikaye Odaklı): İzleyicileri yorumlarda konuşturan samimi bir F/P tartışma sorusu sor ve Hikaye/Profil yönlendirmesi yap:
+   "💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇"
+   "🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz ⚡"
 7. Algoritma Tetikleyicisi (Kaydet & Paylaş): Instagram algoritmasında öne çıkmak için kaydetme ve paylaşma çağrısı ekle:
    "📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️"
 8. Hashtag Kuralı: KESİNLİKLE EN FAZLA 5 ADET etiket yaz (Asla 5'ten fazla yazma! Örn: #indirim #fırsat #teknoloji #kampanya #keşfet).
@@ -99,7 +100,8 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{coupon_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
-        f"🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (DM'den isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)\n"
+        f"💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n"
+        f"🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz ⚡\n"
         f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n"
         f"🌐 Canlı Vitrin: {SITE_URL}?utm_source=instagram&utm_medium=reels\n\n"
         f"#işbirliği #reklam #indirim #fırsat #teknoloji"

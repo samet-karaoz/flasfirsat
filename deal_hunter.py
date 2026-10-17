@@ -754,7 +754,20 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
                 score += 25.0
                 break
 
-        # E. Mağaza Bonusu (Affiliate için Amazon TR önceliği)
+        # E. Viral Tartışma & Yüksek Etkileşim Bonusu (+25 Puan: Reels'te en çok izlenen, paylaşılan ve yorum yapılan ürünler)
+        viral_engagement_kw = [
+            "monitör", "monitor", "klavye", "mouse", "kulaklık", "gaming", "oyuncu", "gamepad",
+            "stanley", "termos", "kahve", "airfryer", "lego", "apple", "samsung", "logitech",
+            "steelseries", "razer", "philips", "sony", "dyson", "north bayou", "dualsense"
+        ]
+        if any(v in title for v in viral_engagement_kw):
+            score += 25.0
+
+        # F. Kupon İndirimi Bonusu (+15 Puan: Kuponlu ürünler kullanıcılara ekstra fırsat hissi verir)
+        if deal.get("coupon_info"):
+            score += 15.0
+
+        # G. Mağaza Bonusu (Affiliate için Amazon TR önceliği)
         if deal.get("store_name") == "Amazon TR":
             score += 35.0
 

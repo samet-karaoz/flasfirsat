@@ -181,6 +181,8 @@ def send_telegram_deal_for_approval(
     api_url = f"https://api.telegram.org/bot{token}/sendVideo"
 
     try:
+        import random as _rnd
+        clean_fname = f"IMG_{_rnd.randint(1000, 9999)}.MP4"
         with open(video_path, "rb") as video_file:
             payload = {
                 "chat_id": cid,
@@ -189,7 +191,7 @@ def send_telegram_deal_for_approval(
                 "supports_streaming": "true",
                 "reply_markup": json.dumps(reply_markup)
             }
-            files = {"video": video_file}
+            files = {"video": (clean_fname, video_file, "video/mp4")}
             res = requests.post(api_url, data=payload, files=files, timeout=120)
 
         data = res.json()

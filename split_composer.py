@@ -312,10 +312,10 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     if has_pilmoji:
         with Pilmoji(img) as p:
             text_w, text_h = p.getsize(clean_text, font=f_hook)
-            box_w = min(W - 40, text_w + 64)
+            box_w = min(W - 120, text_w + 64)
             box_h = 68
             box_x = (W - box_w) // 2
-            box_y = 22
+            box_y = 26
 
             draw.rounded_rectangle(
                 (box_x, box_y, box_x + box_w, box_y + box_h),
@@ -337,10 +337,10 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
             safe_text = re.sub(r'[\U00010000-\U0010ffff]', '', clean_text).strip()
 
         text_w = draw.textlength(safe_text, font=f_hook)
-        box_w = min(W - 40, text_w + 64)
+        box_w = min(W - 120, text_w + 64)
         box_h = 68
         box_x = (W - box_w) // 2
-        box_y = 22
+        box_y = 26
 
         draw.rounded_rectangle(
             (box_x, box_y, box_x + box_w, box_y + box_h),
@@ -655,35 +655,35 @@ def create_product_banner(
             clean_badge = "GÜNÜN FIRSATI"
 
     b_w = draw.textlength(clean_badge, font=f_badge)
-    b1_x2 = int(40 + b_w + 62)
-    draw.rounded_rectangle((40, 20, b1_x2, 72), radius=14, fill=theme["badge_left_bg"])
-    draw_vector_bolt(draw, 64, 46, (255, 215, 0))
-    draw.text((82 + b_w // 2, 46), clean_badge, font=f_badge, fill=(255, 255, 255), anchor="mm")
+    b1_x2 = int(54 + b_w + 64)
+    draw.rounded_rectangle((54, 80, b1_x2, 132), radius=14, fill=theme["badge_left_bg"])
+    draw_vector_bolt(draw, 78, 106, (255, 215, 0))
+    draw.text((96 + b_w // 2, 106), clean_badge, font=f_badge, fill=(255, 255, 255), anchor="mm")
 
-    # 2. Sağ Üst Rozet: % İNDİRİM (Varsa)
+    # 2. Sağ Üst Rozet: % İNDİRİM (Varsa) (Reels Safe Zone: Sağdan 54px ve Üstten 80px)
     clean_pct = discount_pct.strip()
     if clean_pct and clean_pct != "0%" and clean_pct != "-0%":
         if not clean_pct.endswith("İNDİRİM") and not clean_pct.endswith("FİYAT"):
             clean_pct = f"{clean_pct} İNDİRİM"
         p_w = draw.textlength(clean_pct, font=f_pct)
-        b2_x1 = int(W - 40 - p_w - 42)
-        draw.rounded_rectangle((b2_x1, 20, W - 40, 72), radius=14, fill=theme["badge_right_bg"])
-        draw.text(((b2_x1 + W - 40) // 2, 46), clean_pct, font=f_pct, fill=(255, 255, 255), anchor="mm")
+        b2_x1 = int(W - 54 - p_w - 44)
+        draw.rounded_rectangle((b2_x1, 80, W - 54, 132), radius=14, fill=theme["badge_right_bg"])
+        draw.text(((b2_x1 + W - 54) // 2, 106), clean_pct, font=f_pct, fill=(255, 255, 255), anchor="mm")
 
-    # 3. Başlık (Temiz 1 veya 2 Satır Formatı)
+    # 3. Başlık (Temiz 1 veya 2 Satır Formatı - Reels Safe Zone: y=145..205)
     title_lines = wrap_text(title, max_chars_per_line=36)
     if len(title_lines) == 1:
-        f_title = get_font("segoeuib", 36)
-        draw.text((40, 110), title_lines[0], font=f_title, fill=theme["title_color"], anchor="lm")
-        card_top = 148
+        f_title = get_font("segoeuib", 34)
+        draw.text((54, 172), title_lines[0], font=f_title, fill=theme["title_color"], anchor="lm")
+        card_top = 206
     else:
-        f_title = get_font("segoeuib", 31)
-        draw.text((40, 86), title_lines[0], font=f_title, fill=theme["title_color"])
-        draw.text((40, 122), title_lines[1], font=f_title, fill=theme["title_color"])
-        card_top = 164
+        f_title = get_font("segoeuib", 29)
+        draw.text((54, 146), title_lines[0], font=f_title, fill=theme["title_color"])
+        draw.text((54, 180), title_lines[1], font=f_title, fill=theme["title_color"])
+        card_top = 216
 
-    # 4. Ürün Kartı (Stüdyo Çerçevesi)
-    card_box = (40, card_top, W - 40, 704)
+    # 4. Ürün Kartı (Stüdyo Çerçevesi - Kenarlardan 54px ferah pay)
+    card_box = (54, card_top, W - 54, 734)
     draw.rounded_rectangle(card_box, radius=24, fill=(255, 255, 255, 255), outline=theme["card_border"], width=3)
 
     # 🌟 Ürün Arkasına Temaya Uyumlu Soft Spotlight (Işıma) Efekti
@@ -833,7 +833,7 @@ def create_product_banner(
             pill_y1, pill_y2 = 716, 750
             draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
             draw.text((center_x, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
-        elif savings > 0:
+        elif savings > 0 and not (feature_text and len(feature_text.strip()) > 3):
             sav_str = f"{int(savings):,} TL".replace(',', '.')
             sav_text = f"{sav_str} NET TASARRUF"
             s_w = draw.textlength(sav_text, font=f_savings)
@@ -844,8 +844,8 @@ def create_product_banner(
             draw.text((center_x, (pill_y1 + pill_y2) // 2), sav_text, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
 
     if show_old_price:
-        # Sol Kutu: Piyasa Fiyatı
-        old_box = (40, 746, 322, 888)
+        # Sol Kutu: Piyasa Fiyatı (Safe Zone: x=54..)
+        old_box = (54, 750, 328, 888)
         draw.rounded_rectangle(old_box, radius=20, fill=theme["old_box_bg"], outline=theme["old_box_border"], width=2)
         ocx = (old_box[0] + old_box[2]) // 2
         draw.text((ocx, 774), "PİYASA FİYATI", font=f_old_lbl, fill=theme["old_text_col"], anchor="mm")
@@ -855,14 +855,14 @@ def create_product_banner(
         draw.line((ocx - op_w // 2 - 8, 828, ocx + op_w // 2 + 8, 828), fill=(239, 68, 68), width=4)
 
         # Orta Ok Kutusu
-        arrow_box = (336, 800, 378, 842)
+        arrow_box = (340, 800, 382, 842)
         draw.rounded_rectangle(arrow_box, radius=10, fill=theme["arrow_bg"], outline=theme["old_box_border"], width=1)
-        acx, acy = 357, 821
+        acx, acy = 361, 821
         draw.line((acx - 4, acy - 8, acx + 4, acy), fill=theme["arrow_fg"], width=3)
         draw.line((acx + 4, acy, acx - 4, acy + 8), fill=theme["arrow_fg"], width=3)
 
-        # Sağ Kutu: İndirimli Fırsat Fiyatı
-        new_box = (394, 746, W - 40, 888)
+        # Sağ Kutu: İndirimli Fırsat Fiyatı (Safe Zone: ..W-54)
+        new_box = (394, 750, W - 54, 888)
         draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
@@ -879,8 +879,8 @@ def create_product_banner(
         _draw_coupon_or_savings_pill(box_center_x)
 
     else:
-        # Tek Büyük ve Geniş Hero Kutu (Tam Ortalanmış)
-        new_box = (40, 746, W - 40, 888)
+        # Tek Büyük ve Geniş Hero Kutu (Tam Ortalanmış - Safe Zone: 54..W-54)
+        new_box = (54, 750, W - 54, 888)
         draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
@@ -933,7 +933,7 @@ def create_product_banner(
     else:
         cta_prefix = "Ürün linki "
         cta_highlight = "PROFİLDE & HİKAYEDE"
-        cta_suffix = " • Yorum: 'DETAY'"
+        cta_suffix = " • Fırsatı Kaçırma!"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)

@@ -530,5 +530,28 @@
         "url": "https://www.youtube.com/shorts/qWrwEY9mJ3c"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-17 13:05:22",
+    "slot": "Bulut Otopilotu (12:30 / 20:00)",
+    "success": false,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Logitech K380S Klavye",
+      "new_price": "1.104,00 TL",
+      "old_price": "1.799 TL",
+      "discount_pct": "-39%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07W6JJ257?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261017_130628_logitech_k380s_klavye.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261017_130628_logitech_k380s_klavye_youtube.mp4",
+    "caption_text": "🚨 FİYAT HATASI OLABİLİR Mİ?! Bu fiyata kaçıran cidden üzülür!\n\nLogitech K380S Kablosuz Klavye\nEski Fiyat ❌: 1.799 TL\nYeni Fiyat ✅: 1.104 TL (%39 İndirim!)\n\n🚨 DİKKAT: İndirim oranı %35'in üzerinde ve stoklar eriyor, bu fiyata bir daha bulamazsınız elinizi çabuk tutun!\n\n🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'FIRSAT' yazabilir 👇)\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, tablet veya telefonla ders/çalışma yapan arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #teknoloji #kampanya #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_39_amz_B07W6JJ257.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": false,
+      "error": "Unauthorized"
+    }
   }
 ]

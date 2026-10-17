@@ -553,5 +553,28 @@
       "success": false,
       "error": "Unauthorized"
     }
+  },
+  {
+    "timestamp": "2026-10-17 19:09:41",
+    "slot": "Bulut Otopilotu (12:30 / 20:00)",
+    "success": false,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Klasse Pro Mouse Pad",
+      "new_price": "659,90 TL",
+      "old_price": "899,90 TL",
+      "discount_pct": "-27%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B09TV1FWF3?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261017_191111_klasse_pro_mouse_pad.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261017_191111_klasse_pro_mouse_pad_youtube.mp4",
+    "caption_text": "🚨 MASANIZDAKİ EKSİK PARÇA BU MU?!\n\nOyuncuların vazgeçilmezi Klasse Pro Mouse Pad, dev boyutu ve dikişli kalitesiyle uzun zamandır görülmemiş bir fiyata düştü!\n\n❌ Eski Fiyat: 899,90 TL\n✅ Yeni Fiyat: 659,90 TL\n📉 İndirim Oranı: %27\n\n💳 Peşin fiyatına taksit imkanıyla masanıza konforu getirin. Stoklar tükenmeden yakalamak isteyenler acele etsin!\n\n🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'FIRSAT' yazabilir 👇)\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, mouse pad arayan arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #oyuncu #mousepad #kampanya #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_27_amz_B09TV1FWF3.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": false,
+      "error": "Unauthorized"
+    }
   }
 ]

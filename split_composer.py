@@ -727,7 +727,7 @@ def create_product_banner(
     if product_image_path and os.path.exists(product_image_path):
         try:
             cutout_path = f"{os.path.splitext(product_image_path)[0]}_cutout.png"
-            if not os.path.exists(cutout_path):
+            if not os.path.exists(cutout_path) or os.path.getmtime(cutout_path) < os.path.getmtime(product_image_path):
                 try:
                     import rembg
                     with Image.open(product_image_path) as raw_p:

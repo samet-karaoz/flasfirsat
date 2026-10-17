@@ -723,8 +723,10 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             except Exception:
                 pass
 
-            # Görseli indir
-            img_filename = f"hunt_prod_{len(collected_deals) + 1}.jpg"
+            # Görseli indir (Her ürün için benzersiz dosya adı)
+            import hashlib
+            url_hash = hashlib.md5(photo_url.encode("utf-8", errors="ignore")).hexdigest()[:10]
+            img_filename = f"hunt_prod_{url_hash}.jpg"
             img_path = os.path.join(TEMP_DIR, img_filename)
             if not download_file(photo_url, img_path):
                 continue

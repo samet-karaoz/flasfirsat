@@ -19,11 +19,10 @@ MEME_ROTATION_ORDER = [
     "bale_nod.mp4",             # 5. Christian Bale onaylama / takdir
     "limon_davulcu.mp4",        # 6. Limoncu Davulcu (Türk viral dans)
     "cat_vibing.mp4",           # 7. Vibing Cat (Ritimle kafa sallayan kedi)
-    "shark_nemo.mp4",           # 8. Kayıp Balık Nemo Bruce köpekbalığı
-    "angaraya_mi_geldin.mp4",   # 9. Angara'ya mı geldin la
-    "the_rock.mp4",             # 10. The Rock ikonik kaş kaldırma
-    "limon_halay.mp4",          # 11. Limon Halay (Türk viral halay)
-    "vince_mcmahon.mp4"         # 12. Vince McMahon para koklama / Şok sevinç
+    "angaraya_mi_geldin.mp4",   # 8. Angara'ya mı geldin la
+    "the_rock.mp4",             # 9. The Rock ikonik kaş kaldırma
+    "limon_halay.mp4",          # 10. Limon Halay (Türk viral halay)
+    "vince_mcmahon.mp4"         # 11. Vince McMahon para koklama / Şok sevinç
 ]
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 

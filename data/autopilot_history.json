@@ -562,5 +562,93 @@
         "url": "https://www.youtube.com/shorts/W4jzA5syrAs"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-17 19:59",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Dell 24\" 200Hz 1ms IPS Gaming Monitör",
+      "old_price": "5.999 TL",
+      "new_price": "4.449 TL",
+      "discount_pct": "-26%",
+      "discount_val": 26,
+      "store_name": "Amazon TR",
+      "store_url": "https://www.amazon.com.tr/dp/B0FHHVD75B?tag=flasfirsat04-21",
+      "seller_badge": "AMAZON TR",
+      "image_path": "assets/products/dell_200hz_gaming_monitor.jpg",
+      "installment": "Peşin Fiyatına 3 Taksit x 1.483 TL",
+      "killer_hook": "4.449 TL'YE 200Hz 1ms IPS OYUNCU MONİTÖRÜ!",
+      "feature_pill": "4.449 TL'YE 200Hz 1ms IPS OYUNCU MONİTÖRÜ!",
+      "has_verified_old_price": true,
+      "is_lowest_30d": true,
+      "market_badge": "SON 30 GÜNÜN EN DÜŞÜĞÜ",
+      "reaction_text": "200Hz IPS MONİTÖRÜ 4.449 TL'YE GÖREN BİZİM TAYFA:"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/wZMnCYfa9qg"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-17 20:00:02",
+    "slot": "Akşam Prime Time (20:00)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Logitech K380S Klavye",
+      "new_price": "1.009,19 TL",
+      "old_price": "1.599 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07W6JJ257?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261017_200214_logitech_k380s_klavye.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261017_200214_logitech_k380s_klavye_youtube.mp4",
+    "caption_text": "🚨 Bu fiyata kaçarsa üzülürsünüz! Masaüstü setup'ların ve tabletlerin vazgeçilmezi düştü!\n\nEski Fiyat ❌: 1.599 TL\nYeni Fiyat ✅: 1.009,19 TL\nİndirim Oranı: %37 İndirim!\n\n🚨 DİKKAT: %35'i aşan bu dev indirim ve stoklar her an bitebilir, elinizi çabuk tutun!\n\n🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'FIRSAT' yazabilir 👇)\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #logitech #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_37_amz_B07W6JJ257.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792256594",
+      "message_id": 85,
+      "file_id": "BAACAgQAAxkDAANVatOqUcHs-wgatlBGRr3syz5Yb9sAAr8dAAKUyZhSsYYQ44AxTWg9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_13.mp4"
+    }
+  },
+  {
+    "timestamp": "2026-10-17 20:00:16",
+    "slot": "Akşam Prime Time (Etkileşim & Alışveriş Zirvesi)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Logitech K380S Klavye",
+      "new_price": "1.009,19 TL",
+      "old_price": "1.599 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07W6JJ257?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261017_200307_logitech_k380s_klavye.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261017_200307_logitech_k380s_klavye_youtube.mp4",
+    "caption_text": "🚨 FİYAT HATASI MI YOKSA STOK ERİTME Mİ?! Bu fiyata kaçmaz!\n\n1.599 TL ❌ -> 1.009,19 TL ✅ (%37 İNDİRİM!)\n\n🚨 DİKKAT: Fiyat hatası olabilir veya stok her an bitebilir, elinizi çabuk tutun!\n\n🔗 Ürün linki profilimizdeki web sitemizde ve Hikayede! (Doğrudan DM kutusuna isteyenler yoruma 'DETAY' veya 'FIRSAT' yazabilir 👇)\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #logitech #kampanya #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_37_amz_B07W6JJ257.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792256606",
+      "message_id": 86,
+      "file_id": "BAACAgQAAxkDAANWatOqX6j6IdqAX15k6U4Nr-fH9aoAAsAdAAKUyZhSp_1OGresopY9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_14.mp4"
+    }
   }
 ]

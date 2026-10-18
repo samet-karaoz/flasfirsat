@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792300317_24",
+    "deal_code": "#125",
+    "title": "North Bayou NB F80 Kol",
+    "old_price": "1.699 TL",
+    "new_price": "1.069 TL",
+    "discount_pct": "-37%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FMK7H6HQ?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 356 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/north_bayou_nb_f80_kol_bd01326e.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.10.2026 08:11"
+  },
+  {
     "id": "deal_1792300314_23",
     "deal_code": "#124",
     "title": "Philips 7500 Buharlı Ütü",

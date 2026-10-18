@@ -144,7 +144,7 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
         bbox = old_font.getbbox(old_p)
         ow = bbox[2] - bbox[0]
         draw_text_with_emojis(img, draw, (330, y_price), old_p, font=old_font, fill=(148, 163, 184), anchor="mm")
-        draw.line([330 - ow//2 - 6, y_price, 330 + ow//2 + 6, y_price], fill=(239, 68, 68), width=4)
+        draw.line([330 - ow//2 - 6, y_price, 330 + ow//2 + 6, y_price], fill=(239, 68, 68), width=2)
 
         # Yeni Fiyat (Büyük Yeşil / Neon)
         new_font = get_font(68, bold=True)

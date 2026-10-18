@@ -625,7 +625,7 @@ def create_product_banner(
     f_trust = get_font("segoeuib", 19)
     f_feature = get_font("segoeuib", 20)
     f_old_lbl = get_font("segoeuib", 17)
-    f_old_price = get_font("segoeuib", 29)
+    f_old_price = get_font("segoeuib", 36)
     f_new_label = get_font("segoeuib", 20)
     f_new_price = get_font("segoeuib", 60)
     f_net = get_font("segoeuib", 19)
@@ -853,7 +853,7 @@ def create_product_banner(
 
         op_w = draw.textlength(old_price, font=f_old_price)
         draw.text((ocx, 828), old_price, font=f_old_price, fill=theme["old_text_col"], anchor="mm")
-        draw.line((ocx - op_w // 2 - 8, 828, ocx + op_w // 2 + 8, 828), fill=(239, 68, 68), width=4)
+        draw.line((ocx - op_w // 2 - 8, 828, ocx + op_w // 2 + 8, 828), fill=(239, 68, 68), width=2)
 
         # Orta Ok Kutusu
         arrow_box = (340, 800, 382, 842)

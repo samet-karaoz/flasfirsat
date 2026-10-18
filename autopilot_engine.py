@@ -476,7 +476,7 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
 
         history = load_history()
         candidates = hunt_best_deals(
-            limit=12,
+            limit=15,
             platform="all",
             category="all",
             exclude_urls=history,
@@ -484,17 +484,35 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
         )
 
         if len(candidates) < 3:
-            candidates = hunt_best_deals(limit=12, platform="all", category="all", min_discount=15)
+            more = hunt_best_deals(
+                limit=15,
+                platform="all",
+                category="all",
+                exclude_urls=history,
+                min_discount=15
+            )
+            seen_u = {d.get("store_url") for d in candidates}
+            for m_d in more:
+                if m_d.get("store_url") not in seen_u:
+                    candidates.append(m_d)
 
         candidates.sort(key=lambda d: (get_deal_discount_pct(d), get_deal_savings_tl(d)), reverse=True)
 
         top3_deals = []
         seen_subtypes = set()
+        seen_titles = set()
+
+        from campaign_calculator import calculate_campaign_and_net_cost
 
         for c in candidates:
             if len(top3_deals) >= 3:
                 break
-            sub = get_product_subtype(c.get("title", ""))
+            c_url = c.get("store_url") or c.get("url") or ""
+            c_title = c.get("title", "")
+            # Sitede veya geçmişte zaten paylaşılmış ürünleri KESİNLİKLE ele
+            if c_url in history or c_title in history or c_title in seen_titles:
+                continue
+            sub = get_product_subtype(c_title)
             if sub != "general" and sub in seen_subtypes:
                 continue
 
@@ -502,12 +520,20 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             if v_res and (v_res.get("verified") or v_res.get("valid")):
                 c = v_res.get("deal", c)
                 raw_u = c.get("store_url") or c.get("url") or ""
+                if raw_u in history or c.get("title", "") in history:
+                    continue
                 aff_u = get_affiliate_url(raw_u, c.get("store_name", ""))
                 c["affiliate_url"] = aff_u
+                c["store_url"] = aff_u
+                camp_info = calculate_campaign_and_net_cost(c.get("new_price", ""), c.get("store_name", "Amazon TR"))
+                c["bank_campaign"] = c.get("bank_campaign") or camp_info.get("bank_campaign", "")
+                c["net_cost"] = c.get("net_cost") or camp_info.get("net_cost", "")
+                c["installment"] = c.get("installment") or camp_info.get("installment", "")
                 top3_deals.append(c)
+                seen_titles.add(c.get("title", ""))
                 if sub != "general":
                     seen_subtypes.add(sub)
-                print(f"✅ Top 3 Adayı Seçildi (#{len(top3_deals)}): {c.get('title')[:40]} (-%{get_deal_discount_pct(c)})")
+                print(f"✅ Top 3 Yeni Aday Seçildi (#{len(top3_deals)}): {c.get('title')[:45]} (-%{get_deal_discount_pct(c)})")
 
         if len(top3_deals) < 3:
             err = f"Top 3 videosu için yeterli teyitli aday toplanamadı ({len(top3_deals)}/3 aday bulundu)."

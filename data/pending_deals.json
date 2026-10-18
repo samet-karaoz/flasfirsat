@@ -506,5 +506,27 @@
     "file_id": "BAACAgQAAxkDAANWatOqX6j6IdqAX15k6U4Nr-fH9aoAAsAdAAKUyZhSp_1OGresopY9BA",
     "status": "pending",
     "created_at": "2026-10-17 20:03:32"
+  },
+  "deal_1792299826": {
+    "deal_id": "deal_1792299826",
+    "message_id": 87,
+    "chat_id": "6101216739",
+    "deal": {
+      "title": "🏆 Günün En İyi 3 Fırsatı (Test)",
+      "new_price": "Top 3 Fırsat (Ort. -%33)",
+      "old_price": "Çoklu Ürün",
+      "discount_pct": "-%33",
+      "store_name": "Amazon TR / Hepsiburada",
+      "deal_code": "#119, #108, #107"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\VID_20261018_top3_test.mp4",
+    "youtube_video_path": null,
+    "story_image_path": null,
+    "caption_text": "🔥 GÜNÜN EN İYİ 3 İNDİRİMİ RESMEN ÇÖKTÜ!\n\n🥉 #3 [KOD: #107]: Sony PS5 DualSense v2 Kol...\n   💸 6.799,00 TL ➔ 4.799,00 TL (-29%)\n\n🥈 #2 [KOD: #108]: SteelSeries Rival 3 Wireless Gen 2 ...\n   💸 2.999,00 TL ➔ 1.949,00 TL (-35%)\n\n🥇 #1 [KOD: #119]: Lenovo Legion 240Hz Gaming Monitör...\n   💸 8.998 TL ➔ 5.879,02 TL (-35%)\n\n👉 Ürün kodunu (#101 vb.) profilimizdeki sitemizin arama kutusuna yazarak veya Hikayemizden direkt ürüne ulaşabilirsiniz! 🌐\n🔗 Tüm linkler profilimizdeki sitede ve Telegram kanalımızda (@flasfirsat)!\n\n#işbirliği #reklam #indirim #fırsat #teknoloji #kampanya #keşfet",
+    "product_url": "https://flasfirsat.com.tr",
+    "whatsapp_share_url": "https://api.whatsapp.com/send?text=%F0%9F%94%A5%20%2A%F0%9F%8F%86%20G%C3%9CN%C3%9CN%20EN%20%C4%B0YI%203%20FIRSATI%20%28TEST%29%2A%0A%0A%E2%9D%8C%20Eski%20Fiyat%3A%20~%C3%87oklu%20%C3%9Cr%C3%BCn~%0A%E2%9C%85%20%C4%B0ndirimli%20Fiyat%3A%20%2ATop%203%20F%C4%B1rsat%20%28Ort.%20-%2533%29%2A%20%28-%2533%29%0A%F0%9F%8F%AA%20Ma%C4%9Faza%3A%20Amazon%20TR%20/%20Hepsiburada%0A%0A%F0%9F%9B%92%20%2A%C4%B0ndirimli%20Sat%C4%B1n%20Alma%20Linki%3A%2A%0Ahttps%3A//flasfirsat.com.tr%0A%0A%F0%9F%8C%90%20%2AT%C3%BCm%20Canl%C4%B1%20F%C4%B1rsatlar%20%26%20%C4%B0ndirim%20Radar%C4%B1%3A%2A%0Ahttps%3A//flasfirsat.com.tr%3Futm_source%3Dwhatsapp%26utm_medium%3Dchannel%0A%0A%23i%C5%9Fbirli%C4%9Fi%20%23reklam",
+    "file_id": "BAACAgQAAxkDAANXatRTL64Y17CJ7PYNP_YnHn2TQpYAAtIfAAKUyaBSiathVm5eFoQ9BA",
+    "status": "pending",
+    "created_at": "2026-10-18 08:03:59"
   }
 }

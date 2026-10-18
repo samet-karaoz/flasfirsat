@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792300314_23",
+    "deal_code": "#124",
+    "title": "Philips 7500 Buharlı Ütü",
+    "old_price": "5.199 TL",
+    "new_price": "3.298 TL",
+    "discount_pct": "-37%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BXM27M5X?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.099 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/philips_7500_buharl___t_3c221632.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.10.2026 08:11"
+  },
+  {
     "id": "deal_1792256384_23",
     "title": "Dell 24\" 200Hz 1ms IPS Gaming Monitör",
     "old_price": "5.999 TL",

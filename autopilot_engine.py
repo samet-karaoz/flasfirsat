@@ -564,18 +564,6 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             record_autopilot_run(result)
             return result
 
-        # Top 3 ürünlerini web vitrinine ekle ve geçmişe kaydet
-        try:
-            for d in top3_deals:
-                add_deal_to_web(d)
-                if d.get("store_url"):
-                    history.add(d["store_url"])
-                if d.get("title"):
-                    history.add(d["title"])
-            save_history(history)
-        except Exception as ew:
-            print(f"[Top3 Engine] Web vitrini güncelleme uyarısı: {ew}")
-
         # =========================================================================
         # 🛡️ YARI OTOMATİK MOD KONTROLÜ (Top 3 Yönetici Onayı)
         # =========================================================================
@@ -593,7 +581,8 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
                 "old_price": "Çoklu Ürün",
                 "discount_pct": f"-%{avg_disc}",
                 "store_name": "Karma (Amazon / Hepsiburada)",
-                "deal_code": codes_joined
+                "deal_code": codes_joined,
+                "top3_deals": top3_deals
             }
             approval_res = send_telegram_deal_for_approval(deal_summary, video_path, caption_text, product_url=SITE_URL)
             result["mode"] = "semi_automatic_approval"

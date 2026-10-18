@@ -281,8 +281,13 @@ def handle_callback_query(cq: dict):
         # 5. Web Vitrini Güncellemesi
         try:
             from web_showcase import add_deal_to_web
-            add_deal_to_web(deal)
-            statuses.append("• 🌐 Web Vitrini: ✅ Güncellendi (#1 Sıra)")
+            if deal.get("top3_deals"):
+                for d in deal["top3_deals"]:
+                    add_deal_to_web(d)
+                statuses.append("• 🌐 Web Vitrini: ✅ Top 3 Ürünü Eklendi (#1-3 Sıra)")
+            else:
+                add_deal_to_web(deal)
+                statuses.append("• 🌐 Web Vitrini: ✅ Güncellendi (#1 Sıra)")
         except Exception as e_web:
             print(f"[Telegram Service] Web vitrin hatası: {e_web}")
 
@@ -306,9 +311,19 @@ def handle_callback_query(cq: dict):
 
         # 7. Ürün Geçmiş Kaydı
         try:
-            if str(deal.get("old_price", "")).strip() != "Çoklu Ürün" and "Top 3" not in str(deal.get("title", "")):
-                from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
-                history = load_history()
+            from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
+            history = load_history()
+            if deal.get("top3_deals"):
+                for d in deal["top3_deals"]:
+                    d_sig = d.get("store_url") or d.get("url") or d.get("title")
+                    if d_sig:
+                        history.add(d_sig)
+                save_history(history)
+                if deal["top3_deals"]:
+                    first_t = deal["top3_deals"][0].get("title", "")
+                    set_last_product(first_t)
+                    set_last_subtype(get_product_subtype(first_t))
+            elif str(deal.get("old_price", "")).strip() != "Çoklu Ürün" and "Top 3" not in str(deal.get("title", "")):
                 deal_sig = deal.get("store_url") or deal.get("url") or title
                 if deal_sig:
                     history.add(deal_sig)
@@ -346,7 +361,11 @@ def handle_callback_query(cq: dict):
         # Web vitrinine ekle ki profildeki linkte ürün en üstte hazır dursun
         try:
             from web_showcase import add_deal_to_web
-            add_deal_to_web(deal)
+            if deal.get("top3_deals"):
+                for d in deal["top3_deals"]:
+                    add_deal_to_web(d)
+            else:
+                add_deal_to_web(deal)
         except Exception as e_web:
             print(f"[Telegram Service] Web vitrin hatası: {e_web}")
 

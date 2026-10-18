@@ -407,7 +407,8 @@ def render_web_html(deals: list = None):
             elif not first_active_featured:
                 first_active_featured = True
                 card_class = "deal-card featured-reel-card"
-                featured_reel_html = '<span class="badge-featured-reel">⚡ ŞU AN REELS\'TE VİRAL</span>'
+                badge_lbl = "⚡ REELS'TEKİ FIRSAT" if d.get("is_reel") else "⚡ GÜNÜN ÖNE ÇIKAN FIRSATI"
+                featured_reel_html = f'<span class="badge-featured-reel">{badge_lbl}</span>'
 
             expired_badge_html = f'<span class="badge-expired">🔴 {expired_reason.upper()}</span>' if is_expired else ""
             buy_btn_html = (

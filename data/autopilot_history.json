@@ -576,5 +576,28 @@
       "success": false,
       "error": "Unauthorized"
     }
+  },
+  {
+    "timestamp": "2026-10-18 13:25:42",
+    "slot": "Bulut Otopilotu",
+    "success": false,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Logitech G29 Direksiyon Seti",
+      "new_price": "18.799,00 TL",
+      "old_price": "24.999 TL",
+      "discount_pct": "-25%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0C5XNSRHK?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261018_132715_logitech_g29_direksiyon_seti.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261018_132715_logitech_g29_direksiyon_seti_youtube.mp4",
+    "caption_text": "🚨 G29 Fiyatı dipte, bu fırsatı kaçıran üzülür!\n\nEski Fiyat: 24.999 TL ❌ -> Yeni Fiyat: 18.799,00 TL ✅ (%25 İndirim!)\nVites dahil bu fiyata yakalamak gerçekten imkansız deniyordu ama fiyat düştü!\n\n🎟️ KUPON BİLGİSİ: Bu net fiyata düşmesi için ürün sayfasındaki kupon kutucuğunu işaretlemeyi ve kuponu aktif etmeyi unutmayın!\n💳 Peşin fiyatına 3 taksit imkanıyla bütçenizi sarsmadan hemen sahip olabilirsiniz.\n\n🚨 DİKKAT: Stoklar hızla eriyor, bu fiyatın ne kadar kalacağı belirsiz, elinizi çabuk tutun!\n\n🔍 Profilimizdeki sitemizde arama kutusuna **#127** yazarak ürüne saniyeler içinde ulaşabilirsiniz.\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yoksa başka bir set mi beklemeliydik? Yorumlarda buluşalım 👇\n\n🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz ⚡\n\n📌 Fiyatı tekrar kontrol etmek ve kuponu unutmamak için videoyu KAYDET, \"bunu almalıyız\" dediğin arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #logitech #direksiyonseti #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_25_amz_B0C5XNSRHK.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": false,
+      "error": "Unauthorized"
+    }
   }
 ]

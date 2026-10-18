@@ -714,11 +714,11 @@ def handle_user_message(msg: dict):
             f"👉 <b>Bir Sonraki Otomatik Yayın:</b> {info['next_time']}\n"
             f"⏳ <b>Kalan Süre:</b> {info['remaining_str']} ({info['slot_name']})\n\n"
             "📱 <b>Otomatik Yayınlanan Platformlar:</b>\n"
-            "• 📺 YouTube Shorts\n"
-            "• 🎬 Instagram Reels (@flasfirsat)\n"
+            "• 📺 YouTube Shorts (@flasfirsat)\n"
+            "• 🎬 Instagram Reels (@flasfirsat.tr)\n"
+            "• 🎵 TikTok (@flasfirsat)\n"
             "• 📢 Telegram Kanalı (@flasfirsat)\n"
-            "• 🟢 WhatsApp Kanalı (Flaş Fırsat ⚡)\n"
-            "• 🌐 Web Vitrini (Canlı İndirim Radarı)\n\n"
+            "• 🌐 Web Vitrini (flasfirsat.com.tr)\n\n"
             "💡 <i>Saati beklemeden hemen yayınlatmak için: <code>/otopilot</code></i>"
         )
         send_telegram_text(chat_id, prog_msg)

@@ -190,7 +190,9 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
     draw_text_with_emojis(img, draw, (width // 2, sticker_y1 + 144), "🔥 FIRSATI KAÇIRMA • STOKLAR TÜKENEBİLİR", font=cta_urg_font, fill=(185, 28, 28), anchor="mm")
 
     # 9. En Alt Dipnot (1775)
-    draw_text_with_emojis(img, draw, (width // 2, 1775), "Flaş Fırsat • #işbirliği #reklam", font=get_font(26, bold=False), fill=(100, 116, 139), anchor="mm")
+    d_code = deal.get("deal_code", "")
+    code_part = f" • KOD: {d_code}" if d_code else ""
+    draw_text_with_emojis(img, draw, (width // 2, 1775), f"Flaş Fırsat (@flasfirsat.tr){code_part} • #işbirliği #reklam", font=get_font(26, bold=False), fill=(100, 116, 139), anchor="mm")
 
     # RGB'ye çevirip kaydet
     final_img = img.convert("RGB")

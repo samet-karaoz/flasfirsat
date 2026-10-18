@@ -790,7 +790,7 @@ def create_product_banner(
             "Amazon": {"name": "AMAZON TÜRKİYE", "bg": (15, 23, 42), "fg": (255, 255, 255)},
         }
         st_info = store_styles.get(store_name, {"name": store_name.upper(), "bg": (15, 23, 42), "fg": (255, 255, 255)})
-        tag_text = f"{st_info['name']}  •  @flasfirsat"
+        tag_text = f"{st_info['name']}  •  @flasfirsat.tr"
         t_w = draw.textlength(tag_text, font=f_label)
         sx1 = int(card_box[2] - t_w - 40)
         draw.rounded_rectangle((sx1, card_box[3] - 48, card_box[2] - 16, card_box[3] - 14), radius=9, fill=st_info["bg"])

@@ -227,6 +227,71 @@ def send_telegram_deal_for_approval(
         }
         save_pending_deals(pending)
 
+        # ☁️ BULUT BAĞIMSIZLIĞI (PC Kapalıyken GitHub Actions Üzerinde Çalışma):
+        # Eğer bulut sunucusunda (GITHUB_ACTIONS=true) çalışıyorsa, PC kapalı olabileceği için
+        # Story kartını, 4'lü Kopyala-Yapıştır Stüdyo Paketini, Telegram Kanalını ve YouTube Shorts'u
+        # butona basılmasını beklemeden otomatik tamamla!
+        if os.getenv("GITHUB_ACTIONS", "").lower() == "true":
+            try:
+                import html as _html
+                import re as _re
+                print("[Telegram Notifier] ☁️ Bulut Modu Aktif: Story Paketi, Kanal ve YouTube otomatik dağıtılıyor...")
+                # 1. Story görselini gönder
+                if story_image_path and os.path.exists(story_image_path):
+                    with open(story_image_path, "rb") as sf:
+                        requests.post(
+                            f"https://api.telegram.org/bot{token}/sendPhoto",
+                            data={
+                                "chat_id": cid,
+                                "caption": (
+                                    f"📸 <b>1080x1920 HİKAYE (STORY) KARTI HAZIR!</b>\n\n"
+                                    f"🔗 <b>Link Çıkartması İçin Kopyala:</b>\n"
+                                    f"<code>{_html.escape(product_url or '')}</code>"
+                                ),
+                                "parse_mode": "HTML"
+                            },
+                            files={"photo": sf},
+                            timeout=45
+                        )
+                # 2. 4'lü Kopyala-Yapıştır Stüdyo Kutularını gönder
+                clean_w = _re.findall(r'\w+', (title or "").lower())
+                seo_w = [w for w in clean_w if len(w) > 2][:5] + ["indirim", "fırsat", "kampanya", "amazon", "keşfet"]
+                seo_str = " ".join(list(dict.fromkeys(seo_w)))
+                code_pin = f"🔢 Fırsat Kodu: {deal_code} (flasfirsat.com.tr arama kutusuna {deal_code} yazarak anında bulabilirsiniz!)\n\n" if deal_code else ""
+                first_comm = (
+                    f"📌 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede (flasfirsat.com.tr) aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz 👇\n\n"
+                    f"{code_pin}"
+                    f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
+                )
+                studio_msg = (
+                    f"📲 <b>%100 ORGANİK INSTAGRAM & TIKTOK STÜDYO PAKETİ (Bulut Otomatik)</b>\n"
+                    f"<i>(Üzerine bir kez dokunduğunuz metin otomatik kopyalanır)</i>\n\n"
+                    f"📋 <b>1. REELS / TIKTOK AÇIKLAMASI (Dokun & Kopyala):</b>\n"
+                    f"<code>{_html.escape(caption_text)}</code>\n\n"
+                    f"💬 <b>2. BAŞA TUTTURULACAK İLK YORUM (Dokun & Kopyala):</b>\n"
+                    f"<code>{_html.escape(first_comm)}</code>\n\n"
+                    f"🔗 <b>3. HİKAYE (STORY) LİNKİ (Dokun & Kopyala):</b>\n"
+                    f"<code>{_html.escape(product_url or '')}</code>\n\n"
+                    f"🔍 <b>4. INSTAGRAM 'Aa' GÖRÜNMEZ SEO KELİMELERİ:</b>\n"
+                    f"<code>{_html.escape(seo_str)}</code>"
+                )
+                requests.post(
+                    f"https://api.telegram.org/bot{token}/sendMessage",
+                    data={"chat_id": cid, "text": studio_msg, "parse_mode": "HTML"},
+                    timeout=20
+                )
+                # 3. Telegram Kanalına (@flasfirsat) otomatik paylaş
+                send_telegram_deal(video_path, caption_text, product_url=product_url, channel_only=True)
+                # 4. YouTube Shorts'a otomatik yükle
+                try:
+                    from youtube_publisher import publish_shorts_to_youtube
+                    yt_v = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
+                    publish_shorts_to_youtube(yt_v, title=title, description=caption_text)
+                except Exception as eyt:
+                    print(f"[Telegram Notifier] Bulut YouTube yükleme uyarısı: {eyt}")
+            except Exception as ecl:
+                print(f"[Telegram Notifier] Bulut otomatik paket gönderim uyarısı: {ecl}")
+
         print(f"✅ [Telegram Notifier] Fırsat yönetici onayına sunuldu! (Deal ID: {deal_id}, Mesaj ID: {msg_id})")
         return {
             "success": True,

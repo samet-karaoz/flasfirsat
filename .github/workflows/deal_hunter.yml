@@ -2,16 +2,26 @@ name: ⚡ Flaş Fırsat Otomasyonu (24/7 Bulut Otopilotu)
 
 on:
   schedule:
-    # 1. Kuşak: 12:30 TSİ (Öğle Molası) -> 09:30 UTC
+    # 1. Kuşak: 12:30 TSİ (Öğle Molası - Tekli Fırsat) -> 09:30 UTC
     - cron: '30 9 * * *'
-    # 2. Kuşak: 20:00 TSİ (Akşam Prime Time) -> 17:00 UTC
+    # 2. Kuşak: 16:30 TSİ (İkindi Kuşağı - Top 3 Fırsat Bülteni) -> 13:30 UTC
+    - cron: '30 13 * * *'
+    # 3. Kuşak: 20:00 TSİ (Akşam Prime Time - Tekli Fırsat) -> 17:00 UTC
     - cron: '0 17 * * *'
   workflow_dispatch:
     inputs:
+      video_type:
+        description: 'Video Tipi Seçin (single = Tekli Fırsat, top3 = Top 3 Fırsat Listesi)'
+        required: true
+        default: 'single'
+        type: choice
+        options:
+          - single
+          - top3
       slot_name:
-        description: 'Kuşak Adı (Örn: Manuel Tetikleme)'
+        description: 'Kuşak Adı (Örn: Telefondan Bulut Tetikleme)'
         required: false
-        default: 'Manuel Bulut Tetiklemesi'
+        default: 'Telefondan Bulut Tetikleme'
         type: string
 
 permissions:
@@ -65,7 +75,7 @@ jobs:
               print('✅ YouTube Client Secrets yüklendi.')
           "
 
-      - name: 🚀 Yarı Otomatik Bulut Stüdyosunu Çalıştır
+      - name: 🚀 7/24 Bulut Stüdyosunu Çalıştır (PC Kapalıyken Tam Otomatik)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -74,11 +84,19 @@ jobs:
           AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
           TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
           HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
+          SITE_URL: "https://flasfirsat.com.tr"
         run: |
           SLOT="${{ inputs.slot_name }}"
-          [ -z "$SLOT" ] && SLOT="Bulut Otopilotu (12:30 / 20:00)"
-          echo "🚀 Bulut Otopilotu Başlatılıyor: $SLOT"
-          python autopilot_engine.py --now --slot "$SLOT"
+          VTYPE="${{ inputs.video_type }}"
+          CRON_SCHED="${{ github.event.schedule }}"
+          [ -z "$SLOT" ] && SLOT="Bulut Otopilotu"
+          if [ "$VTYPE" = "top3" ] || [ "$CRON_SCHED" = "30 13 * * *" ]; then
+            echo "🏆 Bulut Top 3 Fırsat Bülteni Başlatılıyor: $SLOT"
+            python autopilot_engine.py --top3 --slot "$SLOT"
+          else
+            echo "🚀 Bulut Tekli Fırsat Otopilotu Başlatılıyor: $SLOT"
+            python autopilot_engine.py --now --force --slot "$SLOT"
+          fi
 
       - name: 🌐 Canlı Web Vitrinini ve Fırsat Geçmişini Otomatik Commit & Push Et
         run: |

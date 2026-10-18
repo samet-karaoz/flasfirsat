@@ -582,7 +582,8 @@ def create_product_banner(
     market_badge: str = "",
     cta_type: str = "instagram",
     output_path: str = None,
-    theme_name: str = "auto"
+    theme_name: str = "auto",
+    deal_code: str = ""
 ) -> str:
     """
     Ürün görseli ve fiyat bilgilerinden 1080x960 ebatlarında
@@ -906,7 +907,7 @@ def create_product_banner(
     if str(cta_type).strip().lower() == "youtube":
         cta_prefix = "İndirim linkine "
         cta_highlight = "BİO'DAN"
-        cta_suffix = " ulaşabilirsiniz!"
+        cta_suffix = f" ulaşın • KOD: {deal_code}" if deal_code else " ulaşabilirsiniz!"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)
@@ -933,7 +934,7 @@ def create_product_banner(
     else:
         cta_prefix = "Ürün linki "
         cta_highlight = "PROFİLDE & HİKAYEDE"
-        cta_suffix = " • Fırsatı Kaçırma!"
+        cta_suffix = f" • KOD: {deal_code}" if deal_code else " • Fırsatı Kaçırma!"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)
@@ -1171,11 +1172,12 @@ def build_split_screen_video(
         "-fflags", "+bitexact",
         "-flags:v", "+bitexact",
         "-flags:a", "+bitexact",
-        "-metadata", "com.apple.quicktime.make=Apple",
-        "-metadata", "com.apple.quicktime.model=iPhone 16 Pro",
-        "-metadata", "com.apple.quicktime.software=18.3.1",
-        "-metadata:s:v:0", "handler_name=Core Media Video",
-        "-metadata:s:a:0", "handler_name=Core Media Audio",
+        "-brand", "mp42",
+        "-metadata", "com.android.version=13",
+        "-metadata", "com.android.manufacturer=Xiaomi",
+        "-metadata", "com.android.model=Redmi Note 11 Pro",
+        "-metadata:s:v:0", "handler_name=VideoHandle",
+        "-metadata:s:a:0", "handler_name=SoundHandle",
         "-metadata", f"creation_time={iso_now}",
         "-movflags", "+faststart+use_metadata_tags",
         "-t", str(duration),
@@ -1186,8 +1188,143 @@ def build_split_screen_video(
 
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
-        print(f"[Montaj] Video başarıyla oluşturuldu (iPhone Metadata & Clean Header): {output_path}")
+        print(f"[Montaj] Video başarıyla oluşturuldu (Redmi Note 11 Pro Metadata & Clean Header): {output_path}")
         return output_path
     else:
         print("[Montaj] Hata:", res.stderr[-500:])
         return None
+
+
+def build_top3_split_screen_video(
+    deals: list,
+    meme_name: str = None,
+    output_filename: str = "top3_deal_reel.mp4"
+) -> str:
+    """
+    En yüksek puanlı 3 fırsatı tek bir 12 saniyelik Reels videosunda sırayla (1/3 -> 2/3 -> 3/3)
+    üst yarıda gösteren, kaydetme rekoru kıran 'TOP 3 Fırsat Listesi' videosu üretir.
+    """
+    if not deals or len(deals) < 2:
+        raise ValueError("Top 3 video için en az 2-3 fırsat gereklidir.")
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(TEMP_DIR, exist_ok=True)
+
+    top_deals = deals[:3]
+    banner_paths = []
+    for idx, d in enumerate(top_deals, 1):
+        b_path = os.path.join(TEMP_DIR, f"top3_banner_{idx}.png")
+        code_str = d.get("deal_code", "")
+        badge_lbl = f"FIRSAT #{idx}/{len(top_deals)}" + (f" ({code_str})" if code_str else "")
+        create_product_banner(
+            title=d.get("title", "Fırsat Ürünü"),
+            product_image_path=d.get("image_path", ""),
+            old_price=d.get("old_price", ""),
+            new_price=d.get("new_price", ""),
+            discount_pct=d.get("discount_pct", "-30%"),
+            badge_text=badge_lbl,
+            store_name=d.get("store_name", "Amazon TR"),
+            bank_campaign=d.get("bank_campaign", ""),
+            net_cost=d.get("net_cost", ""),
+            installment=d.get("installment", ""),
+            feature_text=d.get("killer_hook") or d.get("feature_pill", ""),
+            is_lowest_30d=d.get("is_lowest_30d", False),
+            has_verified_old_price=d.get("has_verified_old_price", True),
+            seller_badge_text=d.get("seller_badge", "AMAZON TR"),
+            coupon_text=d.get("coupon_info", ""),
+            output_path=b_path
+        )
+        banner_paths.append(b_path)
+
+    if meme_name:
+        if not meme_name.endswith(".mp4"):
+            meme_name += ".mp4"
+        bottom_meme_path = os.path.join(MEMES_DIR, meme_name)
+    else:
+        chosen = select_smart_meme("-40%", top_deals[0].get("title", ""))
+        bottom_meme_path = os.path.join(MEMES_DIR, chosen)
+
+    reaction_text = "FİYATI ÇÖKEN BU 3 FIRSATI KAYDEDEN TAYFA:"
+    reaction_overlay_path = os.path.join(TEMP_DIR, "reaction_top3_overlay.png")
+    create_reaction_hook_overlay(reaction_text, reaction_overlay_path)
+
+    raw_dur = get_media_duration(bottom_meme_path)
+    rnd_trim = round(random.uniform(0.15, 0.40), 3)
+    duration = round(max(9.6, min(raw_dur - rnd_trim, 12.6)), 3)
+    seg_dur = round(duration / len(banner_paths), 3)
+
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
+    rnd_sat = round(random.uniform(1.01, 1.03), 3)
+    rnd_contrast = round(random.uniform(1.005, 1.015), 3)
+
+    import datetime as _dt
+    iso_now = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Input 0, 1, 2: banners; Input 3: meme; Input 4: reaction overlay
+    cmd = ["ffmpeg", "-y"]
+    for bp in banner_paths:
+        cmd += ["-loop", "1", "-t", str(duration), "-i", bp]
+    cmd += ["-i", bottom_meme_path]
+    cmd += ["-loop", "1", "-t", str(duration), "-i", reaction_overlay_path]
+
+    n_b = len(banner_paths)
+    meme_idx = n_b
+    ovl_idx = n_b + 1
+
+    # Build top sequence via overlay enable=between(t,...)
+    top_chain = "[0:v]scale=1080:960,setsar=1[t0];"
+    for i in range(1, n_b):
+        start_t = round(i * seg_dur, 2)
+        end_t = round((i + 1) * seg_dur + 0.5, 2)
+        top_chain += f"[{i}:v]scale=1080:960,setsar=1[b{i}];[t{i-1}][b{i}]overlay=0:0:enable='between(t,{start_t},{end_t})'[t{i}];"
+    top_final = f"[t{n_b-1}]"
+
+    scale_bottom = (
+        f"scale=1080:960:force_original_aspect_ratio=increase,"
+        f"crop=1080:960,setsar=1,"
+        f"eq=saturation={rnd_sat}:contrast={rnd_contrast}"
+    )
+    progress_bar_filter = (
+        f"[stacked]drawbox=x=0:y=1906:w=1080:h=14:color=black@0.5:t=fill,"
+        f"drawbox=x=0:y=1906:w='1080*(t/{duration:.2f})':h=14:color=#FF5722@0.95:t=fill,"
+        f"drawbox=x=0:y=1906:w='1080*(t/{duration:.2f})':h=4:color=#FACC15@1.0:t=fill[v]"
+    )
+
+    filter_complex = (
+        f"{top_chain}"
+        f"[{meme_idx}:v]{scale_bottom}[bottom_raw];"
+        f"[bottom_raw][{ovl_idx}:v]overlay=0:0[bottom];"
+        f"{top_final}[bottom]vstack=inputs=2[stacked];"
+        f"{progress_bar_filter};"
+        f"[{meme_idx}:a]volume=1.0[a]"
+    )
+
+    cmd += [
+        "-filter_complex", filter_complex,
+        "-map", "[v]", "-map", "[a]",
+        "-map_metadata", "-1",
+        "-fflags", "+bitexact",
+        "-flags:v", "+bitexact",
+        "-flags:a", "+bitexact",
+        "-brand", "mp42",
+        "-metadata", "com.android.version=13",
+        "-metadata", "com.android.manufacturer=Xiaomi",
+        "-metadata", "com.android.model=Redmi Note 11 Pro",
+        "-metadata:s:v:0", "handler_name=VideoHandle",
+        "-metadata:s:a:0", "handler_name=SoundHandle",
+        "-metadata", f"creation_time={iso_now}",
+        "-movflags", "+faststart+use_metadata_tags",
+        "-t", str(duration),
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "192k",
+        output_path
+    ]
+
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode == 0 and os.path.exists(output_path):
+        print(f"[Montaj] 🏆 TOP 3 Liste Videosu oluşturuldu (Redmi Note 11 Pro Metadata): {output_path}")
+        return output_path
+    else:
+        print("[Montaj] Top 3 Video Hatası:", res.stderr[-500:])
+        return None
+

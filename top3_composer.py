@@ -119,6 +119,7 @@ def build_top3_video(
             seller_badge_text=deal.get("seller_badge", ""),
             coupon_text=deal.get("coupon_info", ""),
             market_badge=deal.get("market_badge", ""),
+            deal_code=deal.get("deal_code", ""),
             output_path=card_out
         )
         card_files.append(card_out)
@@ -149,6 +150,9 @@ def build_top3_video(
         f"{progress_bar_filter}"
     )
 
+    import datetime as _dt
+    iso_now = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     cmd = [
         "ffmpeg", "-y",
         "-loop", "1", "-t", str(d1), "-i", card_files[0],
@@ -164,14 +168,26 @@ def build_top3_video(
         cmd += ["-map", "3:a", "-c:a", "aac", "-b:a", "192k"]
 
     cmd += [
+        "-map_metadata", "-1",
+        "-fflags", "+bitexact",
+        "-flags:v", "+bitexact",
+        "-flags:a", "+bitexact",
+        "-brand", "mp42",
+        "-metadata", "com.android.version=13",
+        "-metadata", "com.android.manufacturer=Xiaomi",
+        "-metadata", "com.android.model=Redmi Note 11 Pro",
+        "-metadata:s:v:0", "handler_name=VideoHandle",
+        "-metadata:s:a:0", "handler_name=SoundHandle",
+        "-metadata", f"creation_time={iso_now}",
+        "-movflags", "+faststart+use_metadata_tags",
         "-t", str(duration),
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p",
         output_path
     ]
 
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
-        print(f"[Top3] 🎬 Video başarıyla üretildi: {output_path}")
+        print(f"[Top3] 🎬 Video başarıyla üretildi (Redmi Note 11 Pro Metadata): {output_path}")
         return output_path
     else:
         print("[Top3] FFmpeg hatası:", res.stderr)
@@ -179,22 +195,25 @@ def build_top3_video(
 
 
 def generate_top3_caption(deals: list) -> str:
-    """Top 3 videosu için DM teşvikli viral açıklama metni üretir."""
+    """Top 3 videosu için Fırsat Kodu (#10X) destekli viral açıklama metni üretir."""
     d1 = deals[0]
     d2 = deals[1]
     d3 = deals[2]
+    c1 = f" [KOD: {d1.get('deal_code')}]" if d1.get("deal_code") else ""
+    c2 = f" [KOD: {d2.get('deal_code')}]" if d2.get("deal_code") else ""
+    c3 = f" [KOD: {d3.get('deal_code')}]" if d3.get("deal_code") else ""
 
     caption = (
         f"🔥 GÜNÜN EN İYİ 3 İNDİRİMİ RESMEN ÇÖKTÜ!\n\n"
-        f"🥉 #3: {d3.get('title')[:35]}...\n"
+        f"🥉 #3{c3}: {d3.get('title')[:35]}...\n"
         f"   💸 {d3.get('old_price')} ➔ {d3.get('new_price')} ({d3.get('discount_pct')})\n\n"
-        f"🥈 #2: {d2.get('title')[:35]}...\n"
+        f"🥈 #2{c2}: {d2.get('title')[:35]}...\n"
         f"   💸 {d2.get('old_price')} ➔ {d2.get('new_price')} ({d2.get('discount_pct')})\n\n"
-        f"🥇 #1: {d1.get('title')[:35]}...\n"
+        f"🥇 #1{c1}: {d1.get('title')[:35]}...\n"
         f"   💸 {d1.get('old_price')} ➔ {d1.get('new_price')} ({d1.get('discount_pct')})\n\n"
-        f"👉 İndirimli satın alma linklerine profilimizdeki sitemizden tek tıkla ulaşabilirsiniz! 🌐\n"
+        f"👉 Ürün kodunu (#101 vb.) profilimizdeki sitemizin arama kutusuna yazarak veya Hikayemizden direkt ürüne ulaşabilirsiniz! 🌐\n"
         f"🔗 Tüm linkler profilimizdeki sitede ve Telegram kanalımızda (@flasfirsat)!\n\n"
-        f"#indirim #fırsat #teknoloji #kampanya #keşfet"
+        f"#işbirliği #reklam #indirim #fırsat #teknoloji #kampanya #keşfet"
     )
     return caption
 

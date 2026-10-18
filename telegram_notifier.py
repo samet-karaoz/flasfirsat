@@ -132,9 +132,13 @@ def send_telegram_deal_for_approval(
     installment = deal.get("installment", "")
     coupon_info = str(deal.get("coupon_info", "")).strip()
 
+    deal_code = deal.get("deal_code", "")
+    code_line = f"🔢 <b>Fırsat Kodu:</b> <code>{deal_code}</code>\n" if deal_code else ""
+
     # Yönetici Önizleme Mesajı
     approval_caption = (
         f"🎬 <b>YENİ FIRSAT ONAY BEKLİYOR!</b>\n\n"
+        f"{code_line}"
         f"📦 <b>Ürün:</b> {title}\n"
         f"💰 <b>Fiyat:</b> <s>{old_price}</s> ➔ <b>{new_price}</b> ({discount_pct})\n"
     )
@@ -181,8 +185,8 @@ def send_telegram_deal_for_approval(
     api_url = f"https://api.telegram.org/bot{token}/sendVideo"
 
     try:
-        import random as _rnd
-        clean_fname = f"IMG_{_rnd.randint(1000, 9999)}.MP4"
+        from datetime import datetime as _dt
+        clean_fname = _dt.now().strftime("VID_%Y%m%d_%H%M%S.mp4")
         with open(video_path, "rb") as video_file:
             payload = {
                 "chat_id": cid,

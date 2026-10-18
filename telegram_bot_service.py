@@ -193,9 +193,12 @@ def handle_callback_query(cq: dict):
         all_seo = list(dict.fromkeys(meaningful_words[:5] + category_seo + base_seo[:5]))
         seo_str = " ".join(all_seo)
 
+        deal_code_val = deal.get("deal_code", "")
+        code_pin_line = f"🔢 Fırsat Kodu: {deal_code_val} (flasfirsat.com.tr arama kutusuna {deal_code_val} yazarak anında bulabilirsiniz!)\n\n" if deal_code_val else ""
         first_comment_str = (
-            "📌 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz 👇\n\n"
-            "Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
+            f"📌 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede (flasfirsat.com.tr) aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz 👇\n\n"
+            f"{code_pin_line}"
+            f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
         )
         studio_msg = (
             f"📲 <b>%100 ORGANİK INSTAGRAM STÜDYO PAKETİ</b>\n"
@@ -798,22 +801,27 @@ def handle_user_message(msg: dict):
         send_telegram_text(chat_id, resp)
         return
 
-    # 3.5 /stats veya /web Komutu
-    if text.startswith("/stats") or text.startswith("/web"):
+    # 3.5 /stats, /web veya /rapor Komutu
+    if text.startswith("/stats") or text.startswith("/web") or text.startswith("/rapor"):
         from web_showcase import load_deals
         from config import SITE_URL, GA_MEASUREMENT_ID
         deals = load_deals()
+        active_cnt = sum(1 for d in deals if not d.get("is_expired", False))
+        expired_cnt = len(deals) - active_cnt
         amazon_cnt = sum(1 for d in deals if "amazon" in d.get("store_name", "").lower())
         trendyol_cnt = sum(1 for d in deals if "trendyol" in d.get("store_name", "").lower())
         hb_cnt = sum(1 for d in deals if "hepsi" in d.get("store_name", "").lower())
         other_cnt = len(deals) - (amazon_cnt + trendyol_cnt + hb_cnt)
+        latest_code = deals[0].get("deal_code", "#101") if deals else "#101"
 
         ga_status = f"🟢 Aktif (<code>{GA_MEASUREMENT_ID}</code>)" if GA_MEASUREMENT_ID else "🟡 Yerel Telemetri (Tarayıcı İçi)"
 
         stats_msg = (
-            f"📊 <b>FLAŞ FIRSAT WEB & ANALİTİK PANELİ</b> ⚡\n\n"
-            f"🌐 <b>Web Vitrini:</b> {SITE_URL}\n"
-            f"📦 <b>Yayındaki Aktif Fırsat:</b> {len(deals)} adet\n\n"
+            f"📊 <b>FLAŞ FIRSAT YÖNETİCİ & VİTRİN RAPORU</b> ⚡\n\n"
+            f"🌐 <b>Resmi Domain:</b> {SITE_URL}\n"
+            f"📦 <b>Toplam Vitrin Ürünü:</b> {len(deals)} adet (🟢 {active_cnt} Aktif / 🔴 {expired_cnt} Tükendi)\n"
+            f"🔢 <b>Son Atanan Fırsat Kodu:</b> <code>{latest_code}</code>\n"
+            f"📱 <b>Video Cihaz İzi:</b> Xiaomi Redmi Note 11 Pro (Android 13)\n\n"
             f"🏪 <b>Mağaza Dağılımı:</b>\n"
             f" • Amazon TR: <b>{amazon_cnt}</b>\n"
             f" • Trendyol: <b>{trendyol_cnt}</b>\n"
@@ -827,7 +835,7 @@ def handle_user_message(msg: dict):
             f" • Instagram: <code>{SITE_URL}?utm_source=instagram</code>\n"
             f" • YouTube: <code>{SITE_URL}?utm_source=youtube</code>\n"
             f" • Telegram: <code>{SITE_URL}?utm_source=telegram</code>\n\n"
-            f"👇 <i>Canlı ziyaretçi, tıklama ve cihaz grafiklerini görmek için butona tıklayın:</i>"
+            f"💡 <i>Vitrin stoklarını hemen canlı denetlemek için: <code>/denetle</code></i>"
         )
         markup = {
             "inline_keyboard": [
@@ -835,6 +843,30 @@ def handle_user_message(msg: dict):
             ]
         }
         send_telegram_text(chat_id, stats_msg, reply_markup=markup)
+        return
+
+    # 3.6 /denetle Komutu (Canlı Vitrin Stok ve Fiyat Denetimi)
+    if text.startswith("/denetle"):
+        send_telegram_text(chat_id, "🔍 <b>Canlı Vitrin Stok & Fiyat Denetimi Başlatıldı!</b>\n\nflasfirsat.com.tr üzerindeki tüm ürünler tek tek kontrol ediliyor, tükenen veya indirimi bitenler işaretleniyor...")
+        import threading
+        def _run_verify():
+            try:
+                from web_showcase import check_and_update_all_deals_status, load_deals
+                res_v = check_and_update_all_deals_status()
+                changed = res_v.get("updated", False) if isinstance(res_v, dict) else bool(res_v)
+                deals = load_deals()
+                act = sum(1 for d in deals if not d.get("is_expired", False))
+                exp = len(deals) - act
+                send_telegram_text(
+                    chat_id,
+                    f"✅ <b>Canlı Vitrin Denetimi Tamamlandı!</b>\n\n"
+                    f"• 🟢 Aktif Fırsat: <b>{act}</b>\n"
+                    f"• 🔴 Tükendi / İndirimi Bitti: <b>{exp}</b>\n"
+                    f"• 🔄 Durumu Güncellenen: <b>{'Evet (GitHub Pages Güncellendi)' if changed else 'Değişiklik Yok (Tümü Güncel)'}</b>"
+                )
+            except Exception as ev:
+                send_telegram_text(chat_id, f"❌ Vitrin denetim hatası: {ev}")
+        threading.Thread(target=_run_verify, daemon=True).start()
         return
 
     # 4. /sil <alarm_id>
@@ -987,6 +1019,7 @@ def run_telegram_service():
 
     offset = None
     last_alarm_check = time.time()
+    last_vitrin_check = time.time()
 
     while True:
         try:
@@ -1015,6 +1048,16 @@ def run_telegram_service():
                 print("[Telegram Service] ⏰ Takip edilen ürünlerin fiyatları kontrol ediliyor...")
                 check_user_price_alarms()
                 last_alarm_check = time.time()
+
+            # 3 saatte bir Web Vitrini (flasfirsat.com.tr) canlı stok/fiyat denetimi yap
+            if time.time() - last_vitrin_check > 10800:
+                print("[Telegram Service] 🌐 3 Saatlik Otomatik Vitrin Stok & Fiyat Denetimi başlatılıyor...")
+                try:
+                    from web_showcase import check_and_update_all_deals_status
+                    check_and_update_all_deals_status()
+                except Exception as evc:
+                    print(f"[Telegram Service] Vitrin stok denetim uyarısı: {evc}")
+                last_vitrin_check = time.time()
 
         except requests.exceptions.RequestException:
             time.sleep(3)

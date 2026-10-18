@@ -40,12 +40,34 @@ def ensure_web_setup():
         with open(DEALS_JSON_PATH, "w", encoding="utf-8") as f:
             json.dump([], f, ensure_ascii=False, indent=2)
 
+def _ensure_deal_codes(deals: list) -> bool:
+    """Tüm ürünlerin #101, #102 gibi benzersiz bir Fırsat Koduna sahip olmasını sağlar."""
+    import re
+    max_num = 100
+    for d in deals:
+        c = str(d.get("deal_code", "")).strip()
+        m = re.search(r"(\d+)", c)
+        if m:
+            max_num = max(max_num, int(m.group(1)))
+
+    changed = False
+    # Eski ürünlerden başlayarak kodu olmayanlara sırayla ata
+    for d in reversed(deals):
+        if not d.get("deal_code"):
+            max_num += 1
+            d["deal_code"] = f"#{max_num}"
+            changed = True
+    return changed
+
 def load_deals() -> list:
     ensure_web_setup()
     if os.path.exists(DEALS_JSON_PATH):
         try:
             with open(DEALS_JSON_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
+                deals = json.load(f)
+            if isinstance(deals, list) and _ensure_deal_codes(deals):
+                save_deals(deals)
+            return deals
         except Exception:
             return []
     return []
@@ -54,6 +76,19 @@ def save_deals(deals: list):
     ensure_web_setup()
     with open(DEALS_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(deals, f, ensure_ascii=False, indent=2)
+
+def get_next_deal_code(deals: list = None) -> str:
+    """Sıradaki yeni ürün için #1XX fırsat kodunu döndürür."""
+    import re
+    if deals is None:
+        deals = load_deals()
+    max_num = 100
+    for d in deals:
+        c = str(d.get("deal_code", "")).strip()
+        m = re.search(r"(\d+)", c)
+        if m:
+            max_num = max(max_num, int(m.group(1)))
+    return f"#{max_num + 1}"
 
 def add_deal_to_web(deal: dict):
     """
@@ -94,14 +129,43 @@ def add_deal_to_web(deal: dict):
     else:
         cat = 'general'
 
+    import re
+    store_url_val = deal.get("affiliate_url") or deal.get("store_url", "#")
+    new_url_clean = store_url_val.split("?")[0].strip().lower()
+    new_asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", store_url_val, re.IGNORECASE)
+    new_asin = new_asin_m.group(1).upper() if new_asin_m else ""
+
+    existing_idx = None
+    existing_code = deal.get("deal_code", "")
+    for i, d in enumerate(deals):
+        d_title = d.get("title", "")
+        d_url = d.get("store_url", "")
+        d_url_clean = d_url.split("?")[0].strip().lower()
+        if d_title == deal.get("title", ""):
+            existing_idx = i
+            existing_code = existing_code or d.get("deal_code", "")
+            break
+        if new_url_clean and new_url_clean != "#" and d_url_clean == new_url_clean:
+            existing_idx = i
+            existing_code = existing_code or d.get("deal_code", "")
+            break
+        if new_asin and new_asin.lower() in d_url.lower():
+            existing_idx = i
+            existing_code = existing_code or d.get("deal_code", "")
+            break
+
+    deal_code = existing_code or get_next_deal_code(deals)
+    deal["deal_code"] = deal_code
+
     deal_item = {
         "id": f"deal_{int(datetime.now().timestamp())}_{len(deals)}",
+        "deal_code": deal_code,
         "title": deal.get("title", "Fırsat Ürünü"),
         "old_price": deal.get("old_price", ""),
         "new_price": deal.get("new_price", ""),
         "discount_pct": deal.get("discount_pct", ""),
         "store_name": deal.get("store_name", "Amazon TR"),
-        "store_url": deal.get("affiliate_url") or deal.get("store_url", "#"),
+        "store_url": store_url_val,
         "bank_campaign": bank_camp,
         "net_cost": "",
         "installment": installment,
@@ -112,28 +176,6 @@ def add_deal_to_web(deal: dict):
         "expired_reason": "",
         "date_added": datetime.now().strftime("%d.%m.%Y %H:%M")
     }
-
-    # Başa ekle (en yeni en üstte)
-    # Aynı url, ASIN veya başlık varsa güncelle (Asla aynı ürünü 2 kez vitrine koyma)
-    import re
-    new_url_clean = deal_item["store_url"].split("?")[0].strip().lower()
-    new_asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", deal_item["store_url"], re.IGNORECASE)
-    new_asin = new_asin_m.group(1).upper() if new_asin_m else ""
-
-    existing_idx = None
-    for i, d in enumerate(deals):
-        d_title = d.get("title", "")
-        d_url = d.get("store_url", "")
-        d_url_clean = d_url.split("?")[0].strip().lower()
-        if d_title == deal_item["title"]:
-            existing_idx = i
-            break
-        if new_url_clean and new_url_clean != "#" and d_url_clean == new_url_clean:
-            existing_idx = i
-            break
-        if new_asin and new_asin.lower() in d_url.lower():
-            existing_idx = i
-            break
 
     if existing_idx is not None:
         deals.pop(existing_idx)
@@ -285,6 +327,7 @@ def render_web_html(deals: list = None):
 """
     else:
         from campaign_calculator import calculate_campaign_and_net_cost
+        from deal_hunter import parse_price_to_float
         first_active_featured = False
         for idx, d in enumerate(deals):
             img_src = d.get("image_url") or "assets/logo.jpg"
@@ -295,6 +338,8 @@ def render_web_html(deals: list = None):
             store = d.get("store_name", "Fırsat")
             url = d.get("store_url", "#")
             deal_id = d.get("id", "")
+            deal_code = d.get("deal_code", f"#{100 + len(deals) - idx}")
+            code_num_only = deal_code.replace("#", "").strip()
 
             # Kategori & Kupon (Nays tamamen kaldırıldı)
             category = d.get("category") or "general"
@@ -306,6 +351,26 @@ def render_web_html(deals: list = None):
                             <span class="advantage-txt"><strong>Kupon:</strong> {coupon_info} (Sayfada Aktif Edin)</span>
                         </div>
             """ if coupon_info else ""
+
+            # Görsel Fiyat Geçmişi / Net Kazanç Barı
+            old_val_f = parse_price_to_float(old_p) if old_p else 0.0
+            new_val_f = parse_price_to_float(new_p) if new_p else 0.0
+            savings_bar_html = ""
+            if old_val_f > new_val_f and new_val_f > 0:
+                sav_tl = int(round(old_val_f - new_val_f))
+                sav_fmt = f"{sav_tl:,} TL".replace(",", ".")
+                fill_pct = max(25, min(92, int(round((1.0 - (new_val_f / old_val_f)) * 100)) + 35))
+                savings_bar_html = f"""
+                        <div class="savings-proof-box">
+                            <div class="savings-proof-top">
+                                <span>📉 Piyasa/Liste: <s>{old_p}</s></span>
+                                <span class="savings-gain">🔥 {sav_fmt} Net Kazanç!</span>
+                            </div>
+                            <div class="savings-bar-track">
+                                <div class="savings-bar-fill" style="width: {fill_pct}%"></div>
+                            </div>
+                        </div>
+                """
 
             # Teslimat & Taksit Bilgisi
             camp_info = calculate_campaign_and_net_cost(new_p, store)
@@ -348,12 +413,13 @@ def render_web_html(deals: list = None):
             )
 
             cards_html += f"""
-            <div class="{card_class}" data-status="{status_attr}" data-category="{category}" data-title="{title.lower()} {store.lower()} {category}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
+            <div class="{card_class}" data-status="{status_attr}" data-category="{category}" data-title="{title.lower()} {store.lower()} {category} {deal_code.lower()} {code_num_only} kod {code_num_only}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
                 <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="{safe_title}">
                     <div class="card-img-wrap">
                         <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
                         <span class="badge-store {store_class}">{store}</span>
                         <span class="badge-discount">{disc}</span>
+                        <span class="badge-deal-code">🔢 KOD: {deal_code}</span>
                         {featured_reel_html}
                         {expired_badge_html}
                     </div>
@@ -366,6 +432,7 @@ def render_web_html(deals: list = None):
                         <span class="old-price">{old_p}</span>
                         <span class="new-price">{new_p}</span>
                     </div>
+                    {savings_bar_html}
 
                     <div class="campaign-box">
                         {coupon_html}
@@ -1380,6 +1447,111 @@ def render_web_html(deals: list = None):
             border-radius: 4px;
             color: #94A3B8;
         }
+
+        /* Fırsat Kodu Rozeti */
+        .badge-deal-code {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(15, 23, 42, 0.92);
+            color: #FACC15;
+            border: 1px solid rgba(250, 204, 21, 0.45);
+            font-size: 0.74rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            letter-spacing: 0.4px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            z-index: 3;
+        }
+
+        /* Piyasa Kıyaslama & Net Kazanç Barı */
+        .savings-proof-box {
+            background: rgba(16, 185, 129, 0.07);
+            border: 1px solid rgba(16, 185, 129, 0.22);
+            border-radius: 10px;
+            padding: 8px 11px;
+            margin-bottom: 12px;
+        }
+        .savings-proof-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.76rem;
+            color: #CBD5E1;
+            margin-bottom: 6px;
+            gap: 6px;
+        }
+        .savings-gain {
+            color: #34D399;
+            font-weight: 800;
+        }
+        .savings-bar-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .savings-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10B981, #FACC15);
+            border-radius: 99px;
+        }
+
+        /* Yüzen (Sticky) Telegram Fırsat Alarmı Barı */
+        .sticky-tg-bar {
+            position: fixed;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 28px);
+            max-width: 680px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.96));
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            z-index: 999;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+        }
+        .sticky-tg-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.84rem;
+            color: #F8FAFC;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .sticky-tg-btn {
+            background: linear-gradient(135deg, #0284C7, #38BDF8);
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 8px 14px;
+            border-radius: 10px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+            transition: transform 0.2s;
+        }
+        .sticky-tg-btn:hover {
+            transform: scale(1.04);
+        }
+        .sticky-tg-close {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 4px;
+        }
     </style>
 </head>
 <body>
@@ -1421,7 +1593,7 @@ def render_web_html(deals: list = None):
 
         <div class="controls-bar">
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün veya marka ara (kulaklık, mouse, monitör, stanley, amazon...)" onkeyup="filterDeals()">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün, marka veya Videodaki Fırsat Kodunu (#101, 102...) ara..." onkeyup="filterDeals()">
             </div>
         </div>
 
@@ -1469,6 +1641,18 @@ def render_web_html(deals: list = None):
             </button>
         </div>
     </footer>
+
+    <!-- Yüzen Telegram Fırsat Alarmı Barı -->
+    <div id="stickyTgBar" class="sticky-tg-bar">
+        <div class="sticky-tg-left">
+            <span>🚨</span>
+            <span>Fiyat hatalarını ve anlık indirimleri tükenmeden yakala!</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <a href="https://t.me/flasfirsat" target="_blank" class="sticky-tg-btn" data-social="telegram">✈️ Telegram'a Katıl</a>
+            <button class="sticky-tg-close" onclick="document.getElementById('stickyTgBar').style.display='none'" aria-label="Kapat">&times;</button>
+        </div>
+    </div>
 
     <!-- Native HTML5 Dialog (İstatistik & Ziyaretçi Paneli) -->
     <dialog id="statsModal" class="stats-dialog">

@@ -517,6 +517,13 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             record_autopilot_run(result)
             return result
 
+        from web_showcase import add_deal_to_web, get_next_deal_code, load_deals
+        existing_deals = load_deals()
+        for c in top3_deals:
+            if not c.get("deal_code"):
+                c["deal_code"] = get_next_deal_code(existing_deals)
+                existing_deals.append(c)
+
         ts = int(time.time())
         video_filename = f"top3_weekly_{ts}.mp4"
         print(f"\n🎬 Top 3 videosu derleniyor: {video_filename}...")
@@ -531,6 +538,18 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             record_autopilot_run(result)
             return result
 
+        # Top 3 ürünlerini web vitrinine ekle ve geçmişe kaydet
+        try:
+            for d in top3_deals:
+                add_deal_to_web(d)
+                if d.get("store_url"):
+                    history.add(d["store_url"])
+                if d.get("title"):
+                    history.add(d["title"])
+            save_history(history)
+        except Exception as ew:
+            print(f"[Top3 Engine] Web vitrini güncelleme uyarısı: {ew}")
+
         # =========================================================================
         # 🛡️ YARI OTOMATİK MOD KONTROLÜ (Top 3 Yönetici Onayı)
         # =========================================================================
@@ -541,12 +560,14 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
             from telegram_notifier import send_telegram_deal_for_approval
             from config import SITE_URL
             avg_disc = int(sum(get_deal_discount_pct(d) for d in top3_deals) / len(top3_deals)) if top3_deals else 0
+            codes_joined = ", ".join(d.get("deal_code", "") for d in top3_deals if d.get("deal_code"))
             deal_summary = {
                 "title": f"🏆 {slot_name}",
                 "new_price": f"Top 3 Fırsat (Ort. -%{avg_disc})",
                 "old_price": "Çoklu Ürün",
                 "discount_pct": f"-%{avg_disc}",
-                "store_name": "Karma (Amazon / Hepsiburada)"
+                "store_name": "Karma (Amazon / Hepsiburada)",
+                "deal_code": codes_joined
             }
             approval_res = send_telegram_deal_for_approval(deal_summary, video_path, caption_text, product_url=SITE_URL)
             result["mode"] = "semi_automatic_approval"

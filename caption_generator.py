@@ -9,14 +9,15 @@ MODEL_CANDIDATES = [
     "gemini-flash-latest"
 ]
 
-def generate_viral_caption(product_title: str, old_price: str, new_price: str, discount_pct: str, deal_details: str = "", store_url: str = "", bank_campaign: str = "", net_cost: str = "", coupon_info: str = "") -> str:
+def generate_viral_caption(product_title: str, old_price: str, new_price: str, discount_pct: str, deal_details: str = "", store_url: str = "", bank_campaign: str = "", net_cost: str = "", coupon_info: str = "", deal_code: str = "") -> str:
     """
     Instagram Reels ve TikTok için etkileşimi patlatan, merak uyandıran,
     yoruma teşvik eden açıklama metni (caption) ve viral hashtag'ler üretir.
-    Banka kampanyası, kupon bilgilendirmesi ve net maliyet bilgisini de içerir.
+    Banka kampanyası, kupon bilgilendirmesi, fırsat kodu (#10X) ve net maliyet bilgisini de içerir.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
     coupon_clean = str(coupon_info).strip() if coupon_info else ""
+    code_clean = str(deal_code).strip() if deal_code else ""
     
     system_prompt = """Sen Instagram ve TikTok'ta milyonlarca izlenen viral fırsat ve indirim sayfalarını yöneten dahi bir sosyal medya ve büyüme uzmanısın.
 
@@ -41,6 +42,8 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
     extra_info = ""
     if coupon_clean:
         extra_info += f"\nKupon Bilgilendirmesi (Zorunlu Vurgula): {coupon_clean} (İzleyiciye ürün sayfasındaki kuponu aktif etmesi gerektiğini açıkça yaz)"
+    if code_clean:
+        extra_info += f"\nFırsat Kodu: {code_clean} (İzleyiciye profilimizdeki sitemizde arama kutusuna {code_clean} yazarak da ürünü saniyeler içinde bulabileceğini belirt)"
     price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
     user_prompt = f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÜrün Linki: {store_url}\nYasal Zorunluluk: Açıklamanın en sonuna mutlaka '#işbirliği #reklam' etiketlerini ekle."
 
@@ -54,7 +57,7 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         json.dump(payload, f, ensure_ascii=False)
 
     def sanitize_caption(text: str) -> str:
-        """Metindeki hashtag sayısını dengeler, kupon uyarısını ve #işbirliği zorunluluğunu garanti eder."""
+        """Metindeki hashtag sayısını dengeler, kupon uyarısını, fırsat kodunu ve #işbirliği zorunluluğunu garanti eder."""
         import re
         if coupon_clean and "kupon" not in text.lower():
             coupon_notice = f"\n🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki '{coupon_clean}' kuponunu aktif etmeyi unutmayın!\n"
@@ -64,12 +67,18 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
                 text = "\n".join(lines)
             else:
                 text = coupon_notice + text
+        if code_clean and code_clean.lower() not in text.lower():
+            code_notice = f"🔢 Fırsat Kodu: {code_clean} (Profilimizdeki sitede arama kutusuna {code_clean} yazarak da bulabilirsiniz!)"
+            if "#işbirliği" in text:
+                text = text.replace("#işbirliği", f"{code_notice}\n\n#işbirliği", 1)
+            else:
+                text += f"\n{code_notice}"
         # Yasal uyum: #işbirliği yoksa ekle
         if "#işbirliği" not in text.lower():
             text += "\n\n#işbirliği #reklam"
         tags = re.findall(r"(#[^\s#]+)", text)
-        # Reklam etiketleri hariç en fazla 5 genel etiket
-        general_tags = [t for t in tags if t.lower() not in ["#işbirliği", "#reklam"]]
+        # Reklam etiketleri ve fırsat kodu (#105 vb.) hariç en fazla 5 genel etiket
+        general_tags = [t for t in tags if t.lower() not in ["#işbirliği", "#reklam"] and not re.match(r"^#\d+$", t)]
         if len(general_tags) > 5:
             for t in general_tags[5:]:
                 text = re.sub(re.escape(t) + r"\b", "", text)
@@ -91,6 +100,7 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
     # Fallback Caption if all API models fail
     coupon_line = f"🎟️ KUPON BİLGİSİ: Ürün sayfasındaki '{coupon_clean}' kuponunu aktif etmeyi unutmayın!\n" if coupon_clean else ""
+    code_line = f"🔢 Fırsat Kodu: {code_clean} (Sitede arama kutusuna {code_clean} yazarak anında bulabilirsiniz)\n" if code_clean else ""
     old_line = f"❌ Eski Fiyat: {old_price}\n" if old_price else ""
     pct_line = f" ({discount_pct} İndirim)" if discount_pct and discount_pct != "0%" else ""
 
@@ -99,6 +109,7 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
         f"{old_line}"
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{coupon_line}"
+        f"{code_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
         f"💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n"
         f"🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz ⚡\n"

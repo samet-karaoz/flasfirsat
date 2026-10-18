@@ -192,6 +192,15 @@ def process_deal_to_reel(
         return None
     deal = v_info.get("deal", deal)
 
+    # Fırsat Kodu (#101, #102...) Ata (Eğer henüz atanmamışsa)
+    if not deal.get("deal_code"):
+        try:
+            from web_showcase import get_next_deal_code
+            deal["deal_code"] = get_next_deal_code()
+            print(f"🔢 Fırsat Kodu Atandı: {deal['deal_code']}")
+        except Exception as e_code:
+            print(f"[Deal Bot] Fırsat kodu atama uyarısı: {e_code}")
+
     # Banka Kampanyası ve Net Maliyet Hesapla
     from campaign_calculator import calculate_campaign_and_net_cost
     camp_info = calculate_campaign_and_net_cost(deal.get("new_price", ""), deal.get("store_name", "Amazon TR"))
@@ -221,7 +230,7 @@ def process_deal_to_reel(
 
     # 1a. Instagram Banner'ı Üret (💬 Yoruma LİNK Yazın CTA)
     banner_ig = os.path.join(TEMP_DIR, f"banner_{base_name}_ig.png")
-    print("[1/3] 🎨 Instagram bannerı (Yoruma LİNK yazın) tasarlanıyor...")
+    print("[1/3] 🎨 Instagram bannerı (Profilde & Hikayede + Fırsat Kodu) tasarlanıyor...")
     create_product_banner(
         product_image_path=deal.get("image_path"),
         title=deal.get("title", "Günün Fırsatı"),
@@ -240,12 +249,13 @@ def process_deal_to_reel(
         coupon_text=deal.get("coupon_info", ""),
         market_badge=deal.get("market_badge", ""),
         cta_type="instagram",
+        deal_code=deal.get("deal_code", ""),
         output_path=banner_ig
     )
 
     # 1b. YouTube Shorts Banner'ı Üret (👉 İndirim Linkine BİO'DAN Ulaşabilirsiniz CTA)
     banner_yt = os.path.join(TEMP_DIR, f"banner_{base_name}_yt.png")
-    print("[1/3] 🎨 YouTube Shorts bannerı (BİO'DAN link) tasarlanıyor...")
+    print("[1/3] 🎨 YouTube Shorts bannerı (BİO'DAN link + Fırsat Kodu) tasarlanıyor...")
     create_product_banner(
         product_image_path=deal.get("image_path"),
         title=deal.get("title", "Günün Fırsatı"),
@@ -264,6 +274,7 @@ def process_deal_to_reel(
         coupon_text=deal.get("coupon_info", ""),
         market_badge=deal.get("market_badge", ""),
         cta_type="youtube",
+        deal_code=deal.get("deal_code", ""),
         output_path=banner_yt
     )
 
@@ -314,7 +325,8 @@ def process_deal_to_reel(
         store_url=aff_url,
         bank_campaign=deal.get("bank_campaign", ""),
         net_cost=deal.get("net_cost", ""),
-        coupon_info=deal.get("coupon_info", "")
+        coupon_info=deal.get("coupon_info", ""),
+        deal_code=deal.get("deal_code", "")
     )
 
     caption_filename = f"{base_name}_aciklama.txt"

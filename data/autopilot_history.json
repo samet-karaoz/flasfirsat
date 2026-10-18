@@ -634,5 +634,18 @@
         "channel": "-1004415003185"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-18 16:45:18",
+    "slot": "Bulut Otopilotu",
+    "type": "top3",
+    "success": false,
+    "platforms": {},
+    "error": null,
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": false,
+      "error": "Unauthorized"
+    }
   }
 ]

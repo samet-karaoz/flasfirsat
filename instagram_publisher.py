@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from config import safe_run_subprocess
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 SESSION_FILE = os.path.join(DATA_DIR, "instagram_session.json")
@@ -132,9 +134,8 @@ def publish_reel_via_instagrapi(video_path: str, caption: str, first_comment: st
         # Otomatik FFmpeg thumbnail üretimi (Moviepy bağımlılığı olmadan %100 garantili)
         thumb_path = str(video_path) + ".jpg"
         if not os.path.exists(thumb_path):
-            import subprocess
             try:
-                subprocess.run([
+                safe_run_subprocess([
                     "ffmpeg", "-y", "-ss", "00:00:01",
                     "-i", str(video_path), "-vframes", "1",
                     "-q:v", "2", thumb_path

@@ -1,7 +1,7 @@
 import os
 import json
 import subprocess
-from config import GEMINI_API_KEY, TEMP_DIR, get_curl_cmd, SITE_URL
+from config import GEMINI_API_KEY, TEMP_DIR, get_curl_cmd, SITE_URL, safe_run_subprocess
 
 MODEL_CANDIDATES = [
     "gemini-flash-lite-latest",
@@ -88,7 +88,7 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
     for model in MODEL_CANDIDATES:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
         cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
 
         try:
             data = json.loads(res.stdout)

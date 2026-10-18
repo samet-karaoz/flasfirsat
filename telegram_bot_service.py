@@ -120,8 +120,8 @@ def handle_callback_query(cq: dict):
     # Buluttan yeni bir fırsat push edilmiş olabilir, bulamazsa git rebase çekip tekrar dene
     if not item:
         try:
-            import subprocess
-            subprocess.run(["git", "pull", "--rebase", "origin", "main"], timeout=15, capture_output=True)
+            from config import safe_run_subprocess
+            safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], timeout=15, capture_output=True)
             pending = load_pending_deals()
             item = pending.get(deal_id)
         except Exception:
@@ -1019,20 +1019,10 @@ def run_telegram_service():
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("=======================================================\n")
 
-    # 24/7 Zamanlayıcı: Hem lokal servis hem GitHub Actions çift korumalı çalışır.
-    # 45 dakikalık duplicate run guard sayesinde asla mükerrer paylaşım yapılmaz.
-    enable_local_sched = os.getenv("ENABLE_LOCAL_SCHEDULER", "true").strip().lower() in ("true", "1", "yes")
-    if enable_local_sched:
-        try:
-            import threading
-            from scheduler_service import run_scheduler_daemon
-            sched_thread = threading.Thread(target=run_scheduler_daemon, kwargs={"dry_run": False}, daemon=True)
-            sched_thread.start()
-            print("⏰ [LOKAL ZAMANLAYICI AKTİF] 12:30 & 20:00 kuşağı için yerel zamanlayıcı başlatıldı (GitHub gecikmelerine karşı garanti).\n")
-        except Exception as es:
-            print(f"[Telegram Service] Zamanlayıcı başlatılamadı: {es}")
-    else:
-        print("☁️ [BULUT OTOPİLOTU AKTİF] 12:30 & 20:00 kuşakları GitHub Actions bulut sunucusu tarafından 7/24 kesintisiz yönetilmektedir (Çift paylaşım koruması devrede).\n")
+    # 7/24 Zamanlayıcı Bulutta (GitHub Actions) kesintisiz ve sessizce çalışır.
+    # Kullanıcı isteği doğrultusunda yerel PC zamanlayıcıları ve cmd pencereleri tamamen kaldırılmıştır.
+    print("☁️ [7/24 BULUT OTOPİLOTU AKTİF] Tüm günlük kuşaklar (12:30, 16:30, 20:00) GitHub Actions bulut sunucuları tarafından yönetilmektedir.")
+    print("💻 [LOKAL MOD] Bilgisayarınızda arka plan zamanlayıcısı ve cmd pencereleri tamamen kapalıdır. İstediğiniz zaman /otopilot ile tetikleyebilirsiniz.\n")
 
     offset = None
     last_alarm_check = time.time()

@@ -7,7 +7,7 @@ import subprocess
 import requests
 from pathlib import Path
 from dotenv import load_dotenv
-from config import BASE_DIR, DATA_DIR, SITE_URL
+from config import BASE_DIR, DATA_DIR, SITE_URL, safe_run_subprocess
 
 load_dotenv()
 
@@ -223,19 +223,19 @@ def find_best_product_link(caption: str, media_id: str = None) -> tuple[str, str
 def sync_git_remote():
     """Bulut ve yerel arasındaki yorum geçmişini senkronize eder."""
     try:
-        subprocess.run(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=12)
+        safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=12)
     except Exception:
         pass
 
 def push_git_history():
     """Yeni yanıtlanan yorumları uzaktaki depoya güvenle gönderir."""
     try:
-        subprocess.run(["git", "add", "data/replied_comments.json"], capture_output=True, timeout=10)
-        diff = subprocess.run(["git", "diff", "--staged", "--quiet"], capture_output=True, timeout=10)
+        safe_run_subprocess(["git", "add", "data/replied_comments.json"], capture_output=True, timeout=10)
+        diff = safe_run_subprocess(["git", "diff", "--staged", "--quiet"], capture_output=True, timeout=10)
         if diff.returncode != 0:
-            subprocess.run(["git", "commit", "-m", "💬 Auto-DM: Yorum geçmişi güncellendi [skip ci]"], capture_output=True, timeout=10)
-            subprocess.run(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=12)
-            subprocess.run(["git", "push", "origin", "main"], capture_output=True, timeout=15)
+            safe_run_subprocess(["git", "commit", "-m", "💬 Auto-DM: Yorum geçmişi güncellendi [skip ci]"], capture_output=True, timeout=10)
+            safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=12)
+            safe_run_subprocess(["git", "push", "origin", "main"], capture_output=True, timeout=15)
     except Exception:
         pass
 

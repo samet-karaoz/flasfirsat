@@ -20,6 +20,7 @@ from config import (
     VIDEO_HEIGHT,
     VIDEO_WIDTH,
     WATERMARK_TEXT,
+    safe_run_subprocess,
 )
 
 CARD_W, CARD_H = 960, 1080
@@ -114,7 +115,7 @@ def _rounded_mask(path: str) -> str:
 
 
 def _run(cmd: list, label: str) -> None:
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=BASE_DIR)
+    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=BASE_DIR)
     if res.returncode != 0:
         raise RuntimeError(f"[{label}] ffmpeg hatası:\n{res.stderr[-1500:]}")
 

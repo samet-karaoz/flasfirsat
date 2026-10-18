@@ -20,6 +20,8 @@ try:
 except Exception:
     pass
 
+from config import safe_run_subprocess
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, "client_secrets.json")
 TOKEN_FILE = os.path.join(BASE_DIR, "data", "youtube_token.json")
@@ -124,7 +126,7 @@ def authenticate():
         "-H", "Content-Type: application/x-www-form-urlencoded",
         "-d", post_data
     ]
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
     try:
         token_json = json.loads(res.stdout)
     except Exception as parse_err:

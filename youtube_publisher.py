@@ -11,7 +11,8 @@ load_dotenv()
 from config import (
     BASE_DIR,
     DATA_DIR,
-    get_curl_cmd
+    get_curl_cmd,
+    safe_run_subprocess
 )
 TOKEN_PATH = os.path.join(DATA_DIR, "youtube_token.json")
 CLIENT_SECRETS_PATH = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", os.path.join(BASE_DIR, "client_secrets.json"))
@@ -71,7 +72,7 @@ def get_valid_access_token() -> str:
         "-H", "Content-Type: application/x-www-form-urlencoded",
         "-d", urllib.parse.urlencode(refresh_payload)
     ])
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
     try:
         ref_json = json.loads(res.stdout)
         if "access_token" in ref_json:
@@ -115,7 +116,7 @@ def publish_shorts_to_youtube(
         if video_path.startswith("http://") or video_path.startswith("https://"):
             temp_vid = os.path.join(DATA_DIR, "temp_yt_upload.mp4")
             cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-L", video_path, "-o", temp_vid]
-            subprocess.run(cmd)
+            safe_run_subprocess(cmd)
             if os.path.exists(temp_vid) and os.path.getsize(temp_vid) > 1000:
                 video_path = temp_vid
             else:
@@ -190,7 +191,7 @@ def publish_shorts_to_youtube(
         "--data-binary", f"@{meta_temp}"
     ])
 
-    init_res = subprocess.run(init_cmd, capture_output=True, text=True, encoding="utf-8")
+    init_res = safe_run_subprocess(init_cmd, capture_output=True, text=True, encoding="utf-8")
     headers = init_res.stdout
 
     upload_url = None
@@ -223,7 +224,7 @@ def publish_shorts_to_youtube(
         "--upload-file", video_path
     ])
 
-    put_res = subprocess.run(put_cmd, capture_output=True, text=True, encoding="utf-8")
+    put_res = safe_run_subprocess(put_cmd, capture_output=True, text=True, encoding="utf-8")
     try:
         resp_json = json.loads(put_res.stdout)
         video_id = resp_json.get("id")

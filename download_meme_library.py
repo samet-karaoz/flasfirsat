@@ -1,6 +1,7 @@
 import os
 import subprocess
 import glob
+from config import safe_run_subprocess
 
 MEMES_DIR = os.path.join(os.path.dirname(__file__), "assets", "memes")
 TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp")
@@ -66,7 +67,7 @@ def download_and_format_meme(name: str, query: str, max_duration: int = 10):
         f"ytsearch1:{query}",
         "-o", raw_pattern
     ]
-    res = subprocess.run(dl_cmd, capture_output=True, text=True)
+    res = safe_run_subprocess(dl_cmd, capture_output=True, text=True)
     if res.returncode != 0:
         print(f"[{name}] İndirme hatası: {res.stderr[:200]}")
         return False
@@ -89,7 +90,7 @@ def download_and_format_meme(name: str, query: str, max_duration: int = 10):
         "-an",
         dest_path
     ]
-    c_res = subprocess.run(convert_cmd, capture_output=True, text=True)
+    c_res = safe_run_subprocess(convert_cmd, capture_output=True, text=True)
     if c_res.returncode == 0 and os.path.exists(dest_path):
         print(f"[{name}] Başarıyla hazırlandı: {dest_path} ({os.path.getsize(dest_path)} bytes)")
         try:

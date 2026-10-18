@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 from config import (
     BASE_DIR,
     DATA_DIR,
-    SITE_URL
+    SITE_URL,
+    safe_run_subprocess
 )
 
 load_dotenv()
@@ -90,8 +91,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
     # Eğer son 45 dakika içinde zaten başarılı bir canlı yayın yapılmışsa mükerrer paylaşımı engelle
     if not dry_run and not force:
         try:
-            import subprocess
-            subprocess.run(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=15)
+            safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], capture_output=True, timeout=15)
         except Exception:
             pass
 

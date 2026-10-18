@@ -2,7 +2,7 @@ import os
 import json
 import base64
 import subprocess
-from config import BASE_DIR, TEMP_DIR, GEMINI_API_KEY
+from config import BASE_DIR, TEMP_DIR, GEMINI_API_KEY, safe_run_subprocess
 
 def generate_gemini_voice(text: str, output_filename: str = "gemini_voice.wav", style: str = "calm, deep, natural fluent pacing, conversational, stoic male voice") -> tuple:
     """
@@ -29,7 +29,7 @@ def generate_gemini_voice(text: str, output_filename: str = "gemini_voice.wav", 
     })
 
     cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", payload, url]
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
     data = json.loads(res.stdout)
 
     audio_bytes = None
@@ -47,7 +47,7 @@ def generate_gemini_voice(text: str, output_filename: str = "gemini_voice.wav", 
 
     # %20 daha hızlı, akıcı ve ritmik hale getir (ses tonunu/kalınlığını bozmadan)
     speed_factor = 1.20
-    subprocess.run([
+    safe_run_subprocess([
         "ffmpeg", "-y", "-i", raw_wav_path,
         "-filter:a", f"atempo={speed_factor}",
         out_wav_path

@@ -5,7 +5,7 @@ import base64
 import subprocess
 from datetime import datetime
 from bs4 import BeautifulSoup
-from config import BASE_DIR, TEMP_DIR, GEMINI_API_KEY, get_curl_cmd
+from config import BASE_DIR, TEMP_DIR, GEMINI_API_KEY, get_curl_cmd, safe_run_subprocess
 
 MODEL_CANDIDATES = [
     "gemini-flash-lite-latest",
@@ -283,7 +283,7 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
     for model in MODEL_CANDIDATES:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
         cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
         
         try:
             data = json.loads(res.stdout)
@@ -306,7 +306,7 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
 def download_file(url: str, output_path: str) -> bool:
     """curl ile dosya indirir."""
     cmd = get_curl_cmd(["--max-time", "15", "-s", "-L", url, "-o", output_path])
-    res = subprocess.run(cmd)
+    res = safe_run_subprocess(cmd)
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
 AMAZON_CATALOG_SOURCES = [
@@ -377,7 +377,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             "-H", "Accept-Language: tr-TR,tr;q=0.9", target_url
         ])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
         if res.returncode != 0:
             continue
 
@@ -602,7 +602,7 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
 
         url = f"https://t.me/s/{ch}"
         cmd = get_curl_cmd(["-s", url])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
         if res.returncode != 0:
             continue
 
@@ -962,7 +962,7 @@ def parse_deal_from_url(url: str) -> dict:
     temp_html = os.path.join(TEMP_DIR, "page.html")
     
     cmd = get_curl_cmd(["-s", "-L", "-H", "User-Agent: Mozilla/5.0", url, "-o", temp_html])
-    subprocess.run(cmd)
+    safe_run_subprocess(cmd)
 
     og_title = ""
     og_image = ""

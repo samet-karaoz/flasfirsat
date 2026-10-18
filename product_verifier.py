@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 from bs4 import BeautifulSoup
-from config import BASE_DIR, TEMP_DIR, get_curl_cmd
+from config import BASE_DIR, TEMP_DIR, get_curl_cmd, safe_run_subprocess
 from price_tracker import record_price, check_if_lowest_30d
 
 def extract_product_killer_hook(
@@ -73,7 +73,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         url
     ])
 
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
     out_low = res.stdout.lower()
 
     # 0. BOT / CAPTCHA KORUMASI TESPİTİ - 2. Deneme (Mobil User-Agent)
@@ -92,7 +92,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             "-H", "Sec-CH-UA-Platform: \"Android\"",
             url
         ])
-        res = subprocess.run(mobile_cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        res = safe_run_subprocess(mobile_cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
         out_low = res.stdout.lower()
 
     if (

@@ -4,7 +4,7 @@ import subprocess
 import random
 import re
 from PIL import Image, ImageDraw
-from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR
+from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR, safe_run_subprocess
 from split_composer import (
     get_font, wrap_text, MEMES_DIR, AUDIO_DIR,
     AVAILABLE_MEMES, AVAILABLE_AUDIOS,
@@ -146,7 +146,7 @@ def build_top3_video(
     print(f"[Top3] 🎬 Seçilen Tek Kesintisiz Meme: {chosen_meme}")
 
     # 2. Meme süresini ve ses durumunu al + Anti-Hash Rastgele Milisaniye Kırpması
-    p = subprocess.run(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
+    p = safe_run_subprocess(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
     m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", p.stderr)
     raw_duration = float(m.group(3)) + int(m.group(2))*60 if m else 11.50
     rnd_trim = round(random.uniform(0.15, 0.40), 3)
@@ -284,7 +284,7 @@ def build_top3_video(
         output_path
     ]
 
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = safe_run_subprocess(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
         print(f"[Top3] 🎬 Video başarıyla üretildi (Dinamik Whip-Slide & Sekme Sayaçlı): {output_path}")
         return output_path

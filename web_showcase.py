@@ -2,7 +2,7 @@ import os
 import json
 import shutil
 from datetime import datetime
-from config import BASE_DIR, ASSETS_DIR, GA_MEASUREMENT_ID, SITE_URL
+from config import BASE_DIR, ASSETS_DIR, GA_MEASUREMENT_ID, SITE_URL, safe_run_subprocess
 
 # GitHub Pages ve vitrin dosyaları kök dizinde barındırılır
 WEB_DIR = BASE_DIR
@@ -289,10 +289,9 @@ def check_and_update_all_deals_status() -> dict:
 
 def push_to_github():
     try:
-        import subprocess
-        subprocess.run(["git", "add", "."], cwd=WEB_DIR, capture_output=True)
-        subprocess.run(["git", "commit", "-m", "Auto-update deals"], cwd=WEB_DIR, capture_output=True)
-        subprocess.run(["git", "push"], cwd=WEB_DIR, capture_output=True)
+        safe_run_subprocess(["git", "add", "."], cwd=WEB_DIR, capture_output=True)
+        safe_run_subprocess(["git", "commit", "-m", "Auto-update deals"], cwd=WEB_DIR, capture_output=True)
+        safe_run_subprocess(["git", "push"], cwd=WEB_DIR, capture_output=True)
         print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) otomatik senkronize edildi!")
     except Exception as e:
         print(f"[Web] Git push uyarısı: {e}")

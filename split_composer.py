@@ -4,7 +4,7 @@ import random
 import re
 import json
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR, DATA_DIR
+from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR, DATA_DIR, safe_run_subprocess
 from deal_hunter import parse_price_to_float
 
 MEMES_DIR = os.path.join(BASE_DIR, "assets", "memes")
@@ -1040,7 +1040,7 @@ def build_split_screen_video(
     create_reaction_hook_overlay(reaction_text, reaction_overlay_path)
 
     # 3. Ses kaynağını belirle (Öncelik: Meme'in kendi orijinal sesi)
-    chk_a = subprocess.run(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
+    chk_a = safe_run_subprocess(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
     has_meme_audio = "Audio:" in chk_a.stderr
 
     if audio_name:
@@ -1068,7 +1068,7 @@ def build_split_screen_video(
 
     # 5. Meme süresini al ve Anti-Hash Rastgele Milisaniye Kırpması Yap
     cmd_len = ["ffmpeg", "-i", bottom_meme_path]
-    p = subprocess.run(cmd_len, capture_output=True, text=True)
+    p = safe_run_subprocess(cmd_len, capture_output=True, text=True)
     m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", p.stderr)
     raw_duration = float(m.group(3)) + int(m.group(2))*60 if m else 10.0
 
@@ -1186,7 +1186,7 @@ def build_split_screen_video(
         output_path
     ]
 
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = safe_run_subprocess(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
         print(f"[Montaj] Video başarıyla oluşturuldu (Redmi Note 11 Pro Metadata & Clean Header): {output_path}")
         return output_path
@@ -1320,7 +1320,7 @@ def build_top3_split_screen_video(
         output_path
     ]
 
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = safe_run_subprocess(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
         print(f"[Montaj] 🏆 TOP 3 Liste Videosu oluşturuldu (Redmi Note 11 Pro Metadata): {output_path}")
         return output_path

@@ -1,7 +1,7 @@
 import os
 import json
 import subprocess
-from config import PEXELS_API_KEY, TEMP_DIR
+from config import PEXELS_API_KEY, TEMP_DIR, safe_run_subprocess
 
 def get_cinematic_clips(query: str = "sunset calm sea silhouette", count: int = 3) -> list:
     """
@@ -13,7 +13,7 @@ def get_cinematic_clips(query: str = "sunset calm sea silhouette", count: int = 
     url = f"https://api.pexels.com/videos/search?query={clean_query}&orientation=portrait&per_page=6"
     
     cmd_search = ["curl.exe", "--ssl-no-revoke", "-s", "-H", f"Authorization: {PEXELS_API_KEY}", url]
-    res = subprocess.run(cmd_search, capture_output=True, text=True, encoding="utf-8")
+    res = safe_run_subprocess(cmd_search, capture_output=True, text=True, encoding="utf-8")
     
     downloaded_files = []
     try:
@@ -35,7 +35,7 @@ def get_cinematic_clips(query: str = "sunset calm sea silhouette", count: int = 
             
             print(f"[Media] Video {len(downloaded_files)+1}/{count} indiriliyor ({best.get('width')}x{best.get('height')})...")
             cmd_dl = ["curl.exe", "--ssl-no-revoke", "-L", "-s", "-A", "Mozilla/5.0", link, "-o", out_path]
-            subprocess.run(cmd_dl)
+            safe_run_subprocess(cmd_dl)
             
             if os.path.exists(out_path) and os.path.getsize(out_path) > 100000:
                 downloaded_files.append(out_path)

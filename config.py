@@ -37,10 +37,13 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 TEMP_DIR = os.path.join(BASE_DIR, "temp")
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
-# Cross-platform Curl Helpers (Windows / Linux / GitHub Actions)
+# Cross-platform Curl & Subprocess Helpers (Windows / Linux / GitHub Actions)
 import platform
+import subprocess
+
 IS_WINDOWS = platform.system() == "Windows"
 CURL_BIN = "curl.exe" if IS_WINDOWS else "curl"
+SUBPROCESS_CREATIONFLAGS = subprocess.CREATE_NO_WINDOW if IS_WINDOWS else 0
 
 def get_curl_cmd(extra_args: list = None) -> list:
     cmd = [CURL_BIN, "-4"]
@@ -49,3 +52,9 @@ def get_curl_cmd(extra_args: list = None) -> list:
     if extra_args:
         cmd.extend(extra_args)
     return cmd
+
+def safe_run_subprocess(cmd, **kwargs):
+    """Windows'ta siyah cmd/konsol ekranlarının anlık açılıp kapanmasını engelleyen sessiz subprocess çalıştırıcı."""
+    if IS_WINDOWS and "creationflags" not in kwargs:
+        kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+    return subprocess.run(cmd, **kwargs)

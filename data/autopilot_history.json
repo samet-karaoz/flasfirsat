@@ -715,5 +715,28 @@
       "file_id": "BAACAgQAAxkDAANpatT_YQ9QWZyMNSEl-I6irrPHAAHQAALzHgACdrKoUm-4aQEInhUrPQQ",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_21.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-18 19:21:50",
+    "slot": "Bulut Otopilotu (Tekli Video)",
+    "success": false,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "LG UltraGear 27\" QHD Monitör",
+      "new_price": "8.999,00 TL",
+      "old_price": "11.999 TL",
+      "discount_pct": "-25%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0GSQDRJZG?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261018_192251_lg_ultragear_27_qhd_monitor.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261018_192251_lg_ultragear_27_qhd_monitor_youtube.mp4",
+    "caption_text": "🚨 DİKKAT: 200Hz QHD monitör bu fiyata kaçmaz, stoklar eriyor!\n\nEski Fiyat: 11.999 TL ❌ -> Yeni Fiyat: 8.999 TL ✅ (%25 İndirim)\n\n💬 Sizce bu özelliklere bu fiyat değer mi, sistem dizerseniz ilk bunu mu alırsınız? Yorumlarda buluşalım 👇\n\n🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! Sitedeki arama kutusuna #133 yazarak ürüne saniyeler içinde ulaşabilirsiniz ⚡\n\n📌 Fiyatı tekrar kontrol etmek ve arkadaşına göndermek için videoyu KAYDET, kaçıran üzülür! ✈️\n\n#indirim #fırsat #monitör #oyuncu #keşfet #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_25_amz_B0GSQDRJZG.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": false,
+      "error": "Unauthorized"
+    }
   }
 ]

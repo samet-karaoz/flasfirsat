@@ -84,12 +84,14 @@ def build_top3_video(
     bottom_meme_path = os.path.join(MEMES_DIR, chosen_meme)
     print(f"[Top3] 🎬 Seçilen Tek Kesintisiz Meme: {chosen_meme}")
 
-    # 2. Meme süresini ve ses durumunu al
+    # 2. Meme süresini ve ses durumunu al + Anti-Hash Rastgele Milisaniye Kırpması
     p = subprocess.run(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
     m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", p.stderr)
-    duration = float(m.group(3)) + int(m.group(2))*60 if m else 11.50
+    raw_duration = float(m.group(3)) + int(m.group(2))*60 if m else 11.50
+    rnd_trim = round(random.uniform(0.15, 0.40), 3)
+    duration = max(6.0, round(raw_duration - rnd_trim, 3))
     has_audio = "Audio:" in p.stderr
-    print(f"[Top3] ⏱️ Toplam Video Süresi: {duration:.2f}s (Orijinal Ses: {has_audio})")
+    print(f"[Top3] ⏱️ Toplam Video Süresi: {duration:.2f}s (Anti-Hash Kırpma: -{rnd_trim}s, Orijinal Ses: {has_audio})")
 
     slide_dur = duration / 3.0
     d1 = round(slide_dur, 2)
@@ -102,8 +104,13 @@ def build_top3_video(
         deal = deals[rank - 1]
         card_out = os.path.join(TEMP_DIR, f"top3_single_card_{rank}.png")
         badge_title = f"#{rank} GÜNÜN BOMBASI" if rank == 1 else f"#{rank} GÜNÜN FIRSATI"
+        raw_img = deal.get("image_path") or deal.get("local_img") or deal.get("image_url") or ""
+        if raw_img and not raw_img.startswith("http") and not os.path.isabs(raw_img):
+            cand_img = os.path.join(BASE_DIR, raw_img)
+            if os.path.exists(cand_img):
+                raw_img = cand_img
         create_product_banner(
-            product_image_path=deal.get("image_path") or deal.get("local_img") or deal.get("image_url"),
+            product_image_path=raw_img,
             title=deal.get("title", f"Fırsat Ürünü #{rank}"),
             old_price=deal.get("old_price", ""),
             new_price=deal.get("new_price", ""),
@@ -113,7 +120,7 @@ def build_top3_video(
             bank_campaign=deal.get("bank_campaign", ""),
             net_cost=deal.get("net_cost", ""),
             installment=deal.get("installment", ""),
-            feature_text=deal.get("feature_pill", ""),
+            feature_text=deal.get("killer_hook") or deal.get("feature_pill", ""),
             is_lowest_30d=deal.get("is_lowest_30d", False),
             has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
             seller_badge_text=deal.get("seller_badge", ""),
@@ -138,13 +145,22 @@ def build_top3_video(
         f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1906[v]"
     )
 
-    # 6. FFmpeg Montajı:
+    # 6. FFmpeg Montajı (1. Saniyede Punch-in Zoom + Anti-Hash Özgünlük Kalkanı):
+    rnd_bright = round(random.uniform(-0.012, 0.012), 4)
+    rnd_sat = round(random.uniform(0.985, 1.025), 4)
+    rnd_contrast = round(random.uniform(0.99, 1.015), 4)
+    scale_bottom = (
+        f"scale=w='1080*(1+0.05*max(0,1-t))':h='960*(1+0.05*max(0,1-t))':eval=frame,"
+        f"crop=1080:960,"
+        f"eq=brightness={rnd_bright}:saturation={rnd_sat}:contrast={rnd_contrast}"
+    )
+
     filter_complex = (
         f"[0:v]scale=1080:960[c1];"
         f"[1:v]scale=1080:960[c2];"
         f"[2:v]scale=1080:960[c3];"
         f"[c1][c2][c3]concat=n=3:v=1:a=0[top];"
-        f"[3:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960[bottom_raw];"
+        f"[3:v]{scale_bottom}[bottom_raw];"
         f"[bottom_raw][4:v]overlay=0:0[bottom];"
         f"[top][bottom]vstack=inputs=2[stacked];"
         f"{progress_bar_filter}"

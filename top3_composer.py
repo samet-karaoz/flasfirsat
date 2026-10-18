@@ -56,18 +56,79 @@ def create_top3_card(
         output_path=output_path
     )
 
+def draw_top3_step_tabs(card_path: str, rank: int) -> str:
+    """
+    Ürün kartının en üstüne (y=18..54) Instagram Story tarzı 3 adımlı
+    canlı sayaç sekmeleri ekler ([ 1. FIRSAT (AKTİF) ] [ 2. FIRSAT (SIRADA) ] [ 3. FIRSAT (SIRADA) ]).
+    İzleyicinin gözü hemen 3 fırsat olduğunu anlar ve video sonuna kadar izlenir.
+    """
+    img = Image.open(card_path).convert("RGBA")
+    draw = ImageDraw.Draw(img, "RGBA")
+    f_bold = get_font("segoeuib", 17)
+    f_idle = get_font("segoeuib", 16)
+
+    W = 1080
+    margin = 54
+    gap = 12
+    tab_w = (W - (margin * 2) - (gap * 2)) // 3
+    tab_h = 36
+    tab_y1 = 20
+    tab_y2 = tab_y1 + tab_h
+
+    tabs_data = [
+        {"active_title": "1. FIRSAT (AKTİF)", "color": (245, 158, 11, 245), "fg": (15, 23, 42)},
+        {"active_title": "2. FIRSAT (AKTİF)", "color": (14, 165, 233, 245), "fg": (15, 23, 42)},
+        {"active_title": "3. FIRSAT (AKTİF)", "color": (244, 63, 94, 245), "fg": (255, 255, 255)}
+    ]
+
+    for i in range(3):
+        x1 = margin + i * (tab_w + gap)
+        x2 = x1 + tab_w
+        is_active = (i + 1 == rank)
+        is_past = (i + 1 < rank)
+
+        if is_active:
+            draw.rounded_rectangle((x1, tab_y1, x2, tab_y2), radius=10, fill=tabs_data[i]["color"], outline=(255, 255, 255, 220), width=2)
+            lbl = tabs_data[i]["active_title"]
+            draw.text(((x1 + x2) // 2, (tab_y1 + tab_y2) // 2), lbl, font=f_bold, fill=tabs_data[i]["fg"], anchor="mm")
+        elif is_past:
+            draw.rounded_rectangle((x1, tab_y1, x2, tab_y2), radius=10, fill=(6, 78, 59, 210), outline=(16, 185, 129, 160), width=1)
+            lbl = f"{i+1}. FIRSAT (GEÇTİ)"
+            draw.text(((x1 + x2) // 2, (tab_y1 + tab_y2) // 2), lbl, font=f_idle, fill=(167, 243, 208), anchor="mm")
+        else:
+            draw.rounded_rectangle((x1, tab_y1, x2, tab_y2), radius=10, fill=(15, 23, 42, 170), outline=(71, 85, 105, 110), width=1)
+            lbl = f"{i+1}. FIRSAT (SIRADA)"
+            draw.text(((x1 + x2) // 2, (tab_y1 + tab_y2) // 2), lbl, font=f_idle, fill=(148, 163, 184), anchor="mm")
+
+    img.convert("RGB").save(card_path, "PNG")
+    return card_path
+
+
+def create_dynamic_reaction_hook(rank: int, title: str, output_path: str) -> str:
+    """Her ürün için renk ve metin değiştiren akıllı orta reaksiyon kancası üretir."""
+    # Kısa ürün kancası üret (Örn: STANLEY TERMOS, MONİTÖR KOLU, BUHARLI ÜTÜ)
+    t_clean = re.sub(r"[^\w\s]", " ", title).strip()
+    words = [w for w in t_clean.split() if len(w) > 2]
+    short_hook = " ".join(words[:3]).upper() if words else "FIRSAT ÜRÜNÜ"
+    if len(short_hook) > 22:
+        short_hook = short_hook[:22].strip()
+
+    reaction_text = f"#{rank} • {short_hook} FİYATINI GÖREN BEN:"
+    return create_reaction_hook_overlay(reaction_text, output_path=output_path)
+
+
 def build_top3_video(
     deals: list,
     meme_name: str = None,
     output_filename: str = "top3_deals.mp4"
 ) -> str:
     """
-    Top 3 Fırsat Derleme Videosu:
-    - Üst Yarı (1080x960): Normal videolarımızdaki standart ajans şablonu (1 -> 2 -> 3 sırayla geçer).
-    - Orta Bölüm: Glassmorphic 'GÜNÜN EN İYİ 3 İNDİRİMİNİ GÖREN BEN:' reaksiyon kancası.
-    - Alt Yarı (1080x960): Kesintisiz tek viral meme videosu baştan sona oynar.
-    - Alt Kenar: Süreyle senkronize neon ilerleme çubuğu (progress bar).
-    - Ses: SFX veya karmaşa yok; meme'in kendi ikonik orijinal müziği/sesi doğal netlikte kullanılır.
+    Gelişmiş Sinematik Top 3 Fırsat Derleme Videosu (5 Katmanlı Dinamik Hareket):
+    1. Üstte Story Tarzı 3'lü İlerleme Sekmesi ([ 1. FIRSAT (AKTİF) ] [ 2. FIRSAT (SIRADA) ]...).
+    2. Kartlar arası kesintisiz ve şık Whip-Slide sola kayma efekti (xfade=transition=slideleft:0.35s).
+    3. Her ürün değiştiğinde senkronize değişen Dinamik Orta Kanca Bandı (1/3 -> 2/3 -> 3/3).
+    4. Kesintisiz alt viral meme ve dinamik neon ilerleme çubuğu.
+    5. Xiaomi Redmi Note 11 Pro Android donanım metaverisi.
     """
     if len(deals) < 3:
         raise ValueError("Top 3 videosu için en az 3 fırsat gereklidir!")
@@ -93,22 +154,31 @@ def build_top3_video(
     has_audio = "Audio:" in p.stderr
     print(f"[Top3] ⏱️ Toplam Video Süresi: {duration:.2f}s (Anti-Hash Kırpma: -{rnd_trim}s, Orijinal Ses: {has_audio})")
 
-    slide_dur = duration / 3.0
-    d1 = round(slide_dur, 2)
-    d2 = round(slide_dur, 2)
-    d3 = round(duration - (d1 + d2), 2)
+    # Geçiş hesaplamaları (Slide-Left Whip Swipe: 0.35 sn)
+    trans_dur = 0.35
+    seg_dur = duration / 3.0
+    t1 = round(seg_dur + trans_dur, 2)
+    t2 = round(seg_dur + trans_dur, 2)
+    t3 = round(seg_dur + 0.15, 2)
+    off1 = round(seg_dur, 2)
+    off2 = round(seg_dur * 2.0, 2)
 
-    # 3. Üst kartları üret (1. Fırsat, 2. Fırsat, 3. Fırsat) - Standart Şablon ile
+    # 3. Üst kartları üret ve Story tarzı 3'lü Sayaç Sekmelerini çiz
     card_files = []
+    reaction_files = []
+    contrasting_themes = ["emerald_gold", "cyber_gaming", "apple_warm"]
+
     for rank in [1, 2, 3]:
         deal = deals[rank - 1]
-        card_out = os.path.join(TEMP_DIR, f"top3_single_card_{rank}.png")
+        card_out = os.path.join(TEMP_DIR, f"top3_motion_card_{rank}.png")
         badge_title = f"#{rank} GÜNÜN BOMBASI" if rank == 1 else f"#{rank} GÜNÜN FIRSATI"
         raw_img = deal.get("image_path") or deal.get("local_img") or deal.get("image_url") or ""
         if raw_img and not raw_img.startswith("http") and not os.path.isabs(raw_img):
             cand_img = os.path.join(BASE_DIR, raw_img)
             if os.path.exists(cand_img):
                 raw_img = cand_img
+
+        theme_pick = contrasting_themes[rank - 1]
         create_product_banner(
             product_image_path=raw_img,
             title=deal.get("title", f"Fırsat Ürünü #{rank}"),
@@ -127,17 +197,22 @@ def build_top3_video(
             coupon_text=deal.get("coupon_info", ""),
             market_badge=deal.get("market_badge", ""),
             deal_code=deal.get("deal_code", ""),
+            theme_name=theme_pick,
             output_path=card_out
         )
+
+        # Kartın en üstüne canlı sekme sayaçlarını çiz
+        draw_top3_step_tabs(card_out, rank)
         card_files.append(card_out)
 
-    # 4. Orta Bölüm Reaksiyon Bandı (Tekli videolarla birebir aynı stil)
-    reaction_overlay_path = os.path.join(TEMP_DIR, "top3_reaction_overlay.png")
-    create_reaction_hook_overlay("GÜNÜN EN İYİ 3 İNDİRİMİNİ GÖREN BEN:", output_path=reaction_overlay_path)
+        # Her ürüne özel dinamik orta kanca bandı üret
+        react_out = os.path.join(TEMP_DIR, f"top3_dyn_reaction_{rank}.png")
+        create_dynamic_reaction_hook(rank, deal.get("title", ""), react_out)
+        reaction_files.append(react_out)
 
     output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-    # 5. Dynamic Progress Bar (Neon İlerleme Çubuğu)
+    # 4. Dynamic Progress Bar (Neon İlerleme Çubuğu)
     progress_bar_filter = (
         f"color=c=0x0F172A@0.8:s=1080x14:d={duration:.2f}[pbg];"
         f"color=c=0xFF5722:s=1080x14:d={duration:.2f}[pfill];"
@@ -145,7 +220,7 @@ def build_top3_video(
         f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1906[v]"
     )
 
-    # 6. FFmpeg Montajı (1. Saniyede Punch-in Zoom + Anti-Hash Özgünlük Kalkanı):
+    # 5. FFmpeg Montajı (Whip-Slide Geçişleri + Reaksiyon Crossfade + Punch-in Zoom):
     rnd_bright = round(random.uniform(-0.012, 0.012), 4)
     rnd_sat = round(random.uniform(0.985, 1.025), 4)
     rnd_contrast = round(random.uniform(0.99, 1.015), 4)
@@ -156,12 +231,18 @@ def build_top3_video(
     )
 
     filter_complex = (
-        f"[0:v]scale=1080:960[c1];"
-        f"[1:v]scale=1080:960[c2];"
-        f"[2:v]scale=1080:960[c3];"
-        f"[c1][c2][c3]concat=n=3:v=1:a=0[top];"
+        f"[0:v]settb=AVTB,fps=30,scale=1080:960[c0];"
+        f"[1:v]settb=AVTB,fps=30,scale=1080:960[c1];"
+        f"[2:v]settb=AVTB,fps=30,scale=1080:960[c2];"
+        f"[c0][c1]xfade=transition=slideleft:duration={trans_dur}:offset={off1:.2f}[top_m1];"
+        f"[top_m1][c2]xfade=transition=slideleft:duration={trans_dur}:offset={off2:.2f}[top];"
+        f"[4:v]settb=AVTB,fps=30[r0];"
+        f"[5:v]settb=AVTB,fps=30[r1];"
+        f"[6:v]settb=AVTB,fps=30[r2];"
+        f"[r0][r1]xfade=transition=fade:duration=0.25:offset={off1:.2f}[rm1];"
+        f"[rm1][r2]xfade=transition=fade:duration=0.25:offset={off2:.2f}[reaction];"
         f"[3:v]{scale_bottom}[bottom_raw];"
-        f"[bottom_raw][4:v]overlay=0:0[bottom];"
+        f"[bottom_raw][reaction]overlay=0:0[bottom];"
         f"[top][bottom]vstack=inputs=2[stacked];"
         f"{progress_bar_filter}"
     )
@@ -171,11 +252,13 @@ def build_top3_video(
 
     cmd = [
         "ffmpeg", "-y",
-        "-loop", "1", "-t", str(d1), "-i", card_files[0],
-        "-loop", "1", "-t", str(d2), "-i", card_files[1],
-        "-loop", "1", "-t", str(d3), "-i", card_files[2],
+        "-loop", "1", "-t", str(t1), "-i", card_files[0],
+        "-loop", "1", "-t", str(t2), "-i", card_files[1],
+        "-loop", "1", "-t", str(t3), "-i", card_files[2],
         "-i", bottom_meme_path,
-        "-loop", "1", "-t", str(duration), "-i", reaction_overlay_path,
+        "-loop", "1", "-t", str(t1), "-i", reaction_files[0],
+        "-loop", "1", "-t", str(t2), "-i", reaction_files[1],
+        "-loop", "1", "-t", str(t3), "-i", reaction_files[2],
         "-filter_complex", filter_complex,
         "-map", "[v]"
     ]
@@ -203,7 +286,7 @@ def build_top3_video(
 
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and os.path.exists(output_path):
-        print(f"[Top3] 🎬 Video başarıyla üretildi (Redmi Note 11 Pro Metadata): {output_path}")
+        print(f"[Top3] 🎬 Video başarıyla üretildi (Dinamik Whip-Slide & Sekme Sayaçlı): {output_path}")
         return output_path
     else:
         print("[Top3] FFmpeg hatası:", res.stderr)

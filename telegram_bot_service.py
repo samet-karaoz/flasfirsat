@@ -774,17 +774,14 @@ def handle_user_message(msg: dict):
         threading.Thread(target=_run_dm, daemon=True).start()
         return
 
-    # 1.8 /top3 Komutu (Haftanın En İyi 3 Fırsatı Videosu)
+    # 1.8 /top3 Komutu (Durduruldu - Tekli Video Modu Aktif)
     if text.startswith("/top3"):
-        send_telegram_text(chat_id, "🏆 <b>Top 3 Fırsat Bülteni Başlatıldı!</b>\n\nEn yüksek indirimli 3 ürün taranıyor, sıralama kartları ve tek kesintisiz viral meme ile 9:16 video derleniyor...")
-        import threading
-        def _run_top3():
-            try:
-                from autopilot_engine import run_top3_deal_cycle
-                run_top3_deal_cycle(dry_run=False, slot_name="Telegram Top 3 Tetikleme")
-            except Exception as ex:
-                send_telegram_text(chat_id, f"❌ Top 3 hatası: {ex}")
-        threading.Thread(target=_run_top3, daemon=True).start()
+        send_telegram_text(
+            chat_id,
+            "ℹ️ <b>Top 3 Üretimi Durduruldu!</b>\n\n"
+            "Sistem tercihinize göre <b>sadece tekli video</b> üretecek şekilde ayarlandı.\n\n"
+            "🚀 Hemen tekli viral video üretmek için <code>/otopilot</code> komutunu gönderebilirsiniz!"
+        )
         return
 
     # 2. /yardim Komutu
@@ -792,13 +789,13 @@ def handle_user_message(msg: dict):
         help_text = (
             "ℹ️ <b>Fırsat Avcısı & Otopilot Rehberi</b>\n\n"
             "🤖 <b>24/7 Otopilot Yayın Sistemi:</b>\n"
-            "Sistem her gün <b>12:30</b> ve <b>20:00</b> saatlerinde en iyi indirimi otomatik bulur, 9:16 reels videosunu derler ve tüm sosyal medya platformlarınıza eş zamanlı yükler!\n\n"
+            "Sistem her gün <b>12:30</b>, <b>16:30</b> ve <b>20:00</b> saatlerinde en iyi indirimi otomatik bulur, 9:16 reels videosunu derler ve tüm sosyal medya platformlarınıza eş zamanlı iletir!\n\n"
             "💡 <b>Yönetim Komutları:</b>\n"
+            "• <code>/otopilot</code> - Hemen otomatik tekli video üret ve onaya sun\n"
             "• <code>/program</code> - Sıradaki otomatik yayın zamanı\n"
-            "• <code>/otopilot</code> - Hemen otomatik tekli video üret ve 4 kanala yayınla\n"
-            "• <code>/top3</code> - Günün/Haftanın en iyi 3 fırsatından 3'lü video üret\n"
             "• <code>/dm</code> - Instagram Reels yorumlarını tara ve link isteyenlere Auto-DM at\n"
             "• <code>/stats</code> - Web paneli ve ziyaretçi istatistikleri\n"
+            "• <code>/denetle</code> - Canlı vitrin stok ve fiyat kontrolü\n"
             "• <code>/takip [link]</code> - İstediğin ürünü fiyat takibine al\n"
             "• <code>/listem</code> - Takip listen\n"
         )

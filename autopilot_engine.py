@@ -681,7 +681,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.top3:
-        run_top3_deal_cycle(dry_run=args.dry_run, slot_name=args.slot)
+        print("ℹ️ Top 3 video üretimi kullanıcı tercihiyle durduruldu. Tekli fırsat döngüsü çalıştırılıyor...")
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force)
     elif args.now or args.dry_run:
         run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force)
     else:

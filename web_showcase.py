@@ -94,6 +94,14 @@ def add_deal_to_web(deal: dict):
     """
     Yeni fırsatı web sitesi veritabanına ekler ve index.html'i yeniden derler.
     """
+    if (
+        str(deal.get("old_price", "")).strip() == "Çoklu Ürün"
+        or "Top 3" in str(deal.get("new_price", ""))
+        or "Top 3" in str(deal.get("title", ""))
+    ):
+        render_web_html()
+        return
+
     ensure_web_setup()
     deals = load_deals()
 

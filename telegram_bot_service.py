@@ -306,14 +306,15 @@ def handle_callback_query(cq: dict):
 
         # 7. Ürün Geçmiş Kaydı
         try:
-            from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
-            history = load_history()
-            deal_sig = deal.get("store_url") or deal.get("url") or title
-            if deal_sig:
-                history.add(deal_sig)
-                save_history(history)
-            set_last_product(title)
-            set_last_subtype(get_product_subtype(title))
+            if str(deal.get("old_price", "")).strip() != "Çoklu Ürün" and "Top 3" not in str(deal.get("title", "")):
+                from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype
+                history = load_history()
+                deal_sig = deal.get("store_url") or deal.get("url") or title
+                if deal_sig:
+                    history.add(deal_sig)
+                    save_history(history)
+                set_last_product(title)
+                set_last_subtype(get_product_subtype(title))
         except Exception as ed:
             print(f"[Telegram Service] history_deals kayıt hatası: {ed}")
 

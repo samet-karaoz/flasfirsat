@@ -608,5 +608,31 @@
       "file_id": "BAACAgQAAxkDAANjatTjI_ySu4sJ7UR4DewRA37MQUsAArweAAJ2sqhSQVmNXF1fEJs9BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_19.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-18 18:19",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "🏆 Telegram Top 3 Tetikleme",
+      "new_price": "Top 3 Fırsat (Ort. -%38)",
+      "old_price": "Çoklu Ürün",
+      "discount_pct": "-%38",
+      "store_name": "Karma (Amazon / Hepsiburada)",
+      "deal_code": "#127, #128, #129"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/sYopA10eCf8"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
   }
 ]

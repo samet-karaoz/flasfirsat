@@ -576,5 +576,21 @@
       "success": false,
       "error": "Unauthorized"
     }
+  },
+  {
+    "timestamp": "2026-10-18 08:07:47",
+    "slot": "Günün En İyi 3 Yeni Fırsatı",
+    "type": "top3",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792300322",
+      "message_id": 88,
+      "file_id": "BAACAgQAAxkDAANYatRVIjpbvHB9fspItXG6H1wXWA8AAtMfAAKUyaBSrJEtJgTmk8s9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_16.mp4"
+    }
   }
 ]

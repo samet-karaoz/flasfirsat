@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792336670_26",
+    "deal_code": "#127",
+    "title": "Emsan Közde Kahve Makinesi",
+    "old_price": "2.299 TL",
+    "new_price": "1.363,21 TL",
+    "discount_pct": "-41%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0GNN6JYSC?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 454 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/emsan_k_zde_kahve_makines_f52b87e2.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.10.2026 18:17"
+  },
+  {
     "id": "deal_1792300319_25",
     "deal_code": "#126",
     "title": "Stanley Aerolight 0.47L",

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792300319_25",
+    "deal_code": "#126",
+    "title": "Stanley Aerolight 0.47L",
+    "old_price": "2.300 TL",
+    "new_price": "1.495,20 TL",
+    "discount_pct": "-35%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0F7RV2Y29?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 498 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.10.2026 08:11"
+  },
+  {
     "id": "deal_1792300317_24",
     "deal_code": "#125",
     "title": "North Bayou NB F80 Kol",

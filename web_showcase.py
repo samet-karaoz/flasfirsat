@@ -285,6 +285,26 @@ def check_and_update_all_deals_status() -> dict:
         push_to_github()
         print(f"[Web Vitrini] 🚀 Vitrin güncellendi! {expired_count} adet ürünün durumu yenilendi.")
 
+        # Varsa Telegram üzerinden bildirim ilet
+        try:
+            bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+            chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+            if bot_token and chat_id and expired_count > 0:
+                import requests
+                report_msg = (
+                    f"🌐 <b>Canlı Vitrin Stok & Fiyat Radarı</b> ⚡\n\n"
+                    f"flasfirsat.com.tr üzerindeki fırsatlar denetlendi:\n"
+                    f"• 🔴 Stoğu biten / zamlanan ürün: <b>{expired_count} adet</b>\n"
+                    f"• 🚀 Web vitrini otomatik olarak güncellendi ve GitHub Pages'a yansıtıldı."
+                )
+                requests.post(
+                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                    data={"chat_id": chat_id, "text": report_msg, "parse_mode": "HTML"},
+                    timeout=10
+                )
+        except Exception:
+            pass
+
     return {"updated": changes_made, "expired_count": expired_count}
 
 def push_to_github():

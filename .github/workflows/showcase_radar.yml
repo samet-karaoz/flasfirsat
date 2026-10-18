@@ -1,0 +1,71 @@
+name: 🌐 Vitrin Stok & Fiyat Radarı (flasfirsat.com.tr)
+
+# 🛑 SADECE VİTRİN STOK & FİYAT DENETİMİ:
+# Bu iş akışı ASLA video üretmez, video renderlamaz ve sosyal medyaya paylaşım yapmaz.
+# Yalnızca flasfirsat.com.tr üzerindeki mevcut ürünlerin Amazon stok ve fiyatlarını denetler.
+# Stoğu biten veya indirimi sona eren ürünleri otomatik olarak "Tükendi" yapar.
+
+on:
+  schedule:
+    # Her 4 saatte bir otomatik denetim (00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Manuel Çalıştırma Sebebi'
+        required: false
+        default: 'Manuel Vitrin Denetimi'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  verify-showcase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Depoyu Klonla (Checkout)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Python 3.11 Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Bağımlılıkları Yükle
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔍 Vitrin Stok ve Fiyatlarını Canlı Denetle
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          git config --global user.name "flasfirsat-bot[bot]"
+          git config --global user.email "bot@flasfirsat.com"
+          python -c "
+          from web_showcase import check_and_update_all_deals_status
+          res = check_and_update_all_deals_status()
+          print('✅ Vitrin denetim tamamlandı:', res)
+          "
+
+      - name: 🌐 Canlı Vitrini Güncelle & GitHub Pages Push Et
+        run: |
+          git config --global user.name "flasfirsat-bot[bot]"
+          git config --global user.email "bot@flasfirsat.com"
+          git add index.html data/deals.json history_deals.json || true
+          if git diff --staged --quiet; then
+            echo "✅ Vitrindeki tüm fırsatlar güncel, değişiklik yok."
+          else
+            echo "🚀 Vitrinde değişiklik tespit edildi, GitHub Pages güncelleniyor..."
+            git commit -m "🌐 Canlı Vitrin Stok & Fiyat Güncellemesi [skip ci]"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

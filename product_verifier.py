@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import requests
 from bs4 import BeautifulSoup
 from config import BASE_DIR, TEMP_DIR, get_curl_cmd, safe_run_subprocess
 from price_tracker import record_price, check_if_lowest_30d
@@ -66,15 +67,32 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     asin = asin_match.group(1).upper() if asin_match else ""
     url = f"https://www.amazon.com.tr/dp/{asin}" if asin else asin_or_url
 
-    cmd = get_curl_cmd([
-        "-s", "-L",
-        "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "-H", "Accept-Language: tr-TR,tr;q=0.9",
-        url
-    ])
+    html_text = ""
+    try:
+        r = requests.get(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "Accept-Language": "tr-TR,tr;q=0.9"
+            },
+            timeout=10
+        )
+        if r.status_code == 200:
+            html_text = r.text
+    except Exception:
+        pass
 
-    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-    out_low = res.stdout.lower()
+    if not html_text:
+        cmd = get_curl_cmd([
+            "-s", "-L",
+            "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "-H", "Accept-Language: tr-TR,tr;q=0.9",
+            url
+        ])
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        html_text = res.stdout
+
+    out_low = html_text.lower()
 
     # 0. BOT / CAPTCHA KORUMASI TESPİTİ - 2. Deneme (Mobil User-Agent)
     if (
@@ -93,7 +111,8 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             url
         ])
         res = safe_run_subprocess(mobile_cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-        out_low = res.stdout.lower()
+        html_text = res.stdout
+        out_low = html_text.lower()
 
     if (
         "type the characters you see in this image" in out_low or
@@ -111,7 +130,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             "killer_hook": ""
         }
 
-    if res.returncode != 0 or len(res.stdout) < 8000:
+    if not html_text or len(html_text) < 3000:
         return {
             "success": False,
             "in_stock": False,
@@ -120,7 +139,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             "killer_hook": ""
         }
 
-    soup = BeautifulSoup(res.stdout, "html.parser")
+    soup = BeautifulSoup(html_text, "html.parser")
     from deal_hunter import parse_price_to_float
 
     # 1. STOK KONTROLÜ

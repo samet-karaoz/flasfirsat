@@ -3,6 +3,7 @@ import re
 import json
 import base64
 import subprocess
+import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
 from config import BASE_DIR, TEMP_DIR, GEMINI_API_KEY, get_curl_cmd, safe_run_subprocess
@@ -282,12 +283,25 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
 
     for model in MODEL_CANDIDATES:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
-        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+        data = None
+        try:
+            r = requests.post(url, json=payload, timeout=15)
+            if r.status_code == 200:
+                data = r.json()
+        except Exception:
+            pass
+
+        # Fallback: curl subprocess (arka planda sessiz)
+        if not data:
+            cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
+            res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+            try:
+                data = json.loads(res.stdout)
+            except Exception:
+                continue
         
         try:
-            data = json.loads(res.stdout)
-            if "candidates" in data and len(data["candidates"]) > 0:
+            if data and "candidates" in data and len(data["candidates"]) > 0:
                 text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
                 if not json_mode:
                     return text
@@ -304,7 +318,15 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
     return None
 
 def download_file(url: str, output_path: str) -> bool:
-    """curl ile dosya indirir."""
+    """Doğrudan Python requests ile dosya indirir (sıfır CMD penceresi)."""
+    try:
+        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
+        if r.status_code == 200 and len(r.content) > 1000:
+            with open(output_path, "wb") as f:
+                f.write(r.content)
+            return True
+    except Exception:
+        pass
     cmd = get_curl_cmd(["--max-time", "15", "-s", "-L", url, "-o", output_path])
     res = safe_run_subprocess(cmd)
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000

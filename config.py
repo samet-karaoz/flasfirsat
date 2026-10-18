@@ -55,6 +55,12 @@ def get_curl_cmd(extra_args: list = None) -> list:
 
 def safe_run_subprocess(cmd, **kwargs):
     """Windows'ta siyah cmd/konsol ekranlarının anlık açılıp kapanmasını engelleyen sessiz subprocess çalıştırıcı."""
-    if IS_WINDOWS and "creationflags" not in kwargs:
-        kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+    if IS_WINDOWS:
+        if "creationflags" not in kwargs:
+            kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+        if "startupinfo" not in kwargs:
+            si = subprocess.STARTUPINFO()
+            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            si.wShowWindow = subprocess.SW_HIDE
+            kwargs["startupinfo"] = si
     return subprocess.run(cmd, **kwargs)

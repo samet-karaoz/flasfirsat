@@ -2,6 +2,7 @@ import os
 import json
 import base64
 import subprocess
+import requests
 from config import BASE_DIR, TEMP_DIR, GEMINI_API_KEY, safe_run_subprocess
 
 def generate_gemini_voice(text: str, output_filename: str = "gemini_voice.wav", style: str = "calm, deep, natural fluent pacing, conversational, stoic male voice") -> tuple:
@@ -28,9 +29,18 @@ def generate_gemini_voice(text: str, output_filename: str = "gemini_voice.wav", 
         "generation_config": {"speech_config": [{"voice": "Puck"}]}
     })
 
-    cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", payload, url]
-    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
-    data = json.loads(res.stdout)
+    data = None
+    try:
+        r = requests.post(url, data=payload, headers={"Content-Type": "application/json"}, timeout=20)
+        if r.status_code == 200:
+            data = r.json()
+    except Exception:
+        pass
+
+    if not data:
+        cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", payload, url]
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+        data = json.loads(res.stdout)
 
     audio_bytes = None
     for step in data.get("steps", []):

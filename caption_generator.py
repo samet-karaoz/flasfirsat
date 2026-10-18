@@ -1,6 +1,7 @@
 import os
 import json
 import subprocess
+import requests
 from config import GEMINI_API_KEY, TEMP_DIR, get_curl_cmd, SITE_URL, safe_run_subprocess
 
 MODEL_CANDIDATES = [
@@ -87,12 +88,24 @@ Sadece açıklamayı yaz, başka hiçbir açıklama veya ön ek ekleme."""
 
     for model in MODEL_CANDIDATES:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
-        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+        data = None
+        try:
+            r = requests.post(url, json=payload, timeout=15)
+            if r.status_code == 200:
+                data = r.json()
+        except Exception:
+            pass
+
+        if not data:
+            cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
+            res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+            try:
+                data = json.loads(res.stdout)
+            except Exception:
+                continue
 
         try:
-            data = json.loads(res.stdout)
-            if "candidates" in data and len(data["candidates"]) > 0:
+            if data and "candidates" in data and len(data["candidates"]) > 0:
                 caption = data["candidates"][0]["content"]["parts"][0]["text"].strip()
                 return sanitize_caption(caption)
         except Exception:

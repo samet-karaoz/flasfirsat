@@ -1,6 +1,7 @@
 import os
 import json
 import subprocess
+import requests
 from config import GEMINI_API_KEY, safe_run_subprocess
 
 def generate_script(topic: str = None) -> dict:
@@ -34,11 +35,23 @@ Sadece JSON döndür."""
         "generationConfig": {"response_mime_type": "application/json"}
     })
 
-    cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", payload, url]
-    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+    data = None
+    try:
+        r = requests.post(url, data=payload, headers={"Content-Type": "application/json"}, timeout=15)
+        if r.status_code == 200:
+            data = r.json()
+    except Exception:
+        pass
+
+    if not data:
+        cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", payload, url]
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+        try:
+            data = json.loads(res.stdout)
+        except Exception:
+            pass
     
     try:
-        data = json.loads(res.stdout)
         content_text = data["candidates"][0]["content"]["parts"][0]["text"]
         return json.loads(content_text)
     except Exception as e:

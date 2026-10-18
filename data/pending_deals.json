@@ -594,5 +594,27 @@
     "file_id": "BAACAgQAAxkDAANdatRcUPsV8X_zGLO42ahOyw6PmHwAAtYfAAKUyaBSoHYpLHOKxsA9BA",
     "status": "pending",
     "created_at": "2026-10-18 08:42:56"
+  },
+  "deal_1792336677": {
+    "deal_id": "deal_1792336677",
+    "message_id": 99,
+    "chat_id": "6101216739",
+    "deal": {
+      "title": "🏆 Telegram Top 3 Tetikleme",
+      "new_price": "Top 3 Fırsat (Ort. -%38)",
+      "old_price": "Çoklu Ürün",
+      "discount_pct": "-%38",
+      "store_name": "Karma (Amazon / Hepsiburada)",
+      "deal_code": "#127, #128, #129"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\top3_weekly_1792336546.mp4",
+    "youtube_video_path": null,
+    "story_image_path": null,
+    "caption_text": "🔥 GÜNÜN EN İYİ 3 İNDİRİMİ RESMEN ÇÖKTÜ!\n\n🥉 #3 [KOD: #129]: Razer Basilisk Mouse...\n   💸 2.999 TL ➔ 1.919,63 TL (-36%)\n\n🥈 #2 [KOD: #128]: PS5 DualSense Kolu...\n   💸  ➔ 4.849 TL (-38%)\n\n🥇 #1 [KOD: #127]: Emsan Közde Kahve Makinesi...\n   💸 2.299 TL ➔ 1.363,21 TL (-41%)\n\n👉 Ürün kodunu (#101 vb.) profilimizdeki sitemizin arama kutusuna yazarak veya Hikayemizden direkt ürüne ulaşabilirsiniz! 🌐\n🔗 Tüm linkler profilimizdeki sitede ve Telegram kanalımızda (@flasfirsat)!\n\n#işbirliği #reklam #indirim #fırsat #teknoloji #kampanya #keşfet",
+    "product_url": "https://flasfirsat.com.tr",
+    "whatsapp_share_url": "https://api.whatsapp.com/send?text=%F0%9F%94%A5%20%2A%F0%9F%8F%86%20TELEGRAM%20TOP%203%20TETIKLEME%2A%0A%0A%E2%9D%8C%20Eski%20Fiyat%3A%20~%C3%87oklu%20%C3%9Cr%C3%BCn~%0A%E2%9C%85%20%C4%B0ndirimli%20Fiyat%3A%20%2ATop%203%20F%C4%B1rsat%20%28Ort.%20-%2538%29%2A%20%28-%2538%29%0A%F0%9F%8F%AA%20Ma%C4%9Faza%3A%20Karma%20%28Amazon%20/%20Hepsiburada%29%0A%0A%F0%9F%9B%92%20%2A%C4%B0ndirimli%20Sat%C4%B1n%20Alma%20Linki%3A%2A%0Ahttps%3A//flasfirsat.com.tr%0A%0A%F0%9F%8C%90%20%2AT%C3%BCm%20Canl%C4%B1%20F%C4%B1rsatlar%20%26%20%C4%B0ndirim%20Radar%C4%B1%3A%2A%0Ahttps%3A//flasfirsat.com.tr%3Futm_source%3Dwhatsapp%26utm_medium%3Dchannel%0A%0A%23i%C5%9Fbirli%C4%9Fi%20%23reklam",
+    "file_id": "BAACAgQAAxkDAANjatTjI_ySu4sJ7UR4DewRA37MQUsAArweAAJ2sqhSQVmNXF1fEJs9BA",
+    "status": "pending",
+    "created_at": "2026-10-18 18:18:03"
   }
 }

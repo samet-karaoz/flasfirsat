@@ -592,5 +592,21 @@
       "file_id": "BAACAgQAAxkDAANYatRVIjpbvHB9fspItXG6H1wXWA8AAtMfAAKUyaBSrJEtJgTmk8s9BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_16.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-18 18:13:25",
+    "slot": "Telegram Top 3 Tetikleme",
+    "type": "top3",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792336677",
+      "message_id": 99,
+      "file_id": "BAACAgQAAxkDAANjatTjI_ySu4sJ7UR4DewRA37MQUsAArweAAJ2sqhSQVmNXF1fEJs9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_19.mp4"
+    }
   }
 ]

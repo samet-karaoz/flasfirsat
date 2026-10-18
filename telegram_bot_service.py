@@ -1015,7 +1015,7 @@ def run_telegram_service():
     print("• Yönetici Onay Butonları: Aktif (YouTube, Kanal, Web, Organik IG Paketi)")
     print("• Instagram Modu: %100 Organik Stüdyo (Bot Girişi Kapalı - Sıfır Ban Riski)")
     print("• Kişisel Fiyat Takip Botu (/takip, /listem): Aktif")
-    print("• 24/7 Otopilot Zamanlayıcı: Aktif (12:30 & 20:00)")
+    print("• 24/7 Otopilot Zamanlayıcı: Bulutta Aktif (GitHub Actions: 12:30, 16:30, 20:00)")
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("=======================================================\n")
 

@@ -7,7 +7,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "")
 GA_MEASUREMENT_ID = os.getenv("GA_MEASUREMENT_ID", "").strip()
-SITE_URL = os.getenv("SITE_URL", "https://samet-karaoz.github.io/flasfirsat").rstrip("/")
+SITE_URL = os.getenv("SITE_URL", "https://flasfirsat.com.tr").rstrip("/")
 
 # Video Specs (9:16 Vertical for Reels/Shorts/TikTok)
 VIDEO_WIDTH = 1080

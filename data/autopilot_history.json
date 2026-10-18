@@ -647,5 +647,73 @@
       "success": false,
       "error": "Unauthorized"
     }
+  },
+  {
+    "timestamp": "2026-10-18 20:00:02",
+    "slot": "Akşam Prime Time (20:00)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Philips 2200 Espresso",
+      "new_price": "9.928,13 TL",
+      "old_price": "14.500 TL",
+      "discount_pct": "-32%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07MMSHC4R?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261018_200141_philips_2200_espresso.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261018_200141_philips_2200_espresso_youtube.mp4",
+    "caption_text": "🚨 KAHVE SEVERLER BU FİYATI KAÇIRMASIN! Sabah evde kafe kalitesinde espresso keyfi yaşatacak bu tam otomatik makine dip fiyatta!\n\nEski Fiyat ❌: 14.500 TL\nYeni Fiyat ✅: 9.928,13 TL\nİndirim Oranı: %32 İndirim!\n\n🚨 DİKKAT: Stoklar hızla tükeniyor, bu fiyata bu makineyi bir daha bulamazsınız, elinizi çabuk tutun!\n\n💬 Sizce bu fiyata dışarıdan kahve almak yerine evde yapmak mantıklı mı, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! \n⚡ Hızlı İpucu: Profilimizdeki sitemize girip arama kutusuna #133 yazarak ürüne saniyeler içinde ulaşabilirsiniz!\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, kahve bağımlısı arkadaşına GÖNDER! ✈️\n\n#indirim #kahve #fırsat #espresso #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_32_amz_B07MMSHC4R.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792342975",
+      "message_id": 102,
+      "file_id": "BAACAgQAAxkDAANmatT7wsHlMJ2eMaevBRekVTPDi2AAAukeAAJ2sqhSqK--7RTLrWQ9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_20.mp4"
+    }
+  },
+  {
+    "timestamp": "2026-10-18 20:00:12",
+    "slot": "Haftalık Top 3 Bülteni (Pazar Özel)",
+    "type": "top3",
+    "success": false,
+    "platforms": {},
+    "error": "Top 3 videosu için yeterli teyitli aday toplanamadı (2/3 aday bulundu)."
+  },
+  {
+    "timestamp": "2026-10-18 20:00:16",
+    "slot": "Haftalık Top 3 Bülteni (Pazar Özel)",
+    "type": "top3",
+    "success": false,
+    "platforms": {},
+    "error": "Top 3 videosu için yeterli teyitli aday toplanamadı (2/3 aday bulundu)."
+  },
+  {
+    "timestamp": "2026-10-18 20:16:00",
+    "slot": "Canlı Tekli Fırsat Yayını",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Samsung 43\" 4K Smart Monitör",
+      "new_price": "13.739 TL",
+      "old_price": "18.999 TL",
+      "discount_pct": "-28%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0FFGZP3WZ?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261018_201717_samsung_43_4k_smart_monitor.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261018_201717_samsung_43_4k_smart_monitor_youtube.mp4",
+    "caption_text": "🚨 BU FİYATA BÖYLE BİR MONİTÖR YOK! Masasını ofise veya sinema salonuna çevirmek isteyenler bu fırsatı kaçırmasın! 🖥️🔥\n\nEski Fiyat ❌: 18.999 TL \nYeni Fiyat ✅: 13.739 TL (%28 İndirim!)\n\n💬 Sizce bu fiyata dev ekran 4K Smart Monitör değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! Ürünü saniyeler içinde bulmak için sitemizdeki arama kutusuna **#133** yazmanız yeterli! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, ekranı büyüklük isteyen arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #monitör #teknoloji #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_28_amz_B0FFGZP3WZ.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792343894",
+      "message_id": 105,
+      "file_id": "BAACAgQAAxkDAANpatT_YQ9QWZyMNSEl-I6irrPHAAHQAALzHgACdrKoUm-4aQEInhUrPQQ",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_21.mp4"
+    }
   }
 ]

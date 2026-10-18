@@ -1,19 +1,15 @@
-name: ⚡ Flaş Fırsat Otomasyonu (24/7 Bulut Otopilotu)
+name: ⚡ Flaş Fırsat Otomasyonu (İsteğe Bağlı Manuel Stüdyo)
 
+# 🛑 OTOMATİK ZAMANLAYICI KAPALI:
+# Video üretimi tamamen kullanıcı onayına ve isteğine bağlıdır.
+# Otomatik cron döngüsü kaldırılmıştır. Sadece kullanıcı talimatıyla çalışır.
 on:
-  schedule:
-    # 1. Kuşak: 12:30 TSİ (Öğle Molası - Tekli Fırsat) -> 09:30 UTC
-    - cron: '30 9 * * *'
-    # 2. Kuşak: 16:30 TSİ (İkindi Kuşağı - Tekli Fırsat) -> 13:30 UTC
-    - cron: '30 13 * * *'
-    # 3. Kuşak: 20:00 TSİ (Akşam Prime Time - Tekli Fırsat) -> 17:00 UTC
-    - cron: '0 17 * * *'
   workflow_dispatch:
     inputs:
       slot_name:
-        description: 'Kuşak Adı (Örn: Telefondan Bulut Tetikleme)'
+        description: 'Kuşak Adı (Örn: Manuel Bulut Tetikleme)'
         required: false
-        default: 'Telefondan Bulut Tetikleme'
+        default: 'Manuel Bulut Tetikleme'
         type: string
 
 permissions:

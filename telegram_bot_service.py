@@ -712,8 +712,8 @@ def handle_user_message(msg: dict):
             "📌 <b>Nasıl Kullanılır?</b>\n"
             "Takip etmek istediğin herhangi bir <b>Amazon, Trendyol veya Hepsiburada</b> ürün linkini bana mesaj olarak göndermen yeterli!\n\n"
             "💡 <b>Komutlar:</b>\n"
-            "• <code>/program</code> - Günlük 12:30 & 20:00 yayın saatleri ve sıradaki paylaşım\n"
-            "• <code>/otopilot</code> - Saati beklemeden hemen 4 platforma yayın yap\n"
+            "• <code>/otopilot</code> - Hemen en sıcak indirimi bulup video ve onay butonlarını hazırla\n"
+            "• <code>/durum</code> veya <code>/program</code> - Video üretim modunu ve durumunu gösterir\n"
             "• <code>/takip [link]</code> - Ürünü fiyat takibine alır\n"
             "• <code>/listem</code> - Takip ettiğin ürünleri listeler\n"
             "• <code>/stats</code> - Web vitrini ve etkileşim analizlerini gösterir\n"
@@ -722,24 +722,17 @@ def handle_user_message(msg: dict):
         send_telegram_text(chat_id, welcome)
         return
 
-    # 1.5 /program veya /zamanlayici Komutu
-    if text.startswith("/program") or text.startswith("/zamanlayici"):
-        from scheduler_service import get_next_run_info
-        info = get_next_run_info()
+    # 1.5 /program, /durum veya /zamanlayici Komutu
+    if text.startswith("/program") or text.startswith("/zamanlayici") or text.startswith("/durum"):
         prog_msg = (
-            "⏰ <b>FLAŞ FIRSAT OTOPİLOT YAYIN PROGRAMI</b> 🚀\n\n"
-            "Algoritmanın en yüksek etkileşim verdiği 2 saat kuşağı:\n"
-            "• 🌞 <b>1. Kuşak (Öğle Molası):</b> 12:30\n"
-            "• 🌙 <b>2. Kuşak (Akşam Prime Time):</b> 20:00\n\n"
-            f"👉 <b>Bir Sonraki Otomatik Yayın:</b> {info['next_time']}\n"
-            f"⏳ <b>Kalan Süre:</b> {info['remaining_str']} ({info['slot_name']})\n\n"
-            "📱 <b>Otomatik Yayınlanan Platformlar:</b>\n"
-            "• 📺 YouTube Shorts (@flasfirsat)\n"
-            "• 🎬 Instagram Reels (@flasfirsat.tr)\n"
-            "• 🎵 TikTok (@flasfirsat)\n"
-            "• 📢 Telegram Kanalı (@flasfirsat)\n"
-            "• 🌐 Web Vitrini (flasfirsat.com.tr)\n\n"
-            "💡 <i>Saati beklemeden hemen yayınlatmak için: <code>/otopilot</code></i>"
+            "🎯 <b>VİDEO ÜRETİM MODU: SADECE SEN İSTEYİNCE (İSTEĞE BAĞLI)</b> 🛑\n\n"
+            "Tüm otomatik video üretimleri ve arka plan zamanlayıcıları (bulut ve yerel) tamamen kapatıldı.\n"
+            "Sistem siz talimat vermediğiniz sürece asla kendi kendine video üretmez.\n\n"
+            "🎬 <b>Nasıl Video Ürettirebilirsiniz?</b>\n"
+            "1. <b>Fırsat Avı Başlatmak İçin:</b> Buraya <code>/otopilot</code> yazın. Sistem anında en sıcak indirimi bulup onayınıza sunar.\n"
+            "2. <b>Belirli Bir Ürün İçin:</b> Bir Amazon linkini doğrudan buraya gönderin, linke özel video hazırlansın.\n"
+            "3. <b>AI Asistanına Söyleyerek:</b> Sohbette 'şimdi üret' veya 'video üret' demeniz yeterlidir.\n\n"
+            "✨ <i>Üretilen her video önce Telegram'a onay butonlarıyla gelir; onay vermeden hiçbir yerde yayınlanmaz.</i>"
         )
         send_telegram_text(chat_id, prog_msg)
         return
@@ -1011,18 +1004,16 @@ def run_telegram_service():
         return
 
     print("=======================================================")
-    print("🤖 [TELEGRAM INTERAKTIF YÖNETİM & STÜDYO SERVİSİ BAŞLADI]")
+    print("🤖 [TELEGRAM İNTERAKTİF YÖNETİM & STÜDYO SERVİSİ BAŞLADI]")
+    print("• Video Üretim Modu: %100 İSTEĞE BAĞLI (Otomatik zamanlayıcılar kapalı)")
     print("• Yönetici Onay Butonları: Aktif (YouTube, Kanal, Web, Organik IG Paketi)")
     print("• Instagram Modu: %100 Organik Stüdyo (Bot Girişi Kapalı - Sıfır Ban Riski)")
     print("• Kişisel Fiyat Takip Botu (/takip, /listem): Aktif")
-    print("• 24/7 Otopilot Zamanlayıcı: Bulutta Aktif (GitHub Actions: 12:30, 16:30, 20:00)")
+    print("• Tetikleme: Sadece siz isteyince (/otopilot veya link atarak)")
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("=======================================================\n")
-
-    # 7/24 Zamanlayıcı Bulutta (GitHub Actions) kesintisiz ve sessizce çalışır.
-    # Kullanıcı isteği doğrultusunda yerel PC zamanlayıcıları ve cmd pencereleri tamamen kaldırılmıştır.
-    print("☁️ [7/24 BULUT OTOPİLOTU AKTİF] Tüm günlük kuşaklar (12:30, 16:30, 20:00) GitHub Actions bulut sunucuları tarafından yönetilmektedir.")
-    print("💻 [LOKAL MOD] Bilgisayarınızda arka plan zamanlayıcısı ve cmd pencereleri tamamen kapalıdır. İstediğiniz zaman /otopilot ile tetikleyebilirsiniz.\n")
+    print("🛑 [OTOMATİK ZAMANLAYICILAR KAPALI] Bulut ve yerel tüm otomatik döngüler kaldırıldı.")
+    print("🎬 [İSTEĞE BAĞLI MOD] Video üretimi yalnızca siz talimat verdiğinizde başlar.\n")
 
     offset = None
     last_alarm_check = time.time()

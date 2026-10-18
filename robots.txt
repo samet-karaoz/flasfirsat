@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://flasfirsat.com.tr/sitemap.xml

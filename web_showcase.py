@@ -25,6 +25,17 @@ def ensure_web_setup():
     if os.path.exists(logo_src) and not os.path.exists(logo_dst):
         shutil.copy2(logo_src, logo_dst)
 
+    # CNAME ve robots.txt dosyalarını her zaman koru (Custom Domain & SEO)
+    cname_path = os.path.join(WEB_DIR, "CNAME")
+    if not os.path.exists(cname_path):
+        with open(cname_path, "w", encoding="utf-8") as f:
+            f.write("flasfirsat.com.tr\n")
+
+    robots_path = os.path.join(WEB_DIR, "robots.txt")
+    if not os.path.exists(robots_path):
+        with open(robots_path, "w", encoding="utf-8") as f:
+            f.write("User-agent: *\nAllow: /\nSitemap: https://flasfirsat.com.tr/sitemap.xml\n")
+
     if not os.path.exists(DEALS_JSON_PATH):
         with open(DEALS_JSON_PATH, "w", encoding="utf-8") as f:
             json.dump([], f, ensure_ascii=False, indent=2)
@@ -380,9 +391,12 @@ def render_web_html(deals: list = None):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flaş Fırsat ⚡ | Amazon, Trendyol & Hepsiburada Dip Fiyat Radarı</title>
     <meta name="description" content="Piyasa altı flaş indirimler, yapay zeka destekli dip fiyat takibi ve en sıcak fırsatlar!">
+    <link rel="canonical" href="https://flasfirsat.com.tr/">
+    <meta property="og:url" content="https://flasfirsat.com.tr/">
+    <meta property="og:site_name" content="Flaş Fırsat">
     <meta property="og:title" content="Flaş Fırsat ⚡ | Dip Fiyat Radarı">
     <meta property="og:description" content="Amazon, Trendyol ve Hepsiburada'daki piyasa altı en sıcak fırsatlar!">
-    <meta property="og:image" content="assets/logo.jpg">
+    <meta property="og:image" content="https://flasfirsat.com.tr/assets/logo.jpg">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0B0D12">
     <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
@@ -1935,6 +1949,23 @@ def render_web_html(deals: list = None):
     index_path = os.path.join(WEB_DIR, "index.html")
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(final_html)
+
+    # Sitemap.xml oluştur (Google indekslemesi için)
+    sitemap_path = os.path.join(WEB_DIR, "sitemap.xml")
+    today_iso = datetime.now().strftime("%Y-%m-%d")
+    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://flasfirsat.com.tr/</loc>
+    <lastmod>{today_iso}</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"""
+    with open(sitemap_path, "w", encoding="utf-8") as f:
+        f.write(sitemap_xml)
+
     return index_path
 
 if __name__ == "__main__":

@@ -61,7 +61,7 @@ jobs:
           AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
           TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
           HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
-          SITE_URL: "https://samet-karaoz.github.io/flasfirsat"
+          SITE_URL: "https://flasfirsat.com.tr"
         run: |
           python -u instagram_auto_dm.py
 

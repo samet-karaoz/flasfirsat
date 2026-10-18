@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flaş Fırsat ⚡ | Amazon, Trendyol & Hepsiburada Dip Fiyat Radarı</title>
     <meta name="description" content="Piyasa altı flaş indirimler, yapay zeka destekli dip fiyat takibi ve en sıcak fırsatlar!">
+    <link rel="canonical" href="https://flasfirsat.com.tr/">
+    <meta property="og:url" content="https://flasfirsat.com.tr/">
+    <meta property="og:site_name" content="Flaş Fırsat">
     <meta property="og:title" content="Flaş Fırsat ⚡ | Dip Fiyat Radarı">
     <meta property="og:description" content="Amazon, Trendyol ve Hepsiburada'daki piyasa altı en sıcak fırsatlar!">
-    <meta property="og:image" content="assets/logo.jpg">
+    <meta property="og:image" content="https://flasfirsat.com.tr/assets/logo.jpg">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0B0D12">
     <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
@@ -278,6 +281,36 @@
             z-index: 10;
             pointer-events: none;
             letter-spacing: 0.5px;
+        }
+
+        .badge-featured-reel {
+            position: absolute;
+            bottom: 12px;
+            left: 14px;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #0F172A;
+            font-weight: 800;
+            font-size: 0.74rem;
+            padding: 5px 11px;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+            z-index: 10;
+            letter-spacing: 0.4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: pulse-featured 2.5s infinite;
+        }
+
+        @keyframes pulse-featured {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .featured-reel-card {
+            border: 2px solid rgba(245, 158, 11, 0.6) !important;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2) !important;
         }
 
         .badge-store {
@@ -1047,12 +1080,13 @@
 
         <div class="deals-grid" id="dealsGrid">
 
-            <div class="deal-card" data-status="active" data-category="monitor" data-title="dell 24" 200hz 1ms ips gaming monitör amazon tr monitor" data-deal-id="deal_1792256384_23" data-deal-title="Dell 24&quot; 200Hz 1ms IPS Gaming Monitör" data-store="Amazon TR" data-price="4.449 TL">
+            <div class="deal-card featured-reel-card" data-status="active" data-category="monitor" data-title="dell 24" 200hz 1ms ips gaming monitör amazon tr monitor" data-deal-id="deal_1792256384_23" data-deal-title="Dell 24&quot; 200Hz 1ms IPS Gaming Monitör" data-store="Amazon TR" data-price="4.449 TL">
                 <a href="https://www.amazon.com.tr/dp/B0FHHVD75B?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Dell 24&quot; 200Hz 1ms IPS Gaming Monitör">
                     <div class="card-img-wrap">
                         <img src="assets/products/dell_24__200hz_1ms_ips_ga_72d28263.jpg" alt="Dell 24&quot; 200Hz 1ms IPS Gaming Monitör" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-26%</span>
+                        <span class="badge-featured-reel">⚡ ŞU AN REELS'TE VİRAL</span>
                         
                     </div>
                 </a>
@@ -1088,6 +1122,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-17%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1121,6 +1156,7 @@
                         <img src="assets/products/logitech_g102_lightsync_r_e25b0150.jpg" alt="Logitech G102 Lightsync RGB Oyuncu Mouse" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-%61</span>
+                        
                         <span class="badge-expired">🔴 İNDIRIM BITTI</span>
                     </div>
                 </a>
@@ -1156,6 +1192,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-33%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1189,6 +1226,7 @@
                         <img src="assets/products/lenovo_legion_240hz_gamin_a4fecd19.jpg" alt="Lenovo Legion 240Hz Gaming Monitör" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-35%</span>
+                        
                         
                     </div>
                 </a>
@@ -1224,6 +1262,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-39%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1257,6 +1296,7 @@
                         <img src="assets/products/playstation_5_pro_2efbc8f3.jpg" alt="PlayStation 5 Pro" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-4%</span>
+                        
                         
                     </div>
                 </a>
@@ -1292,6 +1332,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-36%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1325,6 +1366,7 @@
                         <img src="assets/products/razer_kraken_x_lite_e8a6479f.jpg" alt="Razer Kraken X Lite" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-15%</span>
+                        
                         
                     </div>
                 </a>
@@ -1360,6 +1402,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-25%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1393,6 +1436,7 @@
                         <img src="assets/products/stanley_transit_termos_88819170.jpg" alt="Stanley Transit Termos" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-21%</span>
+                        
                         <span class="badge-expired">🔴 İNDIRIM BITTI</span>
                     </div>
                 </a>
@@ -1428,6 +1472,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-39%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1462,6 +1507,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-%36</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1495,6 +1541,7 @@
                         <img src="assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg" alt="Philips Sessiz Kablosuz Mouse" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-31%</span>
+                        
                         <span class="badge-expired">🔴 İNDIRIM BITTI</span>
                     </div>
                 </a>
@@ -1530,6 +1577,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-33%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1563,6 +1611,7 @@
                         <img src="assets/products/steelseries_rival_3_wirel_6f1c7c69.jpg" alt="SteelSeries Rival 3 Wireless Gen 2 Mouse" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-35%</span>
+                        
                         
                     </div>
                 </a>
@@ -1598,6 +1647,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-29%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1631,6 +1681,7 @@
                         <img src="assets/products/razer_blackshark_v2_x_25493bcb.jpg" alt="Razer BlackShark V2 X" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-33%</span>
+                        
                         
                     </div>
                 </a>
@@ -1666,6 +1717,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-33%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1699,6 +1751,7 @@
                         <img src="assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.jpg" alt="HyperX Cloud III Oyuncu Kulaklık" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-30%</span>
+                        
                         <span class="badge-expired">🔴 İNDIRIM BITTI</span>
                     </div>
                 </a>
@@ -1734,6 +1787,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-32%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1768,6 +1822,7 @@
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-31%</span>
                         
+                        
                     </div>
                 </a>
                 <div class="card-content">
@@ -1801,6 +1856,7 @@
                         <img src="assets/products/logitech_g305.jpg" alt="Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-44%</span>
+                        
                         <span class="badge-expired">🔴 İNDIRIM BITTI</span>
                     </div>
                 </a>

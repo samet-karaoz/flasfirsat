@@ -516,11 +516,33 @@ BANNER_THEMES = {
     }
 }
 
+LAST_THEME_FILE = os.path.join(DATA_DIR, "last_banner_theme.txt")
+
+def get_last_banner_theme() -> str:
+    try:
+        if os.path.exists(LAST_THEME_FILE):
+            with open(LAST_THEME_FILE, "r", encoding="utf-8") as f:
+                return f.read().strip()
+    except Exception:
+        pass
+    return ""
+
+def set_last_banner_theme(theme_key: str):
+    try:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(LAST_THEME_FILE, "w", encoding="utf-8") as f:
+            f.write(theme_key)
+    except Exception:
+        pass
+
 def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str = "", theme_name: str = "auto") -> dict:
     """
-    Ürünün indirim oranına, kategorisine ve görsel çeşitlilik algoritmasına göre 5 lüks stüdyo şablonundan en uygun olanı seçer.
+    Ürünün indirim oranına, kategorisine ve görsel çeşitlilik algoritmasına göre
+    5 lüks stüdyo şablonundan en uygun olanı seçer.
+    Ardışık iki videoda ASLA aynı renk skalasını seçmeyerek profil ızgarasında renk körlüğünü önler.
     """
     if theme_name and theme_name in BANNER_THEMES:
+        set_last_banner_theme(theme_name)
         return BANNER_THEMES[theme_name]
 
     pct_m = re.search(r'(\d+)', str(discount_pct))
@@ -528,42 +550,56 @@ def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str
     t_low = (title or "").lower()
     b_low = (badge_text or "").lower()
 
-    # 1. %38 ve üzeri dev indirim veya Fiyat Hatası şüphesi -> Şablon: Kırmızı Alarm (fiyat_hatasi_alarm)
-    if pct_val >= 38 or "hata" in b_low or "alarm" in b_low or "acil" in b_low:
-        return BANNER_THEMES["fiyat_hatasi_alarm"]
+    # Kategoriye ve duruma göre öncelikli tema aday listesi oluştur
+    candidates = []
 
-    # 2. Gaming / Setup / Bilgisayar Ekipmanları -> Şablon: Cyber Gaming & Setup
     gaming_kw = [
         "mouse", "klavye", "kulaklık", "monitör", "monitor", "gaming", "oyuncu",
         "ps5", "gamepad", "koltuk", "ekran kartı", "ssd", "ram", "laptop",
         "notebook", "kasa", "anakart", "işlemci", "webcam", "mikrofon", "north bayou"
     ]
-    if any(k in t_low for k in gaming_kw):
-        return BANNER_THEMES["cyber_gaming"]
-
-    # 3. Mutfak, Sağlık, Termos, Doğal Yaşam -> Şablon: Zümrüt Yeşili (emerald_trust)
-    nature_kw = [
+    kitchen_nature_kw = [
         "termos", "stanley", "kahve", "airfryer", "tencere", "tava", "blender",
         "çay", "filtre", "su arıtma", "vitamin", "organik", "sağlık"
     ]
-    if any(k in t_low for k in nature_kw):
-        return BANNER_THEMES["emerald_trust"]
-
-    # 4. Ev, Yaşam, Kişisel Bakım, Kozmetik, Giyim -> Şablon: Apple Studio Warm
-    warm_kw = [
+    warm_care_kw = [
         "krem", "bakım", "parfüm", "şampuan", "deterjan", "ayakkabı", "çanta",
         "kamp", "çadır", "ütü", "süpürge", "tıraş", "saç", "fırın", "tost"
     ]
-    if any(k in t_low for k in warm_kw):
-        return BANNER_THEMES["studio_warm"]
 
-    # 5. Akşam kuşağı veya genel teknoloji ürünleri -> Şablon: Koyu Obsidyen Altın
-    import datetime as _dt
-    curr_hour = _dt.datetime.now().hour
-    if curr_hour >= 18 or curr_hour < 7:
-        return BANNER_THEMES["obsidian_dark"]
+    is_price_error = (pct_val >= 45 or "hata" in b_low or "alarm" in b_low or "acil" in b_low)
 
-    return BANNER_THEMES["studio_warm"]
+    if any(k in t_low for k in gaming_kw):
+        candidates = ["cyber_gaming", "obsidian_dark", "fiyat_hatasi_alarm"]
+    elif any(k in t_low for k in kitchen_nature_kw):
+        candidates = ["emerald_trust", "studio_warm", "obsidian_dark"]
+    elif any(k in t_low for k in warm_care_kw):
+        candidates = ["studio_warm", "emerald_trust", "obsidian_dark"]
+    elif is_price_error:
+        candidates = ["fiyat_hatasi_alarm", "obsidian_dark", "studio_warm"]
+    else:
+        # Genel Teknoloji veya karma kategori
+        import datetime as _dt
+        curr_hour = _dt.datetime.now().hour
+        if curr_hour >= 18 or curr_hour < 7:
+            candidates = ["obsidian_dark", "studio_warm", "emerald_trust"]
+        else:
+            candidates = ["studio_warm", "obsidian_dark", "emerald_trust"]
+
+    # Yedek havuz ekle
+    all_keys = ["obsidian_dark", "studio_warm", "emerald_trust", "cyber_gaming", "fiyat_hatasi_alarm"]
+    for k in all_keys:
+        if k not in candidates:
+            candidates.append(k)
+
+    # Son kullanılan temayı oku ve tekrarı engelle (Anti-Repetition Guard)
+    last_theme = get_last_banner_theme()
+    chosen_key = candidates[0]
+    if last_theme and chosen_key == last_theme and len(candidates) > 1:
+        chosen_key = candidates[1]
+
+    set_last_banner_theme(chosen_key)
+    return BANNER_THEMES[chosen_key]
 
 # ==========================================
 # ANA ÜRÜN AFİŞİ (1080x960 - V4 STUDIO MULTI-THEME)
@@ -682,19 +718,19 @@ def create_product_banner(
 
     b_w = draw.textlength(clean_badge, font=f_badge)
     b1_x2 = int(54 + b_w + 64)
-    draw.rounded_rectangle((54, 80, b1_x2, 132), radius=14, fill=theme["badge_left_bg"])
-    draw_vector_bolt(draw, 78, 106, (255, 215, 0))
-    draw.text((96 + b_w // 2, 106), clean_badge, font=f_badge, fill=(255, 255, 255), anchor="mm")
+    draw.rounded_rectangle((54, 90, b1_x2, 140), radius=14, fill=theme["badge_left_bg"])
+    draw_vector_bolt(draw, 78, 115, (255, 215, 0))
+    draw.text((96 + b_w // 2, 115), clean_badge, font=f_badge, fill=(255, 255, 255), anchor="mm")
 
-    # 2. Sağ Üst Rozet: % İNDİRİM (Varsa) (Reels Safe Zone: Sağdan 54px ve Üstten 80px)
+    # 2. Sağ Üst Rozet: % İNDİRİM (Varsa) (Reels Safe Zone: Sağdan 54px ve Üstten 90px)
     clean_pct = discount_pct.strip()
     if clean_pct and clean_pct != "0%" and clean_pct != "-0%":
         if not clean_pct.endswith("İNDİRİM") and not clean_pct.endswith("FİYAT"):
             clean_pct = f"{clean_pct} İNDİRİM"
         p_w = draw.textlength(clean_pct, font=f_pct)
         b2_x1 = int(W - 54 - p_w - 44)
-        draw.rounded_rectangle((b2_x1, 80, W - 54, 132), radius=14, fill=theme["badge_right_bg"])
-        draw.text(((b2_x1 + W - 54) // 2, 106), clean_pct, font=f_pct, fill=(255, 255, 255), anchor="mm")
+        draw.rounded_rectangle((b2_x1, 90, W - 54, 140), radius=14, fill=theme["badge_right_bg"])
+        draw.text(((b2_x1 + W - 54) // 2, 115), clean_pct, font=f_pct, fill=(255, 255, 255), anchor="mm")
 
     # 3. Başlık (Temiz 1 veya 2 Satır Formatı - Reels Safe Zone: y=145..205)
     title_lines = wrap_text(title, max_chars_per_line=36)

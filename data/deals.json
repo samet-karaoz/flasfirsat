@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792437333_33",
+    "deal_code": "#134",
+    "title": "Aula F75 RGB Kablosuz Mekanik Klavye",
+    "old_price": "3.499 TL",
+    "new_price": "2.799 TL",
+    "discount_pct": "-20%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DF57F88S?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 933 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/aula_f75_rgb_kablosuz_mek_9b86e61f.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "19.10.2026 22:15"
+  },
+  {
     "id": "deal_1792400029_32",
     "deal_code": "#133",
     "title": "Stanley Quencher H2.0 FlowState 1.18L",

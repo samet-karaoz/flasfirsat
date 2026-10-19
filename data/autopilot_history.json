@@ -884,5 +884,31 @@
         "channel": "-1004415003185"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-19 22:11:34",
+    "slot": "Gece Kuşağı: Aula F75",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Aula F75 RGB Kablosuz Mekanik Klavye",
+      "new_price": "2.799 TL",
+      "old_price": "3.499 TL",
+      "discount_pct": "-20%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DF57F88S?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261019_221134_aula_f75_rgb_kablosuz_mekanik_.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261019_221134_aula_f75_rgb_kablosuz_mekanik__youtube.mp4",
+    "caption_text": "Mekanik klavye piyasası bu fiyata böyle bir efsane görmedi! 🚨\n\nEski Fiyat ❌ -> 3.499 TL\nYeni Fiyat ✅ -> 2.799 TL\n🔥 Kaçırılmayacak %20 İndirim!\n\n🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki kupon kutucuğunu işaretlemeyi / kuponu aktif etmeyi unutmayın!\n💳 Peşin fiyatına 3 taksit imkanıyla!\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz ⚡ Sitedeki arama kutusuna **#134** yazarak da ürüne saniyeler içinde ulaşabilirsiniz!\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #klavye #kampanya #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_prod_aula_f75_rgb_kablosuz_mekanik_.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792437153",
+      "message_id": 116,
+      "file_id": "BAACAgQAAxkDAAN0atZro-Lp_UhNXX6CHYHv-J8WNVgAArUgAAJ2srBSwUcsEMzwYKc9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_27.mp4"
+    }
   }
 ]

@@ -842,5 +842,47 @@
       "file_id": "BAACAgQAAxkDAANuatXLd9gCLDek5Pkj2-6HOWFtcnYAAmYfAAJ2srBS7ILFzPDFu3A9BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_26.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-19 11:53",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Stanley Quencher H2.0 FlowState 1.18L",
+      "old_price": "2.499 TL",
+      "new_price": "1.311,98 TL",
+      "discount_pct": "-47%",
+      "store_url": "https://www.amazon.com.tr/dp/B0CNTV815Y?tag=flasfirsat04-21",
+      "url": "https://www.amazon.com.tr/dp/B0CNTV815Y",
+      "store_name": "Amazon TR",
+      "badge": "DEV İNDİRİM",
+      "rating": 4.1,
+      "bought_past_month": "Geçen ay 1 B adetten fazla satın alındı",
+      "has_verified_old_price": true,
+      "seller_badge": "AMAZON TR",
+      "feature_pill": "1.312 TLYE 1.18L ÇELİK STANLEY!",
+      "killer_hook": "1.312 TLYE 1.18L ÇELİK STANLEY!",
+      "image_url": "https://m.media-amazon.com/images/I/51JSEMUoBUL._AC_SL1500_.jpg",
+      "image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\amz_B0CNTV815Y.jpg",
+      "is_lowest_30d": false,
+      "deal_code": "#133",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "net_cost": "",
+      "installment": "Peşin Fiyatına 3 Taksit x 437 TL",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0CNTV815Y?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/Qc0XlNVB2Wc"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
   }
 ]

@@ -12,17 +12,22 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
-    "degirmenci_dayi_cj.mp4",    # 1. Değirmenci Dayı (CJ)
-    "knight_cat.mp4",            # 2. Zırhlı Şövalye Kedi
-    "limon_halay.mp4",           # 3. Limon Halay
-    "bicerdover_ciftetelli.mp4",  # 4. Biçerdöver Çiftetelli
-    "homelander_stare.mp4",      # 5. Homelander (Şok / Ciddi Bakış)
-    "the_rock.mp4",              # 6. The Rock (Tek Kaş Kaldırma)
-    "vince_mcmahon.mp4",         # 7. Vince McMahon (Para / Şok Sevinç)
-    "bale_nod.mp4",              # 8. Christian Bale (Onaylama / Takdir)
-    "angaraya_mi_geldin.mp4",    # 9. Angara'ya mı geldin la
-    "cat_vibing.mp4",            # 10. Vibing Cat (Ritimle Kafa Sallayan Kedi)
-    "limon_davulcu.mp4"          # 11. Limoncu Davulcu
+    "degirmenci_dayi_cj.mp4",      # 1. Değirmenci Dayı (CJ)
+    "polat_memati_kosu.mp4",       # 2. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
+    "knight_cat.mp4",              # 3. Zırhlı Şövalye Kedi
+    "piyano_davul.mp4",             # 4. Piyano Çalan Kız & Davulcu Dayı
+    "limon_halay.mp4",             # 5. Limon Halay
+    "dugunde_cosan_cocuk.mp4",     # 6. Düğünde Kopan Çocuk (Pist Dansı)
+    "bicerdover_ciftetelli.mp4",    # 7. Biçerdöver Çiftetelli
+    "kemal_efendi_dans.mp4",       # 8. Kemal Efendi (Fesli & Bıyıklı Dans)
+    "homelander_stare.mp4",        # 9. Homelander (Şok / Ciddi Bakış)
+    "otobuste_oynayan_dayi.mp4",   # 10. Otobüste Oynayan Bıyıklı Dayı (Mustafa Usta)
+    "the_rock.mp4",                # 11. The Rock (Tek Kaş Kaldırma)
+    "vince_mcmahon.mp4",           # 12. Vince McMahon (Para / Şok Sevinç)
+    "bale_nod.mp4",                # 13. Christian Bale (Onaylama / Takdir)
+    "angaraya_mi_geldin.mp4",      # 14. Angara'ya mı geldin la
+    "cat_vibing.mp4",              # 15. Vibing Cat (Ritimle Kafa Sallayan Kedi)
+    "limon_davulcu.mp4"            # 16. Limoncu Davulcu
 ]
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 

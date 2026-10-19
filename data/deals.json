@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792400029_32",
+    "deal_code": "#133",
+    "title": "Stanley Quencher H2.0 FlowState 1.18L",
+    "old_price": "2.499 TL",
+    "new_price": "1.311,98 TL",
+    "discount_pct": "-47%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CNTV815Y?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 437 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_quencher_h2_0_flo_395102b3.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "19.10.2026 11:53"
+  },
+  {
     "id": "deal_1792336675_28",
     "deal_code": "#129",
     "title": "Razer Basilisk Mouse",

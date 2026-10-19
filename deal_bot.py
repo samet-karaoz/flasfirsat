@@ -192,6 +192,15 @@ def process_deal_to_reel(
         return None
     deal = v_info.get("deal", deal)
 
+    # 0.1 Ürün Görseli Sağlama Güvencesi
+    if not deal.get("image_path") or not os.path.exists(deal.get("image_path", "")):
+        if deal.get("image_url"):
+            from config import download_file
+            img_path = os.path.join(TEMP_DIR, f"prod_{slug}.jpg")
+            if download_file(deal["image_url"], img_path):
+                deal["image_path"] = img_path
+                print(f"[Deal Bot] 📸 Ürün görseli başarıyla indirildi: {img_path}")
+
     # Fırsat Kodu (#101, #102...) Ata (Eğer henüz atanmamışsa)
     if not deal.get("deal_code"):
         try:
@@ -227,86 +236,146 @@ def process_deal_to_reel(
         chosen_meme = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""))
     else:
         chosen_meme = meme_choice
+        try:
+            from split_composer import load_meme_state, save_meme_state, get_ordered_meme_pool
+            state = load_meme_state()
+            pool = get_ordered_meme_pool()
+            if chosen_meme in pool:
+                cur_idx = pool.index(chosen_meme)
+                state["next_index"] = (cur_idx + 1) % len(pool)
+            recent = state.get("recent_used", [])
+            recent.append(chosen_meme)
+            state["recent_used"] = recent[-30:]
+            save_meme_state(state)
+        except Exception:
+            pass
 
-    # 1a. Instagram Banner'ı Üret (💬 Yoruma LİNK Yazın CTA)
+    # 1 & 2. Banner + Video Üretimi ve Otomatik Görsel Doğrulama / Onarım Döngüsü (En fazla 2 Otomatik Onarım Denemesi)
+    from video_content_validator import validate_rendered_video, auto_repair_deal_for_rerender
+
     banner_ig = os.path.join(TEMP_DIR, f"banner_{base_name}_ig.png")
-    print("[1/3] 🎨 Instagram bannerı (Profilde & Hikayede + Fırsat Kodu) tasarlanıyor...")
-    create_product_banner(
-        product_image_path=deal.get("image_path"),
-        title=deal.get("title", "Günün Fırsatı"),
-        old_price=deal.get("old_price", ""),
-        new_price=deal.get("new_price", "İndirimde"),
-        discount_pct=deal.get("discount_pct", "-40%"),
-        badge_text="DEV İNDİRİM",
-        store_name=deal.get("store_name", "Amazon TR"),
-        bank_campaign=deal.get("bank_campaign", ""),
-        net_cost=deal.get("net_cost", ""),
-        installment=deal.get("installment", ""),
-        feature_text=deal.get("killer_hook") or deal.get("feature_pill", ""),
-        is_lowest_30d=deal.get("is_lowest_30d", False),
-        has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
-        seller_badge_text=deal.get("seller_badge", ""),
-        coupon_text=deal.get("coupon_info", ""),
-        market_badge=deal.get("market_badge", ""),
-        cta_type="instagram",
-        deal_code=deal.get("deal_code", ""),
-        output_path=banner_ig
-    )
-
-    # 1b. YouTube Shorts Banner'ı Üret (👉 İndirim Linkine BİO'DAN Ulaşabilirsiniz CTA)
     banner_yt = os.path.join(TEMP_DIR, f"banner_{base_name}_yt.png")
-    print("[1/3] 🎨 YouTube Shorts bannerı (BİO'DAN link + Fırsat Kodu) tasarlanıyor...")
-    create_product_banner(
-        product_image_path=deal.get("image_path"),
-        title=deal.get("title", "Günün Fırsatı"),
-        old_price=deal.get("old_price", ""),
-        new_price=deal.get("new_price", "İndirimde"),
-        discount_pct=deal.get("discount_pct", "-40%"),
-        badge_text="DEV İNDİRİM",
-        store_name=deal.get("store_name", "Amazon TR"),
-        bank_campaign=deal.get("bank_campaign", ""),
-        net_cost=deal.get("net_cost", ""),
-        installment=deal.get("installment", ""),
-        feature_text=deal.get("killer_hook") or deal.get("feature_pill", ""),
-        is_lowest_30d=deal.get("is_lowest_30d", False),
-        has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
-        seller_badge_text=deal.get("seller_badge", ""),
-        coupon_text=deal.get("coupon_info", ""),
-        market_badge=deal.get("market_badge", ""),
-        cta_type="youtube",
-        deal_code=deal.get("deal_code", ""),
-        output_path=banner_yt
-    )
-
-    # 2a. Instagram / Genel Viral Video Derle
     video_filename = f"{base_name}.mp4"
-    print(f"[2/3] 🎥 Instagram / Genel video derleniyor ({chosen_meme})...")
-    video_path = build_split_screen_video(
-        top_source=banner_ig,
-        meme_name=chosen_meme,
-        audio_name=audio_choice,
-        output_filename=video_filename,
-        discount_pct=deal.get("discount_pct", ""),
-        product_title=deal.get("title", ""),
-        new_price=deal.get("new_price", ""),
-        reaction_text=deal.get("reaction_text"),
-        enable_voiceover=False
-    )
-
-    # 2b. YouTube Shorts Özel Videosu Derle
     yt_video_filename = f"{base_name}_youtube.mp4"
-    print(f"[2/3] 🎥 YouTube Shorts videosu derleniyor ({chosen_meme})...")
-    youtube_video_path = build_split_screen_video(
-        top_source=banner_yt,
-        meme_name=chosen_meme,
-        audio_name=audio_choice,
-        output_filename=yt_video_filename,
-        discount_pct=deal.get("discount_pct", ""),
-        product_title=deal.get("title", ""),
-        new_price=deal.get("new_price", ""),
-        reaction_text=deal.get("reaction_text"),
-        enable_voiceover=False
-    )
+    video_path = None
+    youtube_video_path = None
+    validation_report = None
+
+    max_attempts = 3  # 1 ilk üretim + en fazla 2 otomatik onarım
+    for attempt in range(1, max_attempts + 1):
+        if attempt > 1:
+            print(f"\n🔄 [Auto-Repair] Deneme {attempt}/{max_attempts}: Onarılmış varlıklarla banner ve video yeniden üretiliyor...")
+
+        skip_rembg_flag = bool(deal.get("skip_rembg", False))
+
+        # 1a. Instagram Banner'ı Üret
+        print("[1/3] 🎨 Instagram bannerı (Profilde & Hikayede + Fırsat Kodu) tasarlanıyor...")
+        create_product_banner(
+            product_image_path=deal.get("image_path"),
+            title=deal.get("title", "Günün Fırsatı"),
+            old_price=deal.get("old_price", ""),
+            new_price=deal.get("new_price", "İndirimde"),
+            discount_pct=deal.get("discount_pct", "-40%"),
+            badge_text="DEV İNDİRİM",
+            store_name=deal.get("store_name", "Amazon TR"),
+            bank_campaign=deal.get("bank_campaign", ""),
+            net_cost=deal.get("net_cost", ""),
+            installment=deal.get("installment", ""),
+            feature_text=deal.get("killer_hook") or deal.get("feature_pill", ""),
+            is_lowest_30d=deal.get("is_lowest_30d", False),
+            has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
+            seller_badge_text=deal.get("seller_badge", ""),
+            coupon_text=deal.get("coupon_info", ""),
+            market_badge=deal.get("market_badge", ""),
+            cta_type="instagram",
+            deal_code=deal.get("deal_code", ""),
+            output_path=banner_ig,
+            skip_rembg=skip_rembg_flag
+        )
+
+        # 1b. YouTube Shorts Banner'ı Üret
+        print("[1/3] 🎨 YouTube Shorts bannerı (BİO'DAN link + Fırsat Kodu) tasarlanıyor...")
+        create_product_banner(
+            product_image_path=deal.get("image_path"),
+            title=deal.get("title", "Günün Fırsatı"),
+            old_price=deal.get("old_price", ""),
+            new_price=deal.get("new_price", "İndirimde"),
+            discount_pct=deal.get("discount_pct", "-40%"),
+            badge_text="DEV İNDİRİM",
+            store_name=deal.get("store_name", "Amazon TR"),
+            bank_campaign=deal.get("bank_campaign", ""),
+            net_cost=deal.get("net_cost", ""),
+            installment=deal.get("installment", ""),
+            feature_text=deal.get("killer_hook") or deal.get("feature_pill", ""),
+            is_lowest_30d=deal.get("is_lowest_30d", False),
+            has_verified_old_price=deal.get("has_verified_old_price", bool(deal.get("old_price"))),
+            seller_badge_text=deal.get("seller_badge", ""),
+            coupon_text=deal.get("coupon_info", ""),
+            market_badge=deal.get("market_badge", ""),
+            cta_type="youtube",
+            deal_code=deal.get("deal_code", ""),
+            output_path=banner_yt,
+            skip_rembg=skip_rembg_flag
+        )
+
+        # 2a. Instagram / Genel Viral Video Derle
+        print(f"[2/3] 🎥 Instagram / Genel video derleniyor ({chosen_meme})...")
+        video_path = build_split_screen_video(
+            top_source=banner_ig,
+            meme_name=chosen_meme,
+            audio_name=audio_choice,
+            output_filename=video_filename,
+            discount_pct=deal.get("discount_pct", ""),
+            product_title=deal.get("title", ""),
+            new_price=deal.get("new_price", ""),
+            reaction_text=deal.get("reaction_text"),
+            enable_voiceover=False
+        )
+
+        # 2b. YouTube Shorts Özel Videosu Derle
+        print(f"[2/3] 🎥 YouTube Shorts videosu derleniyor ({chosen_meme})...")
+        youtube_video_path = build_split_screen_video(
+            top_source=banner_yt,
+            meme_name=chosen_meme,
+            audio_name=audio_choice,
+            output_filename=yt_video_filename,
+            discount_pct=deal.get("discount_pct", ""),
+            product_title=deal.get("title", ""),
+            new_price=deal.get("new_price", ""),
+            reaction_text=deal.get("reaction_text"),
+            enable_voiceover=False
+        )
+
+        # 2c. Render Sonrası Kare Analizi ve Görsel Kalite Denetimi (Post-Render Validator)
+        print("[2.5/3] 🔍 Üretilen videodan kare alınıp görsel bütünlük analizi yapılıyor...")
+        validation_report = validate_rendered_video(video_path, deal=deal, banner_path=banner_ig)
+        if validation_report.get("passed"):
+            prod_m = validation_report.get("metrics", {}).get("product_region", {})
+            meme_m = validation_report.get("metrics", {}).get("meme_region", {})
+            print(
+                f"✅ [Video Validator] Görsel denetim kusursuz geçti! "
+                f"(Ürün Görsel Skoru: {prod_m.get('edge_mean')}, Meme Hareket Skoru: {meme_m.get('motion_score')})"
+            )
+            break
+        else:
+            issue_msgs = "; ".join([i.get("message", "") for i in validation_report.get("issues", [])])
+            print(f"⚠️ [Video Validator] Görsel kusur tespit edildi (Deneme {attempt}/{max_attempts}): {issue_msgs}")
+            if attempt < max_attempts:
+                repair_res = auto_repair_deal_for_rerender(deal, validation_report, current_meme=chosen_meme)
+                deal = repair_res["deal"]
+                chosen_meme = repair_res["meme_choice"]
+                print(f"🛠️ [Auto-Repair] Uygulanan onarımlar: {', '.join(repair_res.get('repairs_applied', [])) or 'Standart yenileme'}")
+            else:
+                print(f"❌ [Video Validator] {max_attempts} deneme sonunda görsel sorun giderilemedi. Hatalı video yayına alınmıyor.")
+                try:
+                    from telegram_notifier import send_telegram_alert
+                    send_telegram_alert(
+                        f"Görsel Kalite Denetimi Başarısız ({deal.get('title')}):\n{issue_msgs}\n"
+                        f"Otomatik onarım 2 kez denendi ancak kriter sağlanamadı."
+                    )
+                except Exception:
+                    pass
+                return None
 
     # Affiliate Link Dönüşümü
     raw_url = deal.get("store_url", "")

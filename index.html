@@ -17,7 +17,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Google Analytics ID ayarlanmadı. Yerel telemetri ve etkileşim motoru çalışıyor. -->
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6FTHRHYFR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-E6FTHRHYFR');
+    </script>
     <style>
         :root {
             --bg-base: #0B0D12;
@@ -1177,14 +1185,61 @@
 
         <div class="deals-grid" id="dealsGrid">
 
-            <div class="deal-card featured-reel-card" data-status="active" data-category="gaming" data-title="razer basilisk mouse amazon tr gaming #129 129 kod 129" data-deal-id="deal_1792336675_28" data-deal-title="Razer Basilisk Mouse" data-store="Amazon TR" data-price="1.919,63 TL">
+            <div class="deal-card featured-reel-card" data-status="active" data-category="lifestyle" data-title="stanley quencher h2.0 flowstate 1.18l amazon tr lifestyle #133 133 kod 133" data-deal-id="deal_1792400029_32" data-deal-title="Stanley Quencher H2.0 FlowState 1.18L" data-store="Amazon TR" data-price="1.311,98 TL">
+                <a href="https://www.amazon.com.tr/dp/B0CNTV815Y?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Stanley Quencher H2.0 FlowState 1.18L">
+                    <div class="card-img-wrap">
+                        <img src="assets/products/stanley_quencher_h2_0_flo_395102b3.jpg" alt="Stanley Quencher H2.0 FlowState 1.18L" class="card-img" loading="lazy">
+                        <span class="badge-store store-amazon">Amazon TR</span>
+                        <span class="badge-discount">-47%</span>
+                        <span class="badge-deal-code">🔢 KOD: #133</span>
+                        <span class="badge-featured-reel">⚡ GÜNÜN ÖNE ÇIKAN FIRSATI</span>
+                        
+                    </div>
+                </a>
+                <div class="card-content">
+                    <a href="https://www.amazon.com.tr/dp/B0CNTV815Y?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-title-link" title="Stanley Quencher H2.0 FlowState 1.18L">
+                        <h3 class="card-title">Stanley Quencher H2.0 FlowState 1.18L</h3>
+                    </a>
+                    <div class="price-section">
+                        <span class="old-price">2.499 TL</span>
+                        <span class="new-price">1.311,98 TL</span>
+                    </div>
+                    
+                        <div class="savings-proof-box">
+                            <div class="savings-proof-top">
+                                <span>📉 Piyasa/Liste: <s>2.499 TL</s></span>
+                                <span class="savings-gain">🔥 1.187 TL Net Kazanç!</span>
+                            </div>
+                            <div class="savings-bar-track">
+                                <div class="savings-bar-fill" style="width: 82%"></div>
+                            </div>
+                        </div>
+                
+
+                    <div class="campaign-box">
+                        
+                        <div class="advantage-row">
+                            <span class="advantage-icon">⚡</span>
+                            <span class="advantage-txt">Peşin Fiyatına 3 Taksit x 437 TL</span>
+                        </div>
+                        <div class="advantage-row">
+                            <span class="advantage-icon">📦</span>
+                            <span class="advantage-txt">Prime ile Hızlı & Ücretsiz Kargo</span>
+                        </div>
+                    </div>
+
+                    <a href="https://www.amazon.com.tr/dp/B0CNTV815Y?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="deal_1792400029_32" data-title="Stanley Quencher H2.0 FlowState 1.18L" data-store="Amazon TR" data-price="1.311,98 TL">🔥 Fırsata Git & Satın Al</a>
+                </div>
+            </div>
+
+            <div class="deal-card" data-status="active" data-category="gaming" data-title="razer basilisk mouse amazon tr gaming #129 129 kod 129" data-deal-id="deal_1792336675_28" data-deal-title="Razer Basilisk Mouse" data-store="Amazon TR" data-price="1.919,63 TL">
                 <a href="https://www.amazon.com.tr/dp/B0BT4VRZGV?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Razer Basilisk Mouse">
                     <div class="card-img-wrap">
                         <img src="assets/products/razer_basilisk_mouse_d13f68a9.jpg" alt="Razer Basilisk Mouse" class="card-img" loading="lazy">
                         <span class="badge-store store-amazon">Amazon TR</span>
                         <span class="badge-discount">-36%</span>
                         <span class="badge-deal-code">🔢 KOD: #129</span>
-                        <span class="badge-featured-reel">⚡ REELS'TEKİ FIRSAT</span>
+                        
                         
                     </div>
                 </a>
@@ -2773,8 +2828,8 @@
 
         // --- 2. ZİYARETÇİ VE ETKİLEŞİM TELEMETRİ MOTORU ---
         const STATS_KEY = 'flas_stats_v1';
-        const gaConfigured = false;
-        const gaIdSafe = '';
+        const gaConfigured = true;
+        const gaIdSafe = 'G-E6FTHRHYFR';
 
         function getStoredStats() {
             try {

@@ -314,32 +314,33 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     except ImportError:
         has_pilmoji = False
 
+    rendered_with_pilmoji = False
     if has_pilmoji:
-        with Pilmoji(img) as p:
-            text_w, text_h = p.getsize(clean_text, font=f_hook)
-            box_w = min(W - 120, text_w + 64)
-            box_h = 68
-            box_x = (W - box_w) // 2
-            box_y = 26
-
-            draw.rounded_rectangle(
-                (box_x, box_y, box_x + box_w, box_y + box_h),
-                radius=18,
-                fill=(15, 23, 42, 230),
-                outline=(255, 255, 255, 110),
-                width=2
-            )
-            tx = (W - text_w) // 2
-            ty = box_y + (box_h - text_h) // 2
-            p.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255))
-    else:
-        # Pilmoji yoksa emoji kaynaklı tofu (▢) kutucukları temizle
         try:
-            import emoji
-            safe_text = emoji.replace_emoji(clean_text, replace="").strip()
-        except ImportError:
-            import re
-            safe_text = re.sub(r'[\U00010000-\U0010ffff]', '', clean_text).strip()
+            with Pilmoji(img) as p:
+                text_w, text_h = p.getsize(clean_text, font=f_hook)
+                box_w = min(W - 120, text_w + 64)
+                box_h = 68
+                box_x = (W - box_w) // 2
+                box_y = 26
+
+                draw.rounded_rectangle(
+                    (box_x, box_y, box_x + box_w, box_y + box_h),
+                    radius=18,
+                    fill=(15, 23, 42, 230),
+                    outline=(255, 255, 255, 110),
+                    width=2
+                )
+                tx = (W - text_w) // 2
+                ty = box_y + (box_h - text_h) // 2
+                p.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255))
+                rendered_with_pilmoji = True
+        except Exception:
+            rendered_with_pilmoji = False
+
+    if not rendered_with_pilmoji:
+        # Pilmoji yoksa veya hata verdiyse emoji kaynaklı tofu (▢) kutucukları temizle
+        safe_text = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27BF\ufe00-\ufe0f\u200d\ufffd]', '', clean_text).strip()
 
         text_w = draw.textlength(safe_text, font=f_hook)
         box_w = min(W - 120, text_w + 64)
@@ -568,6 +569,12 @@ def select_banner_theme(title: str = "", discount_pct: str = "", badge_text: str
 # ANA ÜRÜN AFİŞİ (1080x960 - V4 STUDIO MULTI-THEME)
 # ==========================================
 
+def _clean_ttf(val: str) -> str:
+    if not val:
+        return ""
+    c = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27BF\ufe00-\ufe0f\u200d\ufffd]', '', str(val))
+    return re.sub(r'\s+', ' ', c).strip()
+
 def create_product_banner(
     product_image_path: str,
     title: str,
@@ -588,7 +595,8 @@ def create_product_banner(
     cta_type: str = "instagram",
     output_path: str = None,
     theme_name: str = "auto",
-    deal_code: str = ""
+    deal_code: str = "",
+    skip_rembg: bool = False
 ) -> str:
     """
     Ürün görseli ve fiyat bilgilerinden 1080x960 ebatlarında
@@ -605,6 +613,18 @@ def create_product_banner(
     out_dir = os.path.dirname(output_path)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
+
+    # Tüm metin girdilerini TTF fontlarında tofu (▢) çıkmaması için temizle
+    title = _clean_ttf(title) or "Günün Fırsatı"
+    old_price = _clean_ttf(old_price)
+    new_price = _clean_ttf(new_price) or "İndirimde"
+    discount_pct = _clean_ttf(discount_pct)
+    badge_text = _clean_ttf(badge_text)
+    seller_badge_text = _clean_ttf(seller_badge_text)
+    market_badge = _clean_ttf(market_badge)
+    feature_text = _clean_ttf(feature_text)
+    coupon_text = _clean_ttf(coupon_text)
+    installment = _clean_ttf(installment)
 
     theme = select_banner_theme(title=title, discount_pct=discount_pct, badge_text=badge_text, theme_name=theme_name)
     print(f"[Banner Engine] 🎨 Seçilen Renk Skalası: {theme['name']}")
@@ -733,7 +753,7 @@ def create_product_banner(
     if product_image_path and os.path.exists(product_image_path):
         try:
             cutout_path = f"{os.path.splitext(product_image_path)[0]}_cutout.png"
-            if not os.path.exists(cutout_path) or os.path.getmtime(cutout_path) < os.path.getmtime(product_image_path):
+            if not skip_rembg and (not os.path.exists(cutout_path) or os.path.getmtime(cutout_path) < os.path.getmtime(product_image_path)):
                 try:
                     import rembg
                     with Image.open(product_image_path) as raw_p:
@@ -742,12 +762,15 @@ def create_product_banner(
                 except Exception as ex:
                     print(f"[Banner] rembg atlandı/uyarısı: {ex}")
 
-            load_path = cutout_path if os.path.exists(cutout_path) else product_image_path
+            load_path = cutout_path if (not skip_rembg and os.path.exists(cutout_path)) else product_image_path
             p_img = Image.open(load_path).convert("RGBA")
             alpha = p_img.split()[-1]
             bbox = alpha.getbbox()
-            if bbox:
+            # Eğer rembg beyaz bir ürünü yanlışlıkla tamamen sildiyse (bbox < 60x60), orijinal görsele geri dön
+            if bbox and (bbox[2] - bbox[0] >= 60) and (bbox[3] - bbox[1] >= 60):
                 p_img = p_img.crop(bbox)
+            elif load_path != product_image_path:
+                p_img = Image.open(product_image_path).convert("RGBA")
 
             max_img_w = card_box[2] - card_box[0] - 70
             max_img_h = card_box[3] - card_box[1] - 135
@@ -817,7 +840,7 @@ def create_product_banner(
     sub_parts = []
     clean_coupon = re.sub(r'[^\w\s.,xX+\-/%]', '', str(coupon_text)).strip() if coupon_text else ""
     if clean_coupon:
-        sub_parts.append("🎟️ Sayfadaki Kuponu Aktif Et")
+        sub_parts.append("Sayfadaki Kuponu Aktif Et")
     if installment:
         clean_inst_s = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip()
         sub_parts.append(clean_inst_s)

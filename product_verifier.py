@@ -235,7 +235,26 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             raw_specs=raw_specs
         )
 
-    # 8. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
+    # 8. ÜRÜN GÖRSELİ (Yüksek Çözünürlüklü)
+    image_url = ""
+    landing = soup.select_one("#landingImage") or soup.select_one("#imgBlkFront") or soup.select_one("#main-image") or soup.select_one("#landingImageContainer img")
+    if landing:
+        image_url = landing.get("data-old-hires") or landing.get("src") or ""
+        if not image_url and landing.get("data-a-dynamic-image"):
+            try:
+                dyn_dict = json.loads(landing.get("data-a-dynamic-image", "{}"))
+                if dyn_dict:
+                    image_url = list(dyn_dict.keys())[0]
+            except Exception:
+                pass
+    if not image_url:
+        og = soup.find("meta", property="og:image")
+        if og:
+            image_url = og.get("content", "")
+    if image_url:
+        image_url = re.sub(r'\._AC_.*?_\.', '._AC_SL1500_.', image_url)
+
+    # 9. FİYAT GEÇMİŞİNİ KAYDET & SON 30 GÜN KONTROLÜ
     is_lowest_30d = False
     if asin and price_val > 0:
         record_price(asin, "Amazon TR", soup.title.text[:80] if soup.title else "", price_val)
@@ -247,6 +266,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         "asin": asin,
         "in_stock": in_stock,
         "stock_text": avail_text,
+        "image_url": image_url,
         "live_price_str": live_price_str,
         "live_price_val": price_val,
         "real_strike_val": real_strike_val,
@@ -392,6 +412,17 @@ def verify_deal_before_publish(deal: dict) -> dict:
                 deal["killer_hook"] = k_hook
                 deal["feature_pill"] = k_hook
                 print(f"[Doğrulama] ✨ Dinamik Killer Hook Üretildi: {k_hook}")
+
+        # Canlı ürün görseli kontrolü ve otomatik indirme
+        if v_res.get("image_url"):
+            deal["image_url"] = v_res["image_url"]
+            if not deal.get("image_path") or not os.path.exists(deal.get("image_path", "")):
+                from config import download_file
+                p_asin = v_res.get("asin") or "prod"
+                img_path = os.path.join(TEMP_DIR, f"amz_{p_asin}.jpg")
+                if download_file(v_res["image_url"], img_path):
+                    deal["image_path"] = img_path
+                    print(f"[Doğrulama] 📸 Canlı ürün görseli indirildi: {img_path}")
 
         # 30 günün en düşüğü kontrolü
         deal["is_lowest_30d"] = v_res.get("is_lowest_30d", False)

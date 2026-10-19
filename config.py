@@ -64,3 +64,19 @@ def safe_run_subprocess(cmd, **kwargs):
             si.wShowWindow = subprocess.SW_HIDE
             kwargs["startupinfo"] = si
     return subprocess.run(cmd, **kwargs)
+
+def download_file(url: str, output_path: str) -> bool:
+    """Doğrudan Python requests ile dosya indirir (sıfır CMD penceresi)."""
+    import requests
+    try:
+        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
+        if r.status_code == 200 and len(r.content) > 1000:
+            with open(output_path, "wb") as f:
+                f.write(r.content)
+            return True
+    except Exception:
+        pass
+    cmd = get_curl_cmd(["--max-time", "15", "-s", "-L", url, "-o", output_path])
+    res = safe_run_subprocess(cmd)
+    return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
+

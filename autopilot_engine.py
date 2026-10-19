@@ -61,7 +61,7 @@ def send_telegram_admin_summary(summary_text: str, reply_markup: dict = None, dr
     except Exception as e:
         print(f"[Autopilot Engine] Telegram özet gönderim hatası: {e}")
 
-def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False, custom_deal: dict = None) -> dict:
+def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False, custom_deal: dict = None, meme_choice: str = None) -> dict:
     """
     En algoritmik 2 saatte (12:30 ve 20:00) veya isteğe bağlı çalışan tam otomatik döngü:
     1. En yüksek indirimli ve teyitli ürünü avlar (Amazon TR / Fırsat Kanalları).
@@ -186,6 +186,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             print(f"\n👉 Aday {idx}/{len(candidates)} deneniyor: {cand_title} (-%{cand_pct})...")
             p_res = process_deal_to_reel(
                 deal=cand,
+                meme_choice=meme_choice,
                 upload=False,
                 require_approval=False
             )
@@ -678,12 +679,30 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true", help="Gerçek yükleme yapmadan video ve metni test et")
     parser.add_argument("--force", action="store_true", help="45 dakikalık çift paylaşım korumasını atla")
     parser.add_argument("--slot", default="Manuel Test", help="Kuşak adı")
+    parser.add_argument("--url", default="", help="Özel ürün URL'si ile otopilot döngüsü çalıştır")
+    parser.add_argument("--title", default="", help="Özel ürün başlığı")
+    parser.add_argument("--old", default="", help="Özel ürün eski fiyatı")
+    parser.add_argument("--new", default="", help="Özel ürün yeni fiyatı")
+    parser.add_argument("--discount", default="", help="Özel ürün indirim yüzdesi")
+    parser.add_argument("--meme", default="", help="Özel meme seçimi (örn: piyano_davul.mp4)")
     args = parser.parse_args()
 
-    if args.top3:
+    if args.url:
+        custom_deal = {
+            "title": args.title or "Özel Fırsat Ürünü",
+            "old_price": args.old or "",
+            "new_price": args.new or "",
+            "discount_pct": args.discount or "",
+            "store_url": args.url,
+            "url": args.url,
+            "store_name": "Amazon TR",
+            "badge": "DEV İNDİRİM"
+        }
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=True, custom_deal=custom_deal, meme_choice=args.meme or None)
+    elif args.top3:
         print("ℹ️ Top 3 video üretimi kullanıcı tercihiyle durduruldu. Tekli fırsat döngüsü çalıştırılıyor...")
-        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force)
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None)
     elif args.now or args.dry_run:
-        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force)
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None)
     else:
-        print("Kullanım: python autopilot_engine.py --now (veya --top3, --dry-run, --force)")
+        print("Kullanım: python autopilot_engine.py --now (veya --top3, --dry-run, --force, --url, --meme)")

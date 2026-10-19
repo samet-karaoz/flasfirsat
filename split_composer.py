@@ -12,16 +12,16 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
-    "degirmenci_dayi_cj.mp4",      # 1. Değirmenci Dayı (CJ)
-    "polat_memati_kosu.mp4",       # 2. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
-    "knight_cat.mp4",              # 3. Zırhlı Şövalye Kedi
-    "piyano_davul.mp4",             # 4. Piyano Çalan Kız & Davulcu Dayı
-    "limon_halay.mp4",             # 5. Limon Halay
-    "dugunde_cosan_cocuk.mp4",     # 6. Düğünde Kopan Çocuk (Pist Dansı)
-    "bicerdover_ciftetelli.mp4",    # 7. Biçerdöver Çiftetelli
-    "kemal_efendi_dans.mp4",       # 8. Kemal Efendi (Fesli & Bıyıklı Dans)
-    "homelander_stare.mp4",        # 9. Homelander (Şok / Ciddi Bakış)
-    "otobuste_oynayan_dayi.mp4",   # 10. Otobüste Oynayan Bıyıklı Dayı (Mustafa Usta)
+    "polat_memati_kosu.mp4",       # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
+    "piyano_davul.mp4",             # 2. Piyano Çalan Kız & Davulcu Dayı
+    "dugunde_cosan_cocuk.mp4",     # 3. Düğünde Kopan Çocuk (Pist Dansı)
+    "kemal_efendi_dans.mp4",       # 4. Kemal Efendi (Fesli & Bıyıklı Dans)
+    "otobuste_oynayan_dayi.mp4",   # 5. Otobüste Oynayan Bıyıklı Dayı (Mustafa Usta)
+    "degirmenci_dayi_cj.mp4",      # 6. Değirmenci Dayı (CJ)
+    "knight_cat.mp4",              # 7. Zırhlı Şövalye Kedi
+    "limon_halay.mp4",             # 8. Limon Halay
+    "bicerdover_ciftetelli.mp4",    # 9. Biçerdöver Çiftetelli
+    "homelander_stare.mp4",        # 10. Homelander (Şok / Ciddi Bakış)
     "the_rock.mp4",                # 11. The Rock (Tek Kaş Kaldırma)
     "vince_mcmahon.mp4",           # 12. Vince McMahon (Para / Şok Sevinç)
     "bale_nod.mp4",                # 13. Christian Bale (Onaylama / Takdir)

@@ -249,24 +249,78 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
 # VIRAL MEME REAKSİYON METİNLERİ (REACTION HOOKS)
 # ==========================================
 
+MEME_SPECIFIC_HOOKS = {
+    "otobuste_oynayan_dayi": {
+        "audio": [
+            "KULAKLIKTA 7.1 SESİ AÇTIKTAN 5 DAKİKA SONRA:",
+            "{sav_fmt} İNDİRİMLİ RAZER'I KAPIP EVE DÖNEN BEN:",
+            "KULAKLIKTAKİ İNDİRİMİ GÖRÜNCE İÇİMDE ÇALAN MÜZİK:",
+            "{sav_fmt} TASARRUFU CEBE ATIP MESAİ ÇIKIŞI OTOBÜSTE BEN:",
+            "BU FİYATA RAZER KULAKLIK BULUNCA OTOBÜSTE BİZİM TAYFA:"
+        ],
+        "general": [
+            "{sav_fmt} TASARRUFU CEBE ATIP MESAİ ÇIKIŞI OTOBÜSTE BEN:",
+            "MAAŞ GÜNÜ BU İNDİRİME DENK GELİNCE BENİM KAFANIN RAHATLIK:",
+            "{sav_fmt} İNDİRİMLİ ÜRÜNÜ KAPIP EVE DÖNEN BEN:",
+            "BU İNDİRİMİ GÖRÜNCE İÇİMDE ÇALAN ANKARA HAVASI:"
+        ]
+    },
+    "kemal_efendi_dans": {
+        "general": [
+            "KARTTAN PARA ÇEKİLMESİNE RAĞMEN İNDİRİMİ KAPMANIN MUTLULUĞU:",
+            "BU FİYATI GÖRÜNCE BENİM AKIL SAĞLIĞININ GELDİĞİ SEVİYE:",
+            "İNDİRİM BİTMEDEN SİPARİŞİ GEÇİNCE BEN VE KREDİ KARTI:",
+            "FİYATIN DÜŞTÜĞÜNÜ GÖRÜNCE İÇİMDE BAŞLAYAN FESTİVAL:"
+        ]
+    },
+    "dugunde_cosan_cocuk": {
+        "general": [
+            "BU FİYATA İNANAMAYIP EVDE TEK BAŞINA KUTLAMA YAPAN BEN:",
+            "MAAŞ GÜNÜ BU İNDİRİME DENK GELİNCE CEBİMDEKİ SON PARA:",
+            "STOK BİTMEDEN SEPETİ ONAYLAYINCA BİZİM HALLER:",
+            "BU İNDİRİMİ GÖRÜNCE BİZİM KUTLAMA SEVİYESİ:"
+        ]
+    },
+    "polat_memati_kosu": {
+        "general": [
+            "İNDİRİM BİTMEDEN SEPETE YETİŞMEYE ÇALIŞAN TAYFA:",
+            "FİYAT DÜŞTÜ BİLDİRİMİNİ GÖRÜNCE SİTEYE KOŞAN BİZ:",
+            "STOKLAR TÜKENMEDEN LİNKİ AÇMAYA ÇALIŞIRKEN BEN:",
+            "KUPON BİTMEDEN SİPARİŞİ YETİŞTİRMEYE ÇALIŞAN TAYFA:"
+        ]
+    },
+    "homelander_smile": {
+        "general": [
+            "İNDİRİMİ HERKESTEN ÖNCE FARK EDİP SİPARİŞİ VERİNCE BEN:",
+            "HERKES TAM FİYAT ÖDERKEN BÜYÜK İNDİRİMLE ALAN BEN:",
+            "BU FİYAT HATASINI İLK GÖRENİN BEN OLDUĞUNU ANLAYINCA:"
+        ]
+    },
+    "piyano_davul": {
+        "general": [
+            "İNDİRİM BİTMEDEN KART BİLGİSİNİ GİRERKEN BİZİM ELLER:",
+            "FİYATIN DÜŞTÜĞÜNÜ GÖRÜNCE İÇİMDE BAŞLAYAN RİTİM:",
+            "BU İNDİRİMİ GÖRÜP SEPETE KOŞARKEN BENİM TEMPO:"
+        ]
+    }
+}
+
 REACTION_HOOKS_PRICE_ERROR = [
-    "FİYAT HATASI MI DİYE KONTROL EDERKEN BEN:",
-    "BU FİYATA İNANAMAYIP 3 KERE SAYFAYI YENİLEYEN BEN:",
     "FİYAT HATASINI GÖRÜP KART BİLGİSİ GİREN BEN:",
-    "BU FİYATI GÖRÜNCE SİPARİŞİ IŞIK HIZINDA VEREN BEN:"
+    "BU FİYATA İNANAMAYIP 3 KERE SAYFAYI YENİLEYEN BEN:",
+    "FİYAT DÜZELMEDEN SİPARİŞİ IŞIK HIZINDA VEREN BEN:"
 ]
 
 REACTION_HOOKS_HIGH_DISCOUNT = [
-    "BU FİYATI GÖRÜNCE BEN VE CEBİMDEKİ PARA:",
-    "MAAŞI BU İNDİRİME GÖMME KARARI ALIRKEN BEN:",
-    "İNDİRİMİ GÖRÜP ANINDA SEPETE KOŞAN BİZİM TAYFA:",
-    "BU İNDİRİME KARTIN LİMİTİ BİLE DAYANMAZ:"
+    "MAAŞ GÜNÜ BU İNDİRİME DENK GELİNCE BENİM KAFANIN RAHATLIK:",
+    "BU FİYATI GÖRÜNCE KARTTAKİ SON LİMİTİ GÖZDEN ÇIKARAN BEN:",
+    "İNDİRİMİ GÖRÜP GRUBA ATTIKTAN 2 DAKİKA SONRA BİZ:"
 ]
 
 REACTION_HOOKS_GAMING = [
-    "EKİPMAN EKSİĞİNİ BU İNDİRİMLE KAPATAN GAMER'LAR:",
-    "BU SETUP İNDİRİMİNİ GÖRÜNCE BENİM ODAK SEVİYESİ:",
-    "KART LİMİTİNİ BU GAMING İNDİRİMİNE AYIRAN TAYFA:"
+    "BU SETUP İNDİRİMİNİ GÖRÜNCE KARTTAKİ LİMİTİ SIFIRLAYAN TAYFA:",
+    "BU FİYATA BU EKİPMANI BULUNCA BENİM AKIL SAĞLIĞI:",
+    "MESAİ PARASINI BU GAMING İNDİRİMİNE YATIRAN TAYFA:"
 ]
 
 REACTION_HOOKS_GENERAL = [
@@ -275,18 +329,50 @@ REACTION_HOOKS_GENERAL = [
     "CEBİMDEKİ PARAYI BU FIRSATA EMANET EDERKEN BEN:"
 ]
 
-def select_smart_reaction_hook(discount_pct: str = "", product_title: str = "", is_price_error: bool = False) -> str:
+def select_smart_reaction_hook(
+    discount_pct: str = "",
+    product_title: str = "",
+    is_price_error: bool = False,
+    meme_name: str = "",
+    deal: dict = None
+) -> str:
     pct_m = re.search(r'(\d+)', str(discount_pct))
     pct_val = int(pct_m.group(1)) if pct_m else 0
     title_low = (product_title or "").lower()
+    meme_key = os.path.splitext(os.path.basename(meme_name or ""))[0].lower()
 
+    # Tasarruf miktarı hesapla
+    sav_fmt = "800 TL"
+    if deal:
+        try:
+            from deal_hunter import parse_price_to_float
+            o_v = parse_price_to_float(deal.get("old_price", ""))
+            n_v = parse_price_to_float(deal.get("new_price", ""))
+            if o_v and n_v and o_v > n_v:
+                sav_fmt = f"{int(o_v - n_v):,} TL".replace(',', '.')
+        except Exception:
+            pass
+
+    # 1. Meme Özelinde Spesifik & Komik Kanca Eşleştirmesi
+    for k, hook_group in MEME_SPECIFIC_HOOKS.items():
+        if k in meme_key or (k == "otobuste_oynayan_dayi" and ("otobus" in meme_key or "dayi" in meme_key)):
+            is_audio = any(w in title_low for w in ["kulaklık", "headset", "earphone", "sound", "surround"])
+            if is_audio and "audio" in hook_group:
+                chosen = random.choice(hook_group["audio"])
+            else:
+                chosen = random.choice(hook_group["general"])
+            return chosen.replace("{sav_fmt}", sav_fmt)
+
+    # 2. Fiyat Hatası veya Aşırı İndirim
     if is_price_error or pct_val >= 40:
         return random.choice(REACTION_HOOKS_PRICE_ERROR)
     
+    # 3. Gaming Ekipmanı
     gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "oyuncu", "monitor", "ekran kartı"]
     if any(k in title_low for k in gaming_kw):
         return random.choice(REACTION_HOOKS_GAMING)
 
+    # 4. Yüksek İndirim
     if pct_val >= 25:
         return random.choice(REACTION_HOOKS_HIGH_DISCOUNT)
 
@@ -898,7 +984,7 @@ def create_product_banner(
             pill_y1, pill_y2 = 716, 750
             draw.rounded_rectangle((pill_x1, pill_y1, pill_x1 + pill_w, pill_y2), radius=12, fill=theme["savings_pill_bg"])
             draw.text((center_x, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
-        elif savings > 0 and not (feature_text and len(feature_text.strip()) > 3):
+        elif savings > 0:
             sav_str = f"{int(savings):,} TL".replace(',', '.')
             sav_text = f"{sav_str} NET TASARRUF"
             s_w = draw.textlength(sav_text, font=f_savings)
@@ -1117,7 +1203,13 @@ def build_split_screen_video(
 
     # 2. Akıllı Reaksiyon Kancası (Reaction Hook) Overlay Üret
     if not reaction_text:
-        reaction_text = select_smart_reaction_hook(discount_pct, product_title, is_price_error)
+        reaction_text = select_smart_reaction_hook(
+            discount_pct=discount_pct,
+            product_title=product_title,
+            is_price_error=is_price_error,
+            meme_name=bottom_meme_path,
+            deal=deal
+        )
     print(f"[Montaj] 🎯 Reaksiyon Başlığı (Hook): {reaction_text}")
     reaction_overlay_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
     create_reaction_hook_overlay(reaction_text, reaction_overlay_path)

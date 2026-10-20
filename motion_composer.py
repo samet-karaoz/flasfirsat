@@ -374,7 +374,7 @@ def generate_staggered_banner_frames(
         if clean_coupon:
             up_c = clean_coupon.upper()
             pill_txt = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
-        elif savings > 0 and not has_killer_hook:
+        elif savings > 0:
             sav_fmt = f"{int(savings):,} TL".replace(',', '.')
             pill_txt = f"{sav_fmt} NET TASARRUF"
 
@@ -569,9 +569,11 @@ def build_motion_deal_video(
     # 2. Akıllı Reaksiyon Başlığı (Reaction Hook Overlay)
     if not reaction_text:
         reaction_text = select_smart_reaction_hook(
-            deal.get("discount_pct", ""),
-            deal.get("title", ""),
-            is_price_error
+            discount_pct=deal.get("discount_pct", ""),
+            product_title=deal.get("title", ""),
+            is_price_error=is_price_error,
+            meme_name=bottom_meme_path,
+            deal=deal
         )
     reaction_overlay_path = os.path.join(TEMP_DIR, f"reaction_{random.randint(1000, 9999)}.png")
     create_reaction_hook_overlay(reaction_text, reaction_overlay_path)

@@ -1086,7 +1086,9 @@ def build_split_screen_video(
             meme_name=meme_name,
             audio_name=audio_name,
             output_filename=output_filename,
-            cta_type=cta_type
+            cta_type=cta_type,
+            reaction_text=reaction_text,
+            is_price_error=is_price_error
         )
     """
     Üst yarıda ürün banner'ı (1080x960),

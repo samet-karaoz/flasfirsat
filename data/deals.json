@@ -169,8 +169,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.jpg",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -522,8 +522,8 @@
     "date_added": "13.10.2026 19:49",
     "category": "general",
     "deal_code": "#106",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti"
   },
   {
     "id": "deal_1791840416_4",
@@ -554,8 +554,8 @@
     "installment": "3 Taksit x 1.166 TL",
     "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.jpg",
     "date_added": "12.10.2026 21:18",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "category": "gaming",
     "deal_code": "#104"
   },

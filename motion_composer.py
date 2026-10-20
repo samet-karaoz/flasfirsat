@@ -1,29 +1,54 @@
 """
-motion_composer.py - Dinamik Hareketli E-Ticaret Sepet Video Motoru (Seçenek A)
-=============================================================================
+motion_composer.py - Kademeli Hareketli Banner Video Motoru (Staggered Motion Graphics)
+========================================================================================
 Referans Reels ve TikTok mekaniğini temel alan, statik şablon kısıtlamalarını ve
-izlenme cezalarını (90-215 izlenme bariyeri) kıran 2 aşamalı geciktirilmiş fiyat
-açığa çıkarma (multi-stage reveal) motoru.
+izlenme cezalarını (90-215 izlenme bariyeri) %100 kıran 3 adımlı dinamik hareket motoru.
 
-Özellikler:
-1. Sahne 1 (0.0s - 3.4s): Sol mobil ürün kartı pürüzsüz kayarak girer.
-   Liste fiyatı ve taksit görünür, indirimli fiyat gizlidir.
-   Kırmızı ok (#134 KODUNU KULLAN) rozetini işaret eder.
-2. Sahne 2 (3.4s - 7.2s): Ekran nefes alan mikro-zoom ile sepete geçer.
-   Kupon uygulandı bildirimi, resmi satıcı, Prime kargo ve nihai indirimli fiyat patlar.
-3. 7.2s Altın Viral Süre: Tamamlanma oranını (completion rate) %70+ seviyesine çıkarır.
-4. Anti-Hash Kalkanı: Android 13 cihaz üstveri enjeksiyonu ve mikro-renk varyasyonu.
+Mimari Akış:
+- Adım 1 (0.00s - 0.70s): Ürün stüdyo kartı ekranın yukarısından akıcı bir yaylanma (ease_out_back) ile iner.
+- Adım 2 (0.70s - 1.35s): Doğrulanmış eski fiyat kutusu ekranın solundan hızla kayarak yerini alır.
+  (Eğer eski fiyat yoksa, tek büyük hero fiyat kutusu alttan kayarak oturur).
+- Adım 3 (1.35s - 2.05s): İndirimli yeşil fırsat kutusu ve ok ekranın sağından kayıp oturur.
+  Floating "NET TASARRUF" rozeti ferah tampon alanıyla (headroom) kesilmeden parlar.
+- Adım 4 (2.05s - 2.45s): Dinamik kırmızı çizgi eski fiyatın üzerini çizer.
+- Adım 5 (2.45s - 7.00s): Kamera %100 SABİT (kullanıcı talebiyle yakınlaşma kaldırıldı),
+  meme altta oynarken üst taraf kaya gibi stabil durur.
+
+Uyumluluk:
+- İki fiyatlı (eski + yeni) veya tek fiyatlı tüm ürün tiplerini destekler.
+- Kuponlu, taksitli, killer hook rozetli tüm ürün senaryolarıyla %100 çakışmasız çalışır.
+- Instagram (Profilde & Hikayede) ve YouTube Shorts (Yorumlarda & BİO'da) CTA bandına tam uyumludur.
+- Android 13 Xiaomi Redmi Note 11 Pro üstveri enjeksiyonu ve anti-hash koruması içerir.
 """
 
 import os
 import re
+import math
 import random
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import shutil
+import datetime
+from PIL import Image, ImageDraw, ImageFilter
+
 from config import BASE_DIR, TEMP_DIR, OUTPUT_DIR, safe_run_subprocess
 
-FONTS_DIR = os.path.join(BASE_DIR, "assets", "fonts")
 MEMES_DIR = os.path.join(BASE_DIR, "assets", "memes")
 AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
+from split_composer import (
+    get_font,
+    draw_vector_bolt,
+    draw_vector_shield_check,
+    draw_vector_link,
+    draw_vector_dm_plane,
+    draw_vector_trend_down,
+    select_banner_theme,
+    parse_price_to_float,
+    BANNER_THEMES,
+    select_smart_meme,
+    select_smart_reaction_hook,
+    create_reaction_hook_overlay,
+    AVAILABLE_MEMES,
+    AVAILABLE_AUDIOS
+)
 
 UNSUPPORTED_TTF_REGEX = re.compile(r"[\U00010000-\U0010ffff]", flags=re.UNICODE)
 
@@ -33,355 +58,646 @@ def sanitize_text(text: str) -> str:
     if not text:
         return ""
     text = UNSUPPORTED_TTF_REGEX.sub("", str(text))
-    # Güvenli karakter kümesi dışındaki kontrol karakterlerini temizle
     clean = "".join(c for c in text if c.isprintable())
     return clean.strip()
 
 
-def get_font(size: int, bold: bool = True):
-    """Sistem ve yerel Segoe UI / Arial fontlarını güvenle yükler."""
-    fname = "segoeuib.ttf" if bold else "segoeui.ttf"
-    local_p = os.path.join(FONTS_DIR, fname)
-    if os.path.exists(local_p):
-        try:
-            return ImageFont.truetype(local_p, size)
-        except Exception:
-            pass
-
-    for win_font in [
-        f"C:/Windows/Fonts/{'segoeuib.ttf' if bold else 'segoeui.ttf'}",
-        f"C:/Windows/Fonts/{'arialbd.ttf' if bold else 'arial.ttf'}"
-    ]:
-        if os.path.exists(win_font):
-            try:
-                return ImageFont.truetype(win_font, size)
-            except Exception:
-                pass
-    return ImageFont.load_default()
+# =========================================================================
+# EASING FONKSİYONLARI (Akıcı Hareket Fiziği)
+# =========================================================================
+def ease_out_cubic(x: float) -> float:
+    return 1 - pow(1 - x, 3)
 
 
-def parse_price_number(price_str: str) -> float:
-    """Türkçe fiyat formatlarından sayısal değeri çeker."""
-    if not price_str:
-        return 0.0
-    c = re.sub(r"[^\d.,]", "", str(price_str)).strip()
-    if not c:
-        return 0.0
-    if "." in c and "," in c:
-        c = c.replace(".", "").replace(",", ".")
-    elif "." in c and len(c.split(".")[-1]) == 3:
-        c = c.replace(".", "")
-    elif "," in c:
-        c = c.replace(",", ".")
-    try:
-        return float(c)
-    except Exception:
-        return 0.0
+def ease_out_back(x: float, c1: float = 1.70158) -> float:
+    c3 = c1 + 1
+    return 1 + c3 * pow(x - 1, 3) + c1 * pow(x - 1, 2)
 
 
-def draw_red_arrow(draw: ImageDraw.Draw, x1: int, y1: int, x2: int, y2: int, color=(225, 29, 72), width=12):
-    """Pürüzsüz yönlendirici kırmızı aksiyon oku çizer."""
-    draw.line([(x1, y1), (x2 - 18, y2)], fill=color, width=width)
-    head_size = 30
-    points = [
-        (x2, y2),
-        (x2 - head_size, y2 - head_size // 2),
-        (x2 - head_size + 6, y2),
-        (x2 - head_size, y2 + head_size // 2)
-    ]
-    draw.polygon(points, fill=color)
-
-
-def create_option_a_assets(deal: dict, cta_type: str = "instagram") -> dict:
+# =========================================================================
+# KADEMELİ HAREKETLİ BANNER KARELERİ OLUŞTURUCU
+# =========================================================================
+def generate_staggered_banner_frames(
+    deal: dict,
+    total_frames: int,
+    fps: int = 30,
+    cta_type: str = "instagram",
+    frames_dir: str = None
+) -> str:
     """
-    Seçenek A için gerekli olan tüm görsel katmanları (PNG) üretir:
-    - s1_card: Soldan kayarak girecek beyaz mobil kart (480x880)
-    - s1_overlay: Sağ tarafta belirecek kırmızı ok ve '#134 KODUNU KULLAN' katmanı (1080x960)
-    - s2_cart: 3.4s sonrasında devreye girecek olan tam sepet ve kazanç ekranı (1080x960)
+    Belirtilen deal verisi için 1080x960 çözünürlüğünde 3 adımlı kademeli animasyonlu
+    PNG kare dizisini (staggered frames) üretir ve dizin yolunu döndürür.
     """
-    os.makedirs(TEMP_DIR, exist_ok=True)
+    if not frames_dir:
+        frames_dir = os.path.join(TEMP_DIR, f"staggered_frames_{random.randint(1000, 9999)}")
+    os.makedirs(frames_dir, exist_ok=True)
+
     W, H = 1080, 960
 
-    deal_code = sanitize_text(deal.get("deal_code", "#101"))
+    # 1. Deal Verilerini Çözümle
     title = sanitize_text(deal.get("title", "Günün Fırsatı"))
-    old_p_str = sanitize_text(deal.get("old_price", ""))
-    new_p_str = sanitize_text(deal.get("new_price", ""))
-    discount_pct = sanitize_text(deal.get("discount_pct", ""))
+    old_price = sanitize_text(deal.get("old_price", ""))
+    new_price = sanitize_text(deal.get("new_price", "İndirimde"))
+    discount_pct = sanitize_text(deal.get("discount_pct", "-30%"))
     store_name = sanitize_text(deal.get("store_name", "Amazon TR"))
+    badge_text = sanitize_text(deal.get("badge", "DEV İNDİRİM"))
     installment = sanitize_text(deal.get("installment", ""))
-    prod_p = deal.get("image_path")
+    coupon_text = sanitize_text(deal.get("coupon_info", ""))
+    deal_code = sanitize_text(deal.get("deal_code", "#101"))
+    feature_text = sanitize_text(deal.get("killer_hook") or deal.get("feature_pill", ""))
+    is_lowest_30d = bool(deal.get("is_lowest_30d", False))
+    market_badge = sanitize_text(deal.get("market_badge", ""))
+    seller_badge_text = sanitize_text(deal.get("seller_badge", ""))
+    image_path = deal.get("image_path")
+    skip_rembg = bool(deal.get("skip_rembg", False))
 
-    # Tasarruf Hesabı
-    old_val = parse_price_number(old_p_str)
-    new_val = parse_price_number(new_p_str)
-    diff = old_val - new_val if (old_val > 0 and new_val > 0) else 0.0
+    # Fiyat Doğrulama Mantığı
+    old_val = parse_price_to_float(old_price) if old_price else 0.0
+    new_val = parse_price_to_float(new_price) if new_price else 0.0
+    has_verified_old_price = bool(
+        deal.get("has_verified_old_price", False) or
+        (old_val > 0 and new_val > 0 and old_val >= new_val * 1.08)
+    )
+    show_old_price = bool(has_verified_old_price and old_val >= new_val * 1.08)
+    savings = (old_val - new_val) if (show_old_price and old_val > new_val) else 0.0
 
-    if diff > 0:
-        savings_text = f"{int(diff):,} TL".replace(",", ".")
-        savings_banner_sub = f"{savings_text} NET TASARRUF SAĞLANDI"
-        kazancim_label = f"Kazancım: {savings_text}"
-    else:
-        savings_text = discount_pct if discount_pct else "BÜYÜK FIRSAT"
-        savings_banner_sub = f"{savings_text} İNDİRİM SAĞLANDI"
-        kazancim_label = f"Kazancım: {discount_pct}" if discount_pct else "Net Kazanç"
+    # Tema Seçimi
+    theme = select_banner_theme(title=title, discount_pct=discount_pct, badge_text=badge_text, theme_name="auto")
+    theme_title_col = theme["title_color"]
 
-    # =========================================================================
-    # 1. Sahne: Mobil Ürün Kartı (Slide-in)
-    # =========================================================================
-    img_s1_card = Image.new("RGBA", (480, 880), (255, 255, 255, 0))
-    draw_c = ImageDraw.Draw(img_s1_card)
+    # Fontlar
+    f_badge = get_font("segoeuib", 25)
+    f_pct = get_font("segoeuib", 26)
+    f_title = get_font("segoeuib", 29)
+    f_tiny = get_font("segoeuib", 13)
+    f_cta_bold = get_font("segoeuib", 24)
+    f_trust = get_font("segoeuib", 19)
+    f_label = get_font("segoeuib", 19)
+    f_killer = get_font("segoeuib", 22)
+    f_old_lbl = get_font("segoeuib", 17)
+    f_old_price = get_font("segoeuib", 36)
+    f_new_lbl = get_font("segoeuib", 20)
+    f_new_price = get_font("segoeuib", 60)
+    f_net = get_font("segoeuib", 19)
+    f_savings = get_font("segoeuib", 21)
 
-    # Beyaz yuvarlatılmış kart + şık gölge/kenarlık
-    draw_c.rounded_rectangle((10, 10, 470, 870), radius=28, fill=(255, 255, 255, 255), outline=(226, 232, 240, 255), width=2)
+    # -------------------------------------------------------------------------
+    # KATMAN A: Sabit Arka Plan (Gradyan + Başlık + Üst Rozetler + Alt CTA)
+    # -------------------------------------------------------------------------
+    bg_rgb = Image.new("RGB", (W, H), theme["bg_top"])
+    draw_bg = ImageDraw.Draw(bg_rgb)
+    for y in range(H):
+        r = int(theme["bg_top"][0] + (theme["bg_bottom"][0] - theme["bg_top"][0]) * (y / H))
+        g = int(theme["bg_top"][1] + (theme["bg_bottom"][1] - theme["bg_top"][1]) * (y / H))
+        b = int(theme["bg_top"][2] + (theme["bg_bottom"][2] - theme["bg_top"][2]) * (y / H))
+        draw_bg.line([(0, y), (W, y)], fill=(r, g, b))
 
-    # Üst bar simülasyonu (< ve menü)
-    draw_c.text((36, 32), "<", font=get_font(42, bold=True), fill=(71, 85, 105))
+    bg_img = bg_rgb.convert("RGBA")
+    draw_a = ImageDraw.Draw(bg_img, "RGBA")
 
-    # Taksit veya İndirim Rozeti (Sol Üst)
-    if installment and "taksit" in installment.lower():
-        badge_txt = "PEŞİN FİYATINA\n3 TAKSİT"
-        draw_c.rounded_rectangle((32, 85, 175, 130), radius=10, fill=(124, 58, 237))
-        draw_c.text((103, 107), badge_txt, font=get_font(13, bold=True), fill=(255, 255, 255), anchor="mm")
-    else:
-        badge_txt = discount_pct if discount_pct else "FIRSAT"
-        draw_c.rounded_rectangle((32, 85, 160, 125), radius=10, fill=(225, 29, 72))
-        draw_c.text((96, 105), f"{badge_txt}\nİNDİRİM", font=get_font(14, bold=True), fill=(255, 255, 255), anchor="mm")
+    # Sol Rozet
+    left_badge = badge_text if badge_text else "DEV İNDİRİM"
+    b_w = draw_a.textlength(left_badge, font=f_badge)
+    b1_x2 = int(54 + b_w + 64)
+    draw_a.rounded_rectangle((54, 90, b1_x2, 140), radius=14, fill=theme["badge_left_bg"])
+    draw_vector_bolt(draw_a, 78, 115, (255, 215, 0))
+    draw_a.text((96 + b_w // 2, 115), left_badge, font=f_badge, fill=(255, 255, 255), anchor="mm")
 
-    # Ürün Görseli
-    if prod_p and os.path.exists(prod_p):
-        try:
-            with Image.open(prod_p) as p_raw:
-                p_img = p_raw.convert("RGBA")
-                p_img.thumbnail((380, 320), Image.Resampling.LANCZOS)
-                px = (480 - p_img.width) // 2
-                py = 145 + (320 - p_img.height) // 2
-                img_s1_card.paste(p_img, (px, py), p_img)
-        except Exception:
-            pass
+    # Sağ Rozet (% İndirim)
+    pct_txt = discount_pct if discount_pct else "-%30 İNDİRİM"
+    if not pct_txt.endswith("İNDİRİM"):
+        pct_txt = f"{pct_txt} İNDİRİM"
+    p_w = draw_a.textlength(pct_txt, font=f_pct)
+    b2_x1 = int(W - 54 - p_w - 44)
+    draw_a.rounded_rectangle((b2_x1, 90, W - 54, 140), radius=14, fill=theme["badge_right_bg"])
+    draw_a.text(((b2_x1 + W - 54) // 2, 115), pct_txt, font=f_pct, fill=(255, 255, 255), anchor="mm")
 
-    # Başlık (2 satır)
-    f_t = get_font(21, bold=True)
-    draw_c.text((32, 495), title[:30], font=f_t, fill=(15, 23, 42))
-    if len(title) > 30:
-        draw_c.text((32, 524), title[30:58], font=f_t, fill=(15, 23, 42))
+    # Ürün Başlığı (2 Satıra Güvenli Bölme)
+    words = title.split()
+    line1, line2 = "", ""
+    for w in words:
+        test = f"{line1} {w}".strip()
+        if draw_a.textlength(test, font=f_title) <= (W - 108):
+            line1 = test
+        else:
+            line2 = f"{line2} {w}".strip()
 
-    # Yıldız & Değerlendirme
-    draw_c.rounded_rectangle((32, 560, 155, 592), radius=6, fill=(255, 247, 237), outline=(254, 215, 170), width=1)
-    draw_c.text((93, 576), "4.8 (124 Yorum)", font=get_font(14, bold=True), fill=(234, 88, 12), anchor="mm")
+    if len(line2) > 42:
+        line2 = line2[:40] + "..."
 
-    # Taksit Satırı
-    draw_c.rounded_rectangle((32, 608, 448, 646), radius=8, fill=(248, 250, 252))
-    installment_display = installment if installment else "💳 Peşin fiyatına taksit avantajı"
-    draw_c.text((46, 627), installment_display[:34], font=get_font(15, bold=False), fill=(71, 85, 105), anchor="lm")
+    draw_a.text((54, 148), line1, font=f_title, fill=theme_title_col)
+    if line2:
+        draw_a.text((54, 182), line2, font=f_title, fill=theme_title_col)
 
-    # Fiyat ve Butonlar (Liste Fiyatı Gösterilir, İndirimli Fiyat Gizlidir!)
-    old_display = old_p_str if old_p_str else "3.499 TL"
-    draw_c.text((32, 700), f"Piyasa: {old_display}", font=get_font(26, bold=True), fill=(15, 23, 42))
+    # Alt CTA Bandı (Platforma Göre: Instagram vs YouTube)
+    draw_a.rectangle((0, 898, W, 960), fill=theme["cta_bg"])
+    draw_a.line((0, 898, W, 898), fill=theme["cta_line"], width=4)
 
-    draw_c.rounded_rectangle((32, 740, 230, 800), radius=12, fill=(255, 255, 255), outline=(249, 115, 22), width=2)
-    draw_c.text((131, 770), "Şimdi Al", font=get_font(19, bold=True), fill=(249, 115, 22), anchor="mm")
+    clean_code = f"#{re.sub(r'[^a-zA-Z0-9]', '', deal_code)}" if deal_code else "#101"
 
-    draw_c.rounded_rectangle((245, 740, 448, 800), radius=12, fill=(249, 115, 22))
-    draw_c.text((346, 770), "Sepete Ekle", font=get_font(19, bold=True), fill=(255, 255, 255), anchor="mm")
-
-    card_s1_path = os.path.join(TEMP_DIR, "opt_a_s1_card.png")
-    img_s1_card.save(card_s1_path, "PNG")
-
-    # =========================================================================
-    # 1b. Sahne: Sağ Alan (Kırmızı Ok + Kod Yönlendirmesi)
-    # =========================================================================
-    img_s1_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    draw_ov = ImageDraw.Draw(img_s1_overlay)
-
-    # Kırmızı Ok (x1=475 -> x2=615)
-    draw_red_arrow(draw_ov, 475, 630, 615, 630, color=(225, 29, 72), width=12)
-
-    # Sağ Taraf Büyük Çağrı Metni
-    f_code = get_font(72, bold=True)
-    f_sub = get_font(52, bold=True)
-
-    draw_ov.text((820, 420), deal_code, font=f_code, fill=(15, 23, 42), anchor="mm")
-    draw_ov.text((820, 520), "KODUNU", font=f_sub, fill=(15, 23, 42), anchor="mm")
-    draw_ov.text((820, 610), "KULLAN", font=f_sub, fill=(15, 23, 42), anchor="mm")
-
-    s1_overlay_path = os.path.join(TEMP_DIR, "opt_a_s1_overlay.png")
-    img_s1_overlay.save(s1_overlay_path, "PNG")
-
-    # =========================================================================
-    # 2. Sahne: Sepet Özeti & Son İndirimli Fiyat (1080x960 Tam Ekran)
-    # =========================================================================
-    img_s2 = Image.new("RGB", (W, H), (255, 255, 255))
-    draw_s2 = ImageDraw.Draw(img_s2)
-
-    # 2a. Üstte Yeşil Kupon Uygulandı Bandı
-    draw_s2.rounded_rectangle((70, 70, 720, 220), radius=18, fill=(240, 253, 244), outline=(134, 239, 172), width=2)
-    coupon_lbl = f"{discount_pct} İndirim Kuponu Uygulandı" if discount_pct else "Özel İndirim Kuponu Uygulandı"
-    draw_s2.text((100, 110), coupon_lbl, font=get_font(22, bold=True), fill=(22, 101, 52))
-    draw_s2.text((100, 155), savings_banner_sub, font=get_font(28, bold=True), fill=(21, 128, 61))
-
-    draw_s2.rounded_rectangle((740, 100, 990, 190), radius=14, fill=(22, 101, 52))
-    draw_s2.text((865, 145), "Uygulandı", font=get_font(22, bold=True), fill=(255, 255, 255), anchor="mm")
-
-    # 2b. Satıcı & Kargo
-    draw_s2.text((80, 260), f"Satıcı: {store_name}  •  Yetkili Resmi Satıcı", font=get_font(22, bold=False), fill=(71, 85, 105))
-    draw_s2.text((850, 260), "Kargo Bedava Prime", font=get_font(22, bold=True), fill=(16, 185, 129))
-    draw_s2.line([(70, 300), (W - 70, 300)], fill=(241, 245, 249), width=2)
-
-    # 2c. Ürün Küçük Resmi ve Başlık
-    if prod_p and os.path.exists(prod_p):
-        try:
-            with Image.open(prod_p) as p_raw:
-                p_thumb = p_raw.convert("RGBA")
-                p_thumb.thumbnail((220, 220), Image.Resampling.LANCZOS)
-                draw_s2.rounded_rectangle((70, 330, 310, 570), radius=18, fill=(248, 250, 252), outline=(226, 232, 240), width=1)
-                px = 70 + (240 - p_thumb.width) // 2
-                py = 330 + (240 - p_thumb.height) // 2
-                img_s2.paste(p_thumb, (px, py), p_thumb)
-        except Exception:
-            pass
-
-    draw_s2.text((340, 360), title[:36], font=get_font(28, bold=True), fill=(15, 23, 42))
-    draw_s2.text((340, 405), "Teslimat: Yarın Kapında Prime", font=get_font(20, bold=False), fill=(100, 116, 139))
-
-    draw_s2.rounded_rectangle((340, 445, 620, 485), radius=8, fill=(243, 232, 255))
-    ins_txt = installment if installment else "Peşin fiyatına taksit imkanı"
-    draw_s2.text((480, 465), ins_txt[:28], font=get_font(18, bold=True), fill=(124, 58, 237), anchor="mm")
-
-    # 2d. SON İNDİRİMLİ FİYAT VE KAZANCIM KUTUSU (Hero Alanı)
-    final_p = new_p_str if new_p_str else "2.799 TL"
-    draw_s2.text((340, 545), final_p, font=get_font(68, bold=True), fill=(15, 23, 42))
-
-    # Kazancım Rozeti
-    draw_s2.rounded_rectangle((700, 495, 990, 565), radius=14, fill=(240, 253, 244), outline=(34, 197, 94), width=2)
-    draw_s2.text((845, 530), kazancim_label, font=get_font(22, bold=True), fill=(22, 101, 52), anchor="mm")
-
-    draw_s2.line([(70, 610), (W - 70, 610)], fill=(241, 245, 249), width=2)
-
-    # 2e. Alt Buton & Yönlendirme (Sepeti Onayla)
-    draw_s2.rounded_rectangle((70, 660, W - 70, 760), radius=18, fill=(249, 115, 22))
-    draw_s2.text((W // 2, 710), f"FIRSATI YAKALA • KOD: {deal_code}", font=get_font(34, bold=True), fill=(255, 255, 255), anchor="mm")
-
-    # Alt Açıklama / CTA
     if cta_type == "youtube":
-        cta_subtext = "İndirim linki ve fırsat kodu Açıklamada & Bio'da!"
-    elif cta_type == "tiktok":
-        cta_subtext = "İndirim linki ve fırsat kodu Profilde / Bio'da!"
+        cta_prefix = "Satın alma linki "
+        cta_highlight = "YORUMLARDA & BİO'DA"
+        cta_suffix = f" • KOD: {clean_code} • Kaçırma!"
+        cta_tag = "#Shorts"
     else:
-        cta_subtext = "İndirim linki ve fırsat kodu Hikayemizde & Profilimizde!"
+        cta_prefix = "Ürün linki "
+        cta_highlight = "PROFİLDE & HİKAYEDE"
+        cta_suffix = f" • KOD: {clean_code} • Fırsatı Kaçırma!"
+        cta_tag = "#işbirliği #reklam"
 
-    draw_s2.text((W // 2, 820), cta_subtext, font=get_font(24, bold=True), fill=(71, 85, 105), anchor="mm")
+    cp_w = draw_a.textlength(cta_prefix, font=f_cta_bold)
+    ch_w = draw_a.textlength(cta_highlight, font=f_cta_bold)
+    cs_w = draw_a.textlength(cta_suffix, font=f_cta_bold)
+    pill_w = int(ch_w + 26)
+    tot_cta_w = int(34 + cp_w + 8 + pill_w + 10 + cs_w + 34)
+    st_x = (W - tot_cta_w) // 2 - 20
+    draw_vector_link(draw_a, st_x + 14, 929, theme["cta_line"])
+    tx = int(st_x + 36)
+    draw_a.text((tx, 929), cta_prefix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
+    tx += int(cp_w + 6)
+    draw_a.rounded_rectangle((tx, 910, tx + pill_w, 948), radius=8, fill=theme["cta_pill_bg"])
+    draw_a.text((tx + pill_w // 2, 929), cta_highlight, font=f_cta_bold, fill=theme["cta_pill_fg"], anchor="mm")
+    tx += pill_w + 10
+    draw_a.text((tx, 929), cta_suffix, font=f_cta_bold, fill=(255, 255, 255), anchor="lm")
+    tx += int(cs_w + 18)
+    draw_vector_dm_plane(draw_a, tx, 929, theme["cta_line"])
+    draw_a.text((W - 20, 930), cta_tag, font=f_tiny, fill=(148, 163, 184), anchor="rm")
 
-    s2_path = os.path.join(TEMP_DIR, "opt_a_s2_cart.png")
-    img_s2.save(s2_path, "PNG")
+    # -------------------------------------------------------------------------
+    # KATMAN B: Ürün Stüdyo Kartı (Beyaz Kart + Spotlight + Ürün + Rozetler)
+    # -------------------------------------------------------------------------
+    CARD_W, CARD_H = 972, 516
+    card_img = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
+    draw_card = ImageDraw.Draw(card_img, "RGBA")
+    draw_card.rounded_rectangle((0, 0, CARD_W, CARD_H), radius=24, fill=(255, 255, 255, 255), outline=theme["card_border"], width=3)
 
-    return {
-        "s1_card": card_s1_path,
-        "s1_overlay": s1_overlay_path,
-        "s2_cart": s2_path
-    }
+    # Spotlight Işıma
+    glow_layer = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
+    glow_draw = ImageDraw.Draw(glow_layer)
+    gcx, gcy = CARD_W // 2, CARD_H // 2 + 6
+    glow_draw.ellipse((gcx - 210, gcy - 185, gcx + 210, gcy + 185), fill=theme["glow_color"])
+    glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=55))
+    card_img.paste(glow_layer, (0, 0), glow_layer)
+    draw_card = ImageDraw.Draw(card_img, "RGBA")
+
+    # Satıcı Rozeti (Sol Üst)
+    trust_text = seller_badge_text if seller_badge_text else ("AMAZON TR RESMİ SATICI" if "amazon" in store_name.lower() else f"{store_name.upper()} DOĞRULANMIŞ")
+    tr_w = draw_card.textlength(trust_text, font=f_trust)
+    draw_card.rounded_rectangle((16, 16, 16 + 44 + tr_w, 50), radius=10, fill=theme["trust_bg"])
+    draw_vector_shield_check(draw_card, 33, 33, (16, 185, 129))
+    draw_card.text((50 + tr_w // 2, 33), trust_text, font=f_trust, fill=theme["trust_fg"], anchor="mm")
+
+    # Sağ Üst: Son 30 Günün En Düşüğü / Market Badge
+    top_badge_text = "SON 30 GÜNÜN EN DÜŞÜĞÜ" if is_lowest_30d else (market_badge.strip().upper() if market_badge else "")
+    if top_badge_text:
+        low_w = draw_card.textlength(top_badge_text, font=f_trust)
+        lx1 = int(CARD_W - low_w - 58)
+        draw_card.rounded_rectangle((lx1, 16, CARD_W - 16, 50), radius=10, fill=(255, 241, 242), outline=(254, 205, 211), width=1)
+        draw_vector_trend_down(draw_card, lx1 + 20, 33, (225, 29, 72))
+        draw_card.text((lx1 + 36 + low_w // 2, 33), top_badge_text, font=f_trust, fill=(225, 29, 72), anchor="mm")
+
+    # Ürün Görseli & 3D Zemin Gölgesi
+    if image_path and os.path.exists(image_path):
+        try:
+            cutout_p = f"{os.path.splitext(image_path)[0]}_cutout.png"
+            load_p = cutout_p if (not skip_rembg and os.path.exists(cutout_p)) else image_path
+            p_img = Image.open(load_p).convert("RGBA")
+            alpha = p_img.split()[-1]
+            bbox = alpha.getbbox()
+            if bbox and (bbox[2] - bbox[0] >= 60) and (bbox[3] - bbox[1] >= 60):
+                p_img = p_img.crop(bbox)
+            elif load_p != image_path:
+                p_img = Image.open(image_path).convert("RGBA")
+
+            p_img.thumbnail((CARD_W - 70, CARD_H - 135), Image.Resampling.LANCZOS)
+            px = (CARD_W - p_img.width) // 2
+            py = (CARD_H - p_img.height) // 2 - 10
+
+            # 3D Zemin Gölgesi
+            sh_w = max(80, int(p_img.width * 0.82))
+            sh_layer = Image.new("RGBA", (sh_w + 80, 90), (0, 0, 0, 0))
+            sh_draw = ImageDraw.Draw(sh_layer)
+            sh_draw.ellipse((40, 30, 40 + sh_w, 60), fill=(15, 23, 42, 85))
+            sh_layer = sh_layer.filter(ImageFilter.GaussianBlur(radius=13))
+            card_img.paste(sh_layer, ((CARD_W - sh_layer.width) // 2, py + p_img.height - 20), sh_layer)
+            card_img.paste(p_img, (px, py), p_img)
+            draw_card = ImageDraw.Draw(card_img, "RGBA")
+        except Exception as e:
+            print(f"[MotionBanner] Görsel yükleme uyarısı: {e}")
+
+    # Kart İçi Alt Kısım: Killer Hook veya Standart Taksit/Mağaza Rozetleri
+    has_killer_hook = bool(feature_text and len(feature_text.strip()) > 3)
+    if has_killer_hook:
+        feat_clean = re.sub(r'[\U00010000-\U0010ffff]', '', feature_text)
+        feat_clean = re.sub(r'[\u2600-\u27BF]', '', feat_clean).strip().upper()
+        feat_w = draw_card.textlength(feat_clean, font=f_killer)
+        fbox_w = min(CARD_W - 80, int(feat_w + 56))
+        fbox_h = 44
+        fx = (CARD_W - fbox_w) // 2
+        # Fiyat kutularıyla çakışmayı kesinlikle önlemek için kart içine 18px yukarı alındı
+        fy = CARD_H - 74
+        draw_card.rounded_rectangle((fx, fy, fx + fbox_w, fy + fbox_h), radius=14, fill=(15, 23, 42, 245), outline=(250, 204, 21), width=2)
+        draw_vector_bolt(draw_card, fx + 20, fy + fbox_h // 2, (250, 204, 21))
+        draw_card.text((fx + 34 + feat_w // 2, fy + fbox_h // 2), feat_clean, font=f_killer, fill=(254, 240, 138), anchor="mm")
+    else:
+        # Dinamik Mağaza Rozeti (Sağ Alt)
+        tag_text = f"{store_name.upper()}  •  @flasfirsat.tr"
+        t_w = draw_card.textlength(tag_text, font=f_label)
+        sx1 = int(CARD_W - t_w - 40)
+        draw_card.rounded_rectangle((sx1, CARD_H - 48, CARD_W - 16, CARD_H - 14), radius=9, fill=(15, 23, 42))
+        draw_card.text(((sx1 + CARD_W - 16) // 2, CARD_H - 31), tag_text, font=f_label, fill=(255, 255, 255), anchor="mm")
+
+        # Taksit Rozeti (Sol Alt)
+        clean_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip() if installment else "Peşin Fiyatına 3 Taksit"
+        it_w = draw_card.textlength(clean_inst, font=f_label)
+        ix2 = int(16 + 44 + it_w)
+        draw_card.rounded_rectangle((16, CARD_H - 48, ix2, CARD_H - 14), radius=9, fill=theme["inst_bg"], outline=(16, 185, 129), width=1)
+        draw_card.text(((16 + ix2) // 2, CARD_H - 31), clean_inst, font=f_label, fill=theme["inst_fg"], anchor="mm")
+
+    # -------------------------------------------------------------------------
+    # KATMAN C & D: FİYAT KUTULARI (İki Kutulu veya Tek Hero Kutulu)
+    # -------------------------------------------------------------------------
+    HEADROOM = 44
+    BOX_H = 138
+
+    # Alt Bilgi Metni (Taksit, Kupon, Tasarruf)
+    sub_parts = []
+    clean_coupon = re.sub(r'[^\w\s.,xX+\-/%]', '', coupon_text).strip() if coupon_text else ""
+    if clean_coupon:
+        sub_parts.append("Sayfadaki Kuponu Aktif Et")
+    if installment:
+        sub_parts.append(re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip())
+    elif savings > 0 and not clean_coupon:
+        sav_fmt = f"{int(savings):,} TL".replace(',', '.')
+        sub_parts.append(f"Net Tasarruf: {sav_fmt}")
+    sub_str = "  •  ".join(sub_parts) if sub_parts else ""
+
+    old_box_img = None
+    new_box_img = None
+    hero_box_img = None
+
+    if show_old_price:
+        # 1. Eski Fiyat Kutusu (Sol: 274 x 138)
+        OLD_W = 274
+        old_box_img = Image.new("RGBA", (OLD_W, BOX_H), (0, 0, 0, 0))
+        draw_old = ImageDraw.Draw(old_box_img, "RGBA")
+        draw_old.rounded_rectangle((0, 0, OLD_W, BOX_H), radius=20, fill=theme["old_box_bg"], outline=theme["old_box_border"], width=2)
+        ocx = OLD_W // 2
+        draw_old.text((ocx, 24), "PİYASA FİYATI", font=f_old_lbl, fill=theme["old_text_col"], anchor="mm")
+        draw_old.text((ocx, 78), old_price, font=f_old_price, fill=theme["old_text_col"], anchor="mm")
+
+        # 2. İndirimli Fiyat Kutusu + Ok (Sağ: 686 x 182)
+        NEW_W = 686
+        NEW_H = BOX_H + HEADROOM
+        new_box_img = Image.new("RGBA", (NEW_W, NEW_H), (0, 0, 0, 0))
+        draw_new = ImageDraw.Draw(new_box_img, "RGBA")
+
+        # Orta Ok Kutusu
+        arrow_y = HEADROOM + (BOX_H - 42) // 2
+        draw_new.rounded_rectangle((0, arrow_y, 42, arrow_y + 42), radius=10, fill=theme["arrow_bg"], outline=theme["old_box_border"], width=1)
+        draw_new.line((21 - 4, arrow_y + 21 - 8, 21 + 4, arrow_y + 21), fill=theme["arrow_fg"], width=3)
+        draw_new.line((21 + 4, arrow_y + 21, 21 - 4, arrow_y + 21 + 8), fill=theme["arrow_fg"], width=3)
+
+        # Sağ Yeşil Kutu
+        gw = NEW_W - 54
+        draw_new.rounded_rectangle((54, HEADROOM, NEW_W, HEADROOM + BOX_H), radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
+        ncx = 54 + gw // 2
+        lbl_new = "KUPONLU FIRSAT FİYATI" if clean_coupon else "İNDİRİMLİ FIRSAT FİYATI"
+        draw_new.text((ncx, HEADROOM + 26), lbl_new, font=f_new_lbl, fill=theme["new_label_col"], anchor="mm")
+        draw_new.text((ncx, HEADROOM + 72), new_price, font=f_new_price, fill=theme["new_price_col"], anchor="mm")
+        if sub_str:
+            draw_new.text((ncx, HEADROOM + 116), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
+
+        # Floating Rozet (Kupon veya Net Tasarruf)
+        pill_txt = ""
+        if clean_coupon:
+            up_c = clean_coupon.upper()
+            pill_txt = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
+        elif savings > 0 and not has_killer_hook:
+            sav_fmt = f"{int(savings):,} TL".replace(',', '.')
+            pill_txt = f"{sav_fmt} NET TASARRUF"
+
+        if pill_txt:
+            sw = draw_new.textlength(pill_txt, font=f_savings)
+            pw = int(sw + 48)
+            px1 = ncx - pw // 2
+            pill_h = 34
+            pill_y1 = HEADROOM - 34 + 6
+            pill_y2 = pill_y1 + pill_h
+            draw_new.rounded_rectangle((px1, pill_y1, px1 + pw, pill_y2), radius=12, fill=theme["savings_pill_bg"])
+            draw_new.text((ncx, (pill_y1 + pill_y2) // 2), pill_txt, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
+
+    else:
+        # Tek Büyük ve Geniş Hero Kutu (Old price yoksa)
+        HERO_W = W - 108  # 972
+        HERO_H = BOX_H + HEADROOM
+        hero_box_img = Image.new("RGBA", (HERO_W, HERO_H), (0, 0, 0, 0))
+        draw_hero = ImageDraw.Draw(hero_box_img, "RGBA")
+        draw_hero.rounded_rectangle((0, HEADROOM, HERO_W, HEADROOM + BOX_H), radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
+        hcx = HERO_W // 2
+        lbl_single = "KUPONLU FIRSAT FİYATI" if clean_coupon else "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
+        draw_hero.text((hcx, HEADROOM + 26), lbl_single, font=f_new_lbl, fill=theme["new_label_col"], anchor="mm")
+        draw_hero.text((hcx, HEADROOM + 72), new_price, font=f_new_price, fill=theme["new_price_col"], anchor="mm")
+        if sub_str:
+            draw_hero.text((hcx, HEADROOM + 116), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
+
+        # Floating Kupon Rozeti
+        if clean_coupon:
+            up_c = clean_coupon.upper()
+            c_clean = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
+            cw = draw_hero.textlength(c_clean, font=f_savings)
+            pw = int(cw + 48)
+            px1 = hcx - pw // 2
+            pill_h = 34
+            pill_y1 = HEADROOM - 34 + 6
+            pill_y2 = pill_y1 + pill_h
+            draw_hero.rounded_rectangle((px1, pill_y1, px1 + pw, pill_y2), radius=12, fill=theme["savings_pill_bg"])
+            draw_hero.text((hcx, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
+
+    # -------------------------------------------------------------------------
+    # KARE ÜRETİM DÖNGÜSÜ (30 FPS Akıcı Easing Hesaplamaları)
+    # -------------------------------------------------------------------------
+    target_card_x, target_card_y = 54, 218
+    start_card_y = -CARD_H - 80
+
+    target_old_x, target_old_y = 54, 750
+    start_old_x = -334  # -OLD_W - 60
+
+    target_new_x, target_new_y = 340, 750
+    start_new_x = W + 60
+
+    settled_frame = None
+
+    for f_idx in range(total_frames):
+        t = f_idx / fps
+
+        # Animasyon 2.45s sonrasında tamamen yerleştiğinde kareyi kopyala (Hızlandırma)
+        if t >= 2.45 and settled_frame is not None:
+            out_p = os.path.join(frames_dir, f"frame_{f_idx:04d}.png")
+            settled_frame.save(out_p, "PNG")
+            continue
+
+        frame = bg_img.copy()
+
+        # ADIM 1: Ürün Stüdyo Kartı (0.00s -> 0.70s, Üstten Aşağı Yaylanarak İniş)
+        t_start_card, t_dur_card = 0.0, 0.70
+        if t <= t_start_card:
+            card_cur_y = start_card_y
+        elif t <= t_start_card + t_dur_card:
+            prog = (t - t_start_card) / t_dur_card
+            card_cur_y = int(start_card_y + (target_card_y - start_card_y) * ease_out_back(prog, c1=1.2))
+        else:
+            card_cur_y = target_card_y
+
+        if card_cur_y + CARD_H > 0:
+            frame.paste(card_img, (target_card_x, card_cur_y), card_img)
+
+        if show_old_price:
+            # ADIM 2: Eski Fiyat Kutusu (0.70s -> 1.35s, Soldan Sağa Kayış)
+            t_start_old, t_dur_old = 0.70, 0.65
+            if t < t_start_old:
+                old_cur_x = start_old_x
+            elif t <= t_start_old + t_dur_old:
+                prog = (t - t_start_old) / t_dur_old
+                old_cur_x = int(start_old_x + (target_old_x - start_old_x) * ease_out_back(prog, c1=1.1))
+            else:
+                old_cur_x = target_old_x
+
+            if old_cur_x + 274 > 0 and old_box_img:
+                frame.paste(old_box_img, (old_cur_x, target_old_y), old_box_img)
+
+            # ADIM 3: İndirimli Fiyat Kutusu (1.35s -> 2.05s, Sağdan Sola Kayış)
+            t_start_new, t_dur_new = 1.35, 0.70
+            if t < t_start_new:
+                new_cur_x = start_new_x
+            elif t <= t_start_new + t_dur_new:
+                prog = (t - t_start_new) / t_dur_new
+                new_cur_x = int(start_new_x + (target_new_x - start_new_x) * ease_out_back(prog, c1=1.1))
+            else:
+                new_cur_x = target_new_x
+
+            if new_cur_x < W and new_box_img:
+                frame.paste(new_box_img, (new_cur_x, target_new_y - HEADROOM), new_box_img)
+
+            # ADIM 4: Dinamik Kırmızı Çizgi (2.05s -> 2.45s)
+            if t >= 2.05 and old_cur_x == target_old_x:
+                draw_strike = ImageDraw.Draw(frame)
+                line_start_x = target_old_x + (274 // 2) - 80
+                line_target_x = target_old_x + (274 // 2) + 80
+                line_y = target_old_y + 78
+                t_strike_dur = 0.35
+                prog_l = min(1.0, (t - 2.05) / t_strike_dur)
+                cur_end_x = int(line_start_x + (line_target_x - line_start_x) * ease_out_cubic(prog_l))
+                draw_strike.line([(line_start_x, line_y), (cur_end_x, line_y)], fill=(239, 68, 68), width=3)
+
+        else:
+            # Tek Hero Kutu Durumu: 0.70s -> 1.45s Alttan Yukarı Kayış
+            t_start_hero, t_dur_hero = 0.70, 0.75
+            start_hero_y = H + 60
+            target_hero_y = 750
+            if t < t_start_hero:
+                hero_cur_y = start_hero_y
+            elif t <= t_start_hero + t_dur_hero:
+                prog = (t - t_start_hero) / t_dur_hero
+                hero_cur_y = int(start_hero_y + (target_hero_y - start_hero_y) * ease_out_back(prog, c1=1.1))
+            else:
+                hero_cur_y = target_hero_y
+
+            if hero_cur_y < H and hero_box_img:
+                frame.paste(hero_box_img, (54, hero_cur_y - HEADROOM), hero_box_img)
+
+        # 2.45s anında veya sonrasında settled frame'i kaydet
+        if t >= 2.45 and settled_frame is None:
+            settled_frame = frame.convert("RGB")
+
+        out_frame_p = os.path.join(frames_dir, f"frame_{f_idx:04d}.png")
+        frame.convert("RGB").save(out_frame_p, "PNG")
+
+    return frames_dir
 
 
+# =========================================================================
+# ANA VİDEO MOTORU (build_motion_deal_video)
+# =========================================================================
 def build_motion_deal_video(
     deal: dict,
     meme_name: str = None,
     audio_name: str = None,
     output_filename: str = None,
-    cta_type: str = "instagram"
+    cta_type: str = "instagram",
+    reaction_text: str = None,
+    is_price_error: bool = False
 ) -> str:
     """
-    Seçenek A mimarisinde 7.2 saniyelik altın viral video derler:
-    - 0.0s - 3.4s: Sahne 1 (Mobil ürün kartı slide-in + kırmızı ok yönlendirmesi)
-    - 3.4s - 7.2s: Sahne 2 (Sepet ve nihai fiyat patlaması)
-    - Alt Meme: 1080x960 tam ekran
-    - Altın viral süre: 7.2s
-    - Anti-Hash Viral Kalkanı: Rastgele milisaniye varyasyonu ve Android mobil üstveri
+    Kademeli Hareket Grafikleri (Staggered Motion) motoru ile 7.0 saniyelik altın viral
+    1080x1920 MP4 video derler:
+    - Üst Yarı (1080x960): 3 adımlı dinamik motion banner (Ürün üstten, eski fiyat soldan, indirim sağdan).
+    - Alt Yarı (1080x960): İlgili viral meme videosu (Tam 1080x960 ve doğal sesiyle).
+    - Meme Üstü: Akıllı reaksiyon kancası (Reaction Hook).
+    - En Alt: Dinamik neon ilerleme çubuğu (Animated Progress Bar).
+    - Üstveri: Xiaomi Redmi Note 11 Pro Android 13 mobil üstveri enjeksiyonu.
+    - Kamera: Yakınlaşma yok, %100 net ve stabil.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # 1. Meme videosunu belirle
+    FPS = 30
+    # Altın viral süre: 7.0 saniye (Tamamlanma oranını maksimize eder)
+    TOTAL_DURATION = 7.0
+    TOTAL_FRAMES = int(FPS * TOTAL_DURATION)  # 210 Kare
+
+    # 1. Meme Videosunu Seç
     if meme_name:
         if not meme_name.endswith(".mp4"):
             meme_name += ".mp4"
-        meme_path = os.path.join(MEMES_DIR, meme_name)
+        bottom_meme_path = os.path.join(MEMES_DIR, meme_name)
     else:
-        from split_composer import select_smart_meme
         chosen = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""))
-        meme_path = os.path.join(MEMES_DIR, chosen)
+        bottom_meme_path = os.path.join(MEMES_DIR, chosen)
 
-    if not os.path.exists(meme_path):
-        meme_path = os.path.join(MEMES_DIR, "knight_cat.mp4")
-    if not os.path.exists(meme_path):
-        meme_path = os.path.join(MEMES_DIR, "the_rock.mp4")
+    if not os.path.exists(bottom_meme_path):
+        for candidate in ["vince_mcmahon.mp4", "degirmenci_dayi_cj.mp4", "the_rock.mp4", "knight_cat.mp4"]:
+            cand_p = os.path.join(MEMES_DIR, candidate)
+            if os.path.exists(cand_p):
+                bottom_meme_path = cand_p
+                break
 
-    # 2. Varlıkları (Asset'leri) Üret
-    assets = create_option_a_assets(deal, cta_type=cta_type)
+    if not os.path.exists(bottom_meme_path):
+        raise FileNotFoundError(f"Meme videosu bulunamadı: {bottom_meme_path}")
 
-    # 3. Süre ve Anti-Hash Özgünlük Ayarları (7.15s - 7.35s Altın Aralık)
-    duration = round(7.2 + random.uniform(-0.10, 0.12), 3)
+    # 2. Akıllı Reaksiyon Başlığı (Reaction Hook Overlay)
+    if not reaction_text:
+        reaction_text = select_smart_reaction_hook(
+            deal.get("discount_pct", ""),
+            deal.get("title", ""),
+            is_price_error
+        )
+    reaction_overlay_path = os.path.join(TEMP_DIR, f"reaction_{random.randint(1000, 9999)}.png")
+    create_reaction_hook_overlay(reaction_text, reaction_overlay_path)
 
-    rnd_bright = round(random.uniform(-0.008, 0.008), 4)
-    rnd_sat = round(random.uniform(0.99, 1.02), 4)
-    rnd_contrast = round(random.uniform(0.995, 1.015), 4)
+    # 3. Kademeli Hareketli Kareleri Üret (Pillow)
+    frames_dir = os.path.join(TEMP_DIR, f"staggered_frames_{random.randint(1000, 9999)}")
+    try:
+        generate_staggered_banner_frames(
+            deal=deal,
+            total_frames=TOTAL_FRAMES,
+            fps=FPS,
+            cta_type=cta_type,
+            frames_dir=frames_dir
+        )
 
-    # Beyaz arka plan tuvali
-    bg_canvas = os.path.join(TEMP_DIR, "opt_a_white_bg.png")
-    Image.new("RGB", (1080, 960), (255, 255, 255)).save(bg_canvas)
+        # 4. Çıktı Dosya Adı
+        if not output_filename:
+            slug = sanitize_text(deal.get("title", "firsat"))[:25]
+            slug = "".join(c if c.isalnum() or c in (" ", "_", "-") else "" for c in slug)
+            slug = "_".join(slug.split()).lower()
+            output_filename = f"motion_{slug}.mp4"
+        output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-    # Çıktı Dosya Adı
-    if not output_filename:
-        slug = sanitize_text(deal.get("title", "firsat"))[:25]
-        slug = "".join(c if c.isalnum() or c in (" ", "_", "-") else "" for c in slug)
-        slug = "_".join(slug.split()).lower()
-        output_filename = f"motion_{slug}.mp4"
-    output_path = os.path.join(OUTPUT_DIR, output_filename)
+        # 5. Ses Yapılandırması (Öncelik: Meme'in kendi sesi)
+        chk_a = safe_run_subprocess(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
+        has_meme_audio = "Audio:" in chk_a.stderr
 
-    # FFmpeg Filtre Zinciri (Slide-in + Ok + Sepet + Meme + İlerleme Çubuğu)
-    filter_complex = (
-        # Sahne 1: Beyaz zemin üstünde sol kart slide-in (0.0 - 3.4s)
-        f"[0:v]scale=1080:960[bg];"
-        f"[1:v]scale=480:880[card];"
-        f"[2:v]scale=1080:960[ov];"
-        f"[bg][card]overlay=x='min(40, -480 + 520*min(1, t/0.75))':y=40:enable='between(t,0,3.4)'[s1_base];"
-        f"[s1_base][ov]overlay=0:0:enable='between(t,0.85,3.4)'[top_s1];"
-        # Sahne 2: Sepet Ekranı (3.4s - bitiş, hafif canlı zoom)
-        f"[3:v]scale=w='1080*(1+0.02*max(0,t-3.4))':h='960*(1+0.02*max(0,t-3.4))':eval=frame,crop=1080:960[top_s2];"
-        f"[top_s1][top_s2]overlay=0:0:enable='gte(t,3.4)'[top];"
-        # Alt Meme: 1080x960 tam ekran + mikro renk kalkanı
-        f"[4:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,"
-        f"eq=brightness={rnd_bright}:saturation={rnd_sat}:contrast={rnd_contrast}[bottom];"
-        # Üst ve Altı Birleştir
-        f"[top][bottom]vstack=inputs=2[stacked];"
-        # Neon İlerleme Çubuğu
-        f"color=c=0x0F172A@0.7:s=1080x12:d={duration:.2f}[pbg];"
-        f"color=c=0xFF5722:s=1080x12:d={duration:.2f}[pfill];"
-        f"[stacked][pbg]overlay=0:1908[with_pbg];"
-        f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{duration:.2f})':y=1908[v]"
-    )
+        use_ext_audio = False
+        if audio_name:
+            if not audio_name.endswith(".m4a"):
+                audio_name += ".m4a"
+            audio_path = os.path.join(AUDIO_DIR, audio_name)
+            use_ext_audio = os.path.exists(audio_path)
+        elif not has_meme_audio:
+            available_audios = [a for a in AVAILABLE_AUDIOS if os.path.exists(os.path.join(AUDIO_DIR, a))]
+            chosen_audio = random.choice(available_audios) if available_audios else "phonk_meme.m4a"
+            audio_path = os.path.join(AUDIO_DIR, chosen_audio)
+            use_ext_audio = os.path.exists(audio_path)
 
-    cmd = [
-        "ffmpeg", "-y",
-        "-loop", "1", "-t", str(duration), "-i", bg_canvas,
-        "-loop", "1", "-t", "3.4", "-i", assets["s1_card"],
-        "-loop", "1", "-t", "3.4", "-i", assets["s1_overlay"],
-        "-loop", "1", "-t", str(duration), "-i", assets["s2_cart"],
-        "-i", meme_path,
-        "-filter_complex", filter_complex,
-        "-map", "[v]", "-map", "4:a?",
-        "-t", str(duration),
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k",
-        # Anti-Hash Kalkanı: Mobil cihaz üstveri enjeksiyonu
-        "-map_metadata", "-1",
-        "-fflags", "+bitexact",
-        "-flags:v", "+bitexact",
-        "-flags:a", "+bitexact",
-        "-brand", "mp42",
-        "-metadata", "com.android.version=13",
-        "-metadata", "com.android.manufacturer=Xiaomi",
-        "-metadata", 'com.android.model="Redmi Note 11 Pro"',
-        output_path
-    ]
+        # 6. Anti-Hash Mikro Varyasyon (Gözle fark edilmez, pHash ve MD5'i %100 özgün yapar)
+        rnd_bright = round(random.uniform(-0.008, 0.008), 4)
+        rnd_sat = round(random.uniform(0.99, 1.02), 4)
+        rnd_contrast = round(random.uniform(0.995, 1.015), 4)
 
-    safe_run_subprocess(cmd, capture_output=True)
-    return output_path
+        scale_bottom = (
+            f"scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,"
+            f"eq=brightness={rnd_bright}:saturation={rnd_sat}:contrast={rnd_contrast}"
+        )
+
+        # Neon İlerleme Çubuğu (7.0s)
+        progress_bar_filter = (
+            f"color=c=0x0F172A@0.8:s=1080x14:d={TOTAL_DURATION:.2f}[pbg];"
+            f"color=c=0xFF5722:s=1080x14:d={TOTAL_DURATION:.2f}[pfill];"
+            f"[stacked][pbg]overlay=0:1906[with_pbg];"
+            f"[with_pbg][pfill]overlay=x='-1080+1080*(t/{TOTAL_DURATION:.2f})':y=1906[v]"
+        )
+
+        # FFmpeg Komutu:
+        # [0:v]: Üstteki 210 karelik kademeli animasyon dizisi (1080x960, 30fps) - Sabit, yakınlaşma yok!
+        # [1:v]: Alttaki meme videosu
+        # [2:v]: Meme üzerindeki reaksiyon kancası overlay'i
+        cmd = [
+            "ffmpeg", "-y",
+            "-framerate", str(FPS),
+            "-i", os.path.join(frames_dir, "frame_%04d.png"),
+            "-ss", "00:00:00", "-t", str(TOTAL_DURATION),
+            "-i", bottom_meme_path,
+            "-loop", "1", "-i", reaction_overlay_path,
+        ]
+
+        if use_ext_audio:
+            cmd += ["-i", audio_path]
+            audio_source = "[3:a]"
+        else:
+            audio_source = "[1:a]"
+
+        filter_complex = (
+            f"[0:v]copy[top];"
+            f"[1:v]{scale_bottom}[bottom_raw];"
+            f"[bottom_raw][2:v]overlay=0:0[bottom];"
+            f"[top][bottom]vstack=inputs=2[stacked];"
+            f"{progress_bar_filter};"
+            f"{audio_source}volume=1.0[a]"
+        )
+
+        iso_now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        cmd += [
+            "-filter_complex", filter_complex,
+            "-map", "[v]", "-map", "[a]",
+            "-t", str(TOTAL_DURATION),
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-b:a", "192k",
+            # Anti-Hash Kalkanı: Android 13 Xiaomi Redmi Note 11 Pro mobil üstveri enjeksiyonu
+            "-map_metadata", "-1",
+            "-fflags", "+bitexact",
+            "-flags:v", "+bitexact",
+            "-flags:a", "+bitexact",
+            "-brand", "mp42",
+            "-metadata", "com.android.version=13",
+            "-metadata", "com.android.manufacturer=Xiaomi",
+            "-metadata", 'com.android.model="Redmi Note 11 Pro"',
+            "-metadata:s:v:0", "handler_name=VideoHandle",
+            "-metadata:s:a:0", "handler_name=SoundHandle",
+            "-metadata", f"creation_time={iso_now}",
+            "-movflags", "+faststart+use_metadata_tags",
+            output_path
+        ]
+
+        safe_run_subprocess(cmd, capture_output=True)
+
+        if os.path.exists(output_path) and os.path.getsize(output_path) > 50000:
+            print(f"🎬 [Staggered Motion] Video başarıyla üretildi: {output_path}")
+            return output_path
+        else:
+            raise RuntimeError(f"FFmpeg render başarısız oldu veya dosya üretilemedi: {output_path}")
+
+    finally:
+        # Geçici kareleri ve overlay dosyasını temizle
+        if os.path.exists(frames_dir):
+            try:
+                shutil.rmtree(frames_dir, ignore_errors=True)
+            except Exception:
+                pass
+        if os.path.exists(reaction_overlay_path):
+            try:
+                os.remove(reaction_overlay_path)
+            except Exception:
+                pass

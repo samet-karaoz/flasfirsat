@@ -330,7 +330,7 @@ def generate_staggered_banner_frames(
         sub_parts.append(re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip())
     elif savings > 0 and not clean_coupon:
         sav_fmt = f"{int(savings):,} TL".replace(',', '.')
-        sub_parts.append(f"Net Tasarruf: {sav_fmt}")
+        sub_parts.append(f"Net İndirim: {sav_fmt}")
     sub_str = "  •  ".join(sub_parts) if sub_parts else ""
 
     old_box_img = None
@@ -369,14 +369,14 @@ def generate_staggered_banner_frames(
         if sub_str:
             draw_new.text((ncx, HEADROOM + 116), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
 
-        # Floating Rozet (Kupon veya Net Tasarruf)
+        # Floating Rozet (Kupon veya Net İndirim)
         pill_txt = ""
         if clean_coupon:
             up_c = clean_coupon.upper()
             pill_txt = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
         elif savings > 0:
             sav_fmt = f"{int(savings):,} TL".replace(',', '.')
-            pill_txt = f"{sav_fmt} NET TASARRUF"
+            pill_txt = f"{sav_fmt} NET İNDİRİM"
 
         if pill_txt:
             sw = draw_new.textlength(pill_txt, font=f_savings)
@@ -527,10 +527,11 @@ def build_motion_deal_video(
     output_filename: str = None,
     cta_type: str = "instagram",
     reaction_text: str = None,
-    is_price_error: bool = False
+    is_price_error: bool = False,
+    duration: float = 9.0
 ) -> str:
     """
-    Kademeli Hareket Grafikleri (Staggered Motion) motoru ile 7.0 saniyelik altın viral
+    Kademeli Hareket Grafikleri (Staggered Motion) motoru ile 9.0 saniyelik rahat okunur,
     1080x1920 MP4 video derler:
     - Üst Yarı (1080x960): 3 adımlı dinamik motion banner (Ürün üstten, eski fiyat soldan, indirim sağdan).
     - Alt Yarı (1080x960): İlgili viral meme videosu (Tam 1080x960 ve doğal sesiyle).
@@ -543,9 +544,9 @@ def build_motion_deal_video(
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     FPS = 30
-    # Altın viral süre: 7.0 saniye (Tamamlanma oranını maksimize eder)
-    TOTAL_DURATION = 7.0
-    TOTAL_FRAMES = int(FPS * TOTAL_DURATION)  # 210 Kare
+    # Süre: 9.0 saniye (Kullanıcı talebiyle 2 saniye uzatıldı: 270 kare, rahat okunur stabil bekleme)
+    TOTAL_DURATION = float(duration if duration is not None else 9.0)
+    TOTAL_FRAMES = int(FPS * TOTAL_DURATION)  # 270 Kare
 
     # 1. Meme Videosunu Seç
     if meme_name:
@@ -639,7 +640,7 @@ def build_motion_deal_video(
             "ffmpeg", "-y",
             "-framerate", str(FPS),
             "-i", os.path.join(frames_dir, "frame_%04d.png"),
-            "-ss", "00:00:00", "-t", str(TOTAL_DURATION),
+            "-stream_loop", "-1", "-ss", "00:00:00", "-t", str(TOTAL_DURATION),
             "-i", bottom_meme_path,
             "-loop", "1", "-i", reaction_overlay_path,
         ]

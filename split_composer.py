@@ -968,7 +968,7 @@ def create_product_banner(
         sub_parts.append(clean_inst_s)
     elif savings > 0 and not clean_coupon:
         sav_fmt = f"{int(savings):,} TL".replace(',', '.')
-        sub_parts.append(f"Net Tasarruf: {sav_fmt}")
+        sub_parts.append(f"Net İndirim: {sav_fmt}")
     sub_str = "  •  ".join(sub_parts) if sub_parts else ""
     new_str = new_price if new_price else "Fırsat Fiyatı"
 
@@ -986,7 +986,7 @@ def create_product_banner(
             draw.text((center_x, (pill_y1 + pill_y2) // 2), c_clean, font=f_savings, fill=theme["savings_pill_fg"], anchor="mm")
         elif savings > 0:
             sav_str = f"{int(savings):,} TL".replace(',', '.')
-            sav_text = f"{sav_str} NET TASARRUF"
+            sav_text = f"{sav_str} NET İNDİRİM"
             s_w = draw.textlength(sav_text, font=f_savings)
             pill_w = int(s_w + 54)
             pill_x1 = center_x - pill_w // 2

@@ -10,9 +10,15 @@ Bu skill, üretilen tüm Instagram Reels, TikTok, YouTube Shorts ve Telegram aç
 ---
 
 ## 1. Marka Dili ve Tonu
-- **Ton:** Heyecanlı, dinamik, doğrudan ve dürüst.
-- **Karakter:** "Takipçisini koruyan, gereksiz paralar harcatmayan akıllı alışveriş dostu."
-- **Kaçınılması Gerekenler:** Aşırı abartılı yalan vaatler ("Bedava veriyorlar!", "Şok hata!") yerine gerçek matematiksel tasarrufu öne çıkaran net ifadeler.
+- **Ton:** Samimi, organik, merak uyandırıcı, doğrudan ve sokak diliyle akıcı.
+- **Karakter:** "Discord/WhatsApp grubunda arkadaşına indirim haber veren gerçek bir teknoloji/gaming dostu."
+- **Kesinlikle Yasak Olanlar (Yapay Zeka Klişeleri):**
+  - "İnanılmaz fırsat kapınızda!", "Fırsat fırtınası başladı!", "Kaçırmayın üzülürsünüz!", "Tasarrufu cebe atın!" gibi bot/tercüme kokan yapay zeka kalıpları KESİNLİKLE YASAKTIR.
+  - Bunun yerine tamamen insan gibi konuşan doğal kancalar kullanılır:
+    * *"Şaka gibi fiyata düşmüş, ihtiyacı olan arkadaşına acil haber et 👇"*
+    * *"Fiyatı görünce fake sandım ama Amazon direkt kendisi satıyor..."*
+    * *"Bu fiyata bu ayarda ekipman bulmak artık imkansız gibi bir şeydi."*
+    * *"Siparişi verip kargoya versinler diye dua eden tayfa burada mı?"*
 
 ---
 

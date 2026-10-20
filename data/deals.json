@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792508723_34",
+    "deal_code": "#137",
+    "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
+    "old_price": "990 TL",
+    "new_price": "699 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07W5JKFQC?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "20.10.2026 18:05"
+  },
+  {
     "id": "deal_1792490797_34",
     "deal_code": "#136",
     "title": "Razer Kraken X Lite Kulaklık",
@@ -267,24 +286,6 @@
     "expired_reason": "",
     "date_added": "17.10.2026 00:58",
     "deal_code": "#122"
-  },
-  {
-    "id": "deal_1792144968_21",
-    "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
-    "old_price": "990 TL",
-    "new_price": "389 TL",
-    "discount_pct": "-%61",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07W4DH8JW?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "image_url": "assets/products/logitech_g102_lightsync_r_e25b0150.jpg",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "16.10.2026 13:02",
-    "category": "gaming",
-    "deal_code": "#121"
   },
   {
     "id": "deal_1792095414_20",

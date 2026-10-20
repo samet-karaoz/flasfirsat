@@ -997,5 +997,50 @@
         "channel": "-1004415003185"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-20 18:24",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
+      "old_price": "990 TL",
+      "new_price": "699 TL",
+      "discount_pct": "-29%",
+      "asin": "B07W5JKFQC",
+      "store_url": "https://www.amazon.com.tr/dp/B07W5JKFQC?tag=flasfirsat04-21",
+      "store_name": "Amazon TR",
+      "badge": "FİYAT/PERFORMANS",
+      "feature_pill": "8.000 DPI & LIGHTSYNC RGB",
+      "hook": "Türkiye'nin en popüler RGB oyuncu mouse'u bu fiyata kaçmaz!",
+      "meme": "polat_memati_kosu.mp4",
+      "reaction_text": "699 TL'YE LOGITECH RGB MOUSE BULUNCA LİNKE KOŞAN BİZ:",
+      "savings_tl": 291,
+      "has_verified_old_price": true,
+      "seller_badge": "AMAZON TR",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "is_lowest_30d": false,
+      "deal_code": "#138",
+      "net_cost": "",
+      "installment": "Peşin Fiyatına 3 Taksit",
+      "rating": 4.6,
+      "image_url": "https://m.media-amazon.com/images/I/51aKTwcCA4L._AC_SL1500_.jpg",
+      "image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\amz_B07W5JKFQC.jpg",
+      "skip_rembg": true,
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07W5JKFQC?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/CONCy9QZ1Xk"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
   }
 ]

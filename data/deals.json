@@ -1,6 +1,6 @@
 [
   {
-    "id": "deal_1792509853_34",
+    "id": "deal_1792509671_34",
     "deal_code": "#138",
     "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
     "old_price": "990 TL",
@@ -16,7 +16,7 @@
     "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "20.10.2026 18:24"
+    "date_added": "20.10.2026 18:21"
   },
   {
     "id": "deal_1792490797_34",
@@ -407,8 +407,8 @@
     "image_url": "assets/products/stanley_transit_termos_88819170.jpg",
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "deal_code": "#113"
   },
   {
@@ -524,8 +524,8 @@
     "date_added": "13.10.2026 19:49",
     "category": "general",
     "deal_code": "#106",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti"
   },
   {
     "id": "deal_1791840416_4",
@@ -606,8 +606,8 @@
     "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "category": "gaming",
     "deal_code": "#101"
   }

@@ -1,6 +1,6 @@
 [
   {
-    "id": "deal_1792523974_34",
+    "id": "deal_1792523791_34",
     "deal_code": "#138",
     "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
     "old_price": "990 TL",
@@ -13,10 +13,10 @@
     "installment": "Peşin Fiyatına 3 Taksit",
     "coupon_info": "",
     "category": "gaming",
-    "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.png",
+    "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.jpg",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "20.10.2026 22:19"
+    "date_added": "20.10.2026 22:16"
   },
   {
     "id": "deal_1792490797_34",
@@ -207,8 +207,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.jpg",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.10.2026 08:11"
   },
   {

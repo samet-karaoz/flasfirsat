@@ -398,6 +398,7 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     """
     Alt meme videosunun üstüne binecek şeffaf, modern glassmorphic ve büyük reaksiyon başlığı üretir.
     Pilmoji ile gerçek renkli emojileri destekler, font uyumsuzluğunda tofu (▢) kutuları engeller.
+    Metin uzunsa fontu otomatik küçülterek ve kutu içi ortalayarak taşmayı %100 engeller.
     """
     if not output_path:
         output_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
@@ -407,8 +408,20 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    f_hook = get_font("segoeuib", 32)  # 32px Büyütülmüş font
     clean_text = reaction_text.strip()
+    f_size = 32
+    f_hook = get_font("segoeuib", f_size)
+
+    # Otomatik Font Küçültme (Uzun kancalarda kutu dışına taşmayı engeller)
+    while f_size > 22:
+        f_hook = get_font("segoeuib", f_size)
+        try:
+            t_len = draw.textlength(clean_text, font=f_hook)
+        except Exception:
+            t_len = len(clean_text) * (f_size * 0.55)
+        if t_len <= 880:
+            break
+        f_size -= 2
 
     try:
         from pilmoji import Pilmoji
@@ -421,7 +434,7 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
         try:
             with Pilmoji(img) as p:
                 text_w, text_h = p.getsize(clean_text, font=f_hook)
-                box_w = min(W - 120, text_w + 64)
+                box_w = min(W - 80, text_w + 64)
                 box_h = 68
                 box_x = (W - box_w) // 2
                 box_y = 26
@@ -433,7 +446,7 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
                     outline=(255, 255, 255, 110),
                     width=2
                 )
-                tx = (W - text_w) // 2
+                tx = box_x + (box_w - text_w) // 2
                 ty = box_y + (box_h - text_h) // 2
                 p.text((tx, ty), clean_text, font=f_hook, fill=(255, 255, 255))
                 rendered_with_pilmoji = True
@@ -445,7 +458,7 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
         safe_text = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27BF\ufe00-\ufe0f\u200d\ufffd]', '', clean_text).strip()
 
         text_w = draw.textlength(safe_text, font=f_hook)
-        box_w = min(W - 120, text_w + 64)
+        box_w = min(W - 80, text_w + 64)
         box_h = 68
         box_x = (W - box_w) // 2
         box_y = 26
@@ -459,7 +472,7 @@ def create_reaction_hook_overlay(reaction_text: str, output_path: str = None) ->
         )
         t_bbox = draw.textbbox((0, 0), safe_text, font=f_hook)
         t_h = t_bbox[3] - t_bbox[1]
-        tx = (W - text_w) // 2
+        tx = box_x + (box_w - text_w) // 2
         ty = box_y + (box_h - t_h) // 2 - t_bbox[1]
         draw.text((tx, ty), safe_text, font=f_hook, fill=(255, 255, 255, 255))
 

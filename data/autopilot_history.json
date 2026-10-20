@@ -947,5 +947,55 @@
         "channel": "-1004415003185"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-20 13:06",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Razer Kraken X Lite Kulaklık",
+      "old_price": "2.199 TL",
+      "new_price": "1.399 TL",
+      "discount_pct": "-36%",
+      "desirability_score": 8,
+      "badge": "DEV İNDİRİM",
+      "hook": "Dünyaca ünlü oyuncu markası Razer'ın bu fiyatıyla bütçe dostu en popüler kulaklığı kaçmaz!",
+      "rating": 4.2,
+      "review_count": 5577,
+      "is_mover_shaker": false,
+      "discount_val": 36,
+      "asin": "B07XC936P8",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "net_cost": "",
+      "installment": "Peşin Fiyatına 3 Taksit x 466 TL",
+      "image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\amz_B07XC936P8.jpg",
+      "source_channel": "Amazon TR (GAMING)",
+      "store_name": "Amazon TR",
+      "store_url": "https://www.amazon.com.tr/dp/B07XC936P8?tag=flasfirsat04-21",
+      "bought_past_month": "Geçen ay 100 adetten fazla satın alındı",
+      "has_verified_old_price": true,
+      "seller_badge": "AMAZON TR",
+      "feature_pill": "1.399 TLYE 7.1 SURROUND OYUN KULAKLIĞI!",
+      "killer_hook": "1.399 TLYE 7.1 SURROUND OYUN KULAKLIĞI!",
+      "image_url": "https://m.media-amazon.com/images/I/71pNzi4ROJL._AC_SL1500_.jpg",
+      "is_lowest_30d": false,
+      "viral_score": 83.0,
+      "reaction_text": "KULAKLIKTA 7.1 SESİ AÇTIKTAN 5 DAKİKA SONRA:",
+      "deal_code": "#136",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07XC936P8?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/_hYNDCoHVvc"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
   }
 ]

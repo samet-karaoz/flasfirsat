@@ -910,5 +910,42 @@
       "file_id": "BAACAgQAAxkDAAN0atZro-Lp_UhNXX6CHYHv-J8WNVgAArUgAAJ2srBSwUcsEMzwYKc9BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_27.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-19 22:15",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Aula F75 RGB Kablosuz Mekanik Klavye",
+      "old_price": "3.499 TL",
+      "new_price": "2.799 TL",
+      "discount_pct": "-20%",
+      "store_name": "Amazon TR",
+      "store_url": "https://www.amazon.com.tr/dp/B0DF57F88S?tag=flasfirsat04-21",
+      "image_url": "https://m.media-amazon.com/images/I/61BwNJ9OpOL._AC_SL1500_.jpg",
+      "killer_hook": "2.799 TLYE HOT SWAP GRAY SWITCH KLAVYE",
+      "seller_badge": "AMAZON TR",
+      "has_verified_old_price": true,
+      "is_lowest_30d": false,
+      "image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\prod_aula_f75_rgb_kablosuz_mekanik_.jpg",
+      "deal_code": "#134",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "net_cost": "",
+      "installment": "Peşin Fiyatına 3 Taksit x 933 TL",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DF57F88S?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/yCWcfBFVmkg"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
   }
 ]

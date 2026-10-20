@@ -329,7 +329,9 @@ def process_deal_to_reel(
             product_title=deal.get("title", ""),
             new_price=deal.get("new_price", ""),
             reaction_text=deal.get("reaction_text"),
-            enable_voiceover=False
+            enable_voiceover=False,
+            deal=deal,
+            cta_type="instagram"
         )
 
         # 2b. YouTube Shorts Özel Videosu Derle
@@ -343,7 +345,9 @@ def process_deal_to_reel(
             product_title=deal.get("title", ""),
             new_price=deal.get("new_price", ""),
             reaction_text=deal.get("reaction_text"),
-            enable_voiceover=False
+            enable_voiceover=False,
+            deal=deal,
+            cta_type="youtube"
         )
 
         # 2c. Render Sonrası Kare Analizi ve Görsel Kalite Denetimi (Post-Render Validator)

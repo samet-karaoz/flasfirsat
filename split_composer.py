@@ -12,6 +12,7 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
+    "conor_mcgregor.mp4",        # 1. Conor McGregor Swagger Walk (Referans Hit)
     "polat_memati_kosu.mp4",       # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
     "piyano_davul.mp4",             # 2. Piyano Çalan Kız & Davulcu Dayı
     "dugunde_cosan_cocuk.mp4",     # 3. Düğünde Kopan Çocuk (Pist Dansı)
@@ -1069,8 +1070,25 @@ def build_split_screen_video(
     new_price: str = "",
     is_price_error: bool = False,
     reaction_text: str = None,
-    enable_voiceover: bool = False
+    enable_voiceover: bool = False,
+    deal: dict = None,
+    cta_type: str = "instagram"
 ) -> str:
+    """
+    Eğer deal sözlüğü verilmişse (Seçenek A: Dinamik E-Ticaret Sepeti),
+    7.2s süreli iki aşamalı geciktirilmiş fiyat animasyonu motorunu (motion_composer)
+    kullanarak %70+ izlenme tutma oranına sahip yüksek viral dönüşümlü video üretir.
+    Aksi takdirde geriye uyumlu statik banner motorunu çalıştırır.
+    """
+    if deal and isinstance(deal, dict):
+        from motion_composer import build_motion_deal_video
+        return build_motion_deal_video(
+            deal=deal,
+            meme_name=meme_name,
+            audio_name=audio_name,
+            output_filename=output_filename,
+            cta_type=cta_type
+        )
     """
     Üst yarıda ürün banner'ı (1080x960),
     Alt yarıda viral meme videosu (1080x960),

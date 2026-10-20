@@ -12,7 +12,6 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
-    "conor_mcgregor.mp4",        # 1. Conor McGregor Swagger Walk (Referans Hit)
     "polat_memati_kosu.mp4",       # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
     "piyano_davul.mp4",             # 2. Piyano Çalan Kız & Davulcu Dayı
     "dugunde_cosan_cocuk.mp4",     # 3. Düğünde Kopan Çocuk (Pist Dansı)

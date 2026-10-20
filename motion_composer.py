@@ -310,7 +310,7 @@ def build_motion_deal_video(
         meme_path = os.path.join(MEMES_DIR, chosen)
 
     if not os.path.exists(meme_path):
-        meme_path = os.path.join(MEMES_DIR, "conor_mcgregor.mp4")
+        meme_path = os.path.join(MEMES_DIR, "knight_cat.mp4")
     if not os.path.exists(meme_path):
         meme_path = os.path.join(MEMES_DIR, "the_rock.mp4")
 

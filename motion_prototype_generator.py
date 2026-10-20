@@ -406,7 +406,7 @@ if __name__ == "__main__":
         "image_path": "temp/prod_aula_f75_rgb_kablosuz_mekanik_.jpg"
     }
 
-    meme = "assets/memes/conor_mcgregor.mp4"
+    meme = "assets/memes/knight_cat.mp4"
     if not os.path.exists(meme):
         meme = "assets/memes/the_rock.mp4"
 

@@ -207,8 +207,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -371,8 +371,8 @@
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_128gb_type_c_bell_ad87d234.jpg",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "15.10.2026 11:29",
     "category": "hardware",
     "deal_code": "#116"
@@ -457,8 +457,8 @@
     "image_url": "assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg",
     "date_added": "13.10.2026 22:09",
     "category": "gaming",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "deal_code": "#110"
   },
   {
@@ -524,8 +524,8 @@
     "date_added": "13.10.2026 19:49",
     "category": "general",
     "deal_code": "#106",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti"
   },
   {
     "id": "deal_1791840416_4",
@@ -606,8 +606,8 @@
     "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "category": "gaming",
     "deal_code": "#101"
   }

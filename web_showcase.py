@@ -309,12 +309,23 @@ def check_and_update_all_deals_status() -> dict:
 
 def push_to_github():
     try:
+        safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], cwd=WEB_DIR, capture_output=True)
         safe_run_subprocess(["git", "add", "."], cwd=WEB_DIR, capture_output=True)
         safe_run_subprocess(["git", "commit", "-m", "Auto-update deals"], cwd=WEB_DIR, capture_output=True)
-        safe_run_subprocess(["git", "push"], cwd=WEB_DIR, capture_output=True)
-        print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) otomatik senkronize edildi!")
+        safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], cwd=WEB_DIR, capture_output=True)
+        res = safe_run_subprocess(["git", "push", "origin", "main"], cwd=WEB_DIR, capture_output=True, text=True)
+        if res and res.returncode == 0:
+            print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) otomatik senkronize edildi!")
+        else:
+            safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], cwd=WEB_DIR, capture_output=True)
+            res2 = safe_run_subprocess(["git", "push", "origin", "main"], cwd=WEB_DIR, capture_output=True, text=True)
+            if res2 and res2.returncode == 0:
+                print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) rebase sonrası senkronize edildi!")
+            else:
+                err_msg = res2.stderr if res2 else "Bilinmeyen hata"
+                print(f"[Web] ⚠️ Git push uyarısı: {err_msg[:200]}")
     except Exception as e:
-        print(f"[Web] Git push uyarısı: {e}")
+        print(f"[Web] Git push hatası: {e}")
 
 def render_web_html(deals: list = None):
     """

@@ -1,6 +1,6 @@
 [
   {
-    "id": "deal_1792523791_34",
+    "id": "deal_1792523974_34",
     "deal_code": "#138",
     "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
     "old_price": "990 TL",
@@ -13,10 +13,10 @@
     "installment": "Peşin Fiyatına 3 Taksit",
     "coupon_info": "",
     "category": "gaming",
-    "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.jpg",
+    "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.png",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "20.10.2026 22:16"
+    "date_added": "20.10.2026 22:19"
   },
   {
     "id": "deal_1792490797_34",
@@ -371,8 +371,8 @@
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_128gb_type_c_bell_ad87d234.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.10.2026 11:29",
     "category": "hardware",
     "deal_code": "#116"
@@ -407,8 +407,8 @@
     "image_url": "assets/products/stanley_transit_termos_88819170.jpg",
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "deal_code": "#113"
   },
   {

@@ -44,57 +44,8 @@ def get_telegram_file_url(file_id: str, bot_token: str = None) -> str:
     return ""
 
 def generate_whatsapp_share_url(deal: dict, product_url: str = "") -> str:
-    """WhatsApp kanalı veya gruplarında tek tıkla paylaşım için optimize edilmiş URL döner."""
-    import urllib.parse
-    from config import SITE_URL
-
-    title = deal.get("title", "Flaş Fırsat")
-    old_p = deal.get("old_price", "")
-    new_p = deal.get("new_price", "")
-    disc = deal.get("discount_pct", "")
-    store = deal.get("store_name", "Amazon TR")
-    seller_badge = deal.get("seller_badge", "")
-    net_cost = deal.get("net_cost", "")
-    bank_camp = deal.get("bank_campaign", "")
-    p_url = product_url or deal.get("affiliate_url") or deal.get("store_url", "")
-    site_link = f"{SITE_URL}?utm_source=whatsapp&utm_medium=channel"
-
-    msg_lines = [
-        f"🔥 *{title.upper()}*",
-        ""
-    ]
-    if old_p and new_p:
-        msg_lines.append(f"❌ Eski Fiyat: ~{old_p}~")
-        msg_lines.append(f"✅ İndirimli Fiyat: *{new_p}* ({disc})")
-    elif new_p:
-        msg_lines.append(f"✅ Fırsat Fiyatı: *{new_p}*")
-
-    coupon_info = str(deal.get("coupon_info", "")).strip()
-    if coupon_info:
-        msg_lines.append(f"🎟️ Kupon: *{coupon_info}* (Sayfada Aktif Edin)")
-
-    installment = deal.get("installment", "")
-    if installment:
-        msg_lines.append(f"💳 Taksit: *{installment}*")
-
-    if seller_badge:
-        msg_lines.append(f"🏢 Satıcı: {seller_badge}")
-    else:
-        msg_lines.append(f"🏪 Mağaza: {store}")
-
-    msg_lines.append("")
-    if p_url:
-        msg_lines.append("🛒 *İndirimli Satın Alma Linki:*")
-        msg_lines.append(p_url)
-        msg_lines.append("")
-
-    msg_lines.append("🌐 *Tüm Canlı Fırsatlar & İndirim Radarı:*")
-    msg_lines.append(site_link)
-    msg_lines.append("")
-    msg_lines.append("#işbirliği #reklam")
-
-    full_text = "\n".join(msg_lines)
-    return f"https://api.whatsapp.com/send?text={urllib.parse.quote(full_text)}"
+    """WhatsApp desteği kullanıcı talebiyle kaldırılmıştır."""
+    return ""
 
 def send_telegram_deal_for_approval(
     deal: dict,
@@ -149,7 +100,6 @@ def send_telegram_deal_for_approval(
     approval_caption += f"🏪 <b>Mağaza:</b> {store}\n\n"
     approval_caption += "👇 <i>Yayınlamak istediğiniz platformu seçin:</i>"
 
-    wp_share_url = generate_whatsapp_share_url(deal, product_url)
 
     # Butonlar (%100 Organik Instagram Stüdyo Paketi & Resmi API Dağıtımı)
     inline_keyboard = [
@@ -166,10 +116,7 @@ def send_telegram_deal_for_approval(
         [
             {"text": "🚨 Fiyat Hatası / Acil Modu (Aç/Kapa)", "callback_data": f"toggle_urgent:{deal_id}"}
         ],
-        [
-            {"text": "📲 WhatsApp Paylaş (Mobil)", "url": wp_share_url},
-            {"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}
-        ]
+        [{"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}]
     ]
     btn_row = []
     if product_url:
@@ -219,7 +166,6 @@ def send_telegram_deal_for_approval(
             "story_image_path": story_image_path,
             "caption_text": caption_text,
             "product_url": product_url,
-            "whatsapp_share_url": wp_share_url,
             "file_id": file_id,
             "status": "pending",
             "created_at": time.strftime("%Y-%m-%d %H:%M:%S")

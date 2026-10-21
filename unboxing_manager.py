@@ -110,7 +110,7 @@ def get_smart_reaction_hook(title: str) -> str:
     """
     t = title.lower()
     if any(k in t for k in ["klavye", "keyboard"]):
-        return "SESİ VE HİSSİYATI ŞAKA MI? ⌨️🔥"
+        return "SESİ VE HİSSİYATI ŞAKA MI? 🔥✨"
     elif any(k in t for k in ["mouse", "fare"]):
         return "TASARIMI VE AKICILIĞI EFSANE! 🖱️⚡"
     elif any(k in t for k in ["kulaklık", "headset", "earbuds", "tws"]):
@@ -218,17 +218,22 @@ def get_deal_unboxing_video(deal: dict, target_duration: float = 6.8) -> tuple[s
             print(f"⚠️ [UnboxingManager] Video indirilemedi, Meme formatına dönülüyor.")
             return None
 
-        # 4. ffmpeg ile tam target_duration (6.8s), 30fps ve sesli olarak kütüphaneye normalize et
+        # 4. ffmpeg ile tam target_duration (6.8s), 30fps ve SESSİZ STEREO SES İLE normalize et
+        # Yabancı konuşmayı tamamen susturur; Instagram/Shorts içinde Trending Müzik eklenmesi için tertemiz zemin hazırlar
         cmd_trim = [
             "ffmpeg",
             "-ss", "00:00:00.5",
             "-i", temp_raw,
+            "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
             "-t", str(target_duration),
             "-r", "30",
+            "-map", "0:v:0",
+            "-map", "1:a:0",
             "-c:v", "libx264",
             "-preset", "veryfast",
             "-c:a", "aac",
             "-b:a", "128k",
+            "-shortest",
             "-avoid_negative_ts", "make_zero",
             cached_video,
             "-y"

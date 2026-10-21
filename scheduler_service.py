@@ -67,7 +67,7 @@ def run_scheduler_daemon(dry_run: bool = False):
     print("🎯 Hedef Kuşaklar:")
     for s in TARGET_SLOTS:
         print(f"  • {s['hour']:02d}:{s['minute']:02d} - {s['name']}")
-    print("📱 Hedef Kanallar: YouTube Shorts, Instagram Reels, Telegram, WhatsApp")
+    print("📱 Hedef Kanallar: YouTube Shorts, Instagram Reels, Telegram")
     print("Durdurmak için Ctrl+C basabilirsiniz.")
     print("="*65 + "\n")
 

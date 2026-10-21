@@ -70,7 +70,6 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
        - YouTube Shorts
        - Instagram Reels
        - Telegram Kanalı (@flasfirsat)
-       - WhatsApp Kanalı (Flaş Fırsat ⚡)
        - Web Vitrini (index.html / deals.json)
     4. Yönetici Telegram hesabına anlık başarı raporu iletir.
     """
@@ -338,18 +337,6 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             result["platforms"]["telegram"] = {"status": "error", "error": str(et)}
             print(f"❌ Telegram Kanal İstisna: {et}")
 
-        # D) WhatsApp Kanalı (Devre Dışı)
-        from whatsapp_publisher import ENABLE_WHATSAPP
-        if ENABLE_WHATSAPP:
-            print("\n--- 4. WhatsApp Kanalı ---")
-            try:
-                from whatsapp_publisher import publish_deal_to_whatsapp_channel
-                wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path"))
-                if wp_res.get("success"):
-                    result["platforms"]["whatsapp"] = {"status": "ok", "channel": "Flaş Fırsat ⚡"}
-            except Exception:
-                pass
-
         # E) Web Vitrinine Ekle
         try:
             from web_showcase import add_deal_to_web
@@ -390,13 +377,6 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             status_lines.append(f"• 📢 <b>Telegram Kanalı:</b> ✅ {TELEGRAM_CHANNEL_ID}")
         else:
             status_lines.append(f"• 📢 <b>Telegram Kanalı:</b> ❌ {tg_info.get('error', 'Hata')}")
-
-        # WhatsApp
-        wp_info = result["platforms"].get("whatsapp", {})
-        if wp_info.get("status") == "ok":
-            status_lines.append(f"• 🟢 <b>WhatsApp Kanalı:</b> ✅ Flaş Fırsat ⚡")
-        else:
-            status_lines.append(f"• 🟢 <b>WhatsApp Kanalı:</b> ❌ {wp_info.get('error', 'Hata')}")
 
         # Web
         status_lines.append(f"• 🌐 <b>Web Vitrini:</b> <a href=\"{SITE_URL}\">Vitrinde Yayında</a>")
@@ -449,7 +429,7 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
     Haftalık veya özel istek üzerine çalışan Top 3 Fırsat Otopilotu:
     1. En yüksek indirimli ve teyitli 3 farklı alt kategorideki ürünü avlar.
     2. 1080x1920 dikey kesintisiz viral meme + 3 slaytlı Top 3 videosunu derler.
-    3. 4 platforma (YouTube Shorts, Instagram Reels, Telegram, WhatsApp) yayınlar.
+    3. 4 platforma (YouTube Shorts, Instagram Reels, Telegram) yayınlar.
     4. Web vitrinine ekler ve yöneticiye detaylı rapor iletir.
     """
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

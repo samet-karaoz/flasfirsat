@@ -14,7 +14,6 @@ from telegram_notifier import (
     save_pending_deals,
     edit_telegram_message_caption,
     answer_telegram_callback_query,
-    generate_whatsapp_share_url
 )
 
 load_dotenv()
@@ -286,18 +285,6 @@ def handle_callback_query(cq: dict):
         except Exception as et:
             statuses.append(f"• 📢 Telegram Kanalı: ❌ {et}")
 
-        # 4. WhatsApp Kanalı (Devre Dışı)
-        try:
-            from whatsapp_publisher import ENABLE_WHATSAPP, publish_deal_to_whatsapp_channel, check_whatsapp_ready
-            if ENABLE_WHATSAPP:
-                chk = check_whatsapp_ready()
-                if chk.get("ready"):
-                    wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path") or item.get("image_path"))
-                    if wp_res.get("success"):
-                        statuses.append("• 🟢 WhatsApp Kanalı: ✅ Flaş Fırsat ⚡")
-        except Exception:
-            pass
-
         # 5. Web Vitrini Güncellemesi
         try:
             from web_showcase import add_deal_to_web
@@ -402,14 +389,10 @@ def handle_callback_query(cq: dict):
             f"Diğer kanallara da göndermek ister misiniz?"
         )
         from config import SITE_URL
-        wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
         markup_buttons = [
             [
                 {"text": "📢 Kanala da At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
                 {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
-            ],
-            [
-                {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
             ]
         ]
         row_links = []
@@ -463,15 +446,11 @@ def handle_callback_query(cq: dict):
                 f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
                 f"Diğer platformlar:"
             )
-            wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
             markup = {
                 "inline_keyboard": [
                     [
                         {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
                         {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
-                    ],
-                    [
-                        {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
                     ]
                 ]
             }
@@ -546,15 +525,11 @@ def handle_callback_query(cq: dict):
                 f"🔗 <b>Shorts Linki:</b> {yt_url}\n\n"
                 f"Diğer platformlar:"
             )
-            wp_url = item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)
             markup = {
                 "inline_keyboard": [
                     [
                         {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
                         {"text": "📢 Kanala At", "callback_data": f"approve_ch:{deal_id}"}
-                    ],
-                    [
-                        {"text": "🟢 WhatsApp'ta Paylaş", "url": wp_url}
                     ]
                 ]
             }
@@ -582,81 +557,7 @@ def handle_callback_query(cq: dict):
             }
             edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
 
-    # D) WhatsApp Kanalında Otomatik Paylaş
-    elif action == "approve_wp":
-        answer_telegram_callback_query(cq_id, text="🟢 WhatsApp Kanalı yüklemesi başlatılıyor...")
-        edit_telegram_message_caption(chat_id, msg_id, f"⏳ <b>WhatsApp Kanalına Yükleniyor...</b>\n\n📦 {title}\nLütfen bekleyin...")
 
-        from whatsapp_publisher import publish_deal_to_whatsapp_channel, check_whatsapp_ready
-        chk = check_whatsapp_ready()
-        if not chk.get("ready"):
-            fail_caption = (
-                f"❌ <b>WHATSAPP WEB OTURUMU GEREKLİ!</b>\n\n"
-                f"Otomatik paylaşım için bilgisayarınızda bir defaya mahsus:\n"
-                f"<code>python whatsapp_auth.py</code>\n"
-                f"çalıştırıp QR kodu telefonunuzdan okutun.\n\n"
-                f"<i>(Dilerseniz alttaki butondan mobilde tek tıkla hemen paylaşabilirsiniz)</i>"
-            )
-            markup = {
-                "inline_keyboard": [
-                    [{"text": "📲 WhatsApp Paylaş (Mobil)", "url": item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)}],
-                    [{"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}]
-                ]
-            }
-            edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
-        else:
-            wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path") or item.get("image_path"))
-            if wp_res.get("success"):
-                item["status"] = "published_whatsapp"
-                save_pending_deals(pending)
-
-                # Web vitrinine ekle
-                try:
-                    from web_showcase import add_deal_to_web
-                    add_deal_to_web(deal)
-                except Exception as e_web:
-                    print(f"[Telegram Service] Web vitrin hatası: {e_web}")
-
-                updated_caption = (
-                    f"✅ <b>WHATSAPP KANALINDA YAYINLANDI! 🎉</b>\n\n"
-                    f"📦 <b>Ürün:</b> {title}\n"
-                    f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
-                    f"Diğer platformlar:"
-                )
-                markup = {
-                    "inline_keyboard": [
-                        [
-                            {"text": "🎬 Instagram Reels Paylaş", "callback_data": f"approve_ig:{deal_id}"},
-                            {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
-                        ],
-                        [
-                            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"}
-                        ]
-                    ]
-                }
-                from config import SITE_URL
-                row_links = []
-                if product_url:
-                    row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
-                row_links.append({"text": "🌐 Web Vitrini", "url": f"{SITE_URL}?utm_source=whatsapp&utm_medium=channel"})
-                markup["inline_keyboard"].append(row_links)
-                edit_telegram_message_caption(chat_id, msg_id, updated_caption, reply_markup=markup)
-            else:
-                err = wp_res.get("error", "Bilinmeyen hata")
-                fail_caption = (
-                    f"❌ <b>WHATSAPP YÜKLEME HATASI:</b>\n{err}\n\n"
-                    f"📦 <b>Ürün:</b> {title}\nMobilden tek tıkla gönderebilirsiniz:"
-                )
-                markup = {
-                    "inline_keyboard": [
-                        [
-                            {"text": "🔄 Tekrar Dene (Oto)", "callback_data": f"approve_wp:{deal_id}"},
-                            {"text": "📲 Mobil WhatsApp", "url": item.get("whatsapp_share_url") or generate_whatsapp_share_url(deal, product_url)}
-                        ],
-                        [{"text": "❌ İptal Et", "callback_data": f"reject:{deal_id}"}]
-                    ]
-                }
-                edit_telegram_message_caption(chat_id, msg_id, fail_caption, reply_markup=markup)
 
     # T) Fiyat Hatası / Acil Stok Modu Aç/Kapa
     elif action == "toggle_urgent":
@@ -760,7 +661,7 @@ def handle_user_message(msg: dict):
     # 1.6 /otopilot Komutu (Hemen Tek Tıkla Döngü Başlat)
     if text.startswith("/otopilot"):
         is_force = ("zorla" in text.lower() or "force" in text.lower())
-        send_telegram_text(chat_id, "🚀 <b>Otopilot döngüsü başlatıldı!</b>\n\nEn iyi indirim avlanıyor, dikey viral video üretiliyor ve YouTube, Instagram, Telegram ve WhatsApp kanallarına otomatik dağıtılıyor. İşlem tamamlandığında rapor iletilecektir...")
+        send_telegram_text(chat_id, "🚀 <b>Otopilot döngüsü başlatıldı!</b>\n\nEn iyi indirim avlanıyor, dikey viral video üretiliyor ve YouTube Shorts, Instagram ve Telegram kanallarına otomatik dağıtılıyor. İşlem tamamlandığında rapor iletilecektir...")
         import threading
         def _run_auto():
             try:

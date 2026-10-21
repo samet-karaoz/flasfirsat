@@ -1264,23 +1264,30 @@ def build_split_screen_video(
     reaction_overlay_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
     create_reaction_hook_overlay(reaction_text, reaction_overlay_path)
 
-    # 3. Ses kaynağını belirle (Öncelik: Meme'in kendi orijinal sesi)
+    # 3. Ses kaynağını belirle (Öncelik: Sessiz Mod / Meme'in kendi sesi)
     chk_a = safe_run_subprocess(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
-    has_meme_audio = "Audio:" in chk_a.stderr
+    has_meme_audio = "Audio:" in (chk_a.stderr or "")
 
-    if audio_name:
+    is_silent = (audio_name in ("silent", "mute"))
+    use_external_audio = False
+    use_silent_audio = False
+
+    if is_silent:
+        use_silent_audio = True
+    elif audio_name:
         if not audio_name.endswith(".m4a"):
             audio_name += ".m4a"
         audio_path = os.path.join(AUDIO_DIR, audio_name)
-        use_external_audio = True
+        if os.path.exists(audio_path):
+            use_external_audio = True
+        else:
+            use_silent_audio = True
     elif has_meme_audio:
         use_external_audio = False
         print(f"[Montaj] 🎵 Meme'in kendi ikonik orijinal müziği/sesi kullanılıyor!")
     else:
-        available_audios = [a for a in AVAILABLE_AUDIOS if os.path.exists(os.path.join(AUDIO_DIR, a))]
-        chosen_audio = random.choice(available_audios) if available_audios else "phonk_meme.m4a"
-        audio_path = os.path.join(AUDIO_DIR, chosen_audio)
-        use_external_audio = True
+        # Meme'in kendi sesi yoksa ve harici ses verilmediyse temiz dijital sessizlik
+        use_silent_audio = True
 
     # 4. Türkçe Voiceover Hook Üret (edge-tts)
     voice_path = None
@@ -1343,7 +1350,11 @@ def build_split_screen_video(
     has_sfx = False
     input_idx = 3  # 0: top_source, 1: bottom_meme, 2: reaction_overlay
 
-    if not use_external_audio:
+    if use_silent_audio:
+        cmd += ["-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100"]
+        bg_stream = f"[{input_idx}:a]"
+        input_idx += 1
+    elif not use_external_audio:
         bg_stream = "[1:a]"
     else:
         cmd += ["-i", audio_path]

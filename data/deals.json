@@ -371,8 +371,8 @@
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_128gb_type_c_bell_ad87d234.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.10.2026 11:29",
     "category": "hardware",
     "deal_code": "#116"
@@ -407,8 +407,8 @@
     "image_url": "assets/products/stanley_transit_termos_88819170.jpg",
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "deal_code": "#113"
   },
   {
@@ -457,8 +457,8 @@
     "image_url": "assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg",
     "date_added": "13.10.2026 22:09",
     "category": "gaming",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "deal_code": "#110"
   },
   {

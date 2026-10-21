@@ -1068,5 +1068,45 @@
       "file_id": "BAACAgQAAxkDAAOIatiH5YYsOKhTXxC1wpRV6zirDuQAAt0dAAL1tsBSaNSxxIwGKk89BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_34.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-21 12:40",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Glorious Model O Eternal RGB Ultra Hafif Espor Mouse",
+      "old_price": "1.499 TL",
+      "new_price": "1.190 TL",
+      "discount_pct": "-21%",
+      "store_name": "Amazon TR",
+      "store_url": "https://www.amazon.com.tr/dp/B0F9B79WBR?tag=flasfirsat04-21",
+      "category": "gaming",
+      "rating": 4.5,
+      "has_verified_old_price": true,
+      "seller_badge": "AMAZON TR",
+      "feature_pill": "1.190 TLYE 55G RGB GAMİNG MOUSE!",
+      "killer_hook": "1.190 TLYE 55G RGB GAMİNG MOUSE!",
+      "image_url": "https://m.media-amazon.com/images/I/61NtaT-5wKL._AC_SL1500_.jpg",
+      "image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\amz_B0F9B79WBR.jpg",
+      "is_lowest_30d": false,
+      "deal_code": "#139",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "net_cost": "",
+      "installment": "Peşin Fiyatına 3 Taksit x 397 TL",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0F9B79WBR?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "error",
+        "url": ""
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
   }
 ]

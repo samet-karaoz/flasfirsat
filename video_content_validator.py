@@ -119,7 +119,7 @@ def extract_inspection_frames(video_path: str, slug: str = "check") -> tuple:
     frame_a = os.path.join(TEMP_DIR, f"val_frame_a_{slug}.png")
     frame_b = os.path.join(TEMP_DIR, f"val_frame_b_{slug}.png")
 
-    for ts, out_p in [("00:00:01.20", frame_a), ("00:00:02.40", frame_b)]:
+    for ts, out_p in [("00:00:01.30", frame_a), ("00:00:03.40", frame_b)]:
         if os.path.exists(out_p):
             try:
                 os.remove(out_p)

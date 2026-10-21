@@ -859,8 +859,8 @@ def create_product_banner(
         draw.text((54, 180), title_lines[1], font=f_title, fill=theme["title_color"])
         card_top = 216
 
-    # 4. Ürün Kartı (Stüdyo Çerçevesi - Kenarlardan 54px ferah pay)
-    card_box = (54, card_top, W - 54, 734)
+    # 4. Ürün Kartı (Stüdyo Çerçevesi - Kenarlardan 54px ferah pay, alt fiyat rozetine 8px boşluk)
+    card_box = (54, card_top, W - 54, 712)
     draw.rounded_rectangle(card_box, radius=24, fill=(255, 255, 255, 255), outline=theme["card_border"], width=3)
 
     # 🌟 Ürün Arkasına Temaya Uyumlu Soft Spotlight (Işıma) Efekti
@@ -1217,11 +1217,14 @@ def build_split_screen_video(
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(TEMP_DIR, exist_ok=True)
 
-    # 1. Meme videosunu seç (Belirtilmemişse AI/Akıllı Algoritma Seçer)
+    # 1. Meme / Kutu Açılış videosunu seç (Belirtilmemişse AI/Akıllı Algoritma Seçer)
     if meme_name:
-        if not meme_name.endswith(".mp4"):
-            meme_name += ".mp4"
-        bottom_meme_path = os.path.join(MEMES_DIR, meme_name)
+        if os.path.exists(meme_name):
+            bottom_meme_path = meme_name
+        else:
+            if not meme_name.endswith(".mp4"):
+                meme_name += ".mp4"
+            bottom_meme_path = os.path.join(MEMES_DIR, meme_name)
     else:
         chosen = select_smart_meme(discount_pct, product_title)
         bottom_meme_path = os.path.join(MEMES_DIR, chosen)

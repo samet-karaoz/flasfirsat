@@ -91,10 +91,10 @@ def authenticate():
     print(auth_url, flush=True)
     print("=" * 60, flush=True)
 
-    # Windows'ta tarayıcıyı açmayı dene
+    # Tarayıcıyı aç
     try:
-        import subprocess
-        subprocess.run(["cmd.exe", "/c", "start", "", auth_url], check=False)
+        import webbrowser
+        webbrowser.open(auth_url)
     except Exception:
         pass
 

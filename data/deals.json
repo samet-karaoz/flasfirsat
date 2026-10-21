@@ -411,8 +411,8 @@
     "date_added": "14.10.2026 08:35",
     "category": "monitor",
     "deal_code": "#114",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791955175_12",
@@ -590,7 +590,7 @@
     "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.jpg",
     "date_added": "12.10.2026 21:18",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "expired_reason": "Stok Tükendi",
     "category": "gaming",
     "deal_code": "#104"
   },

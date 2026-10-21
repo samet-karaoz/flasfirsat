@@ -774,6 +774,9 @@ def create_product_banner(
     seller_badge_text = _clean_ttf(seller_badge_text)
     market_badge = _clean_ttf(market_badge)
     feature_text = _clean_ttf(feature_text)
+    # Fiyat Gizleme & Spoiler Önleme: Özellik rozetinde asla indirimli fiyat sızamaz!
+    feature_text = re.sub(r"\b\d+[\.,]?\d*\s*(?:bin\s*)?(?:tl|lira)(?:\s*altına|['’]?[yY]?[eEaA]|['’]?[dD][aAeE][nN])?\b|\b\d+[\.,]?\d*\s*(?:bin\s*)?altına\b|\b\d+[\.,]?\d*\s*['’]?(?:ye|ya|e|a)\b", "", feature_text, flags=re.IGNORECASE).strip()
+    feature_text = re.sub(r"^\s*[-–—•:!]+\s*", "", feature_text).strip()
     coupon_text = _clean_ttf(coupon_text)
     installment = _clean_ttf(installment)
 

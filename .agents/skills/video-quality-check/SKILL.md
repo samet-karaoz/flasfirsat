@@ -25,6 +25,13 @@ Bu skill, üretilen 1080x1920 dikey split-screen videoların ve 1080x960 üst ü
 - Ürün görselleri temizlenmiş arka planla (şeffaf PNG) veya beyaz/nötr arka planda merkezi olarak konumlandırılmalıdır.
 - Görsel sıkıştırma veya pikselleşme olmamalıdır; en az 600x600 çözünürlük korunmalıdır.
 
+### D. Fiyat Gizleme (Mystery Reveal) ve Spoiler Önleme Kuralı
+- **Kart Altı Özellik Rozeti (Feature Pill / Killer Hook):**
+  - Ürün görseli altındaki özellik rozetinde (Örn: `⚡ 6 DİLİM İNOX DÖKÜM TOST!`) KESİNLİKLE hiçbir indirimli fiyat tutarı (`3.999 TL vb.`) erken gösterilemez.
+  - Bu rozet yalnızca ürünün teknik/fiziksel üstünlüklerini (kapasite, panel tipi, watt, malzeme, pil ömrü vb.) vurgulamak içindir.
+  - İndirimli fiyat tutarı videonun ilk 2.85 saniyesinde gizlidir (`??? TL`). Erken fiyat bilgisi vermek animasyonun merak/kanca (suspense & retention) etkisini tamamen yok eder.
+  - `product_verifier.py`, `motion_composer.py` ve `split_composer.py` üzerindeki otomatik regex filtreleri rozet metnindeki tüm fiyat kalıntılarını zorunlu olarak ayıklar.
+
 ---
 
 ## 2. Video ve Ses Derleme Standartları (FFmpeg)

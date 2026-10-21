@@ -14,40 +14,45 @@ def extract_product_killer_hook(
     raw_specs: str = ""
 ) -> str:
     """
-    Verilen indirimli e-ticaret ürününün o anki GERÇEK teknik/fiziksel özelliklerini ve satış fiyatını inceleyerek,
+    Verilen indirimli e-ticaret ürününün o anki GERÇEK teknik/fiziksel özelliklerini inceleyerek,
     kısa videoda izleyiciyi hemen yakalayacak, o ürüne ÖZGÜ tek satırlık VURUCU 'Killer Feature / Hook' üretir.
-    Örn: '4.449 TL'YE 200Hz 0.5ms FAST IPS!' veya '1.000 TL ALTINA 2K 360° KAMERA!'
+    Örn: '200Hz 0.5ms FAST IPS PANEL!' veya '2K 360° GECE GÖRÜŞLÜ KAMERA!'
+    NOT: İndirimli fiyat animasyonunu bozmamak (spoiler vermemek) için KESİNLİKLE fiyat rakamı içermez!
     """
     from deal_hunter import call_gemini
     prompt = f"""Sen viral kısa video (Reels, TikTok, Shorts) içerik üreticisisin.
-Verilen indirimli e-ticaret ürününün o anki GERÇEK teknik/fiziksel özelliklerini ve satış fiyatını incele.
-İzleyicinin videoda ilk saniyede görüp "Bu fiyata bu özellik inanılmaz!" diyerek dikkatini çekecek, o ürüne ÖZGÜ, EN VURUCU tek satırlık dikkat çekici başlığı yaz.
+Verilen e-ticaret ürününün teknik/fiziksel özelliklerini incele.
+İzleyicinin videoda ilk saniyede görüp "Bu özellik harika!" diyerek dikkatini çekecek, o ürüne ÖZGÜ, EN VURUCU tek satırlık teknik/fiziksel özellik başlığını yaz.
 
 ZORUNLU KURALLAR:
-1. YALNIZCA bu ürünün gerçek özelliklerini kullan (Asla başka bir ürünün özelliğini uydurma veya yazma!).
-2. Ürünün en can alıcı 1 veya 2 teknik özelliğini, varsa fiyat avantajıyla vurucu şekilde birleştir.
-3. Maksimum 35 karakter uzunluğunda olsun. Kısa, tok ve büyük harflerle vurucu olsun.
-4. Başında veya sonunda gereksiz tırnak, emoji, ön ek veya açıklama olmasın. Sadece tek satır metni döndür.
+1. YALNIZCA bu ürünün gerçek özelliklerini kullan (Asla uydurma özellik yazma!).
+2. KESİNLİKLE FİYAT (TL, Lira, rakam, altına, 'ye vb.) YAZMA! Çünkü indirimli fiyat zaten videonun altında animasyonlu kutuda açılmaktadır. Fiyatı buraya yazmak sürprizi bozar!
+3. SADECE ürünün en can alıcı 1 veya 2 teknik/fiziksel özelliğini vurgula (Örn: panel tipi, kapasite, watt, malzeme, motor gücü, pil ömrü vb.).
+4. Maksimum 35 karakter uzunluğunda olsun. Kısa, tok ve büyük harflerle vurucu olsun.
+5. Başında veya sonunda gereksiz tırnak, emoji, ön ek veya açıklama olmasın. Sadece tek satır metni döndür.
 
 Örnek Çıktılar:
-- Kamera (999 TL): 1.000 TL ALTINA 2K 360° KAMERA!
-- Monitör (4.449 TL): 4.449 TL'YE 200Hz 0.5ms FAST IPS!
-- Mousepad (659 TL): 90x40 CM SU GEÇİRMEZ MİKRO DOKUMA!
-- Airfryer (1.399 TL): 1.400 TL ALTINA 8L DİJİTAL AİRFRYER!
+- Tost Makinesi: 6 DİLİM DÖKÜM GRANİT IZGARA!
+- Kamera: 2K 360° GECE GÖRÜŞLÜ AKILLI KAMERA!
+- Monitör: 200Hz 0.5ms FAST IPS GAMING EKRAN!
+- Mousepad: 90x40 CM SU GEÇİRMEZ MİKRO DOKUMA!
+- Airfryer: 8L DİJİTAL DOKUNMATİK EKRAN!
+- Termos: 48 SAAT ISI KORUMALI ÇELİK VAKUM!
+- Klavye: HOT-SWAP RGB GASKET MEKANİK!
 
 Ürün Başlığı: {title}
-Satış Fiyatı: {new_price}
-Eski Fiyat: {old_price}
-İndirim Oranı: {discount_pct}
 Ürün Detayları/Teknik Veriler:
 {raw_specs[:600]}
 
-SADECE tek satırlık vurucu başlığı döndür:"""
+SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
     try:
         summary = call_gemini(prompt, json_mode=False)
         if isinstance(summary, str) and summary.strip():
             clean = summary.strip().replace('"', '').replace("'", "").replace("\n", " ").strip()
             clean = re.sub(r'^[^\w\s%.,+/\-]+', '', clean).strip()
+            # Spoiler Önleyici: Fiyat rakamı veya TL kalıntılarını tamamen temizle
+            clean = re.sub(r"\b\d+[\.,]?\d*\s*(?:bin\s*)?(?:tl|lira)(?:\s*altına|['’]?[yY]?[eEaA]|['’]?[dD][aAeE][nN])?\b|\b\d+[\.,]?\d*\s*(?:bin\s*)?altına\b|\b\d+[\.,]?\d*\s*['’]?(?:ye|ya|e|a)\b", "", clean, flags=re.IGNORECASE).strip()
+            clean = re.sub(r"^\s*[-–—•:!]+\s*", "", clean).strip()
             if 5 <= len(clean) <= 45:
                 return clean.upper()
     except Exception as e:
@@ -157,7 +162,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         soup.select_one("#apex_desktop .a-price .a-offscreen") or
         soup.select_one("#priceblock_dealprice") or
         soup.select_one("#priceblock_ourprice") or
-        soup.select_one(".a-price .a-offscreen")
+        soup.select_one("#desktop_buybox .a-price .a-offscreen")
     )
     live_price_str = price_el.text.strip().replace("\n", "").replace(" ", "") if price_el else ""
     price_val = parse_price_to_float(live_price_str)
@@ -358,6 +363,10 @@ def verify_deal_before_publish(deal: dict) -> dict:
             if orig_p > 0 and live_p > orig_p * 1.15:
                 print(f"[Doğrulama] ❌ FİYAT DEĞİŞMİŞ/İNDİRİM BİTMİŞ! (Eski: {orig_p} TL -> Canlı: {live_p} TL). Paylaşım iptal ediliyor.")
                 return {"valid": False, "reason": "Fiyat artmış / indirim bitmiş"}
+            elif orig_p > 0 and live_p < orig_p * 0.40:
+                print(f"[Doğrulama] ⚠️ Canlı fiyat ({live_p} TL), ürün fiyatından ({orig_p} TL) aşırı düşük (yedek parça/aksesuar tuzağı). Orijinal fiyat korunuyor.")
+                live_p = orig_p
+                deal["new_price"] = f"{int(orig_p):,} TL".replace(",", ".") if orig_p.is_integer() else f"{orig_p:,.2f} TL".replace(",", "X").replace(".", ",").replace("X", ".")
             elif live_p > 0:
                 deal["new_price"] = f"{int(live_p):,} TL".replace(",", ".") if live_p.is_integer() else f"{live_p:,.2f} TL".replace(",", "X").replace(".", ",").replace("X", ".")
 

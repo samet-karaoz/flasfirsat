@@ -117,6 +117,9 @@ def generate_staggered_banner_frames(
     coupon_text = sanitize_text(deal.get("coupon_info", ""))
     deal_code = sanitize_text(deal.get("deal_code", "#101"))
     feature_text = sanitize_text(deal.get("killer_hook") or deal.get("feature_pill", ""))
+    # Fiyat Gizleme & Spoiler Önleme: Özellik rozetinde asla erken indirimli fiyat sızamaz!
+    feature_text = re.sub(r"\b\d+[\.,]?\d*\s*(?:bin\s*)?(?:tl|lira)(?:\s*altına|['’]?[yY]?[eEaA]|['’]?[dD][aAeE][nN])?\b|\b\d+[\.,]?\d*\s*(?:bin\s*)?altına\b|\b\d+[\.,]?\d*\s*['’]?(?:ye|ya|e|a)\b", "", feature_text, flags=re.IGNORECASE).strip()
+    feature_text = re.sub(r"^\s*[-–—•:!]+\s*", "", feature_text).strip()
     is_lowest_30d = bool(deal.get("is_lowest_30d", False))
     market_badge = sanitize_text(deal.get("market_badge", ""))
     seller_badge_text = sanitize_text(deal.get("seller_badge", ""))

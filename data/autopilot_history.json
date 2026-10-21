@@ -1290,5 +1290,131 @@
       "file_id": "BAACAgQAAxkDAAORatjr5i-8NtZELndXV0u0wBlh91cAAu8dAAJxeclSOASupKvOaLQ9BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_41.mp4"
     }
+  },
+  {
+    "timestamp": "2026-10-21 19:48",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "title": "Karaca Gastro Gourmet Döküm Izgara ve Tost Makinesi Inox 6 Dilim",
+      "old_price": "7.999 TL",
+      "new_price": "3.999 TL",
+      "discount_pct": "-50%",
+      "store_url": "https://www.amazon.com.tr/dp/B0DJQSTY3Y?tag=flasfirsat04-21",
+      "url": "https://www.amazon.com.tr/dp/B0DJQSTY3Y",
+      "store_name": "Amazon TR",
+      "image_url": "https://m.media-amazon.com/images/I/717KNwKiCCL._AC_SL1500_.jpg",
+      "image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\karaca_gourmet_prod.jpg",
+      "seller_badge": "AMAZON TR",
+      "badge": "DEV İNDİRİM",
+      "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+      "installment": "Peşin Fiyatına 3 Taksit x 1.333 TL",
+      "reaction_text": "HEM IZGARA HEM TOST CANAVARI! 🥩🥪",
+      "has_verified_old_price": true,
+      "feature_pill": "3.999 TLYE 6 DİLİM İNOX DÖKÜM TOST!",
+      "killer_hook": "3.999 TLYE 6 DİLİM İNOX DÖKÜM TOST!",
+      "is_lowest_30d": false,
+      "deal_code": "#140",
+      "net_cost": "",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DJQSTY3Y?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/0s3MyMU001k"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-21 20:26:06",
+    "slot": "Prime Time Kuşağı (Karaca Gourmet - Spoiler Free)",
+    "success": false,
+    "platforms": {},
+    "error": "invalid syntax (product_verifier.py, line 54)"
+  },
+  {
+    "timestamp": "2026-10-21 20:27:13",
+    "slot": "Prime Time Kuşağı (Karaca Gourmet - Spoiler Free)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Karaca Gastro Gourmet Döküm Izgara ve Tost Makinesi Inox 6 Dilim",
+      "new_price": "3.999 TL",
+      "old_price": "7.999 TL",
+      "discount_pct": "-50%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DJQSTY3Y?tag=flasfirsat04-21"
+    },
+    "video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_202713_karaca_gastro_gourmet_dokum_iz.mp4",
+    "youtube_video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_202713_karaca_gastro_gourmet_dokum_iz_youtube.mp4",
+    "caption_text": "Fiyatı görünce sitenin hatası sandım ama Amazon kendi satıyormuş, yarı yarıya düşmüş şaka gibi... \n\n7.999 TL ❌ -> 3.999 TL ✅ (%50 İndirim)\n\nGerçek döküm plaka tost makinesi arıyorsanız bu bütçeye kaçmaz, evde döküm ızgara keyfi yapmak isteyenler mutlaka baksın. Stoklar hızlı eriyor.\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n📌 Profilimizdeki sitemizi açıp arama kutusuna #141 yazarak da ürüne saniyeler içinde ulaşabilirsin!\n🔗 Ürün linki Hikayemizde (Story) ve profildeki linkte aktif!\n💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇\n\n#indirim #mutfak #karaca #fırsat #çeyiz #işbirliği #reklam",
+    "story_image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_karaca_gourmet_prod.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792603713",
+      "message_id": 149,
+      "file_id": "BAACAgQAAxkDAAOVatj2RXJKW7Im33DfCqygqBLHVD0AAgoeAAJxeclSjp557UyQoQ89BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_42.mp4"
+    }
+  },
+  {
+    "timestamp": "2026-10-21 20:30:24",
+    "slot": "Prime Time Kuşağı (Karaca Gourmet - Spoiler Free)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Karaca Gastro Gourmet Döküm Izgara ve Tost Makinesi Inox 6 Dilim",
+      "new_price": "3.999 TL",
+      "old_price": "7.999 TL",
+      "discount_pct": "-50%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DJQSTY3Y?tag=flasfirsat04-21"
+    },
+    "video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_203025_karaca_gastro_gourmet_dokum_iz.mp4",
+    "youtube_video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_203025_karaca_gastro_gourmet_dokum_iz_youtube.mp4",
+    "caption_text": "Fiyatı görünce ilk başta ekran hatası sandım ama gerçekmiş, yarı yarıya inmiş resmen... İhtiyacı olan ev arkadaşına veya çeyiz yapan kankana acil haber et 👇\n\nKaraca Gastro Gourmet Döküm Izgara ve Tost Makinesi Inox\n7.999 TL ❌ -> 3.999 TL ✅ (%50 İndirim 🔥)\n\nÇıkarılabilir döküm plakaları ve devasa kapasitesiyle mutfakta hayat kurtarıyor, bu fiyata bu kaliteyi bulmak şu devirde imkansız gibi bir şeydi.\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n🔗 İstersen profilimizdeki sitemize girip arama kutusuna **#141** yazarak da ürüne direkt ulaşabilirsin.\n📌 Fiyatı yine uçmadan önce videoyu KAYDET, ihtiyacı olanla PAYLAŞ! ✈️\n💬 Sizce bu fiyata kaçmaz mı, kullananlar ne diyor? Yorumlarda buluşalım 👇\n\n#indirim #mutfak #karaca #fırsat #işbirliği #reklam",
+    "story_image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_karaca_gourmet_prod.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792603862",
+      "message_id": 150,
+      "file_id": "BAACAgQAAxkDAAOWatj22A7RasiBDj1ZE7tvqqK8fMEAAgseAAJxeclSxiNBljb_cUY9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_43.mp4"
+    }
+  },
+  {
+    "timestamp": "2026-10-21 20:57:23",
+    "slot": "Örnek Test Videosu (De'Longhi Dedica Espresso - 0 Meme)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "De'Longhi Dedica Manuel Espresso Makinesi Inox (EC685.M)",
+      "new_price": "870,13 TL",
+      "old_price": "10.999 TL",
+      "discount_pct": "-92%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B06WGTZ874?tag=flasfirsat04-21"
+    },
+    "video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_205723_delonghi_dedica_manuel_espress.mp4",
+    "youtube_video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_205723_delonghi_dedica_manuel_espress_youtube.mp4",
+    "caption_text": "Fiyatı ilk gördüğümde kesin sistemsel bir hata dedim ama ödeme adımına kadar düşüyor, şaka gibi resmen... 😍\n\n☕ De'Longhi Dedica Manuel Espresso Makinesi (Inox)\n❌ 10.999 TL yerine\n✅ 870,13 TL (%92 İndirim!)\n\nDışarıda tek bir kahve parasına evde barista olmalık makine resmenBEDAVAYA geliyor. Bu fiyata bırakın makineyi, kolunu zor alırsınız. Amazon satıcılı olduğu için kafanız da rahat olur, stoklar eriyor acele edin derim.\n\nProfilimdeki linke tıklayarak veya sitedeki arama çubuğuna #141 yazarak ürüne direkt ulaşabilirsiniz.\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n📌 Fiyat tekrar artmadan videoyu KAYDET, kahve bağımlısı arkadaşına GÖNDER! ✈️\n💬 Sizce bu fiyata gelecek mi yoksa iptal mi olur? Yorumlarda buluşalım 👇\n🔗 Ürün linki Hikayemizde (Story) ve profildeki sitede aktif!\n\n#indirim #kahve #delonghi #fırsat #espresso #işbirliği #reklam",
+    "story_image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_delonghi_dedica_prod.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792605542",
+      "message_id": 151,
+      "file_id": "BAACAgQAAxkDAAOXatj9ar6HmRjH5NRY4JZxZeUMhW4AAhYeAAJxeclSHVatLaMjacE9BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_44.mp4"
+    }
   }
 ]

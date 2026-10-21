@@ -161,8 +161,7 @@ def send_telegram_deal_for_approval(
             {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
         ],
         [
-            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
-            {"text": "🟢 WhatsApp Kanalına At (Oto)", "callback_data": f"approve_wp:{deal_id}"}
+            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"}
         ],
         [
             {"text": "🚨 Fiyat Hatası / Acil Modu (Aç/Kapa)", "callback_data": f"toggle_urgent:{deal_id}"}

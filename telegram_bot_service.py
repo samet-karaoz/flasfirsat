@@ -263,20 +263,17 @@ def handle_callback_query(cq: dict):
         except Exception as et:
             statuses.append(f"• 📢 Telegram Kanalı: ❌ {et}")
 
-        # 4. WhatsApp Kanalı
+        # 4. WhatsApp Kanalı (Devre Dışı)
         try:
-            from whatsapp_publisher import publish_deal_to_whatsapp_channel, check_whatsapp_ready
-            chk = check_whatsapp_ready()
-            if chk.get("ready"):
-                wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path") or item.get("image_path"))
-                if wp_res.get("success"):
-                    statuses.append("• 🟢 WhatsApp Kanalı: ✅ Flaş Fırsat ⚡")
-                else:
-                    statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {wp_res.get('error', 'Hata')}")
-            else:
-                statuses.append("• 🟢 WhatsApp: ℹ️ Mobil butondan paylaşılabilir")
-        except Exception as ew:
-            statuses.append(f"• 🟢 WhatsApp Kanalı: ❌ {ew}")
+            from whatsapp_publisher import ENABLE_WHATSAPP, publish_deal_to_whatsapp_channel, check_whatsapp_ready
+            if ENABLE_WHATSAPP:
+                chk = check_whatsapp_ready()
+                if chk.get("ready"):
+                    wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path") or item.get("image_path"))
+                    if wp_res.get("success"):
+                        statuses.append("• 🟢 WhatsApp Kanalı: ✅ Flaş Fırsat ⚡")
+        except Exception:
+            pass
 
         # 5. Web Vitrini Güncellemesi
         try:

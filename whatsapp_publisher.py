@@ -10,9 +10,12 @@ from config import BASE_DIR, DATA_DIR, SITE_URL
 
 USER_DATA_DIR = os.path.join(DATA_DIR, "whatsapp_user_data")
 WHATSAPP_CHANNEL_NAME = os.getenv("WHATSAPP_CHANNEL_NAME", "Flaş Fırsat").strip()
+ENABLE_WHATSAPP = os.getenv("ENABLE_WHATSAPP", "false").strip().lower() in ("true", "1", "yes")
 
 def check_whatsapp_ready() -> dict:
     """WhatsApp oturumunun hazır olup olmadığını denetler."""
+    if not ENABLE_WHATSAPP:
+        return {"ready": False, "message": "WhatsApp kanalı devre dışı bırakıldı."}
     if not os.path.exists(USER_DATA_DIR):
         return {"ready": False, "message": "WhatsApp oturumu açılmamış. 'python whatsapp_auth.py' çalıştırarak bir kez QR kod okutun."}
     idb = os.path.join(USER_DATA_DIR, "Default", "IndexedDB")
@@ -74,6 +77,10 @@ def publish_deal_to_whatsapp_channel(
     Playwright ve WhatsApp Web üzerinden verilen fırsatı doğrudan WhatsApp Kanalına otomatik gönderir.
     Görsel varsa görsel + açıklama, yoksa metin olarak iletir.
     """
+    if not ENABLE_WHATSAPP:
+        print("[WhatsApp Publisher] ℹ️ WhatsApp kanalı devre dışı bırakıldı, paylaşım atlandı.")
+        return {"success": False, "skipped": True, "error": "WhatsApp kanalı devre dışı bırakıldı."}
+
     target_channel = channel_name or WHATSAPP_CHANNEL_NAME or "Flaş Fırsat"
     caption_text = format_whatsapp_message(deal)
     target_img = image_path if (image_path and os.path.exists(image_path)) else deal.get("image_path")

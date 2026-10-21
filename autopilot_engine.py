@@ -338,20 +338,17 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             result["platforms"]["telegram"] = {"status": "error", "error": str(et)}
             print(f"❌ Telegram Kanal İstisna: {et}")
 
-        # D) WhatsApp Kanalı (Flaş Fırsat ⚡)
-        print("\n--- 4. WhatsApp Kanalı ---")
-        try:
-            from whatsapp_publisher import publish_deal_to_whatsapp_channel
-            wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path"))
-            if wp_res.get("success"):
-                result["platforms"]["whatsapp"] = {"status": "ok", "channel": "Flaş Fırsat ⚡"}
-                print("✅ WhatsApp Kanalı Başarılı!")
-            else:
-                result["platforms"]["whatsapp"] = {"status": "error", "error": wp_res.get("error")}
-                print(f"❌ WhatsApp Kanalı Hatası: {wp_res.get('error')}")
-        except Exception as ew:
-            result["platforms"]["whatsapp"] = {"status": "error", "error": str(ew)}
-            print(f"❌ WhatsApp Kanal İstisna: {ew}")
+        # D) WhatsApp Kanalı (Devre Dışı)
+        from whatsapp_publisher import ENABLE_WHATSAPP
+        if ENABLE_WHATSAPP:
+            print("\n--- 4. WhatsApp Kanalı ---")
+            try:
+                from whatsapp_publisher import publish_deal_to_whatsapp_channel
+                wp_res = publish_deal_to_whatsapp_channel(deal, image_path=deal.get("image_path"))
+                if wp_res.get("success"):
+                    result["platforms"]["whatsapp"] = {"status": "ok", "channel": "Flaş Fırsat ⚡"}
+            except Exception:
+                pass
 
         # E) Web Vitrinine Ekle
         try:

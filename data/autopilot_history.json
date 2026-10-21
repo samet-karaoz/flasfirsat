@@ -1042,5 +1042,31 @@
         "channel": "-1004415003185"
       }
     }
+  },
+  {
+    "timestamp": "2026-10-21 12:36:14",
+    "slot": "12:30 Prime Time (Öğle Kuşağı)",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Glorious Model O Eternal RGB Ultra Hafif Espor Mouse",
+      "new_price": "1.190 TL",
+      "old_price": "1.499 TL",
+      "discount_pct": "-21%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0F9B79WBR?tag=flasfirsat04-21"
+    },
+    "video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_123614_glorious_model_o_eternal_rgb_u.mp4",
+    "youtube_video_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261021_123614_glorious_model_o_eternal_rgb_u_youtube.mp4",
+    "caption_text": "Fiyatı görünce fake sandım ama Amazon direkt kendisi satıyor, esporcu dostlarım hemen baksın stok bitiyor... 🔥\n\n🎮 Glorious Model O Eternal RGB Ultra Hafif Espor Mouse\n❌ Eski Fiyat: 1.499 TL\n✅ Yeni Fiyat: 1.190 TL\n📉 İndirim: %21\n\nElinde kaymak gibi kayan, o ağırlıksız hissi veren bir mouse arıyorsan bu fiyata kaçmaz. \n\n💡 Ürünü profildeki sitemizde arama kutusuna **#139** yazarak saniyeler içinde bulabilirsin!\n\n💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇\n📌 Fiyat tekrar artmadan videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️\n🔗 Ürün linki Hikayemizde (Story) ve profildeki sitede aktif!\n\n#indirim #oyuncu #gaming #fırsat #işbirliği #reklam",
+    "story_image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_40_amz_B0F9B79WBR.jpg.jpg",
+    "mode": "semi_automatic_approval",
+    "approval": {
+      "success": true,
+      "deal_id": "deal_1792575456",
+      "message_id": 136,
+      "file_id": "BAACAgQAAxkDAAOIatiH5YYsOKhTXxC1wpRV6zirDuQAAt0dAAL1tsBSaNSxxIwGKk89BA",
+      "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_34.mp4"
+    }
   }
 ]

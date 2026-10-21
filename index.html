@@ -17,7 +17,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Google Analytics ID ayarlanmadı. Yerel telemetri ve etkileşim motoru çalışıyor. -->
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6FTHRHYFR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-E6FTHRHYFR');
+    </script>
     <style>
         :root {
             --bg-base: #0B0D12;
@@ -1731,7 +1739,7 @@
                 </div>
             </div>
 
-            <div class="deal-card" data-status="active" data-category="general" data-title="philips 7500 buharlı ütü amazon tr general #124 124 kod 124" data-deal-id="deal_1792300314_23" data-deal-title="Philips 7500 Buharlı Ütü" data-store="Amazon TR" data-price="3.298 TL">
+            <div class="deal-card expired-card" data-status="expired" data-category="general" data-title="philips 7500 buharlı ütü amazon tr general #124 124 kod 124" data-deal-id="deal_1792300314_23" data-deal-title="Philips 7500 Buharlı Ütü" data-store="Amazon TR" data-price="3.298 TL">
                 <a href="https://www.amazon.com.tr/dp/B0BXM27M5X?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="Philips 7500 Buharlı Ütü">
                     <div class="card-img-wrap">
                         <img src="assets/products/philips_7500_buharl___t_3c221632.jpg" alt="Philips 7500 Buharlı Ütü" class="card-img" loading="lazy">
@@ -1739,7 +1747,7 @@
                         <span class="badge-discount">-37%</span>
                         <span class="badge-deal-code">🔢 KOD: #124</span>
                         
-                        
+                        <span class="badge-expired">🔴 STOK TÜKENDI</span>
                     </div>
                 </a>
                 <div class="card-content">
@@ -1774,7 +1782,7 @@
                         </div>
                     </div>
 
-                    <a href="https://www.amazon.com.tr/dp/B0BXM27M5X?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn" data-deal-id="deal_1792300314_23" data-title="Philips 7500 Buharlı Ütü" data-store="Amazon TR" data-price="3.298 TL">🔥 Fırsata Git & Satın Al</a>
+                    <a href="https://www.amazon.com.tr/dp/B0BXM27M5X?tag=flasfirsat04-21" target="_blank" rel="nofollow noopener sponsored" class="buy-btn expired-btn" data-deal-id="deal_1792300314_23" data-title="Philips 7500 Buharlı Ütü" data-store="Amazon TR" data-price="3.298 TL">⌛ İndirim Sona Erdi (Fiyatı Gör)</a>
                 </div>
             </div>
 
@@ -2565,7 +2573,7 @@
                         <span class="badge-discount">-30%</span>
                         <span class="badge-deal-code">🔢 KOD: #104</span>
                         
-                        <span class="badge-expired">🔴 STOK TÜKENDI</span>
+                        <span class="badge-expired">🔴 İNDIRIM BITTI</span>
                     </div>
                 </a>
                 <div class="card-content">
@@ -2867,8 +2875,8 @@
 
         // --- 2. ZİYARETÇİ VE ETKİLEŞİM TELEMETRİ MOTORU ---
         const STATS_KEY = 'flas_stats_v1';
-        const gaConfigured = false;
-        const gaIdSafe = '';
+        const gaConfigured = true;
+        const gaIdSafe = 'G-E6FTHRHYFR';
 
         function getStoredStats() {
             try {

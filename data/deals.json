@@ -245,8 +245,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/philips_7500_buharl___t_3c221632.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -571,7 +571,7 @@
     "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.jpg",
     "date_added": "12.10.2026 21:18",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "category": "gaming",
     "deal_code": "#104"
   },

@@ -512,6 +512,7 @@ def render_web_html(deals: list = None):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mitgo-verification" content="6a6de3e3-0930-4b6a-b7ac-1859e87e6ee3" />
     <title>Flaş Fırsat ⚡ | Amazon, Trendyol & Hepsiburada Dip Fiyat Radarı</title>
     <meta name="description" content="Piyasa altı flaş indirimler, yapay zeka destekli dip fiyat takibi ve en sıcak fırsatlar!">
     <link rel="canonical" href="https://flasfirsat.com.tr/">

@@ -1129,9 +1129,9 @@ def create_product_banner(
 
         draw_vector_globe(draw, text_x, cy_cta, theme["cta_line"])
     else:
-        cta_prefix = "Ürün linki "
-        cta_highlight = "PROFİLDE & HİKAYEDE"
-        cta_suffix = f" • KOD: {deal_code}" if deal_code else " • Fırsatı Kaçırma!"
+        cta_prefix = "LİNK İÇİN YORUMA "
+        cta_highlight = '"LİNK" YAZ'
+        cta_suffix = f" ➔ DM'NE GELSİN! • KOD: {deal_code}" if deal_code else " ➔ DM'NE GELSİN!"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)

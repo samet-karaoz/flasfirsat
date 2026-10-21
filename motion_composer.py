@@ -213,9 +213,9 @@ def generate_staggered_banner_frames(
         cta_suffix = f" • KOD: {clean_code} • Kaçırma!"
         cta_tag = "#Shorts"
     else:
-        cta_prefix = "Ürün linki "
-        cta_highlight = "PROFİLDE & HİKAYEDE"
-        cta_suffix = f" • KOD: {clean_code} • Fırsatı Kaçırma!"
+        cta_prefix = "LİNK İÇİN YORUMA "
+        cta_highlight = '"LİNK" YAZ'
+        cta_suffix = f" ➔ DM'NE GELSİN! • KOD: {clean_code}"
         cta_tag = "#işbirliği #reklam"
 
     cp_w = draw_a.textlength(cta_prefix, font=f_cta_bold)

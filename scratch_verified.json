@@ -1,0 +1,52 @@
+[
+  {
+    "title": "Günün İndirimi",
+    "old_price": "Önceki Fiyat",
+    "new_price": "İndirimli Fiyat",
+    "discount_pct": "FIRSAT",
+    "badge": "GÜNÜN FIRSATI",
+    "hook": "Fırsatı kaçırma!",
+    "image_path": null,
+    "store_url": "https://www.amazon.com.tr/dp/B0CNTV815Y"
+  },
+  {
+    "title": "Ürün Adı Bulunamadı",
+    "old_price": null,
+    "new_price": null,
+    "discount_pct": null,
+    "badge": "FIRSAT",
+    "hook": "Bu ürün için güncel indirim bilgisi bulunamadı.",
+    "image_path": null,
+    "store_url": "https://www.amazon.com.tr/dp/B0FMK7H6HQ"
+  },
+  {
+    "title": "Günün İndirimi",
+    "old_price": "Önceki Fiyat",
+    "new_price": "İndirimli Fiyat",
+    "discount_pct": "FIRSAT",
+    "badge": "GÜNÜN FIRSATI",
+    "hook": "Fırsatı kaçırma!",
+    "image_path": null,
+    "store_url": "https://www.amazon.com.tr/dp/B07CGPZ3ZQ"
+  },
+  {
+    "title": "Ürün Adı Bulunamadı",
+    "old_price": null,
+    "new_price": null,
+    "discount_pct": null,
+    "badge": "FIRSAT",
+    "hook": "Bu üründe kaçırılmayacak indirim fırsatı!",
+    "image_path": null,
+    "store_url": "https://www.amazon.com.tr/dp/B09BD75Y21"
+  },
+  {
+    "title": "Ürün Adı Bulunamadı",
+    "old_price": null,
+    "new_price": null,
+    "discount_pct": null,
+    "badge": "FIRSAT",
+    "hook": "Bu ürün için güncel fiyat bilgisi alınamadı.",
+    "image_path": null,
+    "store_url": "https://www.amazon.com.tr/dp/B0GNN6JYSC"
+  }
+]

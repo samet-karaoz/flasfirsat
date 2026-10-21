@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1792601309_35",
+    "deal_code": "#140",
+    "title": "Karaca Gastro Gourmet Döküm Izgara ve Tost Makinesi Inox 6 Dilim",
+    "old_price": "7.999 TL",
+    "new_price": "3.999 TL",
+    "discount_pct": "-50%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DJQSTY3Y?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.333 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/karaca_gastro_gourmet_d_k_ac952adc.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "21.10.2026 19:48"
+  },
+  {
     "id": "deal_1792575614_34",
     "deal_code": "#139",
     "title": "Glorious Model O Eternal RGB Ultra Hafif Espor Mouse",

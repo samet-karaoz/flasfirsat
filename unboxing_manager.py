@@ -1,4 +1,4 @@
-import os
+﻿import os
 import re
 import json
 import time
@@ -28,6 +28,7 @@ ELIGIBLE_KEYWORDS = [
     "direksiyon", "hoparlör", "speaker", "soundbar", "mikrofon", "microphone",
     "şarj aleti", "charger", "powerbank", "adaptör", "dock", "hub", "kablo",
     "airfryer", "hava fritözü", "kahve makinesi", "robot süpürge", "dikey süpürge",
+    "tost makinesi", "tost", "ızgara", "blender", "ütü",
     "tıraş makinesi", "shaver", "saç kurutma", "fön", "projektör", "projeksiyon",
     "termos", "stanley", "matara", "çanta", "oyuncu koltuğu", "webcam", "kamera"
 ]
@@ -119,6 +120,8 @@ def get_smart_reaction_hook(title: str) -> str:
         return "HİSSİYATI VE TEPKİ SÜRESİ EFSANE! 🎮🔥"
     elif any(k in t for k in ["saat", "smartwatch"]):
         return "KOLDA DURUŞU VE TASARIMI ÇOK İYİ! ⌚✨"
+    elif any(k in t for k in ["tost", "ızgara"]):
+        return "HEM IZGARA HEM TOST CANAVARI! 🥩🥪"
     elif any(k in t for k in ["airfryer", "kahve", "termos", "stanley"]):
         return "KULLANIMI VE KALİTESİ ŞAKA MI? ✨🔥"
     elif any(k in t for k in ["monitör", "ekran"]):
@@ -256,3 +259,4 @@ def get_deal_unboxing_video(deal: dict, target_duration: float = 6.8) -> tuple[s
     except Exception as e:
         print(f"⚠️ [UnboxingManager] Kutu açılış motoru istisnası: {e}. Meme formatına dönülüyor.")
         return None
+

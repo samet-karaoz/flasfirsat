@@ -84,9 +84,10 @@ def verify_amazon_product(asin_or_url: str) -> dict:
 
     if not html_text:
         cmd = get_curl_cmd([
-            "-s", "-L",
+            "-s", "-L", "--compressed",
             "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "-H", "Accept-Language: tr-TR,tr;q=0.9",
+            "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
             url
         ])
         res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
@@ -95,14 +96,19 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     out_low = html_text.lower()
 
     # 0. BOT / CAPTCHA KORUMASI TESPİTİ - 2. Deneme (Mobil User-Agent)
-    if (
-        "type the characters you see in this image" in out_low or
-        "robot check" in out_low or
-        "girdiğiniz karakterleri doğrulayın" in out_low or
-        "automated access" in out_low
-    ):
+    captcha_indicators = [
+        "type the characters you see in this image",
+        "robot check",
+        "girdiğiniz karakterleri doğrulayın",
+        "automated access",
+        "api-services-support@amazon.com",
+        "validatecaptcha",
+        "alışverişe devam etmek için",
+        "alisverise devam etmek icin"
+    ]
+    if any(ind in out_low for ind in captcha_indicators):
         mobile_cmd = get_curl_cmd([
-            "-s", "-L",
+            "-s", "-L", "--compressed",
             "-H", "User-Agent: Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.113 Mobile Safari/537.36",
             "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
@@ -114,12 +120,7 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         html_text = res.stdout
         out_low = html_text.lower()
 
-    if (
-        "type the characters you see in this image" in out_low or
-        "robot check" in out_low or
-        "girdiğiniz karakterleri doğrulayın" in out_low or
-        "automated access" in out_low
-    ):
+    if any(ind in out_low for ind in captcha_indicators):
         print(f"[Verifier] ⚠️ Amazon CAPTCHA / Bot Engeli Algılandı: {url}")
         return {
             "success": False,
@@ -149,9 +150,25 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     in_stock = not any(phrase in avail_text for phrase in out_of_stock_phrases)
 
     # 2. CANLI SATIŞ FİYATI VE GERÇEK LİSTE/ÖNCEKİ FİYATI (Strike Price)
-    price_el = soup.select_one(".priceToPay") or soup.select_one("#corePriceDisplay_desktop_feature_div .a-price") or soup.select_one(".a-price .a-offscreen")
+    price_el = (
+        soup.select_one(".priceToPay") or
+        soup.select_one("#corePriceDisplay_desktop_feature_div .a-price") or
+        soup.select_one("#corePrice_desktop .a-price") or
+        soup.select_one("#corePrice_feature_div .a-price") or
+        soup.select_one(".apexPriceToPay .a-offscreen") or
+        soup.select_one("#apex_desktop .a-price .a-offscreen") or
+        soup.select_one("#priceblock_dealprice") or
+        soup.select_one("#priceblock_ourprice") or
+        soup.select_one(".a-price .a-offscreen")
+    )
     live_price_str = price_el.text.strip().replace("\n", "").replace(" ", "") if price_el else ""
     price_val = parse_price_to_float(live_price_str)
+
+    # Eğer doğrudan buybox yoksa ve sadece "Tüm Satın Alma Seçeneklerini Gör" varsa doğrudan fırsat stoğu tükenmiştir
+    see_all = soup.select_one("#buybox-see-all-buying-choices, #all-offers-display")
+    if (see_all or "tüm satın alma seçeneklerini gör" in out_low or "satın alma seçenekleri" in out_low) and price_val == 0.0:
+        in_stock = False
+        avail_text = "Tüm Satın Alma Seçenekleri (Doğrudan Fırsat/Stok Tükendi)"
 
     # Gerçek üstü çizili fiyat (Amazon'daki gerçek liste fiyatı)
     strike_el = (

@@ -44,13 +44,18 @@ def _ensure_deal_codes(deals: list) -> bool:
     """Tüm ürünlerin #101, #102 gibi benzersiz bir Fırsat Koduna sahip olmasını sağlar."""
     import re
     max_num = 100
+    changed = False
     for d in deals:
         c = str(d.get("deal_code", "")).strip()
         m = re.search(r"(\d+)", c)
         if m:
             max_num = max(max_num, int(m.group(1)))
-
-    changed = False
+        if "is_expired" not in d or d.get("is_expired") is None:
+            d["is_expired"] = False
+            changed = True
+        if "expired_reason" not in d or d.get("expired_reason") is None:
+            d["expired_reason"] = ""
+            changed = True
     # Eski ürünlerden başlayarak kodu olmayanlara sırayla ata
     for d in reversed(deals):
         if not d.get("deal_code"):
@@ -260,8 +265,8 @@ def check_and_update_all_deals_status() -> dict:
                         expired_count += 1
                         print(f"[Web Vitrini] 🔴 Stok Tükendi: {title}")
 
-                # 2. Fiyat artmış mı / indirim bitmiş mi? (Örn: %12'den fazla zam gelmişse)
-                elif original_deal_price > 0 and live_price > (original_deal_price * 1.12):
+                # 2. Fiyat artmış mı / indirim bitmiş mi? (Örn: %10'dan fazla zam gelmişse)
+                elif original_deal_price > 0 and live_price > 0 and live_price > (original_deal_price * 1.10):
                     d["is_expired"] = True
                     d["expired_reason"] = "İndirim Bitti"
                     if not was_expired:
@@ -269,12 +274,20 @@ def check_and_update_all_deals_status() -> dict:
                         expired_count += 1
                         print(f"[Web Vitrini] 🔴 İndirim Bitti (Eski: {original_deal_price} TL -> Canlı: {live_price} TL): {title}")
 
-                # 3. Eğer stok geri geldiyse ve indirim devam ediyorsa aktife al
-                elif in_stock and original_deal_price > 0 and live_price <= (original_deal_price * 1.05) and was_expired:
+                # 3. Canlı fiyat tespit edilemediyse (live_price <= 0):
+                # ASLA aktife alma! Ürün bitmişse bitmiş olarak kalmalı.
+                elif live_price <= 0:
+                    if was_expired:
+                        pass
+                    else:
+                        print(f"[Web Vitrini] ⚠️ Fiyat tespit edilemedi ({title}), mevcut durum korundu.")
+
+                # 4. Eğer stok geri geldiyse, geçerli pozitif fiyat varsa ve indirim devam ediyorsa aktife al
+                elif in_stock and original_deal_price > 0 and live_price > 0 and live_price <= (original_deal_price * 1.05) and was_expired:
                     d["is_expired"] = False
                     d["expired_reason"] = ""
                     changes_made = True
-                    print(f"[Web Vitrini] 🟢 Fırsat Yeniden Aktif: {title}")
+                    print(f"[Web Vitrini] 🟢 Fırsat Yeniden Aktif: {title} (Canlı: {live_price} TL / Eski: {original_deal_price} TL)")
 
             except Exception as e:
                 print(f"[Web Vitrini] Kontrol hatası ({title}): {e}")

@@ -34,9 +34,10 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
      * "Grupta paylaştılar baktım gerçekten bu fiyata düşmüş, stok bitmeden bakın."
 2. FİYAT AVANTAJINI GÖSTER (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve İndirim Oranı).
 3. Varsa Kupon ve Taksit bilgisini net belirt (🎟️ Kupon Uyarısı, 💳 Peşin fiyatına 3 taksit).
-4. Eylem Çağrısı (Kaydet & Paylaş & Yorum):
-   - "💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇"
+4. Eylem Çağrısı (LİNK Yorum Kancası, Kaydet & Paylaş):
+   - '👉 Yoruma "LİNK" yaz, satın alma linkini anında DM kutuna gönderelim! 📩'
    - "📌 Fiyat tekrar artmadan videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️"
+   - "💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇"
    - "🔗 Ürün linki Hikayemizde (Story) ve profildeki sitede aktif!"
 5. En fazla 4-5 odaklı etiket (#indirim #teknoloji #gaming #fırsat). En sona zorunlu '#işbirliği #reklam' ekle.
 
@@ -77,6 +78,14 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
                 text = text.replace("#işbirliği", f"{code_notice}\n\n#işbirliği", 1)
             else:
                 text += f"\n{code_notice}"
+        # DM ve LİNK yorum kancası yoksa otomatik ekle (Algoritma patlatıcı)
+        if "yoruma" not in text.lower() or "link" not in text.lower():
+            link_cta = '👉 Yoruma "LİNK" yaz, indirimli linki anında DM kutuna gönderelim! 📩\n'
+            if "#işbirliği" in text:
+                text = text.replace("#işbirliği", f"{link_cta}\n#işbirliği", 1)
+            else:
+                text += f"\n{link_cta}"
+
         # Yasal uyum: #işbirliği yoksa ekle
         if "#işbirliği" not in text.lower():
             text += "\n\n#işbirliği #reklam"

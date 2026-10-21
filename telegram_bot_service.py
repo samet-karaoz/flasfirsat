@@ -222,6 +222,11 @@ def handle_callback_query(cq: dict):
             f"{code_pin_line}"
             f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
         )
+        dm_reply_str = (
+            f"Selam! 👋 Videomuzdaki {title} için indirimli satın alma linkin burada:\n"
+            f"{product_url or 'https://flasfirsat.com.tr'}\n\n"
+            f"Flaş fırsatları kaçırmamak için bildirimleri açmayı ve bizi takip etmeyi unutma! ⚡"
+        )
         studio_msg = (
             f"📲 <b>%100 ORGANİK INSTAGRAM STÜDYO PAKETİ</b>\n"
             f"<i>(Üzerine bir kez dokunduğunuz metin otomatik kopyalanır)</i>\n\n"
@@ -233,10 +238,13 @@ def handle_callback_query(cq: dict):
             f"<code>{_html.escape(product_url or '')}</code>\n\n"
             f"🔍 <b>4. INSTAGRAM 'Aa' GÖRÜNMEZ SEO KELİMELERİ (Dokun & Kopyala):</b>\n"
             f"<code>{_html.escape(seo_str)}</code>\n\n"
+            f"📩 <b>5. 'LİNK' YAZANLARA ATILACAK DM CEVABI (Dokun & Kopyala):</b>\n"
+            f"<code>{_html.escape(dm_reply_str)}</code>\n\n"
             f"💡 <b>Keşfet Taktikleri:</b>\n"
             f"1️⃣ <b>Trend Ses:</b> Reels'e popüler bir müziği <b>%2 ses</b> seviyesinde ekle.\n"
             f"2️⃣ <b>Görünmez SEO:</b> 4. kutudaki kelimeleri Instagram'ın 'Aa' metin aracına yapıştır, ekranın köşesine küçültüp gizle!\n"
-            f"3️⃣ <b>Hikaye:</b> Gönderilen Story kartını paylaşıp anket çıkartması ve link çıkartması ekle."
+            f"3️⃣ <b>Hikaye:</b> Gönderilen Story kartını paylaşıp anket çıkartması ve link çıkartması ekle.\n"
+            f"4️⃣ <b>Auto-DM:</b> Yoruma 'LİNK' yazanlara 5. kutudaki metni tek dokunuşla yapıştırıp göndererek doğrudan takipçiye dönüştür!"
         )
         send_telegram_text(chat_id, studio_msg)
         return True

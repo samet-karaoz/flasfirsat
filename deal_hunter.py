@@ -134,10 +134,18 @@ def get_product_subtype(title: str) -> str:
         return "monitor"
     if any(k in t for k in ["hoparlör", "speaker", "soundbar"]):
         return "speaker"
-    if any(k in t for k in ["termos", "airfryer", "fritöz", "kahve makinesi"]):
-        return "lifestyle"
-    if any(k in t for k in ["tıraş", "oneblade", "epilasyon"]):
+    if any(k in t for k in ["monitör kolu", "f80", "north bayou", "nb f80", "amortisörlü kol"]):
+        return "monitor_arm"
+    if any(k in t for k in ["stanley", "termos", "matara", "mug"]):
+        return "thermos"
+    if any(k in t for k in ["kahve makinesi", "filtre kahve", "espresso", "lattego"]):
+        return "coffee"
+    if any(k in t for k in ["airfryer", "fritöz"]):
+        return "airfryer"
+    if any(k in t for k in ["tıraş", "traş", "oneblade", "epilasyon"]):
         return "grooming"
+    if any(k in t for k in ["diş fırçası", "oral-b", "sonicare"]):
+        return "dental"
     if any(k in t for k in ["ssd", "nvme", "disk"]):
         return "storage"
     return "general"
@@ -249,7 +257,8 @@ def calculate_deal_viral_score(deal: dict) -> float:
 
     return score
 
-MIN_PRODUCT_PRICE_TL = 350  # 350 TL altındaki küçük kırtasiye/ıvır zıvır ürünleri ele
+MIN_PRODUCT_PRICE_TL = 450   # 450 TL altındaki küçük filtre, kablo, ıvır zıvır ürünleri ele
+MAX_PRODUCT_PRICE_TL = 4500  # 4.500 TL üstündeki kimsenin anında alamayacağı aşırı pahalı ürünleri ele (Altın Fiyat Bandı)
 
 def detect_store(url: str, text: str = "") -> str:
     """Ürün linkinden veya metninden mağazayı (Trendyol, Hepsiburada, Amazon TR) tespit eder."""
@@ -342,7 +351,11 @@ AMAZON_CATALOG_SOURCES = [
     ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
     ("KULAKLIK_SES", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709880031"),
     ("PATLAYAN_MUTFAK", "https://www.amazon.com.tr/gp/movers-and-shakers/kitchen"),
-    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")
+    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen"),
+    ("STANLEY_TERMOS_OUTDOOR", "https://www.amazon.com.tr/gp/bestsellers/sports"),
+    ("KİŞİSEL_BAKIM_TIRAŞ", "https://www.amazon.com.tr/gp/bestsellers/personal-care"),
+    ("OFİS_ERGONOMİ_MASA", "https://www.amazon.com.tr/gp/bestsellers/office"),
+    ("PATLAYAN_KİŞİSEL_BAKIM", "https://www.amazon.com.tr/gp/movers-and-shakers/personal-care")
 ]
 
 CAT_ROTATION_FILE = os.path.join(TEMP_DIR, "amazon_cat_rot.txt")
@@ -538,8 +551,10 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             # 3. Minimum Fiyat Kontrolü (350 TL altındaki küçük ıvır zıvırları atla)
             try:
                 price_clean = re.sub(r"[^\d]", "", raw_price.split(",")[0])
-                if price_clean and int(price_clean) < MIN_PRODUCT_PRICE_TL:
-                    continue
+                if price_clean:
+                    p_val = int(price_clean)
+                    if p_val < MIN_PRODUCT_PRICE_TL or p_val > MAX_PRODUCT_PRICE_TL:
+                        continue
             except Exception:
                 pass
 
@@ -808,11 +823,13 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
                 print(f"[Deal Hunter] ⏭️ Düşük İndirim Elendi ({store_name} -%{pct_val} < -%{min_discount}): {deal_data.get('title')}")
                 continue
 
-            # Minimum fiyat kontrolü (350 TL altı ürünleri ele)
+            # Fiyat bandı kontrolü (450 TL - 4.500 TL arası tatlı nokta)
             try:
                 p_digits = re.sub(r"[^\d]", "", deal_data.get("new_price", "").split(",")[0])
-                if p_digits and int(p_digits) < MIN_PRODUCT_PRICE_TL:
-                    continue
+                if p_digits:
+                    p_val = int(p_digits)
+                    if p_val < MIN_PRODUCT_PRICE_TL or p_val > MAX_PRODUCT_PRICE_TL:
+                        continue
             except Exception:
                 pass
 

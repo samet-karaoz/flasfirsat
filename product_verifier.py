@@ -112,8 +112,6 @@ def verify_amazon_product(asin_or_url: str) -> dict:
             "-H", "User-Agent: Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.113 Mobile Safari/537.36",
             "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
-            "-H", "Sec-CH-UA-Mobile: ?1",
-            "-H", "Sec-CH-UA-Platform: \"Android\"",
             url
         ])
         res = safe_run_subprocess(mobile_cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")

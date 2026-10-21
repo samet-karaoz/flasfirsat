@@ -80,6 +80,16 @@ def get_valid_access_token() -> str:
             with open(TOKEN_PATH, "w", encoding="utf-8") as f:
                 json.dump(t_data, f, ensure_ascii=False, indent=2)
             return ref_json["access_token"]
+        elif ref_json.get("error") == "invalid_grant":
+            print("[YouTube Publisher] ⚠️ Refresh token süresi dolmuş veya iptal edilmiş!")
+            try:
+                from telegram_notifier import send_telegram_alert
+                send_telegram_alert(
+                    "⚠️ <b>YouTube Shorts Yetki Süresi Doldu!</b>\n\n"
+                    "Google OAuth token'ının süresi dolmuş. Shorts yüklemelerinin devam etmesi için lütfen terminalde <code>python youtube_auth.py</code> çalıştırarak tek tıkla oturumu yenileyin."
+                )
+            except Exception:
+                pass
     except Exception as e:
         print(f"[YouTube Publisher] Token yenileme uyarısı: {e}")
 

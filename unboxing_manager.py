@@ -164,7 +164,7 @@ def get_deal_unboxing_video(deal: dict, target_duration: float = 6.8) -> tuple[s
             "--print", "%(id)s | %(duration)s | %(title)s",
             f"ytsearch3:{search_term}"
         ]
-        res = subprocess.run(cmd_search, capture_output=True, text=True, timeout=15)
+        res = safe_run_subprocess(cmd_search, capture_output=True, text=True, timeout=15)
         lines = [l.strip() for l in res.stdout.split("\n") if "|" in l]
         
         if not lines:
@@ -200,7 +200,7 @@ def get_deal_unboxing_video(deal: dict, target_duration: float = 6.8) -> tuple[s
             "-o", temp_raw,
             f"https://www.youtube.com/watch?v={chosen_id}"
         ]
-        dl_res = subprocess.run(cmd_download, capture_output=True, text=True, timeout=25)
+        dl_res = safe_run_subprocess(cmd_download, capture_output=True, text=True, timeout=25)
         
         # Eğer indirme başarısızsa ya da dosya oluşmadıysa baştan 00:00-00:10 indir
         if not os.path.exists(temp_raw) or os.path.getsize(temp_raw) < 10000:
@@ -212,7 +212,7 @@ def get_deal_unboxing_video(deal: dict, target_duration: float = 6.8) -> tuple[s
                 "-o", temp_raw,
                 f"https://www.youtube.com/watch?v={chosen_id}"
             ]
-            subprocess.run(cmd_fallback_dl, capture_output=True, text=True, timeout=20)
+            safe_run_subprocess(cmd_fallback_dl, capture_output=True, text=True, timeout=20)
 
         if not os.path.exists(temp_raw) or os.path.getsize(temp_raw) < 10000:
             print(f"⚠️ [UnboxingManager] Video indirilemedi, Meme formatına dönülüyor.")
@@ -233,7 +233,7 @@ def get_deal_unboxing_video(deal: dict, target_duration: float = 6.8) -> tuple[s
             cached_video,
             "-y"
         ]
-        subprocess.run(cmd_trim, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
+        safe_run_subprocess(cmd_trim, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
 
         if os.path.exists(cached_video) and os.path.getsize(cached_video) > 50000:
             print(f"✅ [UnboxingManager] Kutu açılış klibi başarıyla hazırlandı ve arşivlendi: {cached_video}")

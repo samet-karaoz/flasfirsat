@@ -1,6 +1,7 @@
 import os
 import json
 import shutil
+import re
 from datetime import datetime
 from config import BASE_DIR, ASSETS_DIR, GA_MEASUREMENT_ID, SITE_URL, safe_run_subprocess
 
@@ -453,6 +454,9 @@ def render_web_html(deals: list = None):
                 badge_lbl = "⚡ REELS'TEKİ FIRSAT" if d.get("is_reel") else "⚡ GÜNÜN ÖNE ÇIKAN FIRSATI"
                 featured_reel_html = f'<span class="badge-featured-reel">{badge_lbl}</span>'
 
+            price_num_val = parse_price_to_float(new_p)
+            disc_clean_digits = re.sub(r"[^0-9]", "", disc)
+            discount_num_val = int(disc_clean_digits) if disc_clean_digits else 0
             expired_badge_html = f'<span class="badge-expired">🔴 {expired_reason.upper()}</span>' if is_expired else ""
             buy_btn_html = (
                 f'<a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="buy-btn expired-btn" data-deal-id="{deal_id}" data-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">'
@@ -465,7 +469,7 @@ def render_web_html(deals: list = None):
             )
 
             cards_html += f"""
-            <div class="{card_class}" data-status="{status_attr}" data-category="{category}" data-title="{title.lower()} {store.lower()} {category} {deal_code.lower()} {code_num_only} kod {code_num_only}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}">
+            <div class="{card_class}" data-status="{status_attr}" data-category="{category}" data-title="{title.lower()} {store.lower()} {category} {deal_code.lower()} {code_num_only} kod {code_num_only}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}" data-price-val="{price_num_val}" data-discount-val="{discount_num_val}" data-index="{idx}">
                 <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="{safe_title}">
                     <div class="card-img-wrap">
                         <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
@@ -712,6 +716,41 @@ def render_web_html(deals: list = None):
 
         .search-input:focus {
             border-color: var(--primary-orange);
+        }
+
+        .sort-box {
+            min-width: 220px;
+            position: relative;
+        }
+
+        .sort-select {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 20px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 42px;
+        }
+
+        .sort-select:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.2);
+        }
+
+        .sort-select option {
+            background: #181920;
+            color: #ffffff;
         }
 
         /* Product Cards Grid */
@@ -1647,6 +1686,14 @@ def render_web_html(deals: list = None):
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün, marka veya Videodaki Fırsat Kodunu (#101, 102...) ara..." onkeyup="filterDeals()">
             </div>
+            <div class="sort-box">
+                <select id="sortSelect" class="sort-select" onchange="sortDeals(this.value)">
+                    <option value="newest">🕒 Sıralama: En Yeni</option>
+                    <option value="discount">🔥 En Yüksek İndirim (%)</option>
+                    <option value="price_asc">💵 Fiyat: En Düşükten Yükseğe</option>
+                    <option value="price_desc">💎 Fiyat: En Yüksekten Düşüğe</option>
+                </select>
+            </div>
         </div>
 
         <!-- Kategori Filtre Sekmeleri -->
@@ -1744,6 +1791,32 @@ def render_web_html(deals: list = None):
             document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
             filterDeals();
+        }
+
+        function sortDeals(criteria) {
+            const grid = document.getElementById('dealsGrid');
+            if (!grid) return;
+            const cards = Array.from(grid.querySelectorAll('.deal-card'));
+            cards.sort((a, b) => {
+                if (criteria === 'discount') {
+                    const da = parseFloat(a.getAttribute('data-discount-val') || 0);
+                    const db = parseFloat(b.getAttribute('data-discount-val') || 0);
+                    return db - da;
+                } else if (criteria === 'price_asc') {
+                    const pa = parseFloat(a.getAttribute('data-price-val') || 0);
+                    const pb = parseFloat(b.getAttribute('data-price-val') || 0);
+                    return pa - pb;
+                } else if (criteria === 'price_desc') {
+                    const pa = parseFloat(a.getAttribute('data-price-val') || 0);
+                    const pb = parseFloat(b.getAttribute('data-price-val') || 0);
+                    return pb - pa;
+                } else {
+                    const ia = parseInt(a.getAttribute('data-index') || 0, 10);
+                    const ib = parseInt(b.getAttribute('data-index') || 0, 10);
+                    return ia - ib;
+                }
+            });
+            cards.forEach(c => grid.appendChild(c));
         }
 
         function updateBadges() {

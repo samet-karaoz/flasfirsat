@@ -903,17 +903,35 @@ def create_product_banner(
     # 🎨 rembg ile Arka Planı Temizlenmiş Ürün Görseli + 3D Zemin Gölgesi (Contact Floor Shadow)
     if product_image_path and os.path.exists(product_image_path):
         try:
+            import hashlib
+            rembg_cache_dir = os.path.join(TEMP_DIR, "rembg_cache")
+            os.makedirs(rembg_cache_dir, exist_ok=True)
+            
+            # İçerik hash'i ile akıllı önbellekleme (CPU rembg maliyetini ~12s'den ~0.05s'ye düşürür)
+            with open(product_image_path, "rb") as f_hash:
+                img_md5 = hashlib.md5(f_hash.read()).hexdigest()
+            cached_cutout_path = os.path.join(rembg_cache_dir, f"{img_md5}.png")
             cutout_path = f"{os.path.splitext(product_image_path)[0]}_cutout.png"
-            if not skip_rembg and (not os.path.exists(cutout_path) or os.path.getmtime(cutout_path) < os.path.getmtime(product_image_path)):
-                try:
-                    import rembg
-                    with Image.open(product_image_path) as raw_p:
-                        cutout = rembg.remove(raw_p)
-                        cutout.save(cutout_path)
-                except Exception as ex:
-                    print(f"[Banner] rembg atlandı/uyarısı: {ex}")
 
-            load_path = cutout_path if (not skip_rembg and os.path.exists(cutout_path)) else product_image_path
+            if not skip_rembg:
+                if os.path.exists(cached_cutout_path) and os.path.getsize(cached_cutout_path) > 500:
+                    # Önbellekte mevcut, doğrudan kullan
+                    load_path = cached_cutout_path
+                elif not os.path.exists(cutout_path) or os.path.getmtime(cutout_path) < os.path.getmtime(product_image_path):
+                    try:
+                        import rembg
+                        with Image.open(product_image_path) as raw_p:
+                            cutout = rembg.remove(raw_p)
+                            cutout.save(cutout_path)
+                            cutout.save(cached_cutout_path)
+                        load_path = cutout_path
+                    except Exception as ex:
+                        print(f"[Banner] rembg atlandı/uyarısı: {ex}")
+                        load_path = product_image_path
+                else:
+                    load_path = cutout_path
+            else:
+                load_path = product_image_path
             p_img = Image.open(load_path).convert("RGBA")
             alpha = p_img.split()[-1]
             bbox = alpha.getbbox()

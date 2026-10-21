@@ -332,6 +332,7 @@ def download_file(url: str, output_path: str) -> bool:
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
 AMAZON_CATALOG_SOURCES = [
+    ("FIRSATLAR_DEALS", "https://www.amazon.com.tr/deals"),
     ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
     ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
     ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
@@ -396,43 +397,91 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         print(f"[Deal Hunter] Doğrudan Amazon TR ({cat_name}) taranıyor: {target_url}...")
         cmd = get_curl_cmd([
             "--compressed", "-s", "-L",
-            "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "-H", "Accept-Language: tr-TR,tr;q=0.9", target_url
+            "-H", "User-Agent: Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.113 Mobile Safari/537.36",
+            "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
+            target_url
         ])
         res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
         if res.returncode != 0:
             continue
 
+        parsed_candidates = []
+
+        # 1. /deals sayfası için gömülü JSON ürün verilerini çıkar (React/AUI Deals widget)
+        if "deals" in target_url:
+            idx = res.stdout.find('"productSearchResponse"')
+            if idx != -1:
+                brace_start = res.stdout.find('{', idx)
+                try:
+                    obj, _ = json.JSONDecoder().raw_decode(res.stdout[brace_start:])
+                    for p in obj.get("products", []):
+                        p_title = p.get("title", "").strip()
+                        p_pay = p.get("price", {}).get("priceToPay", {})
+                        if not p_pay or not p_pay.get("price") or not p_title:
+                            continue
+                        try:
+                            p_price_f = float(p_pay["price"])
+                            p_price_str = f"{p_price_f:,.0f} TL"
+                        except Exception:
+                            continue
+                        p_asin = p.get("asin", "")
+                        p_link = p.get("link", "")
+                        p_url = f"https://www.amazon.com.tr/dp/{p_asin}" if p_asin else (f"https://www.amazon.com.tr{p_link}" if p_link.startswith("/") else p_link)
+                        p_hires = p.get("image", {}).get("hiRes", {})
+                        if p_hires and p_hires.get("baseUrl"):
+                            p_img = f"{p_hires['baseUrl']}.{p_hires.get('extension', 'jpg')}"
+                        else:
+                            p_img = p.get("image", {}).get("lowRes", {}).get("baseUrl", "")
+
+                        parsed_candidates.append({
+                            "raw_title": p_title,
+                            "raw_price": p_price_str,
+                            "big_img": p_img,
+                            "raw_img": p_img,
+                            "prod_url": p_url,
+                            "asin": p_asin,
+                            "rating_val": 4.5,
+                            "review_count": 50
+                        })
+                except Exception:
+                    pass
+
+        # 2. Standart HTML ürün kartlarını tara
         soup = BeautifulSoup(res.stdout, "html.parser")
         items = soup.find_all("div", class_="p13n-sc-uncoverable-faceout")
+        if not items:
+            items = soup.select("div[data-asin]")
 
         for it in items:
-            if len(deals) >= limit:
-                break
-
-            title_el = it.find("div", class_=lambda c: c and "line-clamp" in c) or it.find("span")
-            price_el = it.find("span", class_=lambda c: c and "price" in c)
+            title_el = it.find("h2") or it.find("div", class_=lambda c: c and "line-clamp" in c) or it.find("span")
+            price_el = it.select_one(".a-price .a-offscreen") or it.find("span", class_=lambda c: c and "price" in c)
             img_el = it.find("img")
             link_el = it.find("a", href=re.compile(r"/dp/"))
 
             if not (title_el and price_el and img_el and link_el):
                 continue
 
-            raw_title = title_el.text.strip()
-            raw_price = price_el.text.strip()
+            h_title = title_el.text.strip()
+            h_price = price_el.text.strip()
+            h_img = img_el.get("src", "")
+            h_big_img = re.sub(r'\._AC_.*?_\.', '._AC_SL1000_.', h_img)
+            h_href = link_el.get("href", "")
+            h_asin_m = re.search(r"/dp/([A-Z0-9]{10})", h_href, re.IGNORECASE)
+            if h_asin_m:
+                h_asin = h_asin_m.group(1).upper()
+                h_url = f"https://www.amazon.com.tr/dp/{h_asin}"
+            else:
+                h_asin = None
+                h_url = "https://www.amazon.com.tr" + h_href.split("?")[0]
 
-            # 1. Sıkıcı veya düşük ilgi gören aksesuarları ele
-            if BORING_REGEX.search(raw_title):
-                continue
-
-            # 1.5 Halk Onayı (Social Proof): Yıldız Puanı ve Yorum Sayısı Kontrolü
-            card_text = it.get_text(" ", strip=True)
-            rating_val = 0.0
-            review_count = 0
-            r_match = re.search(r"([12345][.,]\d)\s*(?:/\s*5|yıldız)", card_text)
+            h_card_text = it.get_text(" ", strip=True)
+            h_rating = 0.0
+            h_reviews = 0
+            r_match = re.search(r"([12345][.,]\d)\s*(?:/\s*5|yıldız)", h_card_text)
             if r_match:
                 try:
-                    rating_val = float(r_match.group(1).replace(",", "."))
+                    h_rating = float(r_match.group(1).replace(",", "."))
                 except Exception:
                     pass
             rev_el = it.find("span", class_=re.compile(r"a-size-small"))
@@ -440,10 +489,39 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
                 rev_digits = re.sub(r"[^\d]", "", rev_el.text)
                 if rev_digits:
                     try:
-                        review_count = int(rev_digits)
+                        h_reviews = int(rev_digits)
                     except Exception:
                         pass
 
+            parsed_candidates.append({
+                "raw_title": h_title,
+                "raw_price": h_price,
+                "big_img": h_big_img,
+                "raw_img": h_img,
+                "prod_url": h_url,
+                "asin": h_asin,
+                "rating_val": h_rating,
+                "review_count": h_reviews
+            })
+
+        for cand in parsed_candidates:
+            if len(deals) >= limit:
+                break
+
+            raw_title = cand["raw_title"]
+            raw_price = cand["raw_price"]
+            big_img = cand["big_img"]
+            raw_img = cand["raw_img"]
+            prod_url = cand["prod_url"]
+            rating_val = cand["rating_val"]
+            review_count = cand["review_count"]
+            asin_from_cand = cand.get("asin")
+
+            # 1. Sıkıcı veya düşük ilgi gören aksesuarları ele
+            if BORING_REGEX.search(raw_title):
+                continue
+
+            # 1.5 Halk Onayı (Social Proof): Yıldız Puanı ve Yorum Sayısı Kontrolü
             if rating_val > 0 and rating_val < 4.1:
                 print(f"[Deal Hunter] ⏭️ Düşük Yıldız Puanı Elendi ({rating_val}⭐ < 4.1): {raw_title[:38]}")
                 continue
@@ -465,21 +543,10 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             except Exception:
                 pass
 
-            # 4. Temiz ve doğrudan tıklanabilir Amazon linki (/dp/ASIN)
-            href = link_el.get("href", "")
-            asin_match = re.search(r"/dp/([A-Z0-9]{10})", href, re.IGNORECASE)
-            if asin_match:
-                prod_url = f"https://www.amazon.com.tr/dp/{asin_match.group(1).upper()}"
-            else:
-                prod_url = "https://www.amazon.com.tr" + href.split("?")[0]
-
             # Daha önce üretilmişse pas geç
             if is_deal_already_shared(raw_title, prod_url, exclude_urls):
                 print(f"[Deal Hunter] ⏭️ Mükerrer Ürün Koruması (Daha önce paylaşıldı): {raw_title[:45]}")
                 continue
-
-            raw_img = img_el.get("src", "")
-            big_img = re.sub(r'\._AC_.*?_\.', '._AC_SL1000_.', raw_img)
 
             if len(raw_title) < 6 or "TL" not in raw_price:
                 continue
@@ -539,9 +606,13 @@ GÖREV:
             if final_subtype != "general":
                 seen_subtypes.add(final_subtype)
 
-            prod_id = asin_match.group(1) if asin_match else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
-            if asin_match:
-                asin = asin_match.group(1).upper()
+            asin = asin_from_cand
+            if not asin:
+                asin_m = re.search(r"/dp/([A-Z0-9]{10})", prod_url, re.IGNORECASE)
+                if asin_m:
+                    asin = asin_m.group(1).upper()
+            prod_id = asin if asin else f"{len(deals)+1}_{int(datetime.now().timestamp())}"
+            if asin:
                 deal_data["asin"] = asin
                 try:
                     from price_tracker import record_price

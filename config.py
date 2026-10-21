@@ -80,3 +80,29 @@ def download_file(url: str, output_path: str) -> bool:
     res = safe_run_subprocess(cmd)
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
+def clean_temp_files(max_age_days: int = 2):
+    """temp/ klasöründe max_age_days gününden eski geçici dosyaları temizler, disk şişmesini önler."""
+    import time
+    if not os.path.exists(TEMP_DIR):
+        return
+    now = time.time()
+    cutoff = now - (max_age_days * 86400)
+    cleaned_bytes = 0
+    cleaned_count = 0
+    for root, dirs, files in os.walk(TEMP_DIR):
+        # rembg_cache klasöründeki kesilmiş görselleri 14 gün sakla, normal temp dosyalarını 2 günde sil
+        effective_cutoff = now - (14 * 86400) if "rembg_cache" in root else cutoff
+        for f in files:
+            fp = os.path.join(root, f)
+            try:
+                if os.path.getmtime(fp) < effective_cutoff:
+                    sz = os.path.getsize(fp)
+                    os.remove(fp)
+                    cleaned_bytes += sz
+                    cleaned_count += 1
+            except Exception:
+                pass
+    if cleaned_count > 0:
+        print(f"[Config] 🧹 Temp temizlendi: {cleaned_count} dosya, {cleaned_bytes / (1024*1024):.1f} MB alan kazanıldı.")
+
+

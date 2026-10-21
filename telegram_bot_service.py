@@ -112,6 +112,29 @@ def handle_callback_query(cq: dict):
         answer_telegram_callback_query(cq_id, text="✅ Test başarılı! Sistem aktif ve çalışıyor.")
         return
 
+    if data == "cmd_denetle":
+        answer_telegram_callback_query(cq_id, text="🔍 Vitrin denetimi arka planda başlatıldı...")
+        import threading
+        def _run_v():
+            try:
+                from web_showcase import check_and_update_all_deals_status, load_deals
+                res_v = check_and_update_all_deals_status()
+                changed = res_v.get("updated", False) if isinstance(res_v, dict) else bool(res_v)
+                deals = load_deals()
+                act = sum(1 for d in deals if not d.get("is_expired", False))
+                exp = len(deals) - act
+                send_telegram_text(
+                    chat_id,
+                    f"✅ <b>Canlı Vitrin Denetimi Tamamlandı!</b>\n\n"
+                    f"• 🟢 Aktif Fırsat: <b>{act}</b>\n"
+                    f"• 🔴 Tükendi / İndirimi Bitti: <b>{exp}</b>\n"
+                    f"• 🔄 Durumu Güncellenen: <b>{'Evet (GitHub Pages Güncellendi)' if changed else 'Değişiklik Yok (Tümü Güncel)'}</b>"
+                )
+            except Exception as ev:
+                send_telegram_text(chat_id, f"❌ Vitrin denetim hatası: {ev}")
+        threading.Thread(target=_run_v, daemon=True).start()
+        return
+
     # Örn: approve_ig:deal_1791946000
     action, _, deal_id = data.partition(":")
     pending = load_pending_deals()
@@ -823,11 +846,28 @@ def handle_user_message(msg: dict):
 
         ga_status = f"🟢 Aktif (<code>{GA_MEASUREMENT_ID}</code>)" if GA_MEASUREMENT_ID else "🟡 Yerel Telemetri (Tarayıcı İçi)"
 
+        import re
+        from config import TEMP_DIR
+        discounts = []
+        for d in deals:
+            pct_s = str(d.get("discount_pct", ""))
+            m = re.search(r"(\d+)", pct_s)
+            if m:
+                discounts.append(int(m.group(1)))
+        avg_disc = int(sum(discounts) / len(discounts)) if discounts else 0
+
+        temp_mb = 0.0
+        if os.path.exists(TEMP_DIR):
+            temp_bytes = sum(os.path.getsize(os.path.join(r, f)) for r, _, files in os.walk(TEMP_DIR) for f in files)
+            temp_mb = temp_bytes / (1024 * 1024)
+
         stats_msg = (
             f"📊 <b>FLAŞ FIRSAT YÖNETİCİ & VİTRİN RAPORU</b> ⚡\n\n"
             f"🌐 <b>Resmi Domain:</b> {SITE_URL}\n"
             f"📦 <b>Toplam Vitrin Ürünü:</b> {len(deals)} adet (🟢 {active_cnt} Aktif / 🔴 {expired_cnt} Tükendi)\n"
+            f"🔥 <b>Ortalama İndirim Oranı:</b> %{avg_disc}\n"
             f"🔢 <b>Son Atanan Fırsat Kodu:</b> <code>{latest_code}</code>\n"
+            f"💾 <b>Geçici Depolama (Temp):</b> {temp_mb:.1f} MB (Oto-temizleme: 2 gün)\n"
             f"📱 <b>Video Cihaz İzi:</b> Xiaomi Redmi Note 11 Pro (Android 13)\n\n"
             f"🏪 <b>Mağaza Dağılımı:</b>\n"
             f" • Amazon TR: <b>{amazon_cnt}</b>\n"
@@ -842,10 +882,11 @@ def handle_user_message(msg: dict):
             f" • Instagram: <code>{SITE_URL}?utm_source=instagram</code>\n"
             f" • YouTube: <code>{SITE_URL}?utm_source=youtube</code>\n"
             f" • Telegram: <code>{SITE_URL}?utm_source=telegram</code>\n\n"
-            f"💡 <i>Vitrin stoklarını hemen canlı denetlemek için: <code>/denetle</code></i>"
+            f"💡 <i>Vitrin stoklarını hemen canlı denetlemek için aşağıdaki butona basın veya <code>/denetle</code> yazın.</i>"
         )
         markup = {
             "inline_keyboard": [
+                [{"text": "🔍 Vitrini Canlı Denetle", "callback_data": "cmd_denetle"}],
                 [{"text": "📊 Canlı Web Panelini Aç (Yönetici)", "url": f"{SITE_URL}?admin=flas"}]
             ]
         }
@@ -1012,9 +1053,17 @@ def run_telegram_service():
     print("🛑 [OTOMATİK ZAMANLAYICILAR KAPALI] Bulut ve yerel tüm otomatik döngüler kaldırıldı.")
     print("🎬 [İSTEĞE BAĞLI MOD] Video üretimi yalnızca siz talimat verdiğinizde başlar.\n")
 
+    # Başlangıçta eski temp dosyalarını temizle
+    try:
+        from config import clean_temp_files
+        clean_temp_files(max_age_days=2)
+    except Exception as e_tc:
+        print(f"[Telegram Service] Başlangıç temp temizleme uyarısı: {e_tc}")
+
     offset = None
     last_alarm_check = time.time()
     last_vitrin_check = time.time()
+    last_temp_clean = time.time()
 
     while True:
         try:
@@ -1053,6 +1102,16 @@ def run_telegram_service():
                 except Exception as evc:
                     print(f"[Telegram Service] Vitrin stok denetim uyarısı: {evc}")
                 last_vitrin_check = time.time()
+
+            # 24 saatte bir temp/ klasörü otomatik temizliği yap
+            if time.time() - last_temp_clean > 86400:
+                print("[Telegram Service] 🧹 Günlük temp/ otomatik temizliği yapılıyor...")
+                try:
+                    from config import clean_temp_files
+                    clean_temp_files(max_age_days=2)
+                except Exception as etc:
+                    print(f"[Telegram Service] Temp temizleme uyarısı: {etc}")
+                last_temp_clean = time.time()
 
         except requests.exceptions.RequestException:
             time.sleep(3)

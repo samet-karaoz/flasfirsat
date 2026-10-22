@@ -180,14 +180,22 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
 
     # 8. Tıklanabilir Link Çıkartması Hedef Alanı (1535 - 1715)
     sticker_y1, sticker_y2 = 1535, 1715
-    draw.rounded_rectangle([90, sticker_y1, 990, sticker_y2], radius=28, fill=(234, 179, 8, 35), outline=(250, 204, 21), width=3)
-    cta_title_font = get_font(38, bold=True)
-    cta_sub_font = get_font(28, bold=False)
-    cta_urg_font = get_font(26, bold=True)
+    draw.rounded_rectangle([90, sticker_y1, 990, sticker_y2], radius=28, fill=(234, 179, 8, 30), outline=(250, 204, 21), width=3)
+    
+    # Instagram Hikaye Bağlantı Çıkartması İçin Özel Kesikli Hizalama Alanı (~580x76 px)
+    slot_w, slot_h = 580, 76
+    slot_x1 = (width - slot_w) // 2
+    slot_y1 = sticker_y1 + 54
+    slot_x2 = slot_x1 + slot_w
+    slot_y2 = slot_y1 + slot_h
+    draw.rounded_rectangle([slot_x1, slot_y1, slot_x2, slot_y2], radius=20, fill=(15, 23, 42, 235), outline=(255, 255, 255), width=2)
+    draw_text_with_emojis(img, draw, (width // 2, slot_y1 + slot_h // 2), "🔗 [ HİKAYE BAĞLANTI ÇIKARTMASI ]", font=get_font(26, bold=True), fill=(255, 255, 255), anchor="mm")
 
-    draw_text_with_emojis(img, draw, (width // 2, sticker_y1 + 42), "👇 BURAYA TIKLA & ÜRÜNE GİT 👇", font=cta_title_font, fill=(255, 255, 255), anchor="mm")
-    draw_text_with_emojis(img, draw, (width // 2, sticker_y1 + 98), "Doğrudan indirimli resmi mağaza sayfası açılır", font=cta_sub_font, fill=(253, 224, 71), anchor="mm")
-    draw_text_with_emojis(img, draw, (width // 2, sticker_y1 + 144), "🔥 FIRSATI KAÇIRMA • STOKLAR TÜKENEBİLİR", font=cta_urg_font, fill=(185, 28, 28), anchor="mm")
+    cta_title_font = get_font(30, bold=True)
+    cta_urg_font = get_font(24, bold=True)
+
+    draw_text_with_emojis(img, draw, (width // 2, sticker_y1 + 30), "👇 İNDİRİMLİ ÜRÜN LİNKİ 👇", font=cta_title_font, fill=(253, 224, 71), anchor="mm")
+    draw_text_with_emojis(img, draw, (width // 2, sticker_y2 - 25), "🔥 FIRSATI KAÇIRMA • STOKLAR TÜKENEBİLİR", font=cta_urg_font, fill=(248, 113, 113), anchor="mm")
 
     # 9. En Alt Dipnot (1775)
     d_code = deal.get("deal_code", "")

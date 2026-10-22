@@ -114,6 +114,17 @@ HIGH_DEMAND_KEYWORDS = [
     "apple", "razer", "logitech", "steelseries", "hyperx", "asus", "rog", "msi", "sony", "samsung", "jbl", "corsair", "anker", "philips"
 ]
 
+# 1. TEMEL KURAL: GENİŞ KİTLEYE HİTAP EDEN ÜRÜNLER (MASS-APPEAL DIRECTIVE)
+BROAD_AUDIENCE_KEYWORDS = [
+    "kulaklık", "headset", "airpods", "buds", "earbuds", "soundcore", "anc", "bluetooth",
+    "hoparlör", "speaker", "soundbar", "powerbank", "akıllı saat", "smart watch",
+    "kahve makinesi", "espresso", "airfryer", "fritöz", "termos", "quencher", "iceflow",
+    "tost makinesi", "blender", "robot süpürge", "dikey süpürge", "süpürge",
+    "monitör", "monitor", "mouse", "fare", "klavye", "keyboard", "oyun kolu", "gamepad",
+    "dualsense", "controller", "oyuncu kulaklığı", "gaming laptop", "laptop",
+    "tıraş", "oneblade", "diş fırçası", "oral-b", "airwrap"
+]
+
 def get_product_subtype(title: str) -> str:
     """
     Ürünün alt kategorisini tespit eder.
@@ -208,6 +219,13 @@ def calculate_deal_viral_score(deal: dict) -> float:
     title = str(deal.get("title") or "").lower()
 
     score = 0.0
+
+    # 0. 1. ÖNCELİK: Geniş Kitleye Hitap (Mass-Appeal Directive) Bonusu & Niş Ürün Cezası
+    is_broad = any(kw in title for kw in BROAD_AUDIENCE_KEYWORDS)
+    if is_broad:
+        score += 40.0
+    if BORING_REGEX.search(title):
+        score -= 120.0
 
     # 1. Net TL Tasarruf Puanı (Maks 40 puan)
     if savings_tl >= 2500:
@@ -410,7 +428,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         print(f"[Deal Hunter] Doğrudan Amazon TR ({cat_name}) taranıyor: {target_url}...")
         cmd = get_curl_cmd([
             "--compressed", "-s", "-L",
-            "-H", "User-Agent: Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.113 Mobile Safari/537.36",
+            "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
             target_url
@@ -460,17 +478,15 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
                 except Exception:
                     pass
 
-        # 2. Standart HTML ürün kartlarını tara
+        # 2. Standart HTML ürün kartlarını tara (Modern Amazon DOM + Legacy Destekli)
         soup = BeautifulSoup(res.stdout, "html.parser")
-        items = soup.find_all("div", class_="p13n-sc-uncoverable-faceout")
-        if not items:
-            items = soup.select("div[data-asin]")
+        items = soup.select("div[id*='gridItemRoot'], .p13n-grid-content, .zg-grid-general-faceout, .p13n-sc-uncoverable-faceout, div[data-asin]")
 
         for it in items:
-            title_el = it.find("h2") or it.find("div", class_=lambda c: c and "line-clamp" in c) or it.find("span")
-            price_el = it.select_one(".a-price .a-offscreen") or it.find("span", class_=lambda c: c and "price" in c)
+            title_el = it.select_one("div[class*='line-clamp-'], h2, div._cDEzb_p13n-sc-css-line-clamp-1_1Fn1y, div._cDEzb_p13n-sc-css-line-clamp-2_EWgt-") or it.find("h2") or it.find("span")
+            price_el = it.select_one(".a-price .a-offscreen, span[class*='price'], .p13n-sc-price") or it.find("span", class_=lambda c: c and "price" in c)
             img_el = it.find("img")
-            link_el = it.find("a", href=re.compile(r"/dp/"))
+            link_el = it.select_one("a[href*='/dp/']") or it.find("a", href=re.compile(r"/dp/"))
 
             if not (title_el and price_el and img_el and link_el):
                 continue
@@ -959,6 +975,15 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
             score += 25.0
         elif rating_val >= 4.3:
             score += 15.0
+
+        # 1. ÖNCELİK: Geniş Kitleye Hitap Eden Ürün (Mass-Appeal Directive)
+        # Herkesin evinde, masasında, cebinde isteyeceği kitlesel tüketici ürünlerine dev öncelik (+85 puan)
+        # Dar niş, teknik aparat, yedek parça ve sarf malzemelerine anında eleme cezası (-200 puan)
+        is_broad = any(kw in title for kw in BROAD_AUDIENCE_KEYWORDS)
+        if is_broad:
+            score += 85.0
+        elif BORING_REGEX.search(title):
+            score -= 200.0
 
         # D. Amazon Movers & Shakers (Son 24 Saatte Satışı Patlayanlar) Bonusu
         if deal.get("is_mover_shaker"):

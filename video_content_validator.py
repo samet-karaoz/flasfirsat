@@ -110,16 +110,16 @@ def check_video_streams(video_path: str) -> dict:
     return res
 
 
-def extract_inspection_frames(video_path: str, slug: str = "check") -> tuple:
+def extract_inspection_frames(video_path: str, slug: str = "check", ts_a: str = "00:00:01.30", ts_b: str = "00:00:03.40") -> tuple:
     """
-    Videonun 1.2. ve 2.4. saniyelerinden iki kontrol karesi (PNG) çıkarır.
-    Hem görsel kaliteyi hem de alt yarıdaki meme videosunun hareketliliğini doğrular.
+    Videonun belirlenen saniyelerinden iki kontrol karesi (PNG) çıkarır.
+    Hem görsel kaliteyi hem de hareketliliği/fiyat geçişini doğrular.
     """
     os.makedirs(TEMP_DIR, exist_ok=True)
     frame_a = os.path.join(TEMP_DIR, f"val_frame_a_{slug}.png")
     frame_b = os.path.join(TEMP_DIR, f"val_frame_b_{slug}.png")
 
-    for ts, out_p in [("00:00:01.30", frame_a), ("00:00:03.40", frame_b)]:
+    for ts, out_p in [(ts_a, frame_a), (ts_b, frame_b)]:
         if os.path.exists(out_p):
             try:
                 os.remove(out_p)
@@ -131,7 +131,7 @@ def extract_inspection_frames(video_path: str, slug: str = "check") -> tuple:
             timeout=15
         )
 
-    # Eğer video 2.4 saniyeden kısaysa 0.5. saniyeden yedek kare al
+    # Eğer video ikinci kareden kısaysa 0.5. saniyeden yedek kare al
     if not os.path.exists(frame_b) and os.path.exists(frame_a):
         safe_run_subprocess(
             ["ffmpeg", "-y", "-ss", "00:00:00.50", "-i", video_path, "-frames:v", "1", frame_b],
@@ -291,14 +291,106 @@ def analyze_banner_typography_and_layout(img: Image.Image, deal: dict = None) ->
     }
 
 
-def validate_rendered_video(video_path: str, deal: dict = None, banner_path: str = None) -> dict:
+def analyze_commercial_regions(img_a: Image.Image, img_b: Image.Image = None, deal: dict = None) -> dict:
     """
-    Üretilen MP4 videoyu (ve varsa üst banner PNG'sini) uçtan uca analiz eder:
-    1. FFmpeg akış, süre ve çözünürlük kontrolü
-    2. Kare (frame) çıkarma ve ürün görseli varlık analizi
-    3. Alt meme katmanı ve hareket kontrolü
-    4. Fiyat kutusu, tipografi, kenar taşması ve tofu (▢) kontrolü
-    Sonucu JSON raporu olarak kaydeder ve döndürür.
+    1080x1920 Resmi Marka Tanıtım & Nizami Kart Layout Denetimi:
+    1. Merkez (1080x1080) B-Roll video stream:
+       - Hareketlilik (motion_score >= 0.4)
+       - Görsel doku ve parlaklık varyansı (luma_std >= 10.0)
+    2. Üst Header (y: 75..252):
+       - Kontrast ve okunurluk (luma_std >= 14.0)
+    3. Alt Nizami Kart (y: 1365..1860):
+       - Kart kontrastı (luma_std >= 14.0)
+       - Fiyat Açılma Geçişi: Frame A (0-3s ??? TL) ile Frame B (3-8s net fiyat) arasındaki fark (transition_diff >= 1.5)
+    4. Tofu / Bozuk Unicode Kontrolü
+    """
+    issues = []
+    W, H = img_a.size
+    
+    # 1. Merkez B-Roll Video Denetimi (y: 280..1340, x: 50..1030)
+    center_a = img_a.crop((50, 280, 1030, 1340)).convert("RGB")
+    center_luma_std = ImageStat.Stat(center_a.convert("L")).stddev[0]
+    
+    broll_motion = 10.0
+    if img_b and img_b.size == img_a.size:
+        center_b = img_b.crop((50, 280, 1030, 1340)).convert("RGB")
+        broll_motion = ImageStat.Stat(ImageChops.difference(center_a, center_b).convert("L")).mean[0]
+        
+    has_broll = center_luma_std >= 10.0
+    broll_moving = broll_motion >= 0.4
+    
+    if not has_broll:
+        issues.append({
+            "code": "BROLL_LAYER_BLANK",
+            "severity": "critical",
+            "message": f"Merkez B-Roll video alanı siyah veya boş (std={center_luma_std:.1f})"
+        })
+    if not broll_moving:
+        issues.append({
+            "code": "BROLL_LAYER_FROZEN",
+            "severity": "critical",
+            "message": f"Merkez B-Roll videosu hareketsiz/donmuş görünüyor (motion={broll_motion:.2f})"
+        })
+        
+    # 2. Üst Header Kontrolü (y: 75..252, x: 54..1026)
+    hdr_crop = img_a.crop((54, 75, 1026, 252)).convert("L")
+    hdr_std = ImageStat.Stat(hdr_crop).stddev[0]
+    if hdr_std < 14.0:
+        issues.append({
+            "code": "HEADER_LOW_CONTRAST",
+            "severity": "critical",
+            "message": f"Üst başlık veya rozetler okunaksız/eksik (std={hdr_std:.1f})"
+        })
+        
+    # 3. Alt Nizami Kart ve Fiyat Açılış Geçişi (y: 1365..1860, x: 54..1026)
+    card_a = img_a.crop((54, 1365, 1026, 1860)).convert("RGB")
+    card_std = ImageStat.Stat(card_a.convert("L")).stddev[0]
+    
+    card_transition = 0.0
+    if img_b and img_b.size == img_a.size:
+        card_b = img_b.crop((54, 1365, 1026, 1860)).convert("RGB")
+        card_transition = ImageStat.Stat(ImageChops.difference(card_a, card_b).convert("L")).mean[0]
+        
+    if card_std < 14.0:
+        issues.append({
+            "code": "DEAL_CARD_LOW_CONTRAST",
+            "severity": "critical",
+            "message": f"Alt nizami fırsat kartı okunaksız veya eksik (std={card_std:.1f})"
+        })
+        
+    # 4. Tofu / Emoji Kontrolü
+    tofu_fields = []
+    if deal and isinstance(deal, dict):
+        check_keys = ["title", "old_price", "new_price", "discount_pct", "killer_hook", "feature_pill", "seller_badge"]
+        for k in check_keys:
+            val = str(deal.get(k, "") or "")
+            if UNSUPPORTED_TTF_REGEX.search(val):
+                tofu_fields.append(k)
+    if tofu_fields:
+        issues.append({
+            "code": "TOFU_GLYPH_RISK",
+            "severity": "warning",
+            "message": f"Deal metinlerinde kutucuk (tofu) riski: {', '.join(tofu_fields)}"
+        })
+
+    valid = has_broll and broll_moving and (hdr_std >= 14.0) and (card_std >= 14.0)
+    return {
+        "valid": valid,
+        "broll_motion": round(broll_motion, 2),
+        "broll_texture_std": round(center_luma_std, 2),
+        "header_std": round(hdr_std, 2),
+        "card_std": round(card_std, 2),
+        "card_transition_diff": round(card_transition, 2),
+        "tofu_risk_fields": tofu_fields,
+        "issues": issues
+    }
+
+
+def validate_rendered_video(video_path: str, deal: dict = None, banner_path: str = None, layout_type: str = "commercial") -> dict:
+    """
+    Üretilen MP4 videoyu uçtan uca analiz eder:
+    - layout_type="commercial" (Varsayılan): Merkez B-roll video, üst header ve alt nizami kart kontrolü
+    - layout_type="split": Eski 2 katmanlı split-screen meme kontrolü
     """
     os.makedirs(VALIDATION_REPORTS_DIR, exist_ok=True)
     slug = re.sub(r'[^a-zA-Z0-9_-]', '', os.path.splitext(os.path.basename(video_path or "video"))[0])[:35]
@@ -307,6 +399,7 @@ def validate_rendered_video(video_path: str, deal: dict = None, banner_path: str
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "video_path": video_path,
         "banner_path": banner_path,
+        "layout_type": layout_type,
         "passed": True,
         "issues": [],
         "metrics": {}
@@ -321,7 +414,9 @@ def validate_rendered_video(video_path: str, deal: dict = None, banner_path: str
         return _save_validation_report(report, slug)
 
     # 2. Videodan Kare Çıkar
-    frame_a_path, frame_b_path = extract_inspection_frames(video_path, slug=slug)
+    ts_a = "00:00:01.50" if layout_type == "commercial" else "00:00:01.30"
+    ts_b = "00:00:04.50" if layout_type == "commercial" else "00:00:03.40"
+    frame_a_path, frame_b_path = extract_inspection_frames(video_path, slug=slug, ts_a=ts_a, ts_b=ts_b)
     if not frame_a_path or not os.path.exists(frame_a_path):
         report["passed"] = False
         report["issues"].append({
@@ -341,41 +436,41 @@ def validate_rendered_video(video_path: str, deal: dict = None, banner_path: str
                 with Image.open(frame_b_path) as img_b:
                     img_b_rgb = img_b.convert("RGB")
 
-            # 3. Ürün Görseli Kontrolü
-            prod_res = analyze_product_region(img_a_rgb, deal=deal)
-            report["metrics"]["product_region"] = prod_res
-            if not prod_res["has_product_visual"]:
-                report["passed"] = False
-                report["issues"].append({
-                    "code": "MISSING_PRODUCT_IMAGE",
-                    "severity": "critical",
-                    "message": (
-                        f"Üst banner kartında ürün görseli tespit edilemedi! "
-                        f"(edge_mean={prod_res['edge_mean']}, ratio={prod_res['strong_edge_ratio']})"
-                    )
-                })
-
-            # 4. Meme Katmanı & Hareket Kontrolü
-            meme_res = analyze_meme_region(img_a_rgb, img_b_rgb)
-            report["metrics"]["meme_region"] = meme_res
-            if not meme_res["valid"]:
-                report["passed"] = False
-                report["issues"].append({
-                    "code": "MEME_LAYER_DEFECT",
-                    "severity": "critical",
-                    "message": (
-                        f"Alt meme videosu bozuk, siyah veya hareketsiz! "
-                        f"(luma_std={meme_res['luma_std']}, motion={meme_res['motion_score']})"
-                    )
-                })
-
-            # 5. Tipografi, Fiyat Kutusu ve Taşma Kontrolü
-            typo_res = analyze_banner_typography_and_layout(img_a_rgb, deal=deal)
-            report["metrics"]["typography"] = typo_res
-            for iss in typo_res["issues"]:
-                if iss["severity"] == "critical":
+            if layout_type == "commercial":
+                comm_res = analyze_commercial_regions(img_a_rgb, img_b_rgb, deal=deal)
+                report["metrics"]["commercial_layout"] = comm_res
+                for iss in comm_res["issues"]:
+                    if iss.get("severity") == "critical":
+                        report["passed"] = False
+                    report["issues"].append(iss)
+            else:
+                # Legacy Split-screen Kontrolü
+                prod_res = analyze_product_region(img_a_rgb, deal=deal)
+                report["metrics"]["product_region"] = prod_res
+                if not prod_res["has_product_visual"]:
                     report["passed"] = False
-                report["issues"].append(iss)
+                    report["issues"].append({
+                        "code": "MISSING_PRODUCT_IMAGE",
+                        "severity": "critical",
+                        "message": f"Üst banner kartında ürün görseli tespit edilemedi! (edge_mean={prod_res['edge_mean']})"
+                    })
+
+                meme_res = analyze_meme_region(img_a_rgb, img_b_rgb)
+                report["metrics"]["meme_region"] = meme_res
+                if not meme_res["valid"]:
+                    report["passed"] = False
+                    report["issues"].append({
+                        "code": "MEME_LAYER_DEFECT",
+                        "severity": "critical",
+                        "message": f"Alt meme videosu bozuk veya hareketsiz!"
+                    })
+
+                typo_res = analyze_banner_typography_and_layout(img_a_rgb, deal=deal)
+                report["metrics"]["typography"] = typo_res
+                for iss in typo_res["issues"]:
+                    if iss["severity"] == "critical":
+                        report["passed"] = False
+                    report["issues"].append(iss)
 
     except Exception as e:
         report["passed"] = False

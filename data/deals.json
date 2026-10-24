@@ -520,8 +520,8 @@
     "date_added": "13.10.2026 20:23",
     "category": "gaming",
     "deal_code": "#109",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti"
   },
   {
     "id": "deal_1791918693_7",

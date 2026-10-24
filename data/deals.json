@@ -320,8 +320,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/tapo_c211_2k_g_venlik_kam_251e612b.jpg",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "17.10.2026 00:58",
     "deal_code": "#122"
   },

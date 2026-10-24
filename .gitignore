@@ -35,3 +35,7 @@ web/
 .idea/
 Thumbs.db
 Desktop.ini
+
+# Medya ve Meme Havuzu (Büyük MP4 dosyaları git'e eklenmez)
+assets/memes/
+*.mp4

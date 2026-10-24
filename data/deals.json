@@ -449,8 +449,8 @@
     "date_added": "14.10.2026 08:35",
     "category": "monitor",
     "deal_code": "#114",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791955175_12",

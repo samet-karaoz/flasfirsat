@@ -81,12 +81,14 @@ def create_story_card(deal: dict, output_path: str = None) -> str:
     # Boyut: 900x790px -> Dikey hizada alt bölümlere bol alan bırakır
     card_x1, card_y1 = 90, 205
     card_x2, card_y2 = 990, 995
-    draw.rounded_rectangle([card_x1, card_y1, card_x2, card_y2], radius=36, fill=(255, 255, 255, 255))
+    draw.rounded_rectangle([card_x1, card_y1, card_x2, card_y2], radius=36, fill=(24, 28, 38, 255), outline=(56, 189, 248, 150), width=2)
 
     prod_img_path = deal.get("image_path")
     if prod_img_path and os.path.exists(prod_img_path):
         try:
-            prod_raw = Image.open(prod_img_path).convert("RGBA")
+            cutout_p = f"{os.path.splitext(prod_img_path)[0]}_cutout.png"
+            load_p = cutout_p if os.path.exists(cutout_p) else prod_img_path
+            prod_raw = Image.open(load_p).convert("RGBA")
             target_w = card_x2 - card_x1 - 80
             target_h = card_y2 - card_y1 - 100
             prod_raw.thumbnail((target_w, target_h), Image.Resampling.LANCZOS)

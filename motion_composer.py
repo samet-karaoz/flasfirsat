@@ -137,7 +137,8 @@ def generate_staggered_banner_frames(
     savings = (old_val - new_val) if (show_old_price and old_val > new_val) else 0.0
 
     # Tema Seçimi
-    theme = select_banner_theme(title=title, discount_pct=discount_pct, badge_text=badge_text, theme_name="auto")
+    theme_req = deal.get("theme") or deal.get("theme_name") or "auto"
+    theme = select_banner_theme(title=title, discount_pct=discount_pct, badge_text=badge_text, theme_name=theme_req)
     theme_title_col = theme["title_color"]
 
     # Fontlar
@@ -245,7 +246,12 @@ def generate_staggered_banner_frames(
     CARD_W, CARD_H = 972, 498
     card_img = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
     draw_card = ImageDraw.Draw(card_img, "RGBA")
-    draw_card.rounded_rectangle((0, 0, CARD_W, CARD_H), radius=24, fill=(255, 255, 255, 255), outline=theme["card_border"], width=3)
+    is_dark_theme = bool(theme["bg_top"][0] < 60 and theme["bg_top"][1] < 60)
+    card_fill = theme.get("card_bg") or ((15, 23, 42, 245) if is_dark_theme else (255, 255, 255, 255))
+    card_outline = theme.get("card_border", (56, 189, 248, 220))
+    draw_card.rounded_rectangle((0, 0, CARD_W, CARD_H), radius=24, fill=card_fill, outline=card_outline, width=2 if is_dark_theme else 3)
+    if is_dark_theme:
+        draw_card.line([(28, 1), (CARD_W - 28, 1)], fill=(255, 255, 255, 180), width=2)
 
     # Spotlight Işıma
     glow_layer = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
@@ -276,6 +282,16 @@ def generate_staggered_banner_frames(
     if image_path and os.path.exists(image_path):
         try:
             cutout_p = f"{os.path.splitext(image_path)[0]}_cutout.png"
+            if not skip_rembg and not os.path.exists(cutout_p):
+                try:
+                    from rembg import remove
+                    with open(image_path, "rb") as f_in:
+                        cutout_data = remove(f_in.read())
+                    with open(cutout_p, "wb") as f_out:
+                        f_out.write(cutout_data)
+                    print(f"[MotionBanner] Otomatik rembg cutout üretildi: {cutout_p}")
+                except Exception as ex_rem:
+                    print(f"[MotionBanner] rembg otomatik üretim hatası: {ex_rem}")
             load_p = cutout_p if (not skip_rembg and os.path.exists(cutout_p)) else image_path
             p_img = Image.open(load_p).convert("RGBA")
             alpha = p_img.split()[-1]
@@ -293,7 +309,8 @@ def generate_staggered_banner_frames(
             sh_w = max(80, int(p_img.width * 0.82))
             sh_layer = Image.new("RGBA", (sh_w + 80, 90), (0, 0, 0, 0))
             sh_draw = ImageDraw.Draw(sh_layer)
-            sh_draw.ellipse((40, 30, 40 + sh_w, 60), fill=(15, 23, 42, 85))
+            shadow_col = (0, 0, 0, 160) if is_dark_theme else (15, 23, 42, 85)
+            sh_draw.ellipse((40, 30, 40 + sh_w, 60), fill=shadow_col)
             sh_layer = sh_layer.filter(ImageFilter.GaussianBlur(radius=13))
             card_img.paste(sh_layer, ((CARD_W - sh_layer.width) // 2, py + p_img.height - 20), sh_layer)
             card_img.paste(p_img, (px, py), p_img)

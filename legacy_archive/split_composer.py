@@ -488,6 +488,7 @@ BANNER_THEMES = {
         "name": "Obsidian Cyber-Luxury (Koyu Sinematik & Neon Zümrüt)",
         "bg_top": (11, 15, 25),
         "bg_bottom": (20, 28, 46),
+        "card_bg": (15, 23, 42, 245),
         "title_color": (248, 250, 252),
         "card_border": (56, 189, 248),
         "glow_color": (56, 189, 248, 95),

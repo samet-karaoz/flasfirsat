@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1793009792_37",
+    "deal_code": "#144",
+    "title": "Soundcore by Anker K20i Bluetooth Kulaklık",
+    "old_price": "1.499 TL",
+    "new_price": "999 TL",
+    "discount_pct": "-%33",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DCZQJT4L?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 333 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/soundcore_by_anker_k20i_b_6a6c410e.jpg",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "26.10.2026 13:16"
+  },
+  {
     "id": "deal_1792869436_37",
     "deal_code": "#143",
     "title": "Stanley Quencher H2.0 FlowState 1.18L Pipetli Termos",

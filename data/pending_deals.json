@@ -1593,5 +1593,34 @@
     "file_id": "BAACAgQAAxkDAAOXatj9ar6HmRjH5NRY4JZxZeUMhW4AAhYeAAJxeclSHVatLaMjacE9BA",
     "status": "rejected",
     "created_at": "2026-10-21 20:59:07"
+  },
+  "deal_1793009572": {
+    "deal_id": "deal_1793009572",
+    "message_id": 168,
+    "chat_id": "6101216739",
+    "deal": {
+      "title": "Soundcore by Anker K20i Bluetooth Kulaklık",
+      "old_price": "1.499 TL",
+      "new_price": "999 TL",
+      "discount_pct": "-%33",
+      "store_name": "Amazon TR",
+      "badge": "DEV İNDİRİM",
+      "installment": "Peşin Fiyatına 3 Taksit x 333 TL",
+      "is_lowest_30d": true,
+      "deal_code": "#144",
+      "killer_hook": "36 SAAT PİL • HIZLI ŞARJ • IPX5",
+      "store_url": "https://www.amazon.com.tr/dp/B0DCZQJT4L?tag=flasfirsat04-21",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0DCZQJT4L?tag=flasfirsat04-21",
+      "image_path": "assets/products/anker_soundcore_k20i.jpg",
+      "theme": "obsidian_dark"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\anker_k20i_dugunde_cosan_cocuk.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\anker_k20i_dugunde_cosan_cocuk.mp4",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\story_anker_k20i.jpg",
+    "caption_text": "Düğünde kulaklığı takıp kendi dünyama dalınca ben... 🕺✨\n\nPiyasa fiyatı 1.499 TL olan Soundcore by Anker K20i Bluetooth Kulaklık, 1.000 TL psikolojik sınırının altına inerek tam 999 TL'ye düştü!\n\n⚡ 36 Saat Kesintisiz Çalma Süresi\n⚡ 10 Dakika Şarjla 2 Saat Kullanım\n⚡ ENC Çift Mikrofon ile Net Görüşmeler\n⚡ IPX5 Suya & Tere Dayanıklılık\n⚡ Peşin Fiyatına 3 Taksit x 333 TL\n\n🔗 Ürün linki profilimizdeki web sitemizde!\n👉 Arama kutusuna kod: 144\n(Direkt link için DM'den \"144\" yazabilirsiniz)\n\n#işbirliği #reklam #anker #soundcore #kulaklık #bluetoothkulaklık #indirim #fırsat #amazonfırsatları #flasfirsat",
+    "product_url": "https://www.amazon.com.tr/dp/B0DCZQJT4L?tag=flasfirsat04-21",
+    "file_id": "BAACAgQAAxkDAAOoat8nq04Dn7o8XlVdqnDRz-Uv52MAAssfAALfxPlSFS4zFz6KBwk9BA",
+    "status": "pending",
+    "created_at": "2026-10-26 13:13:01"
   }
 }

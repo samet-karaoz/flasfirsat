@@ -33,8 +33,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_quencher_h2_0_flo_ee96145e.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "24.10.2026 22:17"
   },
   {
@@ -110,7 +110,7 @@
     "category": "gaming",
     "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.png",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "20.10.2026 22:19"
   },
   {
@@ -128,8 +128,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/razer_kraken_x_lite_kulak_c4e3787a.jpg",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "20.10.2026 13:06"
   },
   {
@@ -166,8 +166,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/razer_basilisk_mouse_d13f68a9.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.10.2026 18:17",
     "is_reel": true
   },
@@ -206,8 +206,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/emsan_k_zde_kahve_makines_f52b87e2.jpg",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.10.2026 18:17",
     "is_reel": true
   },
@@ -283,8 +283,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -375,8 +375,8 @@
     "net_cost": "",
     "installment": "3 Taksit x 2.578 TL",
     "image_url": "assets/products/asus_tuf_27__165hz_monit__543719e7.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "15.10.2026 20:16",
     "category": "monitor",
     "deal_code": "#120"
@@ -411,8 +411,8 @@
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_64gb_usb_bellek_22ab7a43.jpg",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "15.10.2026 21:17",
     "category": "hardware",
     "deal_code": "#118"
@@ -486,7 +486,7 @@
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "expired_reason": "Stok Tükendi",
     "deal_code": "#113"
   },
   {
@@ -539,8 +539,8 @@
     "image_url": "assets/products/philips_sessiz_kablosuz_m_c16b9ef3.jpg",
     "date_added": "13.10.2026 22:09",
     "category": "gaming",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "deal_code": "#110"
   },
   {
@@ -558,8 +558,8 @@
     "date_added": "13.10.2026 20:23",
     "category": "gaming",
     "deal_code": "#109",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791918693_7",
@@ -594,8 +594,8 @@
     "date_added": "13.10.2026 21:50",
     "category": "gaming",
     "deal_code": "#107",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi"
   },
   {
     "id": "deal_1791910189_6",

@@ -39,3 +39,11 @@ Desktop.ini
 # Medya ve Meme Havuzu (Büyük MP4 dosyaları git'e eklenmez)
 assets/memes/
 *.mp4
+
+# Geçici scratch test dosyaları
+hunt_*.py
+check_*.py
+test_*.py
+prep_*.py
+patch_*.py
+send_*.py

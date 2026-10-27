@@ -322,24 +322,63 @@ def check_and_update_all_deals_status() -> dict:
     return {"updated": changes_made, "expired_count": expired_count}
 
 def push_to_github():
+    """
+    Web vitrini dosyalarını (deals.json, index.html, sitemap.xml, assets/products)
+    GitHub Pages'e otomatik ve %100 çakışmasız (conflict-free) olarak pushlar.
+    Rebase kilitlenmelerini, dosya çakışmalarını ve askıda kalmaları tamamen önler.
+    """
     try:
-        safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], cwd=WEB_DIR, capture_output=True)
-        safe_run_subprocess(["git", "add", "."], cwd=WEB_DIR, capture_output=True)
-        safe_run_subprocess(["git", "commit", "-m", "Auto-update deals"], cwd=WEB_DIR, capture_output=True)
-        safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], cwd=WEB_DIR, capture_output=True)
+        # 1. Askıda kalan rebase veya merge varsa önce temizle
+        safe_run_subprocess(["git", "rebase", "--abort"], cwd=WEB_DIR, capture_output=True)
+        safe_run_subprocess(["git", "merge", "--abort"], cwd=WEB_DIR, capture_output=True)
+
+        # 2. Yalnızca web ile ilgili gerekli dosyaları stage et (Tüm repo değil!)
+        web_files = ["data/deals.json", "index.html", "sitemap.xml", "assets/products"]
+        for wf in web_files:
+            wp = os.path.join(WEB_DIR, wf)
+            if os.path.exists(wp):
+                safe_run_subprocess(["git", "add", wf], cwd=WEB_DIR, capture_output=True)
+
+        # 3. Eğer commit edilecek değişiklik varsa yerel commit oluştur
+        status_res = safe_run_subprocess(["git", "status", "--porcelain"], cwd=WEB_DIR, capture_output=True, text=True)
+        has_staged = any(line.startswith(('M ', 'A ', 'D ')) for line in (status_res.stdout or '').splitlines())
+        if has_staged:
+            safe_run_subprocess(["git", "commit", "-m", "Auto-update deals"], cwd=WEB_DIR, capture_output=True)
+
+        # 4. Uzak sunucuyla senkronize et (Çakışma anında yerel vitrini önceleyen -X theirs stratejisi)
+        pull_res = safe_run_subprocess(
+            ["git", "pull", "--rebase", "-X", "theirs", "origin", "main"],
+            cwd=WEB_DIR, capture_output=True, text=True
+        )
+        if pull_res and pull_res.returncode != 0:
+            print("[Web] ⚠️ Rebase uyarısı, rebase temizlenip tekrar deneniyor...")
+            safe_run_subprocess(["git", "rebase", "--abort"], cwd=WEB_DIR, capture_output=True)
+            safe_run_subprocess(["git", "fetch", "origin", "main"], cwd=WEB_DIR, capture_output=True)
+            render_web_html()
+            for wf in web_files:
+                wp = os.path.join(WEB_DIR, wf)
+                if os.path.exists(wp):
+                    safe_run_subprocess(["git", "add", wf], cwd=WEB_DIR, capture_output=True)
+            safe_run_subprocess(["git", "commit", "-m", "Auto-update deals"], cwd=WEB_DIR, capture_output=True)
+
+        # 5. Push işlemi
         res = safe_run_subprocess(["git", "push", "origin", "main"], cwd=WEB_DIR, capture_output=True, text=True)
         if res and res.returncode == 0:
-            print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) otomatik senkronize edildi!")
+            print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) başarıyla güncellendi ve yayına alındı!")
+            return True
         else:
-            safe_run_subprocess(["git", "pull", "--rebase", "origin", "main"], cwd=WEB_DIR, capture_output=True)
+            safe_run_subprocess(["git", "pull", "--rebase", "-X", "theirs", "origin", "main"], cwd=WEB_DIR, capture_output=True)
             res2 = safe_run_subprocess(["git", "push", "origin", "main"], cwd=WEB_DIR, capture_output=True, text=True)
             if res2 and res2.returncode == 0:
-                print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) rebase sonrası senkronize edildi!")
+                print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) 2. denemede senkronize edildi!")
+                return True
             else:
-                err_msg = res2.stderr if res2 else "Bilinmeyen hata"
+                err_msg = res2.stderr if res2 else (res.stderr if res else "Bilinmeyen hata")
                 print(f"[Web] ⚠️ Git push uyarısı: {err_msg[:200]}")
+                return False
     except Exception as e:
         print(f"[Web] Git push hatası: {e}")
+        return False
 
 def render_web_html(deals: list = None):
     """

@@ -485,8 +485,8 @@
     "image_url": "assets/products/stanley_transit_termos_88819170.jpg",
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "deal_code": "#113"
   },
   {

@@ -284,7 +284,7 @@
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.jpg",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -411,8 +411,8 @@
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit",
     "image_url": "assets/products/sandisk_64gb_usb_bellek_22ab7a43.jpg",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.10.2026 21:17",
     "category": "hardware",
     "deal_code": "#118"

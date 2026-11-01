@@ -96,6 +96,37 @@ def get_next_deal_code(deals: list = None) -> str:
             max_num = max(max_num, int(m.group(1)))
     return f"#{max_num + 1}"
 
+def optimize_web_image(src_path: str, dst_path: str, max_dim: int = 440, quality: int = 82) -> bool:
+    """
+    Ürün görselini web vitrini için maksimum 440x440 (2x Retina) boyuta küçültür
+    ve beyaz zemin üzerinde optimize edilmiş WebP veya JPEG olarak kaydeder.
+    800 KB'lık ham Amazon/PNG görsellerini ~12-22 KB seviyesine indirir.
+    """
+    try:
+        from PIL import Image
+        with Image.open(src_path) as im:
+            if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
+                im_rgba = im.convert("RGBA")
+                bg = Image.new("RGB", im_rgba.size, (255, 255, 255))
+                bg.paste(im_rgba, mask=im_rgba.split()[3])
+                im_rgb = bg
+            else:
+                im_rgb = im.convert("RGB")
+            im_rgb.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+            ext_low = os.path.splitext(dst_path)[1].lower()
+            if ext_low == ".webp":
+                im_rgb.save(dst_path, format="WEBP", quality=quality, method=6)
+            else:
+                im_rgb.save(dst_path, format="JPEG", quality=quality, optimize=True, progressive=True)
+        return True
+    except Exception as e:
+        print(f"[Web] Görsel sıkıştırma uyarısı ({src_path}): {e}")
+        try:
+            shutil.copy2(src_path, dst_path)
+            return True
+        except Exception:
+            return False
+
 def add_deal_to_web(deal: dict):
     """
     Yeni fırsatı web sitesi veritabanına ekler ve index.html'i yeniden derler.
@@ -111,17 +142,16 @@ def add_deal_to_web(deal: dict):
     ensure_web_setup()
     deals = load_deals()
 
-    # Ürün resmini web dizinine her ürün için benzersiz bir isimle kopyala
+    # Ürün resmini web dizinine optimize edilmiş .webp formatında kaydet
     img_path = deal.get("image_path", "")
     web_img_rel = ""
     if img_path and os.path.exists(img_path):
         import hashlib, re
         title_slug = re.sub(r'[^a-zA-Z0-9]', '_', deal.get("title", "product")).strip('_')[:25].lower()
         unique_hash = hashlib.md5((deal.get("store_url", "") + deal.get("title", "")).encode('utf-8')).hexdigest()[:8]
-        ext = os.path.splitext(img_path)[1] or ".jpg"
-        unique_fname = f"{title_slug}_{unique_hash}{ext}"
+        unique_fname = f"{title_slug}_{unique_hash}.webp"
         dst_img = os.path.join(WEB_IMG_DIR, unique_fname)
-        shutil.copy2(img_path, dst_img)
+        optimize_web_image(img_path, dst_img, max_dim=440, quality=82)
         web_img_rel = f"assets/products/{unique_fname}"
 
     from campaign_calculator import calculate_campaign_and_net_cost
@@ -493,6 +523,19 @@ def render_web_html(deals: list = None):
                 badge_lbl = "⚡ REELS'TEKİ FIRSAT" if d.get("is_reel") else "⚡ GÜNÜN ÖNE ÇIKAN FIRSATI"
                 featured_reel_html = f'<span class="badge-featured-reel">{badge_lbl}</span>'
 
+            # Ekran altı (below-the-fold) kartlar için tarayıcı render ertelemesi (content-visibility: auto)
+            if idx >= 4:
+                card_class += " card-below-fold"
+
+            # Görsel yükleme önceliği: LCP kartında (idx == 0) fetchpriority="high" ve eager,
+            # ilk satırda (idx 1-2) eager, ekran altında (idx >= 3) loading="lazy" decoding="async"
+            if idx == 0:
+                img_load_attrs = 'fetchpriority="high" width="240" height="210"'
+            elif idx in (1, 2):
+                img_load_attrs = 'width="240" height="210" decoding="async"'
+            else:
+                img_load_attrs = 'loading="lazy" decoding="async" width="240" height="210"'
+
             price_num_val = parse_price_to_float(new_p)
             disc_clean_digits = re.sub(r"[^0-9]", "", disc)
             discount_num_val = int(disc_clean_digits) if disc_clean_digits else 0
@@ -511,7 +554,7 @@ def render_web_html(deals: list = None):
             <div class="{card_class}" data-status="{status_attr}" data-category="{category}" data-title="{title.lower()} {store.lower()} {category} {deal_code.lower()} {code_num_only} kod {code_num_only}" data-deal-id="{deal_id}" data-deal-title="{safe_title}" data-store="{safe_store}" data-price="{safe_price}" data-price-val="{price_num_val}" data-discount-val="{discount_num_val}" data-index="{idx}">
                 <a href="{url}" target="_blank" rel="nofollow noopener sponsored" class="card-img-link" title="{safe_title}">
                     <div class="card-img-wrap">
-                        <img src="{img_src}" alt="{safe_title}" class="card-img" loading="lazy">
+                        <img src="{img_src}" alt="{safe_title}" class="card-img" {img_load_attrs}>
                         <span class="badge-store {store_class}">{store}</span>
                         <span class="badge-discount">{disc}</span>
                         <span class="badge-deal-code">🔢 KOD: {deal_code}</span>
@@ -565,7 +608,8 @@ def render_web_html(deals: list = None):
     <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 {{GA_TAG}}
     <style>
         :root {
@@ -584,7 +628,7 @@ def render_web_html(deals: list = None):
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
@@ -810,6 +854,12 @@ def render_web_html(deals: list = None):
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
 
+        /* Ekran altında kalan kartların DOM boyama maliyetini kaydırma anına kadar ertele */
+        .deal-card.card-below-fold {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 320px auto 520px;
+        }
+
         .deal-card:hover {
             transform: translateY(-4px);
             border-color: rgba(255, 87, 34, 0.4);
@@ -893,8 +943,7 @@ def render_web_html(deals: list = None):
             position: absolute;
             top: 14px;
             left: 14px;
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(8px);
+            background: rgba(15, 23, 42, 0.94);
             color: #F8FAFC;
             font-weight: 700;
             font-size: 0.78rem;
@@ -1689,7 +1738,7 @@ def render_web_html(deals: list = None):
 
     <header>
         <div class="logo-wrap">
-            <img src="assets/logo.jpg" alt="Flaş Fırsat Logo" class="logo-img">
+            <img src="assets/logo.jpg" alt="Flaş Fırsat Logo" class="logo-img" width="104" height="104" fetchpriority="high" decoding="async">
         </div>
         <h1 class="brand-title">FLAŞ FIRSAT ⚡</h1>
         <p class="brand-desc">Amazon, Trendyol ve Hepsiburada'daki piyasa altı en sıcak teknoloji fırsatlarını anlık yakalıyoruz!</p>
@@ -1724,7 +1773,7 @@ def render_web_html(deals: list = None):
 
         <div class="controls-bar">
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün, marka veya Videodaki Fırsat Kodunu (#101, 102...) ara..." onkeyup="filterDeals()">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Ürün, marka veya Videodaki Fırsat Kodunu (#101, 102...) ara..." oninput="onSearchInput()">
             </div>
             <div class="sort-box">
                 <select id="sortSelect" class="sort-select" onchange="sortDeals(this.value)">
@@ -1879,6 +1928,12 @@ def render_web_html(deals: list = None):
         }
 
         let searchDebounce = null;
+        let uiFilterTimer = null;
+        function onSearchInput() {
+            clearTimeout(uiFilterTimer);
+            uiFilterTimer = setTimeout(filterDeals, 100);
+        }
+
         function filterDeals() {
             const input = document.getElementById('searchInput').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.deal-card');
@@ -2275,13 +2330,8 @@ def render_web_html(deals: list = None):
             }
         }
 
-        // İlk açılışta rozet sayılarını hesapla ve aktif fırsatları filtrele
-        document.addEventListener('DOMContentLoaded', function() {
-            updateBadges();
-            filterDeals();
-        });
+        // İlk açılışta yalnızca rozet sayılarını tek seferde hesapla (gereksiz çift DOM döngüsü kaldırıldı)
         updateBadges();
-        filterDeals();
     </script>
 </body>
 </html>

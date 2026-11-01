@@ -612,8 +612,8 @@
     "date_added": "13.10.2026 19:49",
     "category": "general",
     "deal_code": "#106",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791840416_4",

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1793534540_38",
+    "deal_code": "#145",
+    "title": "Logitech G305 LIGHTSPEED Kablosuz Oyuncu Mouse",
+    "old_price": "2.299 TL",
+    "new_price": "1.629 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07CGNP3RH?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 543 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/logitech_g305_lightspeed__0ef2e425.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "01.11.2026 15:02"
+  },
+  {
     "id": "deal_1793009792_37",
     "deal_code": "#144",
     "title": "Soundcore by Anker K20i Bluetooth Kulaklık",

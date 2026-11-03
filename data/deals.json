@@ -1,8 +1,27 @@
 [
   {
+    "id": "deal_1793705670_40",
+    "deal_code": "#148",
+    "title": "LEGO Speed Champions Ferrari SF-24 F1 Yarış Arabası",
+    "old_price": "",
+    "new_price": "959 TL",
+    "discount_pct": "ÇOK SATAN #2",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DHSBBV6R?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 320 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/lego_speed_champions_ferr_cde1bef3.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "03.11.2026 14:34"
+  },
+  {
     "id": "deal_1793704533_39",
     "deal_code": "#147",
-    "title": "LEGO Speed Champions DeLorean & Ferrari SF-24 F1",
+    "title": "LEGO Speed Champions Zamana Dönüş DeLorean",
     "old_price": "1.166 TL",
     "new_price": "989 TL",
     "discount_pct": "-15%",

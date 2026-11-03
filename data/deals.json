@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1793726816_43",
+    "deal_code": "#151",
+    "title": "Huawei MateBook D16 (i5-13420H • 16GB RAM • 1TB SSD • 16\" IPS • Windows 11 Pro)",
+    "old_price": "",
+    "new_price": "40.999,00 TL",
+    "discount_pct": "",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0HBCPFJVR?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "hardware",
+    "image_url": "assets/products/huawei_matebook_d16__i5_1_9cddaebe.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "03.11.2026 20:26"
+  },
+  {
     "id": "deal_1793726808_42",
     "deal_code": "#150",
     "title": "TECNO Megabook T14 Air (i5-1334U • 16GB RAM • 1TB SSD • 14\" FHD+ • Windows 11)",

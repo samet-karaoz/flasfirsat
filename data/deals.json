@@ -1,62 +1,5 @@
 [
   {
-    "id": "deal_1793726816_43",
-    "deal_code": "#151",
-    "title": "Huawei MateBook D16 (i5-13420H • 16GB RAM • 1TB SSD • 16\" IPS • Windows 11 Pro)",
-    "old_price": "",
-    "new_price": "40.999,00 TL",
-    "discount_pct": "",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0HBCPFJVR?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "hardware",
-    "image_url": "assets/products/huawei_matebook_d16__i5_1_9cddaebe.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "03.11.2026 20:26"
-  },
-  {
-    "id": "deal_1793726808_42",
-    "deal_code": "#150",
-    "title": "TECNO Megabook T14 Air (i5-1334U • 16GB RAM • 1TB SSD • 14\" FHD+ • Windows 11)",
-    "old_price": "",
-    "new_price": "32.799,00 TL",
-    "discount_pct": "",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0GWHH93FY?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "hardware",
-    "image_url": "assets/products/tecno_megabook_t14_air__i_f21d48ea.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "03.11.2026 20:26"
-  },
-  {
-    "id": "deal_1793726801_41",
-    "deal_code": "#149",
-    "title": "Acer Aspire Go 15 (Ryzen 7 5825U • 16GB RAM • 1TB SSD • 15.6\" FHD • Windows 11)",
-    "old_price": "",
-    "new_price": "36.999,00 TL",
-    "discount_pct": "",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0GZJ6PH18?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "hardware",
-    "image_url": "assets/products/acer_aspire_go_15__ryzen__72f5cf9e.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "03.11.2026 20:26"
-  },
-  {
     "id": "deal_1793705670_40",
     "deal_code": "#148",
     "title": "LEGO Speed Champions Ferrari SF-24 F1 Yarış Arabası",
@@ -280,8 +223,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/razer_basilisk_mouse_d13f68a9.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.10.2026 18:17",
     "is_reel": true
   },
@@ -435,8 +378,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/philips_7500_buharl___t_3c221632.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -507,8 +450,8 @@
     "net_cost": "",
     "installment": "Peşin Fiyatına 3 Taksit x 1.959 TL",
     "image_url": "assets/products/lenovo_legion_240hz_gamin_a4fecd19.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "15.10.2026 21:39",
     "category": "monitor",
     "deal_code": "#119"
@@ -543,8 +486,8 @@
     "net_cost": "",
     "installment": "3 Taksit x 24.333 TL",
     "image_url": "assets/products/playstation_5_pro_2efbc8f3.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "15.10.2026 12:36",
     "category": "hardware",
     "deal_code": "#117"
@@ -708,8 +651,8 @@
     "date_added": "13.10.2026 21:50",
     "category": "gaming",
     "deal_code": "#107",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791910189_6",
@@ -744,8 +687,8 @@
     "date_added": "12.10.2026 21:26",
     "category": "gaming",
     "deal_code": "#105",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791839926_3",

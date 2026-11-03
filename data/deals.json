@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1793704533_39",
+    "deal_code": "#147",
+    "title": "LEGO Speed Champions DeLorean & Ferrari SF-24 F1",
+    "old_price": "1.166 TL",
+    "new_price": "989 TL",
+    "discount_pct": "-15%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FPXDXXYR?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 330 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/lego_speed_champions_delo_fbdfae13.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "03.11.2026 14:15"
+  },
+  {
     "id": "deal_1793534540_38",
     "deal_code": "#145",
     "title": "Logitech G305 LIGHTSPEED Kablosuz Oyuncu Mouse",

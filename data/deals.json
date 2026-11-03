@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1793726808_42",
+    "deal_code": "#150",
+    "title": "TECNO Megabook T14 Air (i5-1334U • 16GB RAM • 1TB SSD • 14\" FHD+ • Windows 11)",
+    "old_price": "",
+    "new_price": "32.799,00 TL",
+    "discount_pct": "",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0GWHH93FY?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "hardware",
+    "image_url": "assets/products/tecno_megabook_t14_air__i_f21d48ea.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "03.11.2026 20:26"
+  },
+  {
     "id": "deal_1793726801_41",
     "deal_code": "#149",
     "title": "Acer Aspire Go 15 (Ryzen 7 5825U • 16GB RAM • 1TB SSD • 15.6\" FHD • Windows 11)",

@@ -17,7 +17,19 @@ def load_pending_deals() -> dict:
     if os.path.exists(PENDING_DEALS_FILE):
         try:
             with open(PENDING_DEALS_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+            # 48 saatten eski bekleyen kayıtları otomatik temizle (bayat stok/fiyat koruması)
+            now_ts = int(time.time())
+            cleaned = {}
+            for k, v in data.items():
+                try:
+                    ts_part = int(str(k).replace("deal_", "").split("_")[0])
+                    if now_ts - ts_part > 172800 and v.get("status") == "pending":
+                        v["status"] = "expired"
+                except Exception:
+                    pass
+                cleaned[k] = v
+            return cleaned
         except Exception:
             return {}
     return {}
@@ -76,6 +88,20 @@ def send_telegram_deal_for_approval(
     deal_id = f"deal_{timestamp}"
 
     title = deal.get("title", "Fırsat Ürünü")
+    # 30 Dakikalık Mükerrer Gönderim Kilidi (Aynı ürünün art arda iki kez Telegram'a düşmesini önler)
+    existing_pending = load_pending_deals()
+    for prev_id, prev_info in existing_pending.items():
+        try:
+            prev_ts = int(str(prev_id).replace("deal_", "").split("_")[0])
+            if abs(timestamp - prev_ts) < 1800 and prev_info.get("status") == "pending":
+                prev_title = (prev_info.get("deal", {}).get("title") or "").strip().lower()
+                prev_url = (prev_info.get("product_url") or "").strip()
+                if (prev_title and prev_title == title.strip().lower()) or (product_url and prev_url == product_url.strip()):
+                    print(f"[Telegram Notifier] ⏭️ Mükerrer kilit: '{title[:35]}' son 30 dk içinde zaten onaya sunuldu ({prev_id}).")
+                    return {"success": True, "deal_id": prev_id, "message_id": prev_info.get("message_id"), "deduplicated": True}
+        except Exception:
+            pass
+
     new_price = deal.get("new_price", "")
     old_price = deal.get("old_price", "")
     discount_pct = deal.get("discount_pct", "")
@@ -86,12 +112,18 @@ def send_telegram_deal_for_approval(
     deal_code = deal.get("deal_code", "")
     code_line = f"🔢 <b>Fırsat Kodu:</b> <code>{deal_code}</code>\n" if deal_code else ""
 
+    if old_price and old_price != new_price and deal.get("has_verified_old_price", True):
+        price_line = f"💰 <b>Fiyat:</b> <s>{old_price}</s> ➔ <b>{new_price}</b> ({discount_pct})\n"
+    else:
+        badge_info = deal.get("bestseller_badge") or deal.get("bought_past_month") or "Çok Satan Fırsatı"
+        price_line = f"💰 <b>Fiyat:</b> <b>{new_price}</b> ({badge_info})\n"
+
     # Yönetici Önizleme Mesajı
     approval_caption = (
         f"🎬 <b>YENİ FIRSAT ONAY BEKLİYOR!</b>\n\n"
         f"{code_line}"
         f"📦 <b>Ürün:</b> {title}\n"
-        f"💰 <b>Fiyat:</b> <s>{old_price}</s> ➔ <b>{new_price}</b> ({discount_pct})\n"
+        f"{price_line}"
     )
     if coupon_info:
         approval_caption += f"🎟️ <b>Kupon:</b> {coupon_info} (Sayfada Aktif Et)\n"
@@ -111,7 +143,8 @@ def send_telegram_deal_for_approval(
             {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
         ],
         [
-            {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"}
+            {"text": "📢 Kanala & Web'e Paylaş", "callback_data": f"approve_ch:{deal_id}"},
+            {"text": "🌐 Sadece Siteye Ekle", "callback_data": f"approve_web:{deal_id}"}
         ],
         [
             {"text": "🚨 Fiyat Hatası / Acil Modu (Aç/Kapa)", "callback_data": f"toggle_urgent:{deal_id}"}
@@ -202,9 +235,9 @@ def send_telegram_deal_for_approval(
                 clean_w = _re.findall(r'\w+', (title or "").lower())
                 seo_w = [w for w in clean_w if len(w) > 2][:5] + ["indirim", "fırsat", "kampanya", "amazon", "keşfet"]
                 seo_str = " ".join(list(dict.fromkeys(seo_w)))
-                code_pin = f"🔢 Fırsat Kodu: {deal_code} (flasfirsat.com.tr arama kutusuna {deal_code} yazarak anında bulabilirsiniz!)\n\n" if deal_code else ""
+                code_pin = f"🔢 Fırsat Kodu: {deal_code} (Profilimizdeki arama kutusuna {deal_code} yazarak da bulabilirsiniz)\n\n" if deal_code else ""
                 first_comm = (
-                    f"📌 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede (flasfirsat.com.tr) aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz 👇\n\n"
+                    f"📌 Ürün satın alma bağlantısı Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! 24 saat dolmadan Hikayemizden direkt ürüne ulaşabilirsiniz 👇\n\n"
                     f"{code_pin}"
                     f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
                 )

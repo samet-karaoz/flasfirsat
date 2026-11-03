@@ -377,7 +377,7 @@ def push_to_github():
 
         # 4. Uzak sunucuyla senkronize et (Çakışma anında yerel vitrini önceleyen -X theirs stratejisi)
         pull_res = safe_run_subprocess(
-            ["git", "pull", "--rebase", "-X", "theirs", "origin", "main"],
+            ["git", "pull", "--rebase", "--autostash", "-X", "theirs", "origin", "main"],
             cwd=WEB_DIR, capture_output=True, text=True
         )
         if pull_res and pull_res.returncode != 0:
@@ -397,7 +397,7 @@ def push_to_github():
             print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) başarıyla güncellendi ve yayına alındı!")
             return True
         else:
-            safe_run_subprocess(["git", "pull", "--rebase", "-X", "theirs", "origin", "main"], cwd=WEB_DIR, capture_output=True)
+            safe_run_subprocess(["git", "pull", "--rebase", "--autostash", "-X", "theirs", "origin", "main"], cwd=WEB_DIR, capture_output=True)
             res2 = safe_run_subprocess(["git", "push", "origin", "main"], cwd=WEB_DIR, capture_output=True, text=True)
             if res2 and res2.returncode == 0:
                 print("[Web] 🚀 GitHub Pages (Canlı Web Sitesi) 2. denemede senkronize edildi!")

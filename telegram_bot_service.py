@@ -216,9 +216,9 @@ def handle_callback_query(cq: dict):
         seo_str = " ".join(all_seo)
 
         deal_code_val = deal.get("deal_code", "")
-        code_pin_line = f"🔢 Fırsat Kodu: {deal_code_val} (flasfirsat.com.tr arama kutusuna {deal_code_val} yazarak anında bulabilirsiniz!)\n\n" if deal_code_val else ""
+        code_pin_line = f"🔢 Fırsat Kodu: {deal_code_val} (Profilimizdeki arama kutusuna {deal_code_val} yazarak da bulabilirsiniz)\n\n" if deal_code_val else ""
         first_comment_str = (
-            f"📌 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede (flasfirsat.com.tr) aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz 👇\n\n"
+            f"📌 Ürün satın alma bağlantısı Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! 24 saat dolmadan Hikayemizden direkt ürüne ulaşabilirsiniz 👇\n\n"
             f"{code_pin_line}"
             f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
         )
@@ -446,12 +446,24 @@ def handle_callback_query(cq: dict):
             print(f"[Telegram Service] Kanal gönderim hatası: {e}")
 
         if ch_ok:
+            # Web vitrinine de otomatik ekle (Kanal postundaki site linkinde ürün hazır olsun)
+            try:
+                from web_showcase import add_deal_to_web
+                if deal.get("top3_deals"):
+                    for d in deal["top3_deals"]:
+                        add_deal_to_web(d)
+                else:
+                    add_deal_to_web(deal)
+            except Exception as e_web:
+                print(f"[Telegram Service] Web vitrin hatası: {e_web}")
+
             item["status"] = "published_channel"
             save_pending_deals(pending)
             updated_caption = (
-                f"✅ <b>KANALDA PAYLAŞILDI! ({target_ch})</b>\n\n"
+                f"✅ <b>KANALDA PAYLAŞILDI & WEB VİTRİNİNE EKLENDİ! ({target_ch})</b>\n\n"
                 f"📦 <b>Ürün:</b> {title}\n"
-                f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n\n"
+                f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n"
+                f"🌐 <b>Web Vitrini:</b> flasfirsat.com.tr (#1 Sıraya Eklendi)\n\n"
                 f"Diğer platformlar:"
             )
             markup = {
@@ -568,6 +580,51 @@ def handle_callback_query(cq: dict):
 
 
     # T) Fiyat Hatası / Acil Stok Modu Aç/Kapa
+        # W) Sadece Web Vitrinine Ekle (approve_web)
+    elif action == "approve_web":
+        answer_telegram_callback_query(cq_id, text="🌐 Web vitrinine ekleniyor...")
+        web_ok = False
+        try:
+            from web_showcase import add_deal_to_web
+            if deal.get("top3_deals"):
+                for d in deal["top3_deals"]:
+                    add_deal_to_web(d)
+            else:
+                add_deal_to_web(deal)
+            web_ok = True
+        except Exception as ew:
+            print(f"[Telegram Service] Web vitrin hatası: {ew}")
+            answer_telegram_callback_query(cq_id, text=f"❌ Web hatası: {ew}", show_alert=True)
+
+        if web_ok:
+            item["status"] = "published_web"
+            save_pending_deals(pending)
+            from config import SITE_URL
+            updated_caption = (
+                f"✅ <b>WEB VİTRİNİNE EKLENDİ & YAYINLANDI! 🌐</b>\n\n"
+                f"📦 <b>Ürün:</b> {title}\n"
+                f"💰 <b>Fiyat:</b> {deal.get('new_price')}\n"
+                f"🌐 <b>Site:</b> {SITE_URL} (#1 Sıraya Yerleştirildi)\n\n"
+                f"Diğer platformlara da göndermek ister misiniz?"
+            )
+            markup = {
+                "inline_keyboard": [
+                    [
+                        {"text": "📢 Kanala At (@flasfirsat)", "callback_data": f"approve_ch:{deal_id}"},
+                        {"text": "📲 IG Stüdyo Paketi", "callback_data": f"approve_ig:{deal_id}"}
+                    ],
+                    [
+                        {"text": "📺 YouTube Shorts Paylaş", "callback_data": f"approve_yt:{deal_id}"}
+                    ]
+                ]
+            }
+            row_links = []
+            if product_url:
+                row_links.append({"text": "🛒 Ürün Sayfası", "url": product_url})
+            row_links.append({"text": "🌐 Web Vitrinini Aç", "url": f"{SITE_URL}?utm_source=telegram&utm_medium=admin_approval"})
+            markup["inline_keyboard"].append(row_links)
+            edit_telegram_message_caption(chat_id, msg_id, updated_caption, reply_markup=markup)
+
     elif action == "toggle_urgent":
         is_urgent = not item.get("is_urgent", False)
         item["is_urgent"] = is_urgent

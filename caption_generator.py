@@ -38,7 +38,8 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
    - '👉 Yoruma "LİNK" yaz, satın alma linkini anında DM kutuna gönderelim! 📩'
    - "📌 Fiyat tekrar artmadan videoyu KAYDET, indirim arayan arkadaşına GÖNDER! ✈️"
    - "💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇"
-   - "🔗 Ürün linki Hikayemizde (Story) ve profildeki sitede aktif!"
+   - "🔗 Ürün bağlantısı Hikayemizde (Story) ve profilimizdeki bağlantıda aktif!"
+   - KESİNLİKLE AÇIKLAMAYA LİNK (URL / HTTP / HTTPS / WWW) YAZMA! Instagram ve TikTok açıklamalarında linkler tıklanamaz.
 5. En fazla 4-5 odaklı etiket (#indirim #teknoloji #gaming #fırsat). En sona zorunlu '#işbirliği #reklam' ekle.
 
 Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek ekleme."""
@@ -50,7 +51,7 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
     if code_clean:
         extra_info += f"\nFırsat Kodu: {code_clean} (İzleyiciye profilimizdeki sitemizde arama kutusuna {code_clean} yazarak da ürünü saniyeler içinde bulabileceğini belirt)"
     price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
-    user_prompt = f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÜrün Linki: {store_url}\nYasal Zorunluluk: Açıklamanın en sonuna mutlaka '#işbirliği #reklam' etiketlerini ekle."
+    user_prompt = f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\nÖNEMLİ: Açıklamaya KESİNLİKLE web linki/URL yazma (tıklanmıyor). İzleyiciyi yoruma 'LİNK' yazmaya veya Hikayeye yönlendir.\nYasal Zorunluluk: Açıklamanın en sonuna mutlaka '#işbirliği #reklam' etiketlerini ekle."
 
     payload = {
         "contents": [{"parts": [{"text": user_prompt}]}],
@@ -62,8 +63,12 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         json.dump(payload, f, ensure_ascii=False)
 
     def sanitize_caption(text: str) -> str:
-        """Metindeki hashtag sayısını dengeler, kupon uyarısını, fırsat kodunu ve #işbirliği zorunluluğunu garanti eder."""
+        """Metindeki hashtag sayısını dengeler, kupon uyarısını, fırsat kodunu ve #işbirliği zorunluluğunu garanti eder. Açıklamadaki tüm tıklanamayan URL ve linkleri temizler."""
         import re
+        # Tıklanamayan web linklerini (URL) açıklamadan temizle
+        text = re.sub(r'https?://\S+', '', text)
+        text = re.sub(r'www\.\S+', '', text)
+        text = re.sub(r'flasfirsat\.com\.tr\S*', 'profilimizdeki bağlantı', text)
         if coupon_clean and "kupon" not in text.lower():
             coupon_notice = f"\n🎟️ KUPON BİLGİSİ: Bu fiyata düşmesi için ürün sayfasındaki '{coupon_clean}' kuponunu aktif etmeyi unutmayın!\n"
             lines = text.split("\n")
@@ -137,9 +142,8 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         f"{code_line}"
         f"🚨 Sınırlı süreli fırsat, stoklar tükenmeden inceleyin!\n\n"
         f"💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n"
-        f"🔗 Ürün linki şu an Hikayemizde (Story) ve profilimizdeki sitede aktif! 24 saat dolmadan Hikayemizden direkt ürüne gidebilirsiniz ⚡\n"
-        f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n"
-        f"🌐 Canlı Vitrin: {SITE_URL}?utm_source=instagram&utm_medium=reels\n\n"
+        f"🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n"
+        f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n"
         f"#işbirliği #reklam #indirim #fırsat #teknoloji"
     )
     return sanitize_caption(fallback)

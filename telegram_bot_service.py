@@ -231,7 +231,7 @@ def handle_callback_query(cq: dict):
             f"📲 <b>%100 ORGANİK INSTAGRAM STÜDYO PAKETİ</b>\n"
             f"<i>(Üzerine bir kez dokunduğunuz metin otomatik kopyalanır)</i>\n\n"
             f"📋 <b>1. REELS AÇIKLAMASI (Dokun & Kopyala):</b>\n"
-            f"<code>{_html.escape(caption_text)}</code>\n\n"
+            f"<code>{_html.escape(re.sub(r'https?://\\S+|www\\.\\S+', '', caption_text).strip())}</code>\n\n"
             f"💬 <b>2. BAŞA TUTTURULACAK İLK YORUM (Dokun & Kopyala):</b>\n"
             f"<code>{_html.escape(first_comment_str)}</code>\n\n"
             f"🔗 <b>3. HİKAYE (STORY) LİNKİ (Dokun & Kopyala):</b>\n"

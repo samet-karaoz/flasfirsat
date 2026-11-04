@@ -232,6 +232,13 @@ def add_deal_to_web(deal: dict):
     # HTML'i güncelle
     render_web_html(deals)
     print(f"[Web] 🌐 Web vitrini güncellendi: {deal_item['title']}")
+    # Eğer ikili ürün (second_deal) varsa, ikinci ürünü de kendi kartı ve linkiyle vitrine ekle
+    second_d = deal.get("second_deal")
+    if isinstance(second_d, dict) and second_d.get("store_url"):
+        sec_copy = dict(second_d)
+        sec_copy.pop("second_deal", None)
+        add_deal_to_web(sec_copy)
+        return
     push_to_github()
 
 def remove_deal_from_web(identifier: str) -> bool:
@@ -324,8 +331,18 @@ def check_and_update_all_deals_status() -> dict:
                 print(f"[Web Vitrini] Kontrol hatası ({title}): {e}")
 
     if changes_made:
-        save_deals(deals)
-        render_web_html(deals)
+        # Yarış Durumu (Race Condition) Kalkanı:
+        # Uzun süren Amazon sorguları sırasında diske yeni ürün eklenmiş olabilir.
+        # Eski bellek listesiyle diski ezmek yerine güncel deals.json'ı tekrar oku ve sadece durumları birleştir!
+        latest_deals = load_deals()
+        status_map = {d.get("id"): (d.get("is_expired"), d.get("expired_reason")) for d in deals if d.get("id")}
+        for ld in latest_deals:
+            lid = ld.get("id")
+            if lid in status_map:
+                ld["is_expired"], ld["expired_reason"] = status_map[lid]
+
+        save_deals(latest_deals)
+        render_web_html(latest_deals)
         push_to_github()
         print(f"[Web Vitrini] 🚀 Vitrin güncellendi! {expired_count} adet ürünün durumu yenilendi.")
 

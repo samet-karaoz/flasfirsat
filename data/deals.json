@@ -261,8 +261,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/razer_kraken_x_lite_kulak_c4e3787a.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "20.10.2026 13:06"
   },
   {

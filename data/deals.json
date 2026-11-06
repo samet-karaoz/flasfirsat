@@ -128,8 +128,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/lego_speed_champions_ferr_cde1bef3.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 14:34"
   },
   {
@@ -147,8 +147,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/lego_speed_champions_delo_fbdfae13.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 14:15"
   },
   {
@@ -281,7 +281,7 @@
     "category": "gaming",
     "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.webp",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "20.10.2026 22:19"
   },
   {
@@ -817,8 +817,8 @@
     "installment": "3 Taksit x 1.166 TL",
     "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.webp",
     "date_added": "12.10.2026 21:18",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "category": "gaming",
     "deal_code": "#104"
   },

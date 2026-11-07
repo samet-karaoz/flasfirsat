@@ -52,8 +52,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_iceflow_pipetli_t_87432ec4.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "06.11.2026 17:30"
   },
   {

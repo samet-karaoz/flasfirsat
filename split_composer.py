@@ -247,103 +247,163 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
 
 
 # ==========================================
-# VIRAL MEME REAKSİYON METİNLERİ (REACTION HOOKS)
+# VIRAL MEME REAKSİYON METİNLERİ (REACTION HOOKS - SAMİMİ & DOĞAL)
 # ==========================================
 
 MEME_SPECIFIC_HOOKS = {
-    "otobuste_oynayan_dayi": {
-        "audio": [
-            "KULAKLIKTA 7.1 SESİ AÇTIKTAN 5 DAKİKA SONRA BİZİM KAFA:",
-            "HERKES TAM FİYAT VERİRKEN {sav_fmt} İNDİRİMLE KAPIP EVE DÖNEN BEN:",
-            "BU FİYATA KULAKLIK BULUNCA OTOBÜSTE BENİM RAHATLIK:",
-            "{sav_fmt} İNDİRİMİ CEBE ATIP MESAİ ÇIKIŞI OTOBÜSTE BİZİM TAYFA:",
-            "KULAKLIKTAKİ İNDİRİMİ GÖRÜNCE İÇİMDE ÇALAN ANKARA HAVASI:"
+    "bebek_dans": {
+        "beauty": [
+            "Kızlar koşun, bu fiyata görünce odada attığım o zafer dansı:",
+            "Aynada parlayan cildimi görünce evdeki o tatlı neşem:",
+            "Kızlar grubuna 'ACİL ALIN' yazdıktan sonraki mutluluğum:",
+            "Normalde servet ödediğim ürünü bu fiyata bulunca benim keyif:"
         ],
         "general": [
-            "{sav_fmt} NET İNDİRİMİ KAPIP MESAİ ÇIKIŞI EVE DÖNEN BEN:",
-            "AY BAŞINDA BU İNDİRİME DENK GELİNCE BENİM KAFANIN RAHATLIK:",
-            "SİPARİŞİ GEÇTİM ARTIK İPTAL EDEMEZLER RAHATLIĞI:",
-            "PEŞİN FİYATINA 3 TAKSİTİ GÖRÜNCE OTOBÜSTE BİZİM HALLER:"
-        ]
-    },
-    "kemal_efendi_dans": {
-        "general": [
-            "BU FİYATA İNANAMAYIP 3 KERE SAYFAYI YENİLEYEN BİZ:",
-            "SİPARİŞ ONAYLANDI BİLDİRİMİ GELİNCE BENİM AKIL SAĞLIĞI:",
-            "HERKES PAHALI DİYE AĞLARKEN İNDİRİMİ DİPTEN YAKALAYAN BEN:",
-            "KARTTAN PARA ÇEKİLDİ AMA KESİNLİKLE DEĞDİ DEDİRTEN O AN:"
-        ]
-    },
-    "dugunde_cosan_cocuk": {
-        "general": [
-            "BU FİYATA GERÇEKTEN DÜŞTÜĞÜNÜ GÖRÜNCE EVDE BENİM COŞKU:",
-            "MAAŞIN YATTIĞI GÜN BU İNDİRİMİ YAKALAYAN ÖĞRENCİ TAYFA:",
-            "STOK 1 TANE KALMIŞTI ONLARI DA BİZ KAPTIK SEVİNCİ:",
-            "GRUPTAKİLERE 'BEN ALDIM SİZ BAKIN' YAZDIKTAN SONRA BEN:"
-        ]
-    },
-    "polat_memati_kosu": {
-        "general": [
-            "AMAZON'DA ŞAKA GİBİ BİR FİYAT YAKALAYINCA LİNKE KOŞAN BİZ:",
-            "FİYAT DÜZELMEDEN VEYA STOK BİTMEDEN YETİŞMEYE ÇALIŞAN TAYFA:",
-            "GRUPTA 'BEYLER BU FİYAT GERÇEK Mİ' DEYİP SİTEYE KOŞAN BİZ:",
-            "BU FİYATA BULUNCA İKİNCİSİNİ DE SEPETE ATMAYA GİDEN BİZ:",
-            "SİPARİŞİ VERİP KARGOYA VERİLSİN DİYE DUA EDEN TAYFA:"
-        ]
-    },
-    "homelander_smile": {
-        "general": [
-            "İNDİRİMİ HERKESTEN ÖNCE FARK EDİP SİPARİŞİ PATLATINCA BEN:",
-            "MİLLET 2 KATI FİYAT ÖDERKEN BİZİM DİPTEN KAPTIĞIMIZ İNDİRİM:",
-            "FİYAT HATASINI İLK GÖRENİN BEN OLDUĞUNU ANLAYINCA:",
-            "YORUMLARDA 'NEREDEN ALDIN' DİYE SORANLARA BAKIŞIM:"
+            "İndirimi kapıp kargonun yola çıktığını görünce bendeki o saf neşe:",
+            "Normalde asla bu fiyata düşmeyen şeyi kapınca bendeki o sevinç:",
+            "Karttan parayı çektiler ama acayip ucuza aldık dansı:",
+            "Tam ihtiyacım olan şeyin indirime girdiğini görünce içimdeki çocuk:",
+            "Stok bitmeden önce siparişi yetiştirenlerin sevinç dansı:",
+            "Arkadaşlara 'ben kaptım siz de bakın' deyip keyif çatan ben:"
         ]
     },
     "piyano_davul": {
         "general": [
-            "STOK BİTMEDEN KART BİLGİSİNİ JET HIZIYLA GİREN ELLER:",
-            "FİYATIN DÜŞTÜĞÜNÜ GÖRÜNCE KALBİMİN ATTIĞI TEMPO:",
-            "BU FİYATI GÖRÜP SEPETE KOŞARKEN BİZİM CİDDİYET:"
+            "Fiyatın düştüğünü görünce kalbimin ve parmaklarımın girdiği tempo:",
+            "İndirimi yakalayınca içimdeki davulcunun coşku seviyesi:",
+            "Fiyat düzeltilmeden önce kart numarasını giren parmaklarımın hızı:",
+            "Bu indirimi kaçırırsam uyuyamam deyip gece 2'de sipariş geçen ben:",
+            "Gruba 'BEYLER ÇÖKÜN' yazıp ilk kendisi siparişi patlatan ben:"
+        ]
+    },
+    "limon_davulcu": {
+        "general": [
+            "Düğünde halay başı olmuş gibi gelen o tatlı indirim coşkusu:",
+            "İndirimi yakalayınca içimdeki davulcunun coşku seviyesi:",
+            "Bu fiyata görünce kalbimin ve parmaklarımın girdiği o tempo:",
+            "Stok tükenmeden siparişi yetiştiren tayfanın kutlama ritmi:"
+        ]
+    },
+    "polat_memati_kosu": {
+        "general": [
+            "Flaş indirimi görünce sepete depar atan biz:",
+            "Stoklar erimeden önce siparişe nefes nefese koşan tayfa:",
+            "WhatsApp grubuna 'BEYLER KOŞUN' yazıp ilk kendisi alan ben:",
+            "Amazon bu fiyata çekmişken bir saniye bile beklemeyen tayfa:",
+            "Fiyat hatası mı acaba deyip linke depar atan biz:"
+        ]
+    },
+    "kemal_efendi_dans": {
+        "general": [
+            "Mesai çıkışı bu indirimi cebe atıp eve dönen benim rahatlık:",
+            "Herkes pahalı diye yakınırken dip fiyattan kapan uyanık ben:",
+            "Peşin fiyatına 3 taksiti görünce içimde başlayan festival:",
+            "Siparişi geçtim artık iptal edemezler rahatlığı:",
+            "Ay başında bu indirime denk gelince bendeki o kafa rahatlığı:"
+        ]
+    },
+    "otobuste_oynayan_dayi": {
+        "audio": [
+            "Kulaklıkta en sevdiğim şarkıyı açtıktan 5 dakika sonra bizim kafa:",
+            "Herkes tam fiyat verirken {sav_fmt} indirimle kapıp eve dönen ben:",
+            "Bu fiyata kulaklık bulunca otobüste benim rahatlık:",
+            "Müzik açılınca otobüste kendi dünyasına dalıp giden ben:"
+        ],
+        "general": [
+            "{sav_fmt} net indirimi kapıp mesai çıkışı eve dönen ben:",
+            "Ay başında bu indirime denk gelince bendeki o kafa rahatlığı:",
+            "Siparişi geçtim kargoyu bekliyorum rahatlığı:",
+            "Peşin fiyatına 3 taksiti görünce içimde başlayan festival:"
+        ]
+    },
+    "cat_vibing": {
+        "audio": [
+            "Kulaklığı takıp en sevdiğim şarkıyı açınca bendeki o kafa rahatlığı:",
+            "Bu ses kalitesini bu fiyata yakalayınca bendeki tatlı ritim:"
+        ],
+        "general": [
+            "Bu fiyata bu kaliteyi yakalayınca bendeki o tatlı ritim:",
+            "Kargo zilinin çaldığı anı beklerken bendeki huzur:",
+            "Günün bütün yorgunluğunu unutturan o muazzam indirim:"
+        ]
+    },
+    "dugunde_cosan_cocuk": {
+        "general": [
+            "Bu fiyata gerçekten indiğini görünce evde kopan benim enerji:",
+            "Maaş günü bu fırsatı yakalayan gencin coşkusu:",
+            "Son 1 tane kalmıştı onu da biz kaptık sevinci:",
+            "Gruptakilere 'ben aldım siz bakın' yazdıktan sonraki o gurur:"
         ]
     },
     "knight_cat": {
         "general": [
-            "899 TL'YE KABLOSUZ LOGITECH MOUSE BULUNCA BENİM CİDDİYET:",
-            "BU SETUP İNDİRİMİNİ GÖRÜNCE OYUNCU TAYFANIN ODAK SEVİYESİ:",
-            "BU FİYATA KABLOSUZ GAMING MOUSE YAKALAYINCA BİZİM DİSİPLİN:",
-            "HERKES 1500 TL VERİRKEN 899 TL'YE KAPAN BENİM RAHATLIK:",
-            "SETUP'I YENİLEMEK İÇİN BU ANLARI BEKLEYEN OYUNCU TAYFA:"
+            "Bu setup indirimini görünce oyuncu tayfanın odak seviyesi:",
+            "Herkes 2 katı para öderken dip fiyattan kapanın ciddiyeti:",
+            "Setup'ı yenilemek için aylardır bu anı bekleyen oyuncu tayfa:"
+        ]
+    },
+    "the_rock": {
+        "general": [
+            "Bu fiyata düştüğünü görünce sayfaya 3 kere bakan ben:",
+            "Fiyat hatası mı diye kontrol ederken gözlerimin aldığı hal:",
+            "Herkes tam para bayılırken dip fiyattan kapan uyanık tayfa:"
         ]
     }
 }
 
-REACTION_HOOKS_PRICE_ERROR = [
-    "FİYAT HATASI MI DİYE KONTROL EDERKEN KALBİMİN ATIŞ HIZI:",
-    "BU FİYAT GERÇEK Mİ DİYE 3 KERE SAYFAYI YENİLEYEN BEN:",
-    "FİYATI FARK EDİP DÜZELTMEDEN ÖNCE SİPARİŞİ ÇAKAN TAYFA:",
-    "BU FİYAT ŞAKA GİBİ, SATICI GERÇEKTEN BU RAKAMI MI YAZMIŞ:"
-]
-
-REACTION_HOOKS_HIGH_DISCOUNT = [
-    "HERKES TAM FİYAT ÖDERKEN DİPTEN YAKALAYANIN KEYFİ:",
-    "BU FİYATI GÖRÜNCE KARTTAKİ SON LİMİTİ GÖZDEN ÇIKARAN BEN:",
-    "İNDİRİMİ GÖRÜP DİREKT WHATSAPP GRUBUNA ATAN TAYFA:",
-    "BU FİYATA BİR DAHA İNMEZ DEYİP ANINDA YAPIŞTIRAN BEN:"
+REACTION_HOOKS_BEAUTY = [
+    "Kızlar koşun, stoklar bitmeden bu fiyata kapıp aynaya karşı benim keyif:",
+    "Aynada ipek gibi parlayan saçlarımı görünce evdeki o tatlı neşem:",
+    "Normalde servet ödediğim serumu bedavadan biraz pahalıya bulunca ben:",
+    "Kızlar grubuna 'ACİL ALIN ÇEYİZE ATIN' diye linki fırlattıktan sonra ben:",
+    "Cildim cam gibi parlayacak diye siparişi geçerken bendeki o mutluluk:",
+    "Kızlar bu fiyata şaka mı, çeyize ve dolaba stok yaparken benim haller:",
+    "Aynadaki yansımama bakıp 'iyi ki kapmışım' dediğim o tatlı an:",
+    "Bu fiyata orijinal bulmuşum hiç kaçırır mıyım, anında sepete atan ben:"
 ]
 
 REACTION_HOOKS_GAMING = [
-    "BU SETUP İNDİRİMİNİ GÖRÜNCE KARTTAKİ LİMİTİ SIFIRLAYAN TAYFA:",
-    "BU FİYATA BU EKİPMANI BULUNCA BİZİM AKIL SAĞLIĞI:",
-    "MESAİ PARASINI BU İNDİRİME GÖMÜP VİCDAN AZABI ÇEKMEYEN TAYFA:",
-    "BEYLER BU FİYAT ŞAKA MI DİYE DİSCORD'A ATILAN O MESAJ:",
-    "SETUP'I YENİLEMEK İÇİN BU ANLARI BEKLEYEN OYUNCU TAYFA:"
+    "Beyler şaka değil, bu fiyata görünce sepete fırlattığım o an:",
+    "Maaş yattığı gün bu indirime denk gelince bendeki o saf neşe:",
+    "Herkes 2 katı para bayılırken dip fiyattan kapan uyanık tayfa:",
+    "Setup'ı yenilemek için aylardır bu indirimi bekleyen ben:",
+    "Stok tükenmeden önce kartı kapıp odaya koşan tayfa:",
+    "Fiyatı görünce Discord'a 'BEYLER KOŞUN' diye fırlayan ben:",
+    "Oyun zevkini ikiye katlayacak canavarı bu fiyata kapınca benim keyif:",
+    "Kargocu kapıyı çaldığında kutuyu açmak için sabırsızlanan ben:"
+]
+
+REACTION_HOOKS_KITCHEN = [
+    "Sabah kahvemi bu makineden içeceğimi hayal edince bendeki o neşe:",
+    "Evde barista gibi takılacağım diye bu indirimi kapınca benim keyif:",
+    "Mutfakta hayat kurtaran canavarı yarı fiyatına bulunca ben:",
+    "Mis gibi sıcak kahvemi doldurup güne başlama hayalleri:",
+    "Bu fiyata düştüğünü görünce ev ahalisine 'ALDIM GİTTİ' diyen ben:",
+    "Günün yorgunluğunu unutturacak fırsatı kapınca benim rahatlık:"
+]
+
+REACTION_HOOKS_PRICE_ERROR = [
+    "Fiyat hatası mı diye kontrol ederken kalbimin atış hızı:",
+    "Bu fiyat gerçek mi diye 3 kere sayfayı yenileyen ben:",
+    "Fiyatı fark edip satıcı düzeltmeden önce siparişi çakan tayfa:",
+    "Bu fiyat şaka gibi, Amazon gerçekten bu rakamı mı yazmış:"
+]
+
+REACTION_HOOKS_HIGH_DISCOUNT = [
+    "Herkes tam fiyat öderken dip fiyattan yakalayanın keyfi:",
+    "Bu fiyatı görünce karttaki son limiti gözden çıkaran ben:",
+    "İndirimi görüp direkt WhatsApp grubuna fırlatan tayfa:",
+    "Bu fiyata bir daha inmez deyip anında siparişi geçen ben:"
 ]
 
 REACTION_HOOKS_GENERAL = [
-    "BU FİYATI KAÇIRIRSAM RÜYAMA GİRER DİYEN TAYFA:",
-    "İNDİRİMİ GÖRÜP İHTİYACI OLAN ARKADAŞA ACİL GÖNDEREN BEN:",
-    "CÜZDANI BU FIRSATA EMANET EDERKEN HİÇ PİŞMAN OLMAYAN BEN:",
-    "SİPARİŞİ GEÇTİM KARGOYU BEKLEMEYE BAŞLADIM BİLE:"
+    "Bu fiyata görünce sepete atmadan duramayan ben:",
+    "İndirimi kapıp kargonun yola çıktığını görünce evdeki o tatlı neşem:",
+    "Normalde asla bu fiyata düşmeyen şeyi kapınca benim keyif:",
+    "Dostlar bu fiyata şaka gibi, ihtiyacı olan arkadaşa acil gönderen ben:",
+    "Cüzdanı hiç üzmeden en kalitelisini kapınca gelen o rahatlama:",
+    "Gruptakilere 'ben kaptım siz de bakın' yazdıktan sonraki o tatlı gurur:",
+    "Bu fırsatı kaçırsam içimde kalırdı deyip anında siparişi geçen ben:"
 ]
 
 def select_smart_reaction_hook(
@@ -370,23 +430,37 @@ def select_smart_reaction_hook(
         except Exception:
             pass
 
+    # Kategori tespiti
+    beauty_kw = ["şampuan", "serum", "krem", "cilt", "nemlendirici", "bakım", "epilasyon", "epilatör", "purest", "cerave", "bioderma", "l'oreal", "garnier", "saç", "maske", "tonik", "güneş", "parfüm", "dyson"]
+    is_beauty = any(k in title_low for k in beauty_kw)
+
+    kitchen_kw = ["kahve", "espresso", "airfryer", "fritöz", "termos", "stanley", "mutfak", "blender", "tost", "çay", "karaca", "tefal", "delonghi", "philips latte"]
+    is_kitchen = any(k in title_low for k in kitchen_kw)
+
+    gaming_kw = ["mouse", "fare", "kulaklık", "headset", "klavye", "keyboard", "gaming", "ps5", "gamepad", "kol", "oyuncu", "monitor", "ekran kartı", "kulak", "oyun"]
+    is_gaming = any(k in title_low for k in gaming_kw)
+
     # 1. Meme Özelinde Spesifik & Komik Kanca Eşleştirmesi
     for k, hook_group in MEME_SPECIFIC_HOOKS.items():
-        if k in meme_key or (k == "otobuste_oynayan_dayi" and ("otobus" in meme_key or "dayi" in meme_key)):
-            is_audio = any(w in title_low for w in ["kulaklık", "headset", "earphone", "sound", "surround"])
-            if is_audio and "audio" in hook_group:
+        if k in meme_key or (k == "otobuste_oynayan_dayi" and ("otobus" in meme_key or "dayi" in meme_key)) or (k == "bebek_dans" and "bebek" in meme_key):
+            if is_beauty and "beauty" in hook_group:
+                chosen = random.choice(hook_group["beauty"])
+            elif is_gaming and "audio" in hook_group and any(w in title_low for w in ["kulaklık", "headset", "earphone", "sound", "surround"]):
                 chosen = random.choice(hook_group["audio"])
             else:
                 chosen = random.choice(hook_group["general"])
             return chosen.replace("{sav_fmt}", sav_fmt)
 
-    # 2. Fiyat Hatası veya Aşırı İndirim
-    if is_price_error or pct_val >= 40:
+    # 2. Fiyat Hatası veya Aşırı İndirim (>= %45)
+    if is_price_error or pct_val >= 45:
         return random.choice(REACTION_HOOKS_PRICE_ERROR)
-    
-    # 3. Gaming Ekipmanı
-    gaming_kw = ["mouse", "kulaklık", "klavye", "gaming", "ps5", "gamepad", "oyuncu", "monitor", "ekran kartı"]
-    if any(k in title_low for k in gaming_kw):
+
+    # 3. Kategoriye Göre Samimi Kancalar
+    if is_beauty:
+        return random.choice(REACTION_HOOKS_BEAUTY)
+    elif is_kitchen:
+        return random.choice(REACTION_HOOKS_KITCHEN)
+    elif is_gaming:
         return random.choice(REACTION_HOOKS_GAMING)
 
     # 4. Yüksek İndirim

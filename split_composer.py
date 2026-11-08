@@ -10,26 +10,46 @@ from deal_hunter import parse_price_to_float
 MEMES_DIR = os.path.join(BASE_DIR, "assets", "memes")
 AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
-# Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
-MEME_ROTATION_ORDER = [
-    "polat_memati_kosu.mp4",       # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi - Viral)
-    "piyano_davul.mp4",             # 2. Piyano Çalan Kız & Davulcu Dayı
-    "dugunde_cosan_cocuk.mp4",     # 3. Düğünde Kopan Çocuk (Pist Dansı)
-    "kemal_efendi_dans.mp4",       # 4. Kemal Efendi (Fesli & Bıyıklı Dans)
-    "cat_vibing.mp4",              # 5. Vibing Cat (Ritimle Kafa Sallayan Kedi)
-    "otobuste_oynayan_dayi.mp4",   # 6. Otobüste Oynayan Bıyıklı Dayı (Mustafa Usta)
-    "limon_davulcu.mp4",           # 7. Limoncu Davulcu
-    "degirmenci_dayi_cj.mp4",      # 8. Değirmenci Dayı (CJ)
-    "knight_cat.mp4",              # 9. Zırhlı Şövalye Kedi
-    "bicerdover_ciftetelli.mp4",    # 10. Biçerdöver Çiftetelli
-    "vince_mcmahon.mp4",           # 11. Vince McMahon (Para / Şok Sevinç)
-    "the_rock.mp4",                # 12. The Rock (Tek Kaş Kaldırma)
-    "homelander_stare.mp4",        # 13. Homelander (Şok / Ciddi Bakış)
-    "bale_nod.mp4",                # 14. Christian Bale (Onaylama / Takdir)
-    "angaraya_mi_geldin.mp4",      # 15. Angara'ya mı geldin la
-    "limon_halay.mp4",             # 16. Limon Halay
-    "bebek_dans.mp4"              # 17. Dans Eden Bebek (Kırpılmış Temiz Çözünürlük - Seyrek Döngü)
+# ==========================================
+# CİNSİYET & KATEGORİ AYRIMLI VİRAL MEME HAVUZLARI
+# ==========================================
+
+# 1. KADIN & GÜZELLİK / MAKYAJ / CİLT BAKIMI HAVUZU (SADECE Kadın Ürünlerinde Kullanılır!)
+WOMEN_MEME_ORDER = [
+    "arda_guler_soyunma_odasi.mp4",  # 1. Arda Güler Soyunma Odası Tarihi Konuşma (Kızların Favorisi)
+    "dugunde_oynayan_kiz.mp4",        # 2. Düğünde Oynayan Şık Kız Dansı (Zarif & Trend)
+    "pembe_vespa_kiz.mp4",            # 3. Pembe Vespa Süren Tatlı Kız (Yazısız Temiz Kırpım)
+    "pembe_cip_kiz.mp4",              # 4. Pembe Brabus Akülü Cip Süren Kız
+    "motorcu_tatli_kiz.mp4",          # 5. Tünelde Motor Süren Havalı Kız
 ]
+
+# 2. ERKEK / GAMING / TEKNOLOJİ / DONANIM & GENEL HAVUZ (Asla Kadın Memeleri Karışmaz!)
+MEN_GENERAL_MEME_ORDER = [
+    "polat_memati_kosu.mp4",         # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
+    "piyano_davul.mp4",               # 2. Piyano Çalan Kız & Davulcu Dayı
+    "ghost_stare_cod.mp4",            # 3. CoD Ghost Stare & Soap Bakışı (Gaming İkonu)
+    "cg_motorcu_cocuk.mp4",           # 4. Modifiye Işıklı CG Motorlu Çocuk (Peak Erkek Mizahı)
+    "dugunde_cosan_cocuk.mp4",       # 5. Düğünde Kopan Çocuk (Pist Dansı)
+    "kovboy_sapka_kedi.mp4",          # 6. Kovboy Şapkalı Göz Kırpan Kedi (Komik Reaksiyon)
+    "kemal_efendi_dans.mp4",         # 7. Kemal Efendi (Fesli Dans)
+    "cat_vibing.mp4",                # 8. Vibing Cat (Ritimle Kafa Sallayan Kedi)
+    "otobuste_oynayan_dayi.mp4",     # 9. Otobüste Oynayan Mustafa Usta
+    "balik_gozu_kedi.mp4",            # 10. Balıkgözü Beyaz Kedi Şok Bakışı
+    "pepsi_icen_cocuk.mp4",           # 11. Büyük Pepsi'yi Dikleyen Çocuk (Boğulma Şoku)
+    "limon_davulcu.mp4",             # 12. Limoncu Davulcu
+    "degirmenci_dayi_cj.mp4",        # 13. Değirmenci Dayı (CJ)
+    "knight_cat.mp4",                # 14. Zırhlı Şövalye Kedi
+    "bicerdover_ciftetelli.mp4",      # 15. Biçerdöver Çiftetelli
+    "vince_mcmahon.mp4",             # 16. Vince McMahon (Para / Şok Sevinç)
+    "the_rock.mp4",                  # 17. The Rock (Tek Kaş Kaldırma)
+    "homelander_stare.mp4",          # 18. Homelander (Şok / Ciddi Bakış)
+    "bale_nod.mp4",                  # 19. Christian Bale (Onaylama / Takdir)
+    "angaraya_mi_geldin.mp4",        # 20. Angara'ya mı geldin la
+    "limon_halay.mp4",               # 21. Limon Halay
+    "bebek_dans.mp4"                # 22. Dans Eden Bebek (Kırpılmış Temiz Çözünürlük - En Sonda)
+]
+
+MEME_ROTATION_ORDER = MEN_GENERAL_MEME_ORDER + WOMEN_MEME_ORDER
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 
 AVAILABLE_AUDIOS = [
@@ -103,17 +123,42 @@ def save_meme_state(state: dict):
     except Exception as e:
         print(f"[Meme Engine] Durum kaydedilemedi: {e}")
 
-def get_ordered_meme_pool() -> list:
-    """Diskte mevcut olan tüm meme videolarını dengeli ve sıralı bir havuz olarak döndürür."""
+WOMEN_KEYWORDS = [
+    "serum", "cilt bak", "krem", "tonik", "nemlendirici", "ruj", "rimel", "maskara",
+    "fondöten", "göz kalemi", "eyeliner", "allık", "kapatıcı", "c vitamini", "retinol",
+    "hyalüronik", "hyaluronic", "güneş kremi", "güneş sütü", "leke karşıtı", "yaşlanma karşıtı",
+    "peeling", "maske", "temizleme jeli", "micellar", "the purest", "cerave", "bioderma",
+    "la roche", "l'oreal", "maybelline", "revolution", "kiko", "flormar", "golden rose",
+    "pastel", "nivea", "yves rocher", "dyson airwrap", "saç kurutma", "düzleştirici",
+    "maşa", "epilatör", "epilasyon", "ağda", "parfüm", "parfümeri", "manikür", "pedikür",
+    "oje", "makyaj", "şampuan", "saç kremi", "saç bakım", "vücut losyonu", "kolajen",
+    "dudak balmı", "lip gloss", "tint", "kirpik", "kaş wax", "bb krem", "cc krem",
+    "saç köpüğü", "arganyağı", "argan", "biberiye yağı", "saç şekillendirici"
+]
+
+WOMEN_CATEGORIES = [
+    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim"
+]
+
+def is_women_deal(title: str = "", category: str = "") -> bool:
+    """Ürünün kadın/güzellik/makyaj/cilt bakımına ait olup olmadığını tespit eder."""
+    cat_low = (category or "").lower().strip()
+    title_low = (title or "").lower().strip()
+    
+    if any(c in cat_low for c in WOMEN_CATEGORIES):
+        return True
+    for kw in WOMEN_KEYWORDS:
+        if kw in title_low:
+            return True
+    return False
+
+def get_ordered_meme_pool(for_women: bool = False) -> list:
+    """Diskte mevcut olan hedef kitleye özel (kadın veya erkek/genel) meme havuzunu döndürür."""
     if not os.path.exists(MEMES_DIR):
         return []
-    disk_files = [f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4")]
-    # Önceden küratörlüğü yapılmış dengeli sıra
-    pool = [m for m in MEME_ROTATION_ORDER if m in disk_files]
-    # Listede olmayan yeni eklenmiş mp4'leri de sıranın sonuna ekle
-    for f in sorted(disk_files):
-        if f not in pool:
-            pool.append(f)
+    disk_files = set(f for f in os.listdir(MEMES_DIR) if f.endswith(".mp4"))
+    order = WOMEN_MEME_ORDER if for_women else MEN_GENERAL_MEME_ORDER
+    pool = [m for m in order if m in disk_files]
     return pool
 
 def get_last_meme() -> str:
@@ -126,23 +171,30 @@ def set_last_meme(meme_name: str):
 
 def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "") -> str:
     """
-    Kütüphanedeki tüm meme videolarını sıra sıra (Round-Robin) döngüye sokar.
-    Son 3 videoda kullanılan memeleri kesin olarak hariç tutarak mükerrerliği %100 engeller.
-    Herhangi bir kategori veya oran şartlandırması yapmadan havuzdaki tüm videoları sırayla eşit kullanır.
+    Hedef kitleye (Kadın/Güzellik vs Erkek/Gaming/Genel) göre %100 ayrılmış havuzdan
+    sıra sıra (Round-Robin) ve Cooldown korumasıyla meme seçer.
+    Kadın ürünlerinde SADECE kadın memeleri, erkek/genel ürünlerde SADECE erkek/genel memeleri kullanılır!
     """
-    pool = get_ordered_meme_pool()
+    for_women = is_women_deal(title=title, category=category)
+    pool = get_ordered_meme_pool(for_women=for_women)
+    
+    pool_type = "KADIN / GÜZELLİK" if for_women else "ERKEK / GAMİNG / GENEL"
     if not pool:
-        return "vince_mcmahon.mp4"
+        fallback = "dugunde_oynayan_kiz.mp4" if for_women else "polat_memati_kosu.mp4"
+        return fallback
 
     state = load_meme_state()
-    next_idx = state.get("next_index", 0) % len(pool)
-    recent = state.get("recent_used", [])
+    
+    idx_key = "next_index_women" if for_women else "next_index_men"
+    recent_key = "recent_used_women" if for_women else "recent_used_men"
+    
+    next_idx = state.get(idx_key, 0) % len(pool)
+    recent = state.get(recent_key, [])
 
-    # Son 3 videodaki memeleri koruma listesine al (cooldown: en az 3 video boyunca tekrar seçilemez)
-    cooldown_count = min(3, len(pool) - 1) if len(pool) > 1 else 0
+    # Son 2 videodaki memeleri koruma listesine al
+    cooldown_count = min(2, len(pool) - 1) if len(pool) > 1 else 0
     cooldown_set = set(recent[-cooldown_count:]) if cooldown_count > 0 else set()
 
-    # Sıradaki adayı seç; eğer cooldown listesindeyse havuzda sırayla ilerle
     chosen = None
     for attempt in range(len(pool)):
         candidate_idx = (next_idx + attempt) % len(pool)
@@ -152,18 +204,20 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
             next_idx = (candidate_idx + 1) % len(pool)
             break
 
-    # Emniyet: Hepsi cooldown listesindeyse sıradaki adayı al
     if not chosen:
         chosen = pool[next_idx]
         next_idx = (next_idx + 1) % len(pool)
 
-    # Durumu güncelle ve kaydet
     recent.append(chosen)
+    state[idx_key] = next_idx
+    state[recent_key] = recent[-30:]
+    
+    # Genel geriye uyumluluk
     state["next_index"] = next_idx
-    state["recent_used"] = recent[-30:] # Son 30 kaydı tut
+    state["recent_used"] = (state.get("recent_used", []) + [chosen])[-30:]
     save_meme_state(state)
 
-    print(f"[Meme Rotasyonu] 🎬 Sıradaki Video: {chosen} (Sıra: {next_idx}/{len(pool)}, Cooldown: {list(cooldown_set)})")
+    print(f"[Meme Rotasyonu] 🎯 Havuz: [{pool_type}] | 🎬 Seçilen Video: {chosen} (Sıra: {next_idx}/{len(pool)}, Cooldown: {list(cooldown_set)})")
     return chosen
 
 # ==========================================
@@ -251,6 +305,89 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
 # ==========================================
 
 MEME_SPECIFIC_HOOKS = {
+    "arda_guler_soyunma_odasi": {
+        "beauty": [
+            "Kızlar bu indirimi görünce odada verdiğim o tarihi konuşma:",
+            "Kızlar grubuna 'ACİL BU FİYATTAN ALIN' diye gaz verirken ben:",
+            "Stok bitmeden önce kız kardeşime acil sipariş taktiği verirken bendeki ciddiyet:",
+            "Bu markada böyle indirimi yakalayınca ekibe yaptığım o motivasyon konuşması:"
+        ],
+        "general": [
+            "İndirimi yakalayınca gruba 'BEYLER ACİL ÇÖKÜN' konuşması çeken ben:",
+            "Stok bitmeden siparişi kapmak için takıma taktik veren kaptan gibi ben:"
+        ]
+    },
+    "dugunde_oynayan_kiz": {
+        "beauty": [
+            "Kızlar indirim kodunu kapıp siparişi verince bendeki o zarif keyif:",
+            "Normalde servet ödediğim kremi yarı fiyatına alınca bendeki o rahatlık:",
+            "Aynada parlayan cildimi görünce evdeki o tatlı neşem:",
+            "Kızlar grubuna 'kaptım bile' yazdıktan sonraki o tatlı hava:"
+        ]
+    },
+    "pembe_cip_kiz": {
+        "beauty": [
+            "Kızlar indirimi kapıp yeni siparişlerle ortamlara akarken benim keyif:",
+            "Sepeti fulleyip kargonun yola çıktığını görünce bendeki o havalı tavır:",
+            "Kız kıza alışveriş turuna çıkarken bendeki o lüks hissiyat:",
+            "Makyaj masamı bu fiyata baştan aşağı yenileyince bendeki o özgüven:"
+        ]
+    },
+    "pembe_vespa_kiz": {
+        "beauty": [
+            "Kızlar bu fiyata görünce stok bitmeden sipariş vermeye gidişim:",
+            "Tam ihtiyacım olan üründe dev indirimi yakalayınca bendeki tatlı telaş:",
+            "Kızlar grubuna linki atıp kargoyu beklerken bendeki o neşe:",
+            "Bu fiyata kaçmaz deyip siparişe ışık hızında uzanan ben:"
+        ]
+    },
+    "motorcu_tatli_kiz": {
+        "beauty": [
+            "Kızlar bu fiyat şaka mı? İndirimi kapıp ışık hızında siparişe koşan ben:",
+            "Stoklar tükenmeden yetişmek için girdiğim o hızlı mod:",
+            "Bu fiyata görünce kızlar grubuna link yetiştirmek için bastığım o gaz:"
+        ]
+    },
+    "kovboy_sapka_kedi": {
+        "general": [
+            "Bu fiyata orijinalini bulunca benim suratın girdiği o şekil:",
+            "Fiyatı yanlış girdiklerini anlayınca çaktırmadan yaptığım o hareket:",
+            "Kuponu basıp bedavadan biraz pahalıya alınca bendeki o rahatlık:",
+            "Stoklar tükenmeden önce gizlice siparişi patlatan uyanık ben:"
+        ]
+    },
+    "cg_motorcu_cocuk": {
+        "general": [
+            "Setup'ı bu fiyata efsane donanımla döşeyince bendeki o havalı duruş:",
+            "Beyler indirimi yakalayıp ortamlara akarken girdiğim o mod:",
+            "Bu fiyata gaming canavarını kapınca bendeki o özgüven:",
+            "Mahalleye yeni setup'ı dizip hava atan gamer gibi ben:"
+        ]
+    },
+    "ghost_stare_cod": {
+        "general": [
+            "Piyasa fiyatını görüp sonra bizim verdiğimiz fiyata bakanlar anlık:",
+            "Aynı ürüne 3 katı para veren arkadaşıma attığım o soğuk bakış:",
+            "Stok bitince 'keşke alsaydım' diyenlere benim o ikonik bakış:",
+            "Bu donanımı bu paraya kaçıranları uzaktan izleyen ben:"
+        ]
+    },
+    "balik_gozu_kedi": {
+        "general": [
+            "İndirim oranını görünce ekrana iyice yaklaşıp şok olan ben:",
+            "Bu fiyat gerçek mi diye gözlerimi ovuşturup ekrana bakışım:",
+            "Fiyatı görünce monitöre kafa atacak gibi yaklaşan tayfa:",
+            "Stok durumunu kontrol ederken gözünü ekrandan ayıramayan ben:"
+        ]
+    },
+    "pepsi_icen_cocuk": {
+        "general": [
+            "Fiyatı görünce boğazıma bir şey takılmış gibi şoka girdiğim o an:",
+            "Bu fiyata görünce içtiği şeyi püskürtecek gibi olanlar anlık:",
+            "İndirimi son saniyede kaçırmamak için nefessiz siparişe abanan ben:",
+            "Piyasa fiyatı ile indirimli fiyat arasındaki farkı görünce ben:"
+        ]
+    },
     "bebek_dans": {
         "beauty": [
             "Kızlar koşun, bu fiyata görünce odada attığım o zafer dansı:",

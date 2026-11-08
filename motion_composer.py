@@ -677,7 +677,7 @@ def build_motion_deal_video(
                 meme_name += ".mp4"
             bottom_meme_path = os.path.join(MEMES_DIR, meme_name)
     else:
-        chosen = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""))
+        chosen = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""), deal.get("category", ""))
         bottom_meme_path = os.path.join(MEMES_DIR, chosen)
 
     if not os.path.exists(bottom_meme_path):

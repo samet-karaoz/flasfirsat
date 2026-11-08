@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794159883_53",
+    "deal_code": "#161",
+    "title": "Bioderma Atoderm 500 ml",
+    "old_price": "1.750 TL",
+    "new_price": "1.104,15 TL",
+    "discount_pct": "-37%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B079XX76RM?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 368 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/bioderma_atoderm_500_ml_f85f42f9.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "08.11.2026 17:44"
+  },
+  {
     "id": "deal_1794155708_52",
     "deal_code": "#160",
     "title": "GameSir Nova Lite 2 Gamepad",

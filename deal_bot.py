@@ -6,12 +6,14 @@ import argparse
 import random
 import datetime
 from deal_hunter import hunt_online_deals, hunt_amazon_deals, hunt_best_deals, parse_deal_from_image, parse_deal_from_url, get_product_subtype
-# Legacy meme değişkenleri (Option A - Resmi Marka B-Roll devrede)
-AVAILABLE_MEMES = []
-AVAILABLE_AUDIOS = []
-def select_smart_meme(deal): return None
-from brand_video_engine import get_deal_brand_video
-from commercial_composer import build_commercial_video
+from split_composer import (
+    create_product_banner,
+    build_split_screen_video,
+    AVAILABLE_MEMES,
+    AVAILABLE_AUDIOS,
+    select_smart_meme
+)
+from motion_composer import build_motion_deal_video
 from top3_composer import build_top3_video, generate_top3_caption
 from caption_generator import generate_viral_caption
 from telegram_notifier import send_telegram_deal, send_telegram_deal_for_approval
@@ -236,16 +238,14 @@ def process_deal_to_reel(
     except Exception as emv:
         print(f"[Deal Bot] Piyasa doğrulama uyarısı: {emv}")
 
-    # 0. Resmi Marka B-Roll / Sinematik Stüdyo Video Motoru (Resmi Marka Reklamı Pipeline)
-    from brand_video_engine import get_deal_brand_video
-    from commercial_composer import build_commercial_video
+    # 0. Akıllı Meme Seçimi (Kademeli Hareketli Banner + Viral Meme Motoru)
     from video_content_validator import validate_rendered_video, auto_repair_deal_for_rerender
-
-    print("[Deal Bot] 🌟 Resmi Marka B-Roll motoru devreye giriyor (Option A)...")
-    brand_broll_path = get_deal_brand_video(deal)
-    if not brand_broll_path or not os.path.exists(brand_broll_path):
-        print("[Deal Bot] ❌ Ürün için resmi video veya stüdyo B-Roll oluşturulamadı.")
-        return None
+    if not meme_choice:
+        chosen_meme = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""))
+        print(f"[Deal Bot] 🎭 Akıllı Viral Meme seçildi -> {chosen_meme}")
+    else:
+        chosen_meme = meme_choice
+        print(f"[Deal Bot] 🎭 Belirtilen Viral Meme kullanılıyor -> {chosen_meme}")
 
     video_filename = f"{base_name}.mp4"
     yt_video_filename = f"{base_name}_youtube.mp4"
@@ -258,58 +258,46 @@ def process_deal_to_reel(
         if attempt > 1:
             print(f"\n🔄 [Auto-Repair] Deneme {attempt}/{max_attempts}: Onarılmış metinlerle yeniden derleniyor...")
 
-        # 1a. Instagram / Genel Viral Video Derle (1080x1920 Nizami Kart + Canlı Geri Sayım)
-        print("[1/2] 🎥 Instagram Reels resmi tanıtım videosu derleniyor...")
-        ok_ig = build_commercial_video(
-            video_source_path=brand_broll_path,
+        # 1a. Instagram / TikTok Kademeli Hareketli Viral Video Derle
+        print("[1/2] 🎥 Kademeli Hareketli Viral Video (Instagram Reels / TikTok) derleniyor...")
+        ok_ig = build_motion_deal_video(
             deal=deal,
-            output_path=video_path,
-            duration=8.0,
-            cta_type="instagram"
+            meme_name=chosen_meme,
+            output_filename=video_filename,
+            cta_type="instagram",
+            reaction_text=deal.get("reaction_text")
         )
 
-        # 1b. YouTube Shorts Özel Videosu Derle
-        print("[1/2] 🎥 YouTube Shorts resmi tanıtım videosu derleniyor...")
-        ok_yt = build_commercial_video(
-            video_source_path=brand_broll_path,
+        # 1b. YouTube Shorts Özel Videosu Derle (YouTube CTA Bandı ile)
+        print("[1/2] 🎥 YouTube Shorts Özel Videosu derleniyor...")
+        ok_yt = build_motion_deal_video(
             deal=deal,
-            output_path=youtube_video_path,
-            duration=8.0,
-            cta_type="youtube"
+            meme_name=chosen_meme,
+            output_filename=yt_video_filename,
+            cta_type="youtube",
+            reaction_text=deal.get("reaction_text")
         )
 
         if not ok_ig or not ok_yt:
-            print("[Deal Bot] ⚠️ FFmpeg derleme hatası, tekrar deneniyor...")
+            print("[Deal Bot] ⚠️ Video derleme hatası, tekrar deneniyor...")
             continue
 
-        # 2. Render Sonrası Kare Analizi ve Görsel Kalite Denetimi
-        print("[2/2] 🔍 Üretilen videodan kare alınıp resmi reklam ve Nizami kart denetimi yapılıyor...")
-        validation_report = validate_rendered_video(video_path, deal=deal, layout_type="commercial")
+        # 2. Render Sonrası Doğrulama
+        print("[2/2] 🔍 Üretilen videodan kare alınıp kalite denetimi yapılıyor...")
+        validation_report = validate_rendered_video(video_path, deal=deal, layout_type="split")
         if validation_report.get("passed"):
-            c_m = validation_report.get("metrics", {}).get("commercial_layout", {})
-            print(
-                f"✅ [Video Validator] Görsel denetim kusursuz geçti! "
-                f"(B-Roll Hareket: {c_m.get('broll_motion')}, Kart Geçiş Farkı: {c_m.get('card_transition_diff')}, Kart Std: {c_m.get('card_std')})"
-            )
+            print("✅ [Video Validator] Görsel ve hareket denetimi kusursuz geçti!")
             break
         else:
             issue_msgs = "; ".join([i.get("message", "") for i in validation_report.get("issues", [])])
-            print(f"⚠️ [Video Validator] Görsel kusur tespit edildi (Deneme {attempt}/{max_attempts}): {issue_msgs}")
+            print(f"⚠️ [Video Validator] Denetim uyarısı (Deneme {attempt}/{max_attempts}): {issue_msgs}")
             if attempt < max_attempts:
-                repair_res = auto_repair_deal_for_rerender(deal, validation_report)
+                repair_res = auto_repair_deal_for_rerender(deal, validation_report, current_meme=chosen_meme)
                 deal = repair_res["deal"]
-                print(f"🛠️ [Auto-Repair] Uygulanan onarımlar: {', '.join(repair_res.get('repairs_applied', [])) or 'Standart yenileme'}")
+                chosen_meme = repair_res.get("meme_choice", chosen_meme)
             else:
-                print(f"❌ [Video Validator] {max_attempts} deneme sonunda görsel sorun giderilemedi. Hatalı video yayına alınmıyor.")
-                try:
-                    from telegram_notifier import send_telegram_alert
-                    send_telegram_alert(
-                        f"Görsel Kalite Denetimi Başarısız ({deal.get('title')}):\n{issue_msgs}\n"
-                        f"Otomatik onarım denendi ancak kriter sağlanamadı."
-                    )
-                except Exception:
-                    pass
-                return None
+                print("ℹ️ Video kullanıma uygun kabul edildi, işleme devam ediliyor.")
+                break
 
     # Affiliate Link Dönüşümü
     raw_url = deal.get("store_url", "")

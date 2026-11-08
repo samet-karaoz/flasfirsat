@@ -25,7 +25,8 @@ Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral eri
    - Popüler oyuncu kulaklıkları (HyperX Cloud, SteelSeries Arctis, Logitech G435/G733)
    - Popüler gaming monitörler (Asus TUF, AOC, ViewSonic, Samsung Odyssey)
    - Oyun kolları (Sony DualSense, Xbox Wireless Controller)
-4. **Popüler Kişisel Bakım Teknolojileri:**
+4. **Popüler Kişisel Bakım & Kozmetik Teknolojileri:**
+   - Kadın cilt ve saç bakımı (The Purest Solutions, CeraVe, Bioderma, La Roche-Posay, L'Oreal)
    - Şarjlı diş fırçaları (Oral-B iO / Pro serisi, Philips Sonicare)
    - Tıraş ve saç kesim makineleri (Philips OneBlade, Braun Series)
    - Saç şekillendirme ve kurutma (Dyson Airwrap muadilleri, Philips)
@@ -45,8 +46,10 @@ Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİ
 
 ---
 
-## 2. FORMAT KURALI: RESMİ MARKA REKLAMI & NİZAMİ ŞABLON (OPTION A)
-- **Sıfır Meme:** Bölünmüş ekranda viral meme'ler kesinlikle kullanılmaz.
-- **Sıfır Amatör UGC:** Rastgele kişilerin çektiği amatör YouTube kutu açılış videoları kullanılmaz.
-- **Resmi Tanıtım B-Roll:** Yalnızca markaların resmi lansman ve ürün tanıtım videoları kullanılır; bulunamazsa 1080x1080 sinematik stüdyo B-Roll'u üretilir.
-- **Nizami Şablon:** 0-3 sn canlı ilerleme çubuğu & `??? TL` geri sayımı, 3-8 sn neon zümrüt fiyat ve kazanç rozeti.
+## 2. FORMAT KURALI: VİRAL BÖLÜNMÜŞ EKRAN (SPLIT-SCREEN MOTION + VIRAL MEME)
+- **Ana Şablon (1080x1920 Dikey Full HD):**
+  - **Üst Yarı (1080x960):** Kademeli Hareket Grafikleri (Staggered Motion Card). Ürün stüdyo görseli, akıcı yaylanma (`ease_out_back`), eski fiyat soldan kayar, indirimli yeşil fırsat kutusu sağdan kayar, kırmızı üst çizgi, net tasarruf rozeti, kademeli fiyat açılışı (`??? TL` -> gerçek indirimli fiyat) ve alt CTA bandı (Fırsat Kodu `#XXX`, Profildeki Linkte / BİO).
+  - **Alt Yarı (1080x960):** Viral MEME videosu (`bebek_dans.mp4`, `piyano_davul.mp4`, `polat_memati_kosu.mp4`, `cat_vibing.mp4`, `dugunde_cosan_cocuk.mp4`, `kemal_efendi_dans.mp4`, `otobuste_oynayan_dayi.mp4` vb.) ve akıllı reaksiyon kancası (Reaction Hook overlay).
+  - **Ses & Ritim:** Meme'in kendi doğal sesi veya popüler viral Phonk/Bass arka plan müziği.
+  - **Sıfır Blur:** Alt meme tam 1080x960 oranında kesilmiş, net ve kenarları blursuz olmalıdır.
+  - **Asla Yapılmayacak:** Ortaya statik ürün kutusu koyup alt ve üste koyu mavi kartlar yerleştiren sıkıcı reklam şablonları KESİNLİKLE KULLANILMAZ!

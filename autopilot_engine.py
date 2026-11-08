@@ -741,7 +741,7 @@ if __name__ == "__main__":
             "store_name": "Amazon TR",
             "badge": "DEV İNDİRİM"
         }
-        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=True, custom_deal=custom_deal, meme_choice=args.meme or None)
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=True, custom_deal=custom_deal, meme_choice=args.meme or None, target_platform=args.platform, auto_publish=args.auto_publish)
     elif args.top3:
         print("ℹ️ Top 3 video üretimi kullanıcı tercihiyle durduruldu. Tekli fırsat döngüsü çalıştırılıyor...")
         run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None, target_platform=args.platform, auto_publish=args.auto_publish)

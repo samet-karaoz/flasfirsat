@@ -20,7 +20,7 @@ try:
 except Exception:
     pass
 
-from config import safe_run_subprocess
+from config import safe_run_subprocess, get_curl_cmd
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, "client_secrets.json")
@@ -120,12 +120,12 @@ def authenticate():
 
     # Windows Python 3.14 SSL bug'ını önlemek için curl.exe --ssl-no-revoke ile doğrudan al
     post_data = urllib.parse.urlencode(token_payload)
-    cmd = [
-        "curl.exe", "-4", "--ssl-no-revoke", "-s", "-X", "POST",
+    cmd = get_curl_cmd([
+        "-s", "-X", "POST",
         token_url,
         "-H", "Content-Type: application/x-www-form-urlencoded",
         "-d", post_data
-    ]
+    ])
     res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
     try:
         token_json = json.loads(res.stdout)

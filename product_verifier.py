@@ -316,9 +316,17 @@ def verify_deal_before_publish(deal: dict) -> dict:
         v_res = verify_amazon_product(store_url)
         if not v_res.get("success", False) or not v_res.get("in_stock", False):
             reason = v_res.get("reason", "Stokta yok veya doğrulanamadı")
-            # Eğer Amazon Datacenter CAPTCHA verdiyse ve fırsat doğrulanmış bir kanaldan geldiyse ve görseli/fiyatı tamsa:
-            if v_res.get("is_captcha") and deal.get("new_price") and deal.get("image_path") and os.path.exists(deal.get("image_path")):
-                print(f"[Doğrulama] ⚠️ Amazon Datacenter CAPTCHA algılandı ancak fırsat verisi taranan kaynaktan teyitli ({deal.get('title')}). Taranan veriyle devam ediliyor.")
+            is_cloud = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+            has_img = (deal.get("image_path") and os.path.exists(deal.get("image_path"))) or bool(deal.get("image_url"))
+            # Eğer Amazon Datacenter CAPTCHA verdiyse veya Cloud ortamında bloklandıysa ve fırsat taranan kaynaktan geçerli veriye sahipse:
+            if (v_res.get("is_captcha") or is_cloud or "boş yanıt" in reason.lower()) and deal.get("new_price") and has_img:
+                print(f"[Doğrulama] ⚠️ Amazon bulut/IP kısıtı algılandı ({reason}) ancak fırsat verisi taranan kaynaktan teyitli ({deal.get('title')}). Taranan veriyle devam ediliyor.")
+                if not deal.get("image_path") and deal.get("image_url"):
+                    from config import download_file
+                    p_asin = v_res.get("asin") or "prod"
+                    img_path = os.path.join(TEMP_DIR, f"cand_{p_asin}.jpg")
+                    if download_file(deal["image_url"], img_path):
+                        deal["image_path"] = img_path
                 deal["seller_badge"] = deal.get("seller_badge") or "AMAZON TR"
                 if not deal.get("killer_hook"):
                     k_hook = extract_product_killer_hook(

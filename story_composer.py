@@ -15,7 +15,7 @@ def get_font(size: int, bold: bool = True):
         except Exception:
             pass
     # Fallback to standard
-    candidates = ["C:/Windows/Fonts/segoeuib.ttf", "C:/Windows/Fonts/arialbd.ttf", "arial.ttf"]
+    candidates = ["C:/Windows/Fonts/segoeuib.ttf", "C:/Windows/Fonts/arialbd.ttf", "arial.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"]
     for c in candidates:
         if os.path.exists(c):
             try:

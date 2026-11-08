@@ -23,11 +23,21 @@ def check_youtube_credentials() -> dict:
     os.makedirs(DATA_DIR, exist_ok=True)
 
     if not os.path.exists(CLIENT_SECRETS_PATH):
-        return {
-            "configured": False,
-            "token_ready": False,
-            "error": "client_secrets.json bulunamadı. Lütfen Google Cloud'dan indirip proje klasörüne koyun."
-        }
+        token_ready_internally = False
+        if os.path.exists(TOKEN_PATH):
+            try:
+                with open(TOKEN_PATH, "r", encoding="utf-8") as f:
+                    t_data = json.load(f)
+                    if (t_data.get("refresh_token") or t_data.get("token")) and t_data.get("client_id") and t_data.get("client_secret"):
+                        token_ready_internally = True
+            except Exception:
+                pass
+        if not token_ready_internally:
+            return {
+                "configured": False,
+                "token_ready": False,
+                "error": "client_secrets.json bulunamadı. Lütfen Google Cloud'dan indirip proje klasörüne koyun."
+            }
 
     if not os.path.exists(TOKEN_PATH):
         return {
@@ -125,7 +135,7 @@ def publish_shorts_to_youtube(
     if not os.path.exists(video_path):
         if video_path.startswith("http://") or video_path.startswith("https://"):
             temp_vid = os.path.join(DATA_DIR, "temp_yt_upload.mp4")
-            cmd = ["curl.exe", "-4", "--ssl-no-revoke", "-s", "-L", video_path, "-o", temp_vid]
+            cmd = get_curl_cmd(["-s", "-L", video_path, "-o", temp_vid])
             safe_run_subprocess(cmd)
             if os.path.exists(temp_vid) and os.path.getsize(temp_vid) > 1000:
                 video_path = temp_vid

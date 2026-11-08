@@ -36,10 +36,10 @@ web/
 Thumbs.db
 Desktop.ini
 
-# Medya ve Meme Havuzu (Büyük MP4 dosyaları git'e eklenmez)
-assets/memes/
+# Medya ve Meme Havuzu
 *.mp4
 !assets/videos/*.mp4
+!assets/memes/*.mp4
 
 # Geçici scratch test dosyaları
 hunt_*.py

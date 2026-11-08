@@ -376,6 +376,8 @@ def push_to_github():
     """
     try:
         # 1. Askıda kalan rebase veya merge varsa önce temizle
+        safe_run_subprocess(["git", "config", "user.name", "flasfirsat-bot[bot]"], cwd=WEB_DIR, capture_output=True)
+        safe_run_subprocess(["git", "config", "user.email", "bot@flasfirsat.com"], cwd=WEB_DIR, capture_output=True)
         safe_run_subprocess(["git", "rebase", "--abort"], cwd=WEB_DIR, capture_output=True)
         safe_run_subprocess(["git", "merge", "--abort"], cwd=WEB_DIR, capture_output=True)
 

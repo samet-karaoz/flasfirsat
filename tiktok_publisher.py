@@ -109,6 +109,8 @@ def ensure_video_hosted_publicly(video_path: str) -> str:
     # Git'e ekle ve pushla
     from web_showcase import push_to_github
     try:
+        safe_run_subprocess(["git", "config", "user.name", "flasfirsat-bot[bot]"], check=False)
+        safe_run_subprocess(["git", "config", "user.email", "bot@flasfirsat.com"], check=False)
         safe_run_subprocess(["git", "add", dst_path], check=False)
         safe_run_subprocess(["git", "commit", "-m", f"Add TikTok video asset: {base_name}"], check=False)
         push_to_github()

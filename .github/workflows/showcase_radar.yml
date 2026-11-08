@@ -7,8 +7,9 @@ name: 🌐 Vitrin Stok & Fiyat Radarı (flasfirsat.com.tr)
 
 on:
   schedule:
-    # Her 4 saatte bir otomatik denetim (00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
-    - cron: '0 */4 * * *'
+    # Her 4 saatte bir 15. dakikada otomatik denetim (00:15, 04:15, 08:15, 12:15, 16:15, 20:15 UTC)
+    # Deal hunter kuşakları (:00 ve :30) ile çakışmayı %100 önler
+    - cron: '15 */4 * * *'
   workflow_dispatch:
     inputs:
       reason:
@@ -20,6 +21,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: git-repo-sync
+  cancel-in-progress: false
+
 jobs:
   verify-showcase:
     runs-on: ubuntu-latest
@@ -30,6 +35,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: ⚙️ Git Kimliğini Yapılandır
+        run: |
+          git config --global user.name "flasfirsat-bot[bot]"
+          git config --global user.email "bot@flasfirsat.com"
 
       - name: 🐍 Python 3.11 Kur
         uses: actions/setup-python@v5
@@ -58,14 +68,16 @@ jobs:
 
       - name: 🌐 Canlı Vitrini Güncelle & GitHub Pages Push Et
         run: |
-          git config --global user.name "flasfirsat-bot[bot]"
-          git config --global user.email "bot@flasfirsat.com"
           git add index.html data/deals.json history_deals.json || true
           if git diff --staged --quiet; then
             echo "✅ Vitrindeki tüm fırsatlar güncel, değişiklik yok."
           else
             echo "🚀 Vitrinde değişiklik tespit edildi, GitHub Pages güncelleniyor..."
             git commit -m "🌐 Canlı Vitrin Stok & Fiyat Güncellemesi [skip ci]"
-            git pull --rebase origin main || true
-            git push origin main
+            for i in 1 2 3 4 5; do
+              echo "Git senkronizasyonu deneniyor (deneme $i)..."
+              git fetch origin main
+              git pull --rebase -X theirs origin main || git rebase --abort || true
+              git push origin main && echo "✅ Başarıyla push edildi." && break || sleep 5
+            done
           fi

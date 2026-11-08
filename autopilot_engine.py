@@ -297,7 +297,9 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             from web_showcase import add_deal_to_web
             add_deal_to_web(deal)
             result["platforms"]["web"] = {"status": "ok", "url": SITE_URL}
-            print(f"✅ Web Vitrini Güncellendi: Kod #{deal.get('deal_code', '')} | {SITE_URL}")
+            d_code = deal.get('deal_code', '')
+            code_disp = d_code if str(d_code).startswith('#') else f'#{d_code}'
+            print(f"✅ Web Vitrini Güncellendi: Kod {code_disp} | {SITE_URL}")
         except Exception as ewb:
             result["platforms"]["web"] = {"status": "error", "error": str(ewb)}
             print(f"❌ Web Vitrini Hatası: {ewb}")

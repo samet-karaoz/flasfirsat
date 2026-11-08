@@ -1470,5 +1470,13 @@
     "caption_text": "Çeyiz düzenecekler veya çantasında acil durumlar için kurtarıcı arayanlar kesinlikle baksın, fiyatı inanılmaz düşmüş kızlar 👇\n\nNormalde 1.499 TL olan Philips Yüz Epilatörü kuponla beraber tam %41 indirimle 882 TL'ye düştü! Üstelik dahili aynası ve LED ışığı var, çantaya at çık o kadar pratik ki. Bu fiyata başka yerde bulmak imkansız resmen.\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n🔗 Web sitemizdeki arama kutusuna **#157** yazarak da ürüne saniyeler içinde ulaşabilirsin.\n📌 Fiyatı yine uçmadan videoyu KAYDET, kınada veya tatilde lazım olur diye arkadaşına GÖNDER! ✈️\n\n#indirim #kişiselbakım #fırsat #keşfet #işbirliği #reklam",
     "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_41_amz_B0B9RQB3NQ.jpg.jpg",
     "dry_run": true
+  },
+  {
+    "timestamp": "2026-11-08 09:54:02",
+    "slot": "Bulut Otopilot Test Yayini",
+    "target_platform": "youtube",
+    "success": false,
+    "platforms": {},
+    "error": "f-string expression part cannot include a backslash (telegram_notifier.py, line 255)"
   }
 ]

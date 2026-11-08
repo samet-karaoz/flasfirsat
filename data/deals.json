@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794152636_51",
+    "deal_code": "#159",
+    "title": "SteelSeries QcK Medium",
+    "old_price": "999 TL",
+    "new_price": "649 TL",
+    "discount_pct": "-35%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B000UEZ36W?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/steelseries_qck_medium_c977bfea.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "08.11.2026 18:43"
+  },
+  {
     "id": "deal_1794134078_50",
     "deal_code": "#158",
     "title": "Xbox 9. Nesil Oyun Kolu",

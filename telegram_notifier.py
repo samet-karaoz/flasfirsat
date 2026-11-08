@@ -241,11 +241,12 @@ def send_telegram_deal_for_approval(
                     f"{code_pin}"
                     f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
                 )
+                clean_caption = _html.escape(_re.sub(r'https?://\S+|www\.\S+', '', caption_text).strip())
                 studio_msg = (
                     f"📲 <b>%100 ORGANİK INSTAGRAM & TIKTOK STÜDYO PAKETİ (Bulut Otomatik)</b>\n"
                     f"<i>(Üzerine bir kez dokunduğunuz metin otomatik kopyalanır)</i>\n\n"
                     f"📋 <b>1. REELS / TIKTOK AÇIKLAMASI (Dokun & Kopyala):</b>\n"
-                    f"<code>{_html.escape(_re.sub(r'https?://\\S+|www\\.\\S+', '', caption_text).strip())}</code>\n\n"
+                    f"<code>{clean_caption}</code>\n\n"
                     f"💬 <b>2. BAŞA TUTTURULACAK İLK YORUM (Dokun & Kopyala):</b>\n"
                     f"<code>{_html.escape(first_comm)}</code>\n\n"
                     f"🔗 <b>3. HİKAYE (STORY) LİNKİ (Dokun & Kopyala):</b>\n"

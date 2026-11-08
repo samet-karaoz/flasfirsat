@@ -12,23 +12,23 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # Dengeli, türlerine göre ardışık dizilmiş ana rotasyon havuzu (Round-Robin)
 MEME_ROTATION_ORDER = [
-    "bebek_dans.mp4",              # 0. Dans Eden Bebek (Viral Neşe & Eğlence)
-    "polat_memati_kosu.mp4",       # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
+    "polat_memati_kosu.mp4",       # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi - Viral)
     "piyano_davul.mp4",             # 2. Piyano Çalan Kız & Davulcu Dayı
     "dugunde_cosan_cocuk.mp4",     # 3. Düğünde Kopan Çocuk (Pist Dansı)
     "kemal_efendi_dans.mp4",       # 4. Kemal Efendi (Fesli & Bıyıklı Dans)
-    "otobuste_oynayan_dayi.mp4",   # 5. Otobüste Oynayan Bıyıklı Dayı (Mustafa Usta)
-    "degirmenci_dayi_cj.mp4",      # 6. Değirmenci Dayı (CJ)
-    "knight_cat.mp4",              # 7. Zırhlı Şövalye Kedi
-    "limon_halay.mp4",             # 8. Limon Halay
-    "bicerdover_ciftetelli.mp4",    # 9. Biçerdöver Çiftetelli
-    "homelander_stare.mp4",        # 10. Homelander (Şok / Ciddi Bakış)
-    "the_rock.mp4",                # 11. The Rock (Tek Kaş Kaldırma)
-    "vince_mcmahon.mp4",           # 12. Vince McMahon (Para / Şok Sevinç)
-    "bale_nod.mp4",                # 13. Christian Bale (Onaylama / Takdir)
-    "angaraya_mi_geldin.mp4",      # 14. Angara'ya mı geldin la
-    "cat_vibing.mp4",              # 15. Vibing Cat (Ritimle Kafa Sallayan Kedi)
-    "limon_davulcu.mp4"            # 16. Limoncu Davulcu
+    "cat_vibing.mp4",              # 5. Vibing Cat (Ritimle Kafa Sallayan Kedi)
+    "otobuste_oynayan_dayi.mp4",   # 6. Otobüste Oynayan Bıyıklı Dayı (Mustafa Usta)
+    "limon_davulcu.mp4",           # 7. Limoncu Davulcu
+    "degirmenci_dayi_cj.mp4",      # 8. Değirmenci Dayı (CJ)
+    "knight_cat.mp4",              # 9. Zırhlı Şövalye Kedi
+    "bicerdover_ciftetelli.mp4",    # 10. Biçerdöver Çiftetelli
+    "vince_mcmahon.mp4",           # 11. Vince McMahon (Para / Şok Sevinç)
+    "the_rock.mp4",                # 12. The Rock (Tek Kaş Kaldırma)
+    "homelander_stare.mp4",        # 13. Homelander (Şok / Ciddi Bakış)
+    "bale_nod.mp4",                # 14. Christian Bale (Onaylama / Takdir)
+    "angaraya_mi_geldin.mp4",      # 15. Angara'ya mı geldin la
+    "limon_halay.mp4",             # 16. Limon Halay
+    "bebek_dans.mp4"              # 17. Dans Eden Bebek (Kırpılmış Temiz Çözünürlük - Seyrek Döngü)
 ]
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794172518_55",
+    "deal_code": "#163",
+    "title": "Stanley Legendary 2.3L Termos",
+    "old_price": "3.800 TL",
+    "new_price": "2.975,00 TL",
+    "discount_pct": "-22%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BKLPF6FX?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 992 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_legendary_2_3l_te_09456df5.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "08.11.2026 21:15"
+  },
+  {
     "id": "deal_1794167838_54",
     "deal_code": "#162",
     "title": "Stanley Aerolight Mug",

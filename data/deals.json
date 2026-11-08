@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794155708_52",
+    "deal_code": "#160",
+    "title": "GameSir Nova Lite 2 Gamepad",
+    "old_price": "2.899 TL",
+    "new_price": "2.209,76 TL",
+    "discount_pct": "-24%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0F3CZJGSF?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 737 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/gamesir_nova_lite_2_gamep_06eb9caf.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "08.11.2026 16:35"
+  },
+  {
     "id": "deal_1794152636_51",
     "deal_code": "#159",
     "title": "SteelSeries QcK Medium",

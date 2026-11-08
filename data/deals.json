@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794134078_50",
+    "deal_code": "#158",
+    "title": "Xbox 9. Nesil Oyun Kolu",
+    "old_price": "4.299 TL",
+    "new_price": "3.449,00 TL",
+    "discount_pct": "-20%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0F2NC69KK?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.150 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/xbox_9__nesil_oyun_kolu_11ae6107.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "08.11.2026 10:34"
+  },
+  {
     "id": "deal_1794131923_49",
     "deal_code": "#157",
     "title": "SteelSeries Aerox 5 Mouse",

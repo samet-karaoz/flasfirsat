@@ -1510,5 +1510,37 @@
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261108_095751_steelseries_aerox_5_mouse_youtube.mp4",
     "caption_text": "Bunu dün akşam grupta biri attı, önce \"yanlış modeldir ya\" dedim ama baktım direkt Amazon kendi satıyor, hemen çektim bir tane. \n\nNormalde 6 bin e dayanan fiyatı 4.459 TL’ye düşmüş (-%26 net indirim) 🔥 74 gramcık zaten, elinde tüy gibi kayıyor. Masayı dizecekler veya elindeki eski fareden darlananlar varsa kesinlikle kaçırmasın, bu kurda bu kalite zor bulunuyor.\n\nProfilimizdeki sitemizde arama kutusuna **#157** yazarak ürünü saniyeler içinde bulabilirsin!\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n🔗 Ürün bağlantısı Hikayemizde de aktif!\n📌 Fiyatı tekrar fırlamadan videoyu KAYDET, mouse arayan kankana GÖNDER! ✈️\n💬 Sizce bu ağırlık ve tuş dizilimi nasıl, kullanan var mı? Yorumlarda buluşalım 👇\n\n#indirim #gaming #mouse #fırsat #işbirliği #reklam",
     "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_26_amz_B09W1B5S5W.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-11-08 10:28:41",
+    "slot": "Bulut Otopilot Canli Dogrulama",
+    "target_platform": "youtube",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/AZ9DQpcMYXk"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Xbox 9. Nesil Oyun Kolu",
+      "new_price": "3.449,00 TL",
+      "old_price": "4.299 TL",
+      "discount_pct": "-20%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0F2NC69KK?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261108_103346_xbox_9_nesil_oyun_kolu.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261108_103346_xbox_9_nesil_oyun_kolu_youtube.mp4",
+    "caption_text": "Grupta paylaştılar baktım gerçekten bu fiyata düşmüş, stok bitmeden bakın. Xbox sahiplerinin gözü yaşlı, o aradığınız 9. nesil kol sonunda dibe vurdu.\n\n4.299 TL ❌ -> 3.449 TL ✅ (%20 İndirim)\n\nResmi garanti güvencesiyle bu fiyata bulmak cidden imkansız hale gelmişti, elimi çabuk tutun derim. \n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩 İstersen profilimizdeki sitemizde arama kutusuna #158 yazarak da ürünü saniyeler içinde bulabilirsin.\n📌 Fiyat tekrar artmadan videoyu KAYDET, indirim arayanoyuncu arkadaşına GÖNDER! ✈️\n💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇\n\n#indirim #oyun #xbox #fırsat #gaming #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_20_amz_B0F2NC69KK.jpg.jpg"
   }
 ]

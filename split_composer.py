@@ -52,12 +52,9 @@ MEN_GENERAL_MEME_ORDER = [
 MEME_ROTATION_ORDER = MEN_GENERAL_MEME_ORDER + WOMEN_MEME_ORDER
 AVAILABLE_MEMES = MEME_ROTATION_ORDER
 
-AVAILABLE_AUDIOS = [
-    "phonk_meme.m4a",
-    "brazilian_phonk.m4a",
-    "viral_bass.m4a",
-    "drift_phonk.m4a"
-]
+# Harici phonk/müzik ve ses efektleri KESİNLİKLE YASAKLANMIŞTIR!
+# Bütün videolarda istisnasız alt videodaki meme'in kendi orijinal sesi kullanılır.
+AVAILABLE_AUDIOS = []
 
 FONTS_DIR = os.path.join(BASE_DIR, "assets", "fonts")
 
@@ -1480,37 +1477,19 @@ def build_split_screen_video(
     reaction_overlay_path = os.path.join(TEMP_DIR, "reaction_overlay.png")
     create_reaction_hook_overlay(reaction_text, reaction_overlay_path)
 
-    # 3. Ses kaynağını belirle (Öncelik: Sessiz Mod / Meme'in kendi sesi)
+    # 3. Ses kaynağını belirle: Harici phonk/müzik ve SFX KESİNLİKLE YASAKTIR!
+    # İstisnasız her videoda meme'in kendi orijinal sesi kullanılır.
     chk_a = safe_run_subprocess(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
     has_meme_audio = "Audio:" in (chk_a.stderr or "")
 
-    is_silent = (audio_name in ("silent", "mute"))
     use_external_audio = False
-    use_silent_audio = False
+    use_silent_audio = not has_meme_audio
+    if audio_name and audio_name not in ("silent", "mute"):
+        print(f"[Audio Policy] 🚫 Harici müzik/phonk kesinlikle yasaklanmıştır! Meme videosunun orijinal sesi kullanılıyor.")
+    print(f"[Montaj] 🎵 Meme'in kendi orijinal sesi kullanılıyor: {os.path.basename(bottom_meme_path)}")
 
-    if is_silent:
-        use_silent_audio = True
-    elif audio_name:
-        if not audio_name.endswith(".m4a"):
-            audio_name += ".m4a"
-        audio_path = os.path.join(AUDIO_DIR, audio_name)
-        if os.path.exists(audio_path):
-            use_external_audio = True
-        else:
-            use_silent_audio = True
-    elif has_meme_audio:
-        use_external_audio = False
-        print(f"[Montaj] 🎵 Meme'in kendi ikonik orijinal müziği/sesi kullanılıyor!")
-    else:
-        # Meme'in kendi sesi yoksa ve harici ses verilmediyse temiz dijital sessizlik
-        use_silent_audio = True
-
-    # 4. Türkçe Voiceover Hook Üret (edge-tts)
+    # 4. Voiceover / yapay zeka sesi devre dışı (kullanıcı direktifi)
     voice_path = None
-    if enable_voiceover and product_title and new_price:
-        voice_path = generate_voiceover_hook(product_title, new_price)
-        if voice_path:
-            print(f"[Montaj] 🎙️ Türkçe Yapay Zeka Seslendirmesi (edge-tts) Eklendi: AhmetNeural")
 
     output_path = os.path.join(OUTPUT_DIR, output_filename)
 

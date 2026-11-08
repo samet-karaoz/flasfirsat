@@ -50,6 +50,6 @@ Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİ
 - **Ana Şablon (1080x1920 Dikey Full HD):**
   - **Üst Yarı (1080x960):** Kademeli Hareket Grafikleri (Staggered Motion Card). Ürün stüdyo görseli, akıcı yaylanma (`ease_out_back`), eski fiyat soldan kayar, indirimli yeşil fırsat kutusu sağdan kayar, kırmızı üst çizgi, net tasarruf rozeti, kademeli fiyat açılışı (`??? TL` -> gerçek indirimli fiyat) ve alt CTA bandı (Fırsat Kodu `#XXX`, Profildeki Linkte / BİO).
   - **Alt Yarı (1080x960):** Viral MEME videosu (`bebek_dans.mp4`, `piyano_davul.mp4`, `polat_memati_kosu.mp4`, `cat_vibing.mp4`, `dugunde_cosan_cocuk.mp4`, `kemal_efendi_dans.mp4`, `otobuste_oynayan_dayi.mp4` vb.) ve akıllı reaksiyon kancası (Reaction Hook overlay).
-  - **Ses & Ritim:** Meme'in kendi doğal sesi veya popüler viral Phonk/Bass arka plan müziği.
+  - **Ses & Ritim:** KESİNLİKLE DIŞARIDAN PHONK, MÜZİK VEYA SES EFEKTİ KULLANILMAZ! Bütün videolarda istisnasız alt videodaki meme'in kendi orijinal doğal sesi kullanılır (tüm videolarda zaten orijinal ses mevcuttur).
   - **Sıfır Blur:** Alt meme tam 1080x960 oranında kesilmiş, net ve kenarları blursuz olmalıdır.
   - **Asla Yapılmayacak:** Ortaya statik ürün kutusu koyup alt ve üste koyu mavi kartlar yerleştiren sıkıcı reklam şablonları KESİNLİKLE KULLANILMAZ!

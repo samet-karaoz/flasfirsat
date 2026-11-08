@@ -168,7 +168,7 @@ def process_deal_to_reel(
     """
     Tek bir fırsat nesnesinden (deal dict):
     1. 1080x960 Üst Banner üretir (büyük ürün görseli ve çarpıcı tipografi).
-    2. Viral meme ve phonk müzikle 1080x1920 MP4 Video derler.
+    2. Viral meme ve videonun kendi orijinal doğal sesiyle 1080x1920 MP4 Video derler (Harici phonk/SFX kesinlikle yasaktır).
     3. Gemini ile viral açıklama metni ve hashtag'leri üretir.
     4. Dosyaları output/ klasörüne kaydeder.
     """

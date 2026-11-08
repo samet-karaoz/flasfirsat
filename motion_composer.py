@@ -721,27 +721,16 @@ def build_motion_deal_video(
             output_filename = f"motion_{slug}.mp4"
         output_path = os.path.join(OUTPUT_DIR, output_filename)
 
-        # 5. Ses Yapılandırması (Öncelik: Sessiz Mod / Meme'in kendi sesi)
+        # 5. Ses Yapılandırması: Harici phonk/müzik ve ses efektleri KESİNLİKLE YASAKTIR!
+        # İstisnasız her videoda alt meme videosunun kendi orijinal doğal sesi kullanılır.
         chk_a = safe_run_subprocess(["ffmpeg", "-i", bottom_meme_path], capture_output=True, text=True)
         has_meme_audio = "Audio:" in (chk_a.stderr or "")
 
-        is_silent = (audio_name in ("silent", "mute"))
         use_ext_audio = False
-        use_silent_audio = False
-
-        if is_silent:
-            use_silent_audio = True
-        elif audio_name:
-            if not audio_name.endswith(".m4a"):
-                audio_name += ".m4a"
-            audio_path = os.path.join(AUDIO_DIR, audio_name)
-            if os.path.exists(audio_path):
-                use_ext_audio = True
-            else:
-                use_silent_audio = True
-        elif not has_meme_audio:
-            # Harici müzik istenmediğinde ve meme'in kendi sesi yoksa temiz dijital sessizlik
-            use_silent_audio = True
+        use_silent_audio = not has_meme_audio
+        if audio_name and audio_name not in ("silent", "mute"):
+            print("[Audio Policy] 🚫 Harici müzik/phonk kesinlikle yasaklanmıştır! Meme videosunun orijinal sesi kullanılıyor.")
+        print(f"[Montaj] 🎵 Meme videosunun orijinal sesi kullanılıyor: {os.path.basename(bottom_meme_path)}")
 
         # 6. Anti-Hash Mikro Varyasyon (Gözle fark edilmez, pHash ve MD5'i %100 özgün yapar)
         rnd_bright = round(random.uniform(-0.008, 0.008), 4)

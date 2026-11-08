@@ -380,7 +380,7 @@ def push_to_github():
         safe_run_subprocess(["git", "merge", "--abort"], cwd=WEB_DIR, capture_output=True)
 
         # 2. Yalnızca web ile ilgili gerekli dosyaları stage et (Tüm repo değil!)
-        web_files = ["data/deals.json", "index.html", "sitemap.xml", "assets/products"]
+        web_files = ["data/deals.json", "index.html", "sitemap.xml", "assets/products", "assets/videos"]
         for wf in web_files:
             wp = os.path.join(WEB_DIR, wf)
             if os.path.exists(wp):

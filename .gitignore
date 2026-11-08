@@ -48,3 +48,6 @@ test_*.py
 prep_*.py
 patch_*.py
 send_*.py
+
+assets/voice_cache/
+archive/

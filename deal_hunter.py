@@ -87,7 +87,8 @@ TIER_1_BRANDS = [
     "stanley", "delonghi", "nespresso", "xiaomi", "roborock", "dreame", "bosch", "einhell", "lego", "braun",
     "oral-b", "spigen", "baseus", "ugreen", "belkin", "tp-link", "sandisk", "kingston", "crucial", "wd", "seagate",
     "nintendo", "playstation", "dualsense", "xbox", "casio", "garmin", "huawei", "honor", "anker", "north bayou",
-    "keychron", "epomaker", "ajazz", "attack shark", "wraith", "aula", "fifine", "elgato", "rode", "shure"
+    "keychron", "epomaker", "ajazz", "attack shark", "wraith", "aula", "fifine", "elgato", "rode", "shure",
+    "the purest solutions", "l'oreal", "maybelline", "cerave", "bioderma", "la roche-posay", "garnier", "nivea", "bioxcin", "opalescence", "marvis"
 ]
 
 def has_tier1_brand(title: str) -> bool:
@@ -415,6 +416,20 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         url_categories = [("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics")]
     elif category == "kitchen":
         url_categories = [("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")]
+    elif category in ("beauty", "cosmetics", "care", "skincare"):
+        url_categories = [
+            ("GÜZELLİK_CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty"),
+            ("PATLAYAN_GÜZELLİK", "https://www.amazon.com.tr/gp/movers-and-shakers/beauty"),
+            ("KİŞİSEL_BAKIM", "https://www.amazon.com.tr/gp/bestsellers/personal-care")
+        ]
+    elif category in ("tech", "gaming_tech"):
+        url_categories = [
+            ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
+            ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
+            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
+            ("KULAKLIK_SES", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709880031"),
+            ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics")
+        ]
     else:
         url_categories = get_rotated_amazon_catalogs()
 

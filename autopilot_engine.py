@@ -61,7 +61,7 @@ def send_telegram_admin_summary(summary_text: str, reply_markup: dict = None, dr
     except Exception as e:
         print(f"[Autopilot Engine] Telegram özet gönderim hatası: {e}")
 
-def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False, custom_deal: dict = None, meme_choice: str = None) -> dict:
+def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", force: bool = False, custom_deal: dict = None, meme_choice: str = None, target_platform: str = "auto", auto_publish: bool = False) -> dict:
     """
     En algoritmik 2 saatte (12:30 ve 20:00) veya isteğe bağlı çalışan tam otomatik döngü:
     1. En yüksek indirimli ve teyitli ürünü avlar (Amazon TR / Fırsat Kanalları).
@@ -78,13 +78,27 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
     print(f"🚀 [OTOPİLOT BAŞLATILDI] Kuşak: {slot_name} | Zaman: {now_str}")
     print("="*65)
 
+    # Platform & Kategori Tespiti
+    t_plat = (target_platform or "auto").lower()
+    if t_plat == "auto":
+        s_low = slot_name.lower()
+        from datetime import datetime as _dt
+        utc_h = _dt.utcnow().hour
+        if "tiktok" in s_low or utc_h in (10, 17):
+            t_plat = "tiktok"
+        else:
+            t_plat = "youtube"
+    target_platform = t_plat
+
     result = {
         "timestamp": now_str,
         "slot": slot_name,
+        "target_platform": target_platform,
         "success": False,
         "platforms": {},
         "error": None
     }
+    print(f"🎯 [Hedef Platform]: {target_platform.upper()} (Kuşak: {slot_name})")
 
     # 0. Çift Paylaşım Koruması (Duplicate Run Guard):
     # Eğer son 45 dakika içinde zaten başarılı bir canlı yayın yapılmışsa mükerrer paylaşımı engelle
@@ -134,13 +148,15 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             last_sub = get_last_subtype()
             exclude_subs = {last_sub} if (last_sub and last_sub != "general") else None
 
+            hunt_cat = "beauty" if target_platform == "tiktok" else ("tech" if target_platform == "youtube" else "all")
+            print(f"[Deal Hunter] Hedef platforma özel kategori taranıyor: {hunt_cat.upper()}...")
             candidates = hunt_best_deals(
                 limit=5,
                 platform="amazon",
-                category="all",
+                category=hunt_cat,
                 exclude_urls=history,
                 exclude_subtypes=exclude_subs,
-                min_discount=25
+                min_discount=20 if hunt_cat == "beauty" else 25
             )
 
         if not candidates:
@@ -248,7 +264,12 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # Bot kafasına göre otomatik paylaşmaz; videoyu hazırlar ve Telegram'a
         # onay butonlarıyla gönderir. Siz 'Onayla' butonuna basmadıkça yayınlanmaz.
         # =========================================================================
-        require_approval = os.getenv("AUTOPILOT_REQUIRE_APPROVAL", "true").strip().lower() in ("true", "1", "yes")
+        is_cloud = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+        if auto_publish or is_cloud or os.getenv("AUTOPILOT_REQUIRE_APPROVAL", "").strip().lower() in ("false", "0", "no"):
+            require_approval = False
+            print("[Autopilot Engine] ☁️ TAM OTOMATİK MOD AKTİF: Onay beklemeden doğrudan yayınlanıyor.")
+        else:
+            require_approval = True
 
         if require_approval:
             print("\n[Autopilot Engine] 🛡️ YARI OTOMATİK MOD AKTİF: Fırsat yönetici onayına sunuluyor...")
@@ -271,56 +292,91 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # 3. Sırasıyla 4 Platforma Yayınla
         print("\n[Adım 3/4] 📡 4 Platforma Eşzamanlı Otomatik Yayın Başlatılıyor...")
 
-        # A) YouTube Shorts (Platforma Özel: BİO Link CTA Bandı & Açıklama)
-        print("\n--- 1. YouTube Shorts ---")
+        # 0) Web Vitrinine Ekle (Önce ekle ki benzersiz deal_code #XXX üretilsin ve TikTok/YT başlıklarına eklensin)
         try:
-            from youtube_publisher import publish_shorts_to_youtube
-            yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
-            yt_desc = caption_text
-            if "BİO" not in yt_desc and "bio" not in yt_desc:
-                yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
+            from web_showcase import add_deal_to_web
+            add_deal_to_web(deal)
+            result["platforms"]["web"] = {"status": "ok", "url": SITE_URL}
+            print(f"✅ Web Vitrini Güncellendi: Kod #{deal.get('deal_code', '')} | {SITE_URL}")
+        except Exception as ewb:
+            result["platforms"]["web"] = {"status": "error", "error": str(ewb)}
+            print(f"❌ Web Vitrini Hatası: {ewb}")
 
-            yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
-            if yt_res.get("success"):
-                result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
-                print(f"✅ YouTube Shorts Başarılı: {yt_res.get('url')}")
-            else:
-                result["platforms"]["youtube"] = {"status": "error", "error": yt_res.get("error")}
-                print(f"❌ YouTube Shorts Hatası: {yt_res.get('error')}")
-        except Exception as ey:
-            result["platforms"]["youtube"] = {"status": "error", "error": str(ey)}
-            print(f"❌ YouTube Shorts İstisna: {ey}")
-
-        # B) Instagram Reels
-        print("\n--- 2. Instagram Reels ---")
-        try:
-            from instagram_publisher import publish_reel_to_instagram
-            ig_res = publish_reel_to_instagram(video_path, caption_text)
-            if ig_res.get("success"):
-                result["platforms"]["instagram"] = {"status": "ok", "media_id": ig_res.get("media_id")}
-                print(f"✅ Instagram Reels Başarılı: Media ID {ig_res.get('media_id')}")
-            else:
-                result["platforms"]["instagram"] = {"status": "error", "error": ig_res.get("error")}
-                print(f"❌ Instagram Reels Hatası: {ig_res.get('error')}")
-        except Exception as ei:
-            result["platforms"]["instagram"] = {"status": "error", "error": str(ei)}
-            print(f"❌ Instagram Reels İstisna: {ei}")
-
-        # B2) Instagram Story (Tıklanabilir Link Çıkartması ile)
-        print("\n--- 2b. Instagram Story (Tıklanabilir Link Çıkartması) ---")
-        try:
-            from instagram_publisher import publish_story_with_link
-            if story_img and os.path.exists(story_img):
-                st_res = publish_story_with_link(story_img, link_url=aff_url)
-                if st_res.get("success"):
-                    result["platforms"]["instagram_story"] = {"status": "ok", "media_id": st_res.get("media_id")}
-                    print(f"✅ Instagram Story Başarılı (Link Çıkartmalı)! ID: {st_res.get('media_id')}")
+        # D) TikTok (Buffer API ile Tam Otomatik Dağıtım)
+        if target_platform in ("tiktok", "all"):
+            print("\n--- 0. TikTok ---")
+            try:
+                from tiktok_publisher import publish_video_to_tiktok
+                tt_code = deal.get("deal_code", "")
+                code_str = str(tt_code) if str(tt_code).startswith("#") else (f"#{tt_code}" if tt_code else "")
+                tt_caption = (
+                    f"Fiyata inanamayacaksınız! {title} dip fiyata indi 💥 "
+                    f"Profilimizdeki sitemizin arama çubuğuna {code_str} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n\n"
+                    f"#keşfet #fırsat #indirim #ürüninceleme #işbirliği"
+                )
+                tt_res = publish_video_to_tiktok(video_path, caption=tt_caption, mode="shareNow")
+                if tt_res.get("success"):
+                    result["platforms"]["tiktok"] = {"status": "ok", "post_id": tt_res.get("post_id"), "channel": tt_res.get("channel")}
+                    print(f"✅ TikTok Başarılı: Post ID {tt_res.get('post_id')} ({tt_res.get('channel')})")
                 else:
-                    result["platforms"]["instagram_story"] = {"status": "error", "error": st_res.get("error")}
-                    print(f"❌ Instagram Story Hatası: {st_res.get('error')}")
-        except Exception as es:
-            result["platforms"]["instagram_story"] = {"status": "error", "error": str(es)}
-            print(f"❌ Instagram Story İstisna: {es}")
+                    result["platforms"]["tiktok"] = {"status": "error", "error": tt_res.get("error")}
+                    print(f"❌ TikTok Hatası: {tt_res.get('error')}")
+            except Exception as ett:
+                result["platforms"]["tiktok"] = {"status": "error", "error": str(ett)}
+                print(f"❌ TikTok İstisna: {ett}")
+
+        # A) YouTube Shorts (Platforma Özel: BİO Link CTA Bandı & Açıklama)
+        if target_platform in ("youtube", "all"):
+            print("\n--- 1. YouTube Shorts ---")
+            try:
+                from youtube_publisher import publish_shorts_to_youtube
+                yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
+                yt_desc = caption_text
+                if "BİO" not in yt_desc and "bio" not in yt_desc:
+                    yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
+    
+                yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
+                if yt_res.get("success"):
+                    result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
+                    print(f"✅ YouTube Shorts Başarılı: {yt_res.get('url')}")
+                else:
+                    result["platforms"]["youtube"] = {"status": "error", "error": yt_res.get("error")}
+                    print(f"❌ YouTube Shorts Hatası: {yt_res.get('error')}")
+            except Exception as ey:
+                result["platforms"]["youtube"] = {"status": "error", "error": str(ey)}
+                print(f"❌ YouTube Shorts İstisna: {ey}")
+
+        # B) Instagram Reels (İsteğe bağlı veya hepsi modunda)
+        if target_platform in ("instagram", "all"):
+            print("\n--- 2. Instagram Reels ---")
+            try:
+                from instagram_publisher import publish_reel_to_instagram
+                ig_res = publish_reel_to_instagram(video_path, caption_text)
+                if ig_res.get("success"):
+                    result["platforms"]["instagram"] = {"status": "ok", "media_id": ig_res.get("media_id")}
+                    print(f"✅ Instagram Reels Başarılı: Media ID {ig_res.get('media_id')}")
+                else:
+                    result["platforms"]["instagram"] = {"status": "error", "error": ig_res.get("error")}
+                    print(f"❌ Instagram Reels Hatası: {ig_res.get('error')}")
+            except Exception as ei:
+                result["platforms"]["instagram"] = {"status": "error", "error": str(ei)}
+                print(f"❌ Instagram Reels İstisna: {ei}")
+    
+            # B2) Instagram Story (Tıklanabilir Link Çıkartması ile)
+            print("\n--- 2b. Instagram Story (Tıklanabilir Link Çıkartması) ---")
+            try:
+                from instagram_publisher import publish_story_with_link
+                if story_img and os.path.exists(story_img):
+                    st_res = publish_story_with_link(story_img, link_url=aff_url)
+                    if st_res.get("success"):
+                        result["platforms"]["instagram_story"] = {"status": "ok", "media_id": st_res.get("media_id")}
+                        print(f"✅ Instagram Story Başarılı (Link Çıkartmalı)! ID: {st_res.get('media_id')}")
+                    else:
+                        result["platforms"]["instagram_story"] = {"status": "error", "error": st_res.get("error")}
+                        print(f"❌ Instagram Story Hatası: {st_res.get('error')}")
+            except Exception as es:
+                result["platforms"]["instagram_story"] = {"status": "error", "error": str(es)}
+                print(f"❌ Instagram Story İstisna: {es}")
 
         # C) Telegram Kanalı (@flasfirsat)
         print("\n--- 3. Telegram Kanalı ---")
@@ -337,19 +393,20 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             result["platforms"]["telegram"] = {"status": "error", "error": str(et)}
             print(f"❌ Telegram Kanal İstisna: {et}")
 
-        # E) Web Vitrinine Ekle
-        try:
-            from web_showcase import add_deal_to_web
-            add_deal_to_web(deal)
-            result["platforms"]["web"] = {"status": "ok", "url": SITE_URL}
-        except Exception as ewb:
-            result["platforms"]["web"] = {"status": "error", "error": str(ewb)}
+        # E) Web Vitrini (Adım 3 başında başarıyla güncellendi)
 
         # 4. Yöneticiye Başarı Raporu Gönder
         print("\n[Adım 4/4] 📲 Yöneticiye Telegram raporu gönderiliyor...")
         result["success"] = True
 
         status_lines = []
+        # TikTok
+        tt_info = result["platforms"].get("tiktok", {})
+        if tt_info.get("status") == "ok":
+            status_lines.append(f"• 🎵 <b>TikTok:</b> Yayında (Post: <code>{tt_info.get('post_id')}</code>)")
+        elif tt_info:
+            status_lines.append(f"• 🎵 <b>TikTok:</b> ❌ {tt_info.get('error', 'Hata')}")
+
         # YouTube
         yt_info = result["platforms"].get("youtube", {})
         if yt_info.get("status") == "ok":
@@ -545,7 +602,12 @@ def run_top3_deal_cycle(dry_run: bool = False, slot_name: str = "Haftalık Top 3
         # =========================================================================
         # 🛡️ YARI OTOMATİK MOD KONTROLÜ (Top 3 Yönetici Onayı)
         # =========================================================================
-        require_approval = os.getenv("AUTOPILOT_REQUIRE_APPROVAL", "true").strip().lower() in ("true", "1", "yes")
+        is_cloud = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+        if auto_publish or is_cloud or os.getenv("AUTOPILOT_REQUIRE_APPROVAL", "").strip().lower() in ("false", "0", "no"):
+            require_approval = False
+            print("[Autopilot Engine] ☁️ TAM OTOMATİK MOD AKTİF: Onay beklemeden doğrudan yayınlanıyor.")
+        else:
+            require_approval = True
 
         if require_approval:
             print("\n[Top3 Engine] 🛡️ YARI OTOMATİK MOD AKTİF: Top 3 videosu yönetici onayına sunuluyor...")
@@ -662,6 +724,8 @@ if __name__ == "__main__":
     parser.add_argument("--new", default="", help="Özel ürün yeni fiyatı")
     parser.add_argument("--discount", default="", help="Özel ürün indirim yüzdesi")
     parser.add_argument("--meme", default="", help="Özel meme seçimi (örn: piyano_davul.mp4)")
+    parser.add_argument("--platform", default="auto", choices=["auto", "youtube", "tiktok", "all"], help="Hedef platform (youtube, tiktok, all)")
+    parser.add_argument("--auto-publish", action="store_true", help="Yönetici onayı beklemeden doğrudan yayınla (Bulut/Cron Modu)")
     args = parser.parse_args()
 
     if args.url:
@@ -678,8 +742,8 @@ if __name__ == "__main__":
         run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=True, custom_deal=custom_deal, meme_choice=args.meme or None)
     elif args.top3:
         print("ℹ️ Top 3 video üretimi kullanıcı tercihiyle durduruldu. Tekli fırsat döngüsü çalıştırılıyor...")
-        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None)
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None, target_platform=args.platform, auto_publish=args.auto_publish)
     elif args.now or args.dry_run:
-        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None)
+        run_autopilot_deal_cycle(dry_run=args.dry_run, slot_name=args.slot, force=args.force, meme_choice=args.meme or None, target_platform=args.platform, auto_publish=args.auto_publish)
     else:
         print("Kullanım: python autopilot_engine.py --now (veya --top3, --dry-run, --force, --url, --meme)")

@@ -1,11 +1,33 @@
-name: ⚡ Flaş Fırsat Otomasyonu (İsteğe Bağlı Manuel Stüdyo)
+name: ⚡ Flaş Fırsat 7/24 Bulut Otopilotu (YouTube Shorts & TikTok)
 
-# 🛑 OTOMATİK ZAMANLAYICI KAPALI:
-# Video üretimi tamamen kullanıcı onayına ve isteğine bağlıdır.
-# Otomatik cron döngüsü kaldırılmıştır. Sadece kullanıcı talimatıyla çalışır.
 on:
+  schedule:
+    # Türkiye Saati (UTC+3) -> GitHub Actions Cron (UTC)
+    # 1. YouTube Shorts (Sabah F/P Teknoloji & Kulaklık/Şarj) -> 11:00 TS (08:00 UTC)
+    - cron: '0 8 * * *'
+    # 2. TikTok (Öğle Kadın Cilt Bakımı & Kozmetik / Viral Ev) -> 13:00 TS (10:00 UTC)
+    - cron: '0 10 * * *'
+    # 3. YouTube Shorts (Öğleden Sonra Gaming Gear & Donanım) -> 15:00 TS (12:00 UTC)
+    - cron: '0 12 * * *'
+    # 4. YouTube Shorts (Prime Time Çok Satan Teknoloji & Bestseller) -> 18:30 TS (15:30 UTC)
+    - cron: '30 15 * * *'
+    # 5. TikTok (Akşam Prime Time Viral Güzellik, Saç Bakımı & Estetik Yaşam) -> 20:00 TS (17:00 UTC)
+    - cron: '0 17 * * *'
+    # 6. YouTube Shorts (Gece Yıldız Fırsat / F/P Gadget) -> 21:30 TS (18:30 UTC)
+    - cron: '30 18 * * *'
+
   workflow_dispatch:
     inputs:
+      target_platform:
+        description: 'Hedef Platform (auto: saate göre, youtube, tiktok, all)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - 'auto'
+          - 'youtube'
+          - 'tiktok'
+          - 'all'
       slot_name:
         description: 'Kuşak Adı (Örn: Manuel Bulut Tetikleme)'
         required: false
@@ -40,7 +62,7 @@ jobs:
       - name: 🎬 FFmpeg Kur
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ffmpeg
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-noto-color-emoji fonts-dejavu-core
           ffmpeg -version | head -n 1
 
       - name: 🔑 YouTube Bulut Oturumunu Yapılandır
@@ -63,7 +85,7 @@ jobs:
               print('✅ YouTube Client Secrets yüklendi.')
           "
 
-      - name: 🚀 7/24 Bulut Stüdyosunu Çalıştır (PC Kapalıyken Tam Otomatik Tekli Video)
+      - name: 🚀 7/24 Bulut Otopilotunu Çalıştır (PC Kapalıyken Otomatik Üretim & Yayın)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -72,18 +94,43 @@ jobs:
           AMAZON_AFFILIATE_TAG: ${{ secrets.AMAZON_AFFILIATE_TAG }}
           TRENDYOL_AFFILIATE_TAG: ${{ secrets.TRENDYOL_AFFILIATE_TAG }}
           HEPSIBURADA_AFFILIATE_TAG: ${{ secrets.HEPSIBURADA_AFFILIATE_TAG }}
+          BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
           SITE_URL: "https://flasfirsat.com.tr"
+          AUTOPILOT_REQUIRE_APPROVAL: "false"
         run: |
-          SLOT="${{ inputs.slot_name }}"
-          [ -z "$SLOT" ] && SLOT="Bulut Otopilotu (Tekli Video)"
-          echo "🚀 Bulut Tekli Fırsat Otopilotu Başlatılıyor: $SLOT"
-          python autopilot_engine.py --now --force --slot "$SLOT"
+          PLATFORM="${{ inputs.target_platform || 'auto' }}"
+          SLOT="${{ inputs.slot_name || '' }}"
 
-      - name: 🌐 Canlı Web Vitrinini ve Fırsat Geçmişini Otomatik Commit & Push Et
+          # Eğer otomatik cron tetiklemişse, saate göre akıllı kuşak ismi ver
+          if [ -z "$SLOT" ] || [ "$SLOT" = "Manuel Bulut Tetikleme" ]; then
+            UTC_H=$(date -u +%H)
+            if [ "$UTC_H" = "08" ]; then
+              SLOT="11:00 YouTube Sabah F/P"
+            elif [ "$UTC_H" = "10" ]; then
+              SLOT="13:00 TikTok Güzellik & Bakım"
+            elif [ "$UTC_H" = "12" ]; then
+              SLOT="15:00 YouTube Gaming & Donanım"
+            elif [ "$UTC_H" = "15" ]; then
+              SLOT="18:30 YouTube Prime Time Fırsat"
+            elif [ "$UTC_H" = "17" ]; then
+              SLOT="20:00 TikTok Akşam Özel Bakım"
+            elif [ "$UTC_H" = "18" ]; then
+              SLOT="21:30 YouTube Gece F/P"
+            else
+              SLOT="Bulut Otopilotu (${UTC_H}:00 UTC)"
+            fi
+          fi
+
+          echo "🚀 Bulut Otopilotu Başlatılıyor..."
+          echo "🎯 Platform: $PLATFORM"
+          echo "⏰ Kuşak: $SLOT"
+          python -u autopilot_engine.py --now --force --auto-publish --platform "$PLATFORM" --slot "$SLOT"
+
+      - name: 🌐 Canlı Web Vitrinini, Video Varlıklarını ve Geçmişi Commit & Push Et
         run: |
           git config --global user.name "flasfirsat-bot[bot]"
           git config --global user.email "bot@flasfirsat.com"
-          git add index.html data/deals.json data/autopilot_history.json data/pending_deals.json data/meme_history.json data/replied_comments.json assets/products/ history_deals.json || true
+          git add index.html data/deals.json data/autopilot_history.json data/pending_deals.json data/meme_history.json data/replied_comments.json assets/products/ assets/videos/ history_deals.json || true
           if git diff --staged --quiet; then
             echo "Değişiklik yok, commit atlanıyor."
           else

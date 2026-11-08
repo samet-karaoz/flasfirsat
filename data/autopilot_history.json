@@ -1416,5 +1416,59 @@
       "file_id": "BAACAgQAAxkDAAOXatj9ar6HmRjH5NRY4JZxZeUMhW4AAhYeAAJxeclSHVatLaMjacE9BA",
       "public_video_url": "https://api.telegram.org/file/bot8742183075:AAHRuIoKq0QJvDa34nOoBJTUe0dWlsdKttg/videos/file_44.mp4"
     }
+  },
+  {
+    "timestamp": "2026-11-07 21:31",
+    "slot": "Telegram Onaylı Yayın",
+    "success": true,
+    "deal": {
+      "asin": "B0HDD96Q24",
+      "title": "The Purest Solutions Yoğun Nem & Bariyer Şampuanı (300 ml)",
+      "new_price": "279,90 TL",
+      "old_price": "599,94 TL",
+      "discount_pct": "-%53",
+      "has_verified_old_price": true,
+      "store_name": "Amazon TR",
+      "image_path": "c:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\candidate_catalog_images\\B0HDD96Q24.jpg",
+      "bought_past_month": "Yoğun Nemlendirici",
+      "killer_hook": "BARİYER DESTEKLİ YOĞUN NEM!",
+      "category": "care",
+      "deal_code": "155",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0HDD96Q24?tag=flasfirsat04-21",
+      "store_url": "https://www.amazon.com.tr/dp/B0HDD96Q24?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "instagram": {
+        "status": "organic_studio_package"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/XY8utKsCTGY"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-11-08 12:49:41",
+    "slot": "Manuel Test",
+    "target_platform": "tiktok",
+    "success": true,
+    "platforms": {},
+    "error": null,
+    "deal": {
+      "title": "Philips Yüz Epilatörü",
+      "new_price": "882 TL",
+      "old_price": "1.499 TL",
+      "discount_pct": "-41%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0B9RQB3NQ?tag=flasfirsat04-21"
+    },
+    "video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261108_125137_philips_yuz_epilatoru.mp4",
+    "youtube_video_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\output\\20261108_125137_philips_yuz_epilatoru_youtube.mp4",
+    "caption_text": "Çeyiz düzenecekler veya çantasında acil durumlar için kurtarıcı arayanlar kesinlikle baksın, fiyatı inanılmaz düşmüş kızlar 👇\n\nNormalde 1.499 TL olan Philips Yüz Epilatörü kuponla beraber tam %41 indirimle 882 TL'ye düştü! Üstelik dahili aynası ve LED ışığı var, çantaya at çık o kadar pratik ki. Bu fiyata başka yerde bulmak imkansız resmen.\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n🔗 Web sitemizdeki arama kutusuna **#157** yazarak da ürüne saniyeler içinde ulaşabilirsin.\n📌 Fiyatı yine uçmadan videoyu KAYDET, kınada veya tatilde lazım olur diye arkadaşına GÖNDER! ✈️\n\n#indirim #kişiselbakım #fırsat #keşfet #işbirliği #reklam",
+    "story_image_path": "C:\\Users\\Samet\\Desktop\\Otomasyon\\temp\\story_41_amz_B0B9RQB3NQ.jpg.jpg",
+    "dry_run": true
   }
 ]

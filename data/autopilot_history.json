@@ -1478,5 +1478,37 @@
     "success": false,
     "platforms": {},
     "error": "f-string expression part cannot include a backslash (telegram_notifier.py, line 255)"
+  },
+  {
+    "timestamp": "2026-11-08 09:56:20",
+    "slot": "Bulut Otopilot Test Yayini",
+    "target_platform": "youtube",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "error",
+        "error": "Oturum açılamadı: Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project."
+      },
+      "telegram": {
+        "status": "error",
+        "error": "Telegram kanala gönderilemedi"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "SteelSeries Aerox 5 Mouse",
+      "new_price": "4.459,00 TL",
+      "old_price": "5.999 TL",
+      "discount_pct": "-26%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B09W1B5S5W?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261108_095751_steelseries_aerox_5_mouse.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261108_095751_steelseries_aerox_5_mouse_youtube.mp4",
+    "caption_text": "Bunu dün akşam grupta biri attı, önce \"yanlış modeldir ya\" dedim ama baktım direkt Amazon kendi satıyor, hemen çektim bir tane. \n\nNormalde 6 bin e dayanan fiyatı 4.459 TL’ye düşmüş (-%26 net indirim) 🔥 74 gramcık zaten, elinde tüy gibi kayıyor. Masayı dizecekler veya elindeki eski fareden darlananlar varsa kesinlikle kaçırmasın, bu kurda bu kalite zor bulunuyor.\n\nProfilimizdeki sitemizde arama kutusuna **#157** yazarak ürünü saniyeler içinde bulabilirsin!\n\n👉 Yoruma \"LİNK\" yaz, satın alma linkini anında DM kutuna gönderelim! 📩\n🔗 Ürün bağlantısı Hikayemizde de aktif!\n📌 Fiyatı tekrar fırlamadan videoyu KAYDET, mouse arayan kankana GÖNDER! ✈️\n💬 Sizce bu ağırlık ve tuş dizilimi nasıl, kullanan var mı? Yorumlarda buluşalım 👇\n\n#indirim #gaming #mouse #fırsat #işbirliği #reklam",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_26_amz_B09W1B5S5W.jpg.jpg"
   }
 ]

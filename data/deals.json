@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794167838_54",
+    "deal_code": "#162",
+    "title": "Stanley Aerolight Mug",
+    "old_price": "2.100 TL",
+    "new_price": "1.499,00 TL",
+    "discount_pct": "-28%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0F5WVJZ82?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 500 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_aerolight_mug_203461f8.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "08.11.2026 19:57"
+  },
+  {
     "id": "deal_1794159883_53",
     "deal_code": "#161",
     "title": "Bioderma Atoderm 500 ml",

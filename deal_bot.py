@@ -556,14 +556,15 @@ Kullanım Şekilleri:
         print(f"🚀 [MOD: EN İYİ İNDİRİM AVI - Platform: {platform.upper()}]")
         history = load_history()
         last_prod = get_last_product()
-        last_sub = get_last_subtype()
-        exclude_subtypes = {last_sub} if last_sub and last_sub != "general" else set()
-        if exclude_subtypes:
-            print(f"[Deal Bot] 🛡️ Çeşitlilik Koruması Aktif (Son ürün: '{last_prod}' | Engellenen Alt Kategori: {list(exclude_subtypes)})")
+        from deal_hunter import get_recent_subtypes_from_history, get_recent_brands_from_history, extract_brand
+        exclude_subtypes = get_recent_subtypes_from_history(limit=4)
+        exclude_brands = get_recent_brands_from_history(limit=3)
+        if exclude_subtypes or exclude_brands:
+            print(f"[Deal Bot] 🛡️ Çeşitlilik & Marka Koruması Aktif (Kategoriler: {list(exclude_subtypes)} | Markalar: {list(exclude_brands)})")
 
-        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
+        fresh_deals = hunt_best_deals(limit=10, platform=platform, category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, exclude_brands=exclude_brands, min_discount=args.min_discount)
         if not fresh_deals:
-            fresh_deals = hunt_best_deals(limit=10, platform="all", category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, min_discount=args.min_discount)
+            fresh_deals = hunt_best_deals(limit=10, platform="all", category=args.category, exclude_urls=history, exclude_subtypes=exclude_subtypes, exclude_brands=exclude_brands, min_discount=args.min_discount)
         if not fresh_deals:
             fresh_deals = hunt_best_deals(limit=10, platform="all", category=args.category, exclude_urls=history, min_discount=15)
 

@@ -188,22 +188,39 @@ def select_smart_meme(discount_pct: str = "", title: str = "", category: str = "
     next_idx = state.get(idx_key, 0) % len(pool)
     recent = state.get(recent_key, [])
 
-    # Son 2 videodaki memeleri koruma listesine al
-    cooldown_count = min(2, len(pool) - 1) if len(pool) > 1 else 0
+    # 1. KESİNLİKLE ARDIŞIK AYNI MEME YASAĞI (Global Consecutive Ban):
+    # En son paylaşılan videonun meme'i (kategori/havuz farketmeksizin) kesinlikle üst üste seçilemez!
+    last_global = state.get("recent_used", [])[-1] if state.get("recent_used") else ""
+
+    # 2. Havuz İçi Soğuma Süresi (Cooldown):
+    # Erkek/Gaming havuzunda (22 meme) son 8 meme, Kadın havuzunda (6 meme) son 4 meme cooldown'a alınır
+    max_cooldown = 4 if for_women else 8
+    cooldown_count = min(max_cooldown, len(pool) - 2) if len(pool) > 2 else (len(pool) - 1 if len(pool) > 1 else 0)
     cooldown_set = set(recent[-cooldown_count:]) if cooldown_count > 0 else set()
+    if last_global:
+        cooldown_set.add(last_global)
 
     chosen = None
     for attempt in range(len(pool)):
         candidate_idx = (next_idx + attempt) % len(pool)
         candidate = pool[candidate_idx]
-        if candidate not in cooldown_set:
+        if candidate not in cooldown_set and candidate != last_global:
             chosen = candidate
             next_idx = (candidate_idx + 1) % len(pool)
             break
 
     if not chosen:
-        chosen = pool[next_idx]
-        next_idx = (next_idx + 1) % len(pool)
+        # Eğer havuz küçükse en azından son paylaşılanla birebir aynı olmayanı seç
+        for attempt in range(len(pool)):
+            candidate_idx = (next_idx + attempt) % len(pool)
+            candidate = pool[candidate_idx]
+            if candidate != last_global:
+                chosen = candidate
+                next_idx = (candidate_idx + 1) % len(pool)
+                break
+        if not chosen:
+            chosen = pool[next_idx]
+            next_idx = (next_idx + 1) % len(pool)
 
     recent.append(chosen)
     state[idx_key] = next_idx

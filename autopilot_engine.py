@@ -141,12 +141,20 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         else:
             # 1. En iyi fırsatı tara
             print("\n[Adım 1/4] 🔍 En yüksek indirimli taze fırsat avlanıyor...")
-            from deal_hunter import hunt_best_deals, get_product_subtype
-            from deal_bot import load_history, get_last_subtype
+            from deal_hunter import (
+                hunt_best_deals,
+                get_product_subtype,
+                get_recent_subtypes_from_history,
+                get_recent_brands_from_history
+            )
+            from deal_bot import load_history
 
             history = load_history()
-            last_sub = get_last_subtype()
-            exclude_subs = {last_sub} if (last_sub and last_sub != "general") else None
+            recent_subs = get_recent_subtypes_from_history(limit=4)
+            recent_brands = get_recent_brands_from_history(limit=3)
+
+            print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Alt Kategoriler: {list(recent_subs)}")
+            print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Markalar (Stanley vb.): {list(recent_brands)}")
 
             hunt_cat = "beauty" if target_platform == "tiktok" else ("tech" if target_platform == "youtube" else "all")
             print(f"[Deal Hunter] Hedef platforma özel kategori taranıyor: {hunt_cat.upper()}...")
@@ -155,7 +163,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 platform="amazon",
                 category=hunt_cat,
                 exclude_urls=history,
-                exclude_subtypes=exclude_subs,
+                exclude_subtypes=recent_subs,
+                exclude_brands=recent_brands,
                 min_discount=20 if hunt_cat == "beauty" else 25
             )
 
@@ -166,6 +175,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 platform="all",
                 category="all",
                 exclude_urls=history,
+                exclude_subtypes=recent_subs,
+                exclude_brands=recent_brands,
                 min_discount=20
             )
 

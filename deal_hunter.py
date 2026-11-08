@@ -126,6 +126,70 @@ BROAD_AUDIENCE_KEYWORDS = [
     "tıraş", "oneblade", "diş fırçası", "oral-b", "airwrap"
 ]
 
+KNOWN_BRANDS = [
+    "stanley", "logitech", "steelseries", "razer", "gamesir", "philips", "karaca",
+    "the purest solutions", "delonghi", "de'longhi", "anker", "jbl", "sony", "apple",
+    "cosori", "xiaomi", "roborock", "dreame", "dyson", "hyperx", "corsair", "asus", "msi",
+    "lenovo", "dell", "samsung", "huawei", "oral-b", "braun", "cerave", "bioderma",
+    "tefal", "arzum", "fakir", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc"
+]
+
+def extract_brand(title: str) -> str:
+    """Ürün başlığından ana markayı tespit eder (Marka yorgunluğu ve anti-tekrar koruması)."""
+    t = (title or "").lower()
+    for b in KNOWN_BRANDS:
+        if b in t:
+            return "delonghi" if b == "de'longhi" else b
+    return ""
+
+def get_recent_subtypes_from_history(limit: int = 4) -> set:
+    """Son başarılı paylaşımlardaki alt kategorileri döner (Çeşitlilik koruması)."""
+    subtypes = set()
+    from config import DATA_DIR
+    history_file = os.path.join(DATA_DIR, "autopilot_history.json")
+    if os.path.exists(history_file):
+        try:
+            with open(history_file, "r", encoding="utf-8") as f:
+                items = json.load(f)
+                count = 0
+                for it in reversed(items):
+                    if it.get("success") and not it.get("dry_run") and not it.get("skipped"):
+                        deal_info = it.get("deal")
+                        t = deal_info.get("title", "") if isinstance(deal_info, dict) else str(deal_info or "")
+                        sub = get_product_subtype(t)
+                        if sub and sub != "general":
+                            subtypes.add(sub)
+                            count += 1
+                            if count >= limit:
+                                break
+        except Exception:
+            pass
+    return subtypes
+
+def get_recent_brands_from_history(limit: int = 3) -> set:
+    """Son başarılı paylaşımlardaki markaları döner (Stanley, Logitech vb. marka yorgunluğu koruması)."""
+    brands = set()
+    from config import DATA_DIR
+    history_file = os.path.join(DATA_DIR, "autopilot_history.json")
+    if os.path.exists(history_file):
+        try:
+            with open(history_file, "r", encoding="utf-8") as f:
+                items = json.load(f)
+                count = 0
+                for it in reversed(items):
+                    if it.get("success") and not it.get("dry_run") and not it.get("skipped"):
+                        deal_info = it.get("deal")
+                        t = deal_info.get("title", "") if isinstance(deal_info, dict) else str(deal_info or "")
+                        b = extract_brand(t)
+                        if b:
+                            brands.add(b)
+                            count += 1
+                            if count >= limit:
+                                break
+        except Exception:
+            pass
+    return brands
+
 def get_product_subtype(title: str) -> str:
     """
     Ürünün alt kategorisini tespit eder.
@@ -148,9 +212,9 @@ def get_product_subtype(title: str) -> str:
         return "speaker"
     if any(k in t for k in ["monitör kolu", "f80", "north bayou", "nb f80", "amortisörlü kol"]):
         return "monitor_arm"
-    if any(k in t for k in ["stanley", "termos", "matara", "mug"]):
+    if any(k in t for k in ["stanley", "termos", "matara", "mug", "quencher", "iceflow"]):
         return "thermos"
-    if any(k in t for k in ["kahve makinesi", "filtre kahve", "espresso", "lattego"]):
+    if any(k in t for k in ["kahve", "espresso", "lattego"]):
         return "coffee"
     if any(k in t for k in ["airfryer", "fritöz"]):
         return "airfryer"
@@ -158,6 +222,16 @@ def get_product_subtype(title: str) -> str:
         return "grooming"
     if any(k in t for k in ["diş fırçası", "oral-b", "sonicare"]):
         return "dental"
+    if any(k in t for k in ["akıllı saat", "smartwatch", "bileklik", "watch"]):
+        return "smartwatch"
+    if any(k in t for k in ["powerbank", "hızlı şarj", "şarj aleti"]):
+        return "powerbank"
+    if any(k in t for k in ["serum", "nemlendirici", "cilt", "tonik", "güneş kremi", "leke karşıtı"]):
+        return "skincare"
+    if any(k in t for k in ["şampuan", "saç bakım", "saç kremi", "düzleştirici", "airwrap"]):
+        return "haircare"
+    if any(k in t for k in ["epilatör", "yüz epilatörü", "ipl"]):
+        return "epilator"
     if any(k in t for k in ["ssd", "nvme", "disk"]):
         return "storage"
     return "general"
@@ -269,15 +343,25 @@ def calculate_deal_viral_score(deal: dict) -> float:
     if any(k in title for k in VIRAL_KEYWORDS):
         score += 30
 
-    # 4. Düşük Bütçeli / Heyecansız Ürün Cezası
-    # 500 TL altı ve tasarrufu 300 TL'den az olan ürünler Reels için heyecan yaratmaz
-    if new_p < 500 and savings_tl < 300:
-        score -= 40
+    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Tatlı Nokta: 350 TL - 2.200 TL)
+    # Sosyal medyada insanların anında ve düşünmeden alabileceği uygun fiyatlara öncelik ver
+    if 350 <= new_p <= 2200:
+        score += 35.0  # Anında satın alma tatlı noktası (+35 Puan)
+    elif 2200 < new_p <= 2900:
+        score += 15.0  # Makul orta bütçe
+    elif new_p > 3500:
+        score -= 50.0  # Aşırı pahalı ürün cezası (-50 Puan: sosyal medyada anlık satışı zor)
+    elif new_p < 250:
+        score -= 30.0  # Çok ucuz/önemsiz sarf malzemesi cezası
+
+    # Stanley / Termos Yorgunluğu Koruması (Aynı markanın farklı litre varyasyonlarının sürekli çıkmasını engelle)
+    if "stanley" in title:
+        score -= 25.0
 
     return score
 
-MIN_PRODUCT_PRICE_TL = 450   # 450 TL altındaki küçük filtre, kablo, ıvır zıvır ürünleri ele
-MAX_PRODUCT_PRICE_TL = 4500  # 4.500 TL üstündeki kimsenin anında alamayacağı aşırı pahalı ürünleri ele (Altın Fiyat Bandı)
+MIN_PRODUCT_PRICE_TL = 250   # 250 TL alt sınır (The Purest Solutions, kaliteli bakım/aksesuarlar için)
+MAX_PRODUCT_PRICE_TL = 3200  # 3.200 TL üst sınır (İmpulsif/hızlı satın alma tavanı - pahalı ürünleri engeller)
 
 def detect_store(url: str, text: str = "") -> str:
     """Ürün linkinden veya metninden mağazayı (Trendyol, Hepsiburada, Amazon TR) tespit eder."""
@@ -370,8 +454,8 @@ AMAZON_CATALOG_SOURCES = [
     ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
     ("KULAKLIK_SES", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709880031"),
     ("PATLAYAN_MUTFAK", "https://www.amazon.com.tr/gp/movers-and-shakers/kitchen"),
-    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen"),
-    ("STANLEY_TERMOS_OUTDOOR", "https://www.amazon.com.tr/gp/bestsellers/sports"),
+    ("ELEKTRİKLİ_MUTFAK", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13844654031"),
+    ("KAHVE_ÇAY_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13844656031"),
     ("KİŞİSEL_BAKIM_TIRAŞ", "https://www.amazon.com.tr/gp/bestsellers/personal-care"),
     ("OFİS_ERGONOMİ_MASA", "https://www.amazon.com.tr/gp/bestsellers/office"),
     ("PATLAYAN_KİŞİSEL_BAKIM", "https://www.amazon.com.tr/gp/movers-and-shakers/personal-care")
@@ -398,7 +482,7 @@ def get_rotated_amazon_catalogs():
         pass
     return rotated
 
-def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, min_discount: int = 25) -> list:
+def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, exclude_brands: set = None, min_discount: int = 25) -> list:
     """
     Doğrudan amazon.com.tr üzerinden yüksek talep gören viral Gaming, PC, Donanım, Ses ve Trend Yaşam ürünlerini çeker.
     Sıkıcı aksesuarları filtreler, ürünün gerçek Türkiye piyasa fiyatını ve indirimini analiz eder.
@@ -435,6 +519,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
 
     deals = []
     seen_subtypes = set(exclude_subtypes) if exclude_subtypes else set()
+    seen_brands = set(exclude_brands) if exclude_brands else set()
 
     for cat_name, target_url in url_categories:
         if len(deals) >= limit:
@@ -548,6 +633,16 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
                 "review_count": h_reviews
             })
 
+        # Adayları ASIN / URL bazında tekilleştir (Mükerrer DOM taramalarını önle)
+        seen_cand_sigs = set()
+        unique_cands = []
+        for cand in parsed_candidates:
+            cand_sig = cand.get("asin") or cand.get("prod_url") or cand.get("raw_title")
+            if cand_sig and cand_sig not in seen_cand_sigs:
+                seen_cand_sigs.add(cand_sig)
+                unique_cands.append(cand)
+        parsed_candidates = unique_cands
+
         for cand in parsed_candidates:
             if len(deals) >= limit:
                 break
@@ -573,10 +668,21 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
                 print(f"[Deal Hunter] ⏭️ Yetersiz Yorumlu Fason Ürün Elendi ({review_count} yorum): {raw_title[:38]}")
                 continue
 
-            # 2. Alt tip anti-tekrar koruması (örn: peş peşe 2 kol/gamepad veya 2 fare gelmez)
+            # 2. Alt tip ve marka anti-tekrar koruması (örn: peş peşe 2 kol/gamepad gelmez, aynı marka sürekli tekrar etmez)
             raw_subtype = get_product_subtype(raw_title)
+            raw_brand = extract_brand(raw_title)
+
             if raw_subtype != "general" and raw_subtype in seen_subtypes:
-                print(f"[Deal Hunter] ⏭️ Çeşitlilik Koruması ({raw_subtype} zaten var/yasaklı): {raw_title[:38]}")
+                print(f"[Deal Hunter] ⏭️ Çeşitlilik Koruması (Alt Kategori '{raw_subtype}' beklemede): {raw_title[:38]}")
+                continue
+
+            if raw_brand and raw_brand in seen_brands:
+                print(f"[Deal Hunter] ⏭️ Marka Koruması ('{raw_brand.upper()}' yakın zamanda paylaşıldı): {raw_title[:38]}")
+                continue
+
+            # Stanley & Termos Özel Koruması (Farklı litre/modellerin üst üste gelmesini %100 engeller)
+            if "stanley" in raw_title.lower() and ("stanley" in seen_brands or "thermos" in seen_subtypes):
+                print(f"[Deal Hunter] ⏭️ Stanley Termos Koruması (Yakın zamanda Stanley paylaşıldı): {raw_title[:38]}")
                 continue
 
             # 3. Minimum Fiyat Kontrolü (350 TL altındaki küçük ıvır zıvırları atla)
@@ -909,7 +1015,7 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
 
     return collected_deals
 
-def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, min_discount: int = 25) -> list:
+def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "all", exclude_urls: set = None, exclude_subtypes: set = None, exclude_brands: set = None, min_discount: int = 25) -> list:
     """
     Amazon TR, Hepsiburada ve Trendyol üzerindeki EN ARZU EDİLEN ve EN YÜKSEK İNDİRİMLİ fırsatları avlar.
     6 Katmanlı Akıllı Keşif Motoru ile saçma/fason ürünleri eler, A-Sınıfı marka ve çok satan fırsatları zirveye taşır.
@@ -919,7 +1025,7 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
 
     # 1. Amazon TR Kataloglarından Çek (Movers & Shakers + Çok Satanlar + Fırsatlar rotasyonlu)
     if platform in ("all", "amazon"):
-        amz_deals = hunt_amazon_deals(limit=limit + 5, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, min_discount=min_discount)
+        amz_deals = hunt_amazon_deals(limit=limit + 5, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, exclude_brands=exclude_brands, min_discount=min_discount)
         for d in amz_deals:
             d["store_name"] = "Amazon TR"
             candidates.append(d)
@@ -935,14 +1041,26 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
         if platform == "hepsiburada" and st != "Hepsiburada":
             continue
         sub = get_product_subtype(d.get("title", ""))
+        b = extract_brand(d.get("title", ""))
         if exclude_subtypes and sub in exclude_subtypes and sub != "general":
+            continue
+        if exclude_brands and b and b in exclude_brands:
+            continue
+        if "stanley" in d.get("title", "").lower() and ("stanley" in (exclude_brands or set()) or "thermos" in (exclude_subtypes or set())):
             continue
         candidates.append(d)
 
     # Eğer belirlenen min_discount ile hiç ürün bulunamadıysa eşiği %15'e gevşet
     if not candidates and min_discount > 15:
         print(f"[Deal Hunter] ⚠️ %{min_discount} ve üzeri indirim bulunamadı, eşik %15'e gevşetiliyor...")
-        return hunt_best_deals(limit=limit, platform=platform, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, min_discount=15)
+        return hunt_best_deals(limit=limit, platform=platform, category=category, exclude_urls=exclude_urls, exclude_subtypes=exclude_subtypes, exclude_brands=exclude_brands, min_discount=15)
+
+    # Eğer katı çeşitlilik/marka filtresi nedeniyle hiçbir aday kalamadıysa sadece ardışık tekrarı önleyerek gevşet
+    if not candidates and (exclude_subtypes or exclude_brands):
+        print("[Deal Hunter] ⚠️ Katı çeşitlilik filtresiyle uygun ürün bulunamadı. Filtre yalnızca son ürünü engelleyecek şekilde gevşetiliyor...")
+        last_sub = list(exclude_subtypes)[0] if exclude_subtypes else None
+        minimal_sub = {last_sub} if last_sub and last_sub != "general" else None
+        return hunt_best_deals(limit=limit, platform=platform, category=category, exclude_urls=exclude_urls, exclude_subtypes=minimal_sub, exclude_brands=None, min_discount=15)
 
     if not candidates:
         return []
@@ -1038,25 +1156,35 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
 
     candidates.sort(key=score_deal, reverse=True)
 
-    # Çeşitlilik süzgeci: Tek bir listede aynı ürün tipinden birden fazla olmasın
+    # Çeşitlilik süzgeci: Tek bir listede aynı ürün tipinden veya markadan birden fazla olmasın
     best_deals = []
     seen_types = set(exclude_subtypes) if exclude_subtypes else set()
+    seen_b = set(exclude_brands) if exclude_brands else set()
     for d in candidates:
         if len(best_deals) >= limit:
             break
         st = get_product_subtype(d.get("title", ""))
+        b = extract_brand(d.get("title", ""))
         if st != "general" and st in seen_types:
+            continue
+        if b and b in seen_b:
+            continue
+        if "stanley" in d.get("title", "").lower() and ("stanley" in seen_b or "thermos" in seen_types):
             continue
         best_deals.append(d)
         if st != "general":
             seen_types.add(st)
+        if b:
+            seen_b.add(b)
 
-    # Eğer çeşitlilik kuralı nedeniyle limit dolmadıysa kalan adaylardan tamamla
+    # Eğer çeşitlilik kuralı nedeniyle limit dolmadıysa kalan adaylardan tamamla (Stanley hariç)
     if len(best_deals) < limit:
         for d in candidates:
             if len(best_deals) >= limit:
                 break
             if d not in best_deals:
+                if "stanley" in d.get("title", "").lower() and ("stanley" in seen_b or "thermos" in seen_types):
+                    continue
                 best_deals.append(d)
 
     print(f"\n[Deal Hunter] 🏆 EN YÜKSEK İNDİRİMLİ {len(best_deals)} FIRSAT SEÇİLDİ:")

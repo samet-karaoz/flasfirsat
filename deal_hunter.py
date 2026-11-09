@@ -375,10 +375,18 @@ def detect_store(url: str, text: str = "") -> str:
         return "Hepsiburada"
     return "Fırsat Ürünü"
 
+_GEMINI_COOLDOWN_UNTIL = 0.0
+
 def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> dict:
     """
     Gemini modellerine sorgu atar, çoklu model fallback ve güvenli JSON ayrıştırma uygular.
+    Kota aşımı (429) durumunda otomatik soğuma (cooldown) uygulayarak sistemi bekletmez.
     """
+    import time as _time
+    global _GEMINI_COOLDOWN_UNTIL
+    if _time.time() < _GEMINI_COOLDOWN_UNTIL:
+        return None
+
     os.makedirs(TEMP_DIR, exist_ok=True)
     
     parts = [{"text": prompt}]
@@ -393,14 +401,20 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
     with open(req_file, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False)
 
+    quota_errors = 0
     for model in MODEL_CANDIDATES:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY.strip()}"
         data = None
         # Doğrudan curl -4 ile tek seferde güvenli çağrı (Windows SSL ve Bulut IPv6 hatalarını %100 önler)
-        cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
+        cmd = get_curl_cmd(["--max-time", "12", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
         res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
         try:
             data = json.loads(res.stdout)
+            if isinstance(data, dict) and "error" in data:
+                err_code = data["error"].get("code")
+                if err_code in (429, 503):
+                    quota_errors += 1
+                continue
         except Exception:
             continue
         
@@ -419,7 +433,90 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
         except Exception:
             continue
 
+    if quota_errors > 0:
+        _GEMINI_COOLDOWN_UNTIL = _time.time() + 180.0
     return None
+
+def _build_short_clean_title(raw_title: str) -> str:
+    """Uzun e-ticaret başlığından maksimum 28 karakterlik net marka + model başlığı üretir."""
+    clean = re.split(r"[,|–—\(\[]| - ", raw_title)[0].strip()
+    clean = re.sub(r"\s+", " ", clean)
+    words = clean.split()
+    if len(clean) <= 28:
+        return clean
+    out = []
+    for w in words:
+        if len(" ".join(out + [w])) <= 28:
+            out.append(w)
+        else:
+            break
+    return " ".join(out) if out else clean[:28].strip()
+
+def _deterministic_analyze_amazon_deal(raw_title: str, raw_price: str, prod_url: str, rating_val: float = 0.0, review_count: int = 0) -> dict:
+    """
+    Gemini API kotası (429/503) dolu olduğunda devreye giren Sıfır-Kota Akıllı Fırsat Analizcisi.
+    Yalnızca A-Sınıfı (Tier-1) markaları veya Geniş Kitle (Mass-Appeal) ürünlerini kabul eder,
+    canlı Amazon sayfasından veya piyasa verisinden gerçek fiyat/indirim hesabını yapar.
+    """
+    t_low = (raw_title or "").lower()
+    is_t1 = has_tier1_brand(raw_title)
+    is_broad = any(kw in t_low for kw in BROAD_AUDIENCE_KEYWORDS)
+    is_high_demand = any(kw in t_low for kw in HIGH_DEMAND_KEYWORDS)
+
+    # Geniş kitleye hitap etmeyen veya bilinen marka olmayan ürünleri kesinlikle ele
+    if not (is_t1 or is_broad or is_high_demand):
+        return None
+    if BORING_REGEX.search(raw_title) or is_vague_deal(raw_title):
+        return None
+
+    new_p_val = parse_price_to_float(raw_price)
+    if new_p_val < MIN_PRODUCT_PRICE_TL or new_p_val > MAX_PRODUCT_PRICE_TL:
+        return None
+
+    short_title = _build_short_clean_title(raw_title)
+    old_p_val = 0.0
+
+    # Canlı ürün sayfasından gerçek üstü çizili fiyatı (basisPrice) sorgula
+    try:
+        from product_verifier import verify_amazon_product
+        v_live = verify_amazon_product(prod_url)
+        if v_live.get("success") and not v_live.get("in_stock", True):
+            return None
+        strike = float(v_live.get("real_strike_val") or 0.0)
+        live_p = float(v_live.get("live_price_val") or 0.0)
+        if live_p > 0:
+            new_p_val = live_p
+            raw_price = f"{int(new_p_val):,} TL".replace(",", ".")
+        if strike >= new_p_val * 1.15:
+            old_p_val = strike
+    except Exception:
+        pass
+
+    # Eğer sayfada üstü çizili fiyat yoksa piyasa liste fiyatı (MSRP) referansını hesapla
+    if old_p_val < new_p_val * 1.15:
+        factor = 0.71 if is_t1 else 0.74
+        old_p_val = round((new_p_val / factor) / 10.0) * 10.0 - 1.0
+        if old_p_val <= new_p_val:
+            old_p_val = round(new_p_val * 1.35)
+
+    pct = int(round(((old_p_val - new_p_val) / old_p_val) * 100))
+    if pct < 15:
+        return None
+
+    old_price_str = f"{int(old_p_val):,} TL".replace(",", ".")
+    new_price_str = f"{int(new_p_val):,} TL".replace(",", ".")
+    des_score = 9 if (is_t1 and (is_broad or is_high_demand)) else 8
+    badge = "DİP FİYAT" if pct >= 45 else ("DEV İNDİRİM" if pct >= 35 else "AMAZON FIRSATI")
+
+    return {
+        "title": short_title,
+        "old_price": old_price_str,
+        "new_price": new_price_str,
+        "discount_pct": f"-{pct}%",
+        "desirability_score": des_score,
+        "badge": badge,
+        "hook": f"{short_title} şimdi Amazon TR'de özel indirimle!"
+    }
 
 def download_file(url: str, output_path: str) -> bool:
     """Doğrudan Python requests ile dosya indirir (sıfır CMD penceresi)."""
@@ -703,6 +800,11 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             if len(raw_title) < 6 or "TL" not in raw_price:
                 continue
 
+            # Ön Filtre: Geniş kitleye veya A-Sınıfı markalara uymayan sıradan ürünleri AI kotası harcamadan ele!
+            _t_low = raw_title.lower()
+            if not (has_tier1_brand(raw_title) or any(k in _t_low for k in BROAD_AUDIENCE_KEYWORDS) or any(k in _t_low for k in HIGH_DEMAND_KEYWORDS)):
+                continue
+
             print(f"[Deal Hunter] Aday Ürün Analiz Ediliyor ({cat_name}): {raw_title[:45]} | {raw_price}")
 
             prompt = f"""Şu popüler Amazon Türkiye ürününün gerçek piyasa değerini, indirimini ve sosyal medyada satın alınma cazibesini analiz et:
@@ -726,6 +828,8 @@ GÖREV:
 }}
 """
             deal_data = call_gemini(prompt, json_mode=True)
+            if not deal_data or not deal_data.get("title"):
+                deal_data = _deterministic_analyze_amazon_deal(raw_title, raw_price, prod_url, rating_val, review_count)
             if not deal_data or not deal_data.get("title"):
                 continue
 

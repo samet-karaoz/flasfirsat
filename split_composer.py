@@ -16,9 +16,10 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # 1. KADIN & GÜZELLİK / MAKYAJ / CİLT BAKIMI HAVUZU (SADECE Kadın Ürünlerinde Kullanılır!)
 WOMEN_MEME_ORDER = [
-    "market_arabasi_bebek.mp4",       # 1. Market Arabasıyla Dans Eden Tatlı Kız Bebek
-    "spa_gozluklu_bebek.mp4",         # 2. Alışveriş Poşetleri & Güneş Gözlüklü VIP Spa Bebek
-    "gozluklu_kopek_araba.mp4",       # 3. Şapkalı & Gözlüklü Tatlı Köpek Akülü Araba Keyfi
+    "scooter_kaskli_bebek.mp4",       # 1. Sarı Kasklı & Çantalı Tatlı Bebek Scooter Keyfi
+    "market_arabasi_bebek.mp4",       # 2. Market Arabasıyla Dans Eden Tatlı Kız Bebek
+    "spa_gozluklu_bebek.mp4",         # 3. Alışveriş Poşetleri & Güneş Gözlüklü VIP Spa Bebek
+    "gozluklu_kopek_araba.mp4",       # 4. Şapkalı & Gözlüklü Tatlı Köpek Akülü Araba Keyfi
     "arda_guler_soyunma_odasi.mp4",   # 4. Arda Güler Soyunma Odası Tarihi Konuşma (Kızların Favorisi)
     "dugunde_oynayan_kiz.mp4",        # 5. Düğünde Oynayan Şık Kız Dansı (Zarif & Trend)
     "pembe_vespa_kiz.mp4",            # 6. Pembe Vespa Süren Tatlı Kız (Yazısız Temiz Kırpım)
@@ -322,6 +323,18 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
 # ==========================================
 
 MEME_SPECIFIC_HOOKS = {
+    "scooter_kaskli_bebek": {
+        "beauty": [
+            "Kızlar indirimi görünce stoklar bitmeden siparişe yetişmeye çalışırken ben:",
+            "Favori bakım ürünümde bu fiyatı yakalayınca kargoya koşuş hızım:",
+            "Kızlar grubuna linki atıp kendim ışık hızında sipariş verirken ben:",
+            "Bu fiyata görünce çantamı takıp indirime uçuş şeklim:"
+        ],
+        "general": [
+            "Bu indirimi görünce stoklar bitmeden siparişe yetişme hızım:",
+            "Dip fiyatı yakalayınca siparişe giderken bendeki o tatlı telaş:"
+        ]
+    },
     "market_arabasi_bebek": {
         "beauty": [
             "Kızlar bu indirimi görünce sepeti doldururken bendeki o tatlı heyecan:",

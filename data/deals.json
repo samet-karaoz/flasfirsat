@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794244027_58",
+    "deal_code": "#166",
+    "title": "CeraVe Nemlendirici Krem 340g",
+    "old_price": "1.250 TL",
+    "new_price": "799,00 TL",
+    "discount_pct": "-36%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07CH9XWHR?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/cerave_nemlendirici_krem__11dca823.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "09.11.2026 17:07"
+  },
+  {
     "id": "deal_1794238626_57",
     "deal_code": "#165",
     "title": "JBL Wave Flex",

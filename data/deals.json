@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794249417_59",
+    "deal_code": "#167",
+    "title": "Philips SPK7448 Kablosuz",
+    "old_price": "699 TL",
+    "new_price": "499 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0G2M3Z38D?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/philips_spk7448_kablosuz_bd39b673.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "09.11.2026 18:36"
+  },
+  {
     "id": "deal_1794244027_58",
     "deal_code": "#166",
     "title": "CeraVe Nemlendirici Krem 340g",

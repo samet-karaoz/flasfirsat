@@ -16,11 +16,14 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # 1. KADIN & GÜZELLİK / MAKYAJ / CİLT BAKIMI HAVUZU (SADECE Kadın Ürünlerinde Kullanılır!)
 WOMEN_MEME_ORDER = [
-    "arda_guler_soyunma_odasi.mp4",  # 1. Arda Güler Soyunma Odası Tarihi Konuşma (Kızların Favorisi)
-    "dugunde_oynayan_kiz.mp4",        # 2. Düğünde Oynayan Şık Kız Dansı (Zarif & Trend)
-    "pembe_vespa_kiz.mp4",            # 3. Pembe Vespa Süren Tatlı Kız (Yazısız Temiz Kırpım)
-    "pembe_cip_kiz.mp4",              # 4. Pembe Brabus Akülü Cip Süren Kız
-    "motorcu_tatli_kiz.mp4",          # 5. Tünelde Motor Süren Havalı Kız
+    "market_arabasi_bebek.mp4",       # 1. Market Arabasıyla Dans Eden Tatlı Kız Bebek
+    "spa_gozluklu_bebek.mp4",         # 2. Alışveriş Poşetleri & Güneş Gözlüklü VIP Spa Bebek
+    "gozluklu_kopek_araba.mp4",       # 3. Şapkalı & Gözlüklü Tatlı Köpek Akülü Araba Keyfi
+    "arda_guler_soyunma_odasi.mp4",   # 4. Arda Güler Soyunma Odası Tarihi Konuşma (Kızların Favorisi)
+    "dugunde_oynayan_kiz.mp4",        # 5. Düğünde Oynayan Şık Kız Dansı (Zarif & Trend)
+    "pembe_vespa_kiz.mp4",            # 6. Pembe Vespa Süren Tatlı Kız (Yazısız Temiz Kırpım)
+    "pembe_cip_kiz.mp4",              # 7. Pembe Brabus Akülü Cip Süren Kız
+    "motorcu_tatli_kiz.mp4",          # 8. Tünelde Motor Süren Havalı Kız
 ]
 
 # 2. ERKEK / GAMING / TEKNOLOJİ / DONANIM & GENEL HAVUZ (Asla Kadın Memeleri Karışmaz!)
@@ -319,6 +322,42 @@ def draw_vector_dm_plane(draw: ImageDraw.Draw, cx: int, cy: int, color=(251, 191
 # ==========================================
 
 MEME_SPECIFIC_HOOKS = {
+    "market_arabasi_bebek": {
+        "beauty": [
+            "Kızlar bu indirimi görünce sepeti doldururken bendeki o tatlı heyecan:",
+            "Favori bakım ürünlerimi yarı fiyatına yakalayınca alışverişteki keyfim:",
+            "Stok bitmeden tüm eksikleri sepete atarken benim neşe seviyesi:",
+            "Kızlar grubuna indirimi haber verip sepeti fullerken ben:"
+        ],
+        "general": [
+            "İndirimi yakalayıp sepeti doldururken bendeki o tatlı heyecan:",
+            "Bu fiyata görünce alışveriş arabasını sürerken benim keyif:"
+        ]
+    },
+    "spa_gozluklu_bebek": {
+        "beauty": [
+            "Kızlar indirimden bütün cilt bakım stoklarını kapınca evdeki VIP keyfim:",
+            "Normalde servet ödediğim ürünleri dip fiyata dizince bendeki o lüks his:",
+            "Kargolarım gelip akşam bakım rutinime geçince benim rahatlık seviyesi:",
+            "Alışveriş poşetlerini dizip bakım yaparken bendeki o havalı mod:"
+        ],
+        "general": [
+            "İndirimden tüm eksikleri yarı fiyatına kapınca evdeki VIP keyfim:",
+            "Siparişleri tamamlayıp köşeme çekilince bendeki o rahatlık:"
+        ]
+    },
+    "gozluklu_kopek_araba": {
+        "beauty": [
+            "Kızlar indirimli bakım ürünleriyle cildimi parlatıp dışarı çıkınca benim hava:",
+            "Bu fiyata siparişi kapıp kargoyu beklerken bendeki o havalı mod:",
+            "Kız kıza dışarı çıkarken indirimden aldığım favorimle benim özgüven:",
+            "Stoklar tükenmeden siparişi verip ortamlara akarken ben:"
+        ],
+        "general": [
+            "Dip fiyattan siparişi kapıp dışarı çıkınca bendeki o havalı mod:",
+            "Bu indirimi kaçırmadan yakalayınca benim keyif seviyesi:"
+        ]
+    },
     "arda_guler_soyunma_odasi": {
         "beauty": [
             "Kızlar bu indirimi görünce odada verdiğim o tarihi konuşma:",

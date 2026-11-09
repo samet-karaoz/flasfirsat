@@ -735,62 +735,6 @@ def render_web_html(deals: list = None):
             padding: 0 16px;
         }
 
-        /* Dynamic Welcome Banner (UTM Referral) */
-        .welcome-banner {
-            display: none;
-            background: linear-gradient(135deg, rgba(255, 87, 34, 0.15) 0%, rgba(255, 193, 7, 0.10) 100%);
-            border: 1px solid rgba(255, 87, 34, 0.35);
-            border-radius: 16px;
-            padding: 14px 20px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 20px rgba(255, 87, 34, 0.12);
-            animation: fadeInSlide 0.35s ease-out;
-        }
-
-        @keyframes fadeInSlide {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .welcome-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .welcome-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.94rem;
-            color: #F8FAFC;
-        }
-
-        .welcome-icon {
-            font-size: 1.45rem;
-            line-height: 1;
-        }
-
-        .welcome-text strong {
-            color: #FFC107;
-        }
-
-        .welcome-close {
-            background: transparent;
-            border: none;
-            color: #94A3B8;
-            font-size: 1.3rem;
-            cursor: pointer;
-            padding: 0 4px;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-
-        .welcome-close:hover {
-            color: #FFFFFF;
-        }
-
         /* Search & Filter Bar */
         .controls-bar {
             display: flex;
@@ -1698,59 +1642,6 @@ def render_web_html(deals: list = None):
             background: linear-gradient(90deg, #10B981, #FACC15);
             border-radius: 99px;
         }
-
-        /* Yüzen (Sticky) Telegram Fırsat Alarmı Barı */
-        .sticky-tg-bar {
-            position: fixed;
-            bottom: 14px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 28px);
-            max-width: 680px;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.96));
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            border-radius: 16px;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            z-index: 999;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-        }
-        .sticky-tg-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.84rem;
-            color: #F8FAFC;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-        .sticky-tg-btn {
-            background: linear-gradient(135deg, #0284C7, #38BDF8);
-            color: #FFFFFF;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 0.82rem;
-            padding: 8px 14px;
-            border-radius: 10px;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
-            transition: transform 0.2s;
-        }
-        .sticky-tg-btn:hover {
-            transform: scale(1.04);
-        }
-        .sticky-tg-close {
-            background: none;
-            border: none;
-            color: #94A3B8;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0 4px;
-        }
     </style>
 </head>
 <body>
@@ -1779,16 +1670,6 @@ def render_web_html(deals: list = None):
     </header>
 
     <main class="container">
-        <!-- Dinamik Hoş Geldiniz Bildirimi (UTM Kaynak Karşılama) -->
-        <div id="welcomeBanner" class="welcome-banner">
-            <div class="welcome-inner">
-                <div class="welcome-content">
-                    <span id="welcomeIcon" class="welcome-icon">⚡</span>
-                    <span id="welcomeText" class="welcome-text">Hoş geldiniz!</span>
-                </div>
-                <button class="welcome-close" onclick="closeWelcomeBanner()" aria-label="Kapat">&times;</button>
-            </div>
-        </div>
 
         <div class="controls-bar">
             <div class="search-box">
@@ -1852,18 +1733,6 @@ def render_web_html(deals: list = None):
             </button>
         </div>
     </footer>
-
-    <!-- Yüzen Telegram Fırsat Alarmı Barı -->
-    <div id="stickyTgBar" class="sticky-tg-bar">
-        <div class="sticky-tg-left">
-            <span>🚨</span>
-            <span>Fiyat hatalarını ve anlık indirimleri tükenmeden yakala!</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-            <a href="https://t.me/flasfirsat" target="_blank" class="sticky-tg-btn" data-social="telegram">✈️ Telegram'a Katıl</a>
-            <button class="sticky-tg-close" onclick="document.getElementById('stickyTgBar').style.display='none'" aria-label="Kapat">&times;</button>
-        </div>
-    </div>
 
     <!-- Native HTML5 Dialog (İstatistik & Ziyaretçi Paneli) -->
     <dialog id="statsModal" class="stats-dialog">
@@ -2054,44 +1923,7 @@ def render_web_html(deals: list = None):
             }
         })();
 
-        // Sosyal Karşılama Bildirimi
-        (function renderWelcomeBanner() {
-            if (sessionStorage.getItem('flas_banner_dismissed')) return;
-            const banner = document.getElementById('welcomeBanner');
-            const icon = document.getElementById('welcomeIcon');
-            const text = document.getElementById('welcomeText');
-            if (!banner || !icon || !text) return;
-
-            if (currentSource === 'instagram') {
-                icon.textContent = '📸';
-                text.innerHTML = '<strong>Instagram</strong> takipçimiz hoş geldin! Reels videomuzda gördüğün dip fiyat fırsatları aşağıda ⚡';
-                banner.style.display = 'block';
-            } else if (currentSource === 'youtube') {
-                icon.textContent = '📺';
-                text.innerHTML = '<strong>YouTube Shorts</strong> izleyicimiz hoş geldin! Videodaki dip fiyat fırsatı ve daha fazlası aşağıda ⚡';
-                banner.style.display = 'block';
-            } else if (currentSource === 'telegram') {
-                icon.textContent = '✈️';
-                text.innerHTML = '<strong>Telegram</strong> ailemiz hoş geldin! Radarımıza takılan en sıcak fırsatlar listelendi ⚡';
-                banner.style.display = 'block';
-            } else if (currentSource === 'whatsapp') {
-                icon.textContent = '🟢';
-                text.innerHTML = '<strong>WhatsApp</strong> kanalımızdan gelen fırsat avcısı hoş geldin! Sıcak fırsatlar aşağıda listelendi ⚡';
-                banner.style.display = 'block';
-            } else if (currentSource === 'tiktok') {
-                icon.textContent = '🎵';
-                text.innerHTML = '<strong>TikTok</strong> fırsat avcısı hoş geldin! Viral fırsatları kaçırmadan incele ⚡';
-                banner.style.display = 'block';
-            }
-        })();
-
-        function closeWelcomeBanner() {
-            const banner = document.getElementById('welcomeBanner');
-            if (banner) banner.style.display = 'none';
-            sessionStorage.setItem('flas_banner_dismissed', '1');
-        }
-
-        // Ürün Satın Al Tıklama Takibi (Buton, Görsel veya Başlık)
+// Ürün Satın Al Tıklama Takibi (Buton, Görsel veya Başlık)
         document.addEventListener('click', function(e) {
             const btn = e.target.closest('.buy-btn, .card-img-link, .card-title-link');
             if (!btn) return;

@@ -222,11 +222,6 @@ def handle_callback_query(cq: dict):
             f"{code_pin_line}"
             f"Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım!"
         )
-        dm_reply_str = (
-            f"Selam! 👋 Videomuzdaki {title} için indirimli satın alma linkin burada:\n"
-            f"{product_url or 'https://flasfirsat.com.tr'}\n\n"
-            f"Flaş fırsatları kaçırmamak için bildirimleri açmayı ve bizi takip etmeyi unutma! ⚡"
-        )
         clean_caption = _html.escape(re.sub(r'https?://\S+|www\.\S+', '', caption_text).strip())
         studio_msg = (
             f"📲 <b>%100 ORGANİK INSTAGRAM STÜDYO PAKETİ</b>\n"
@@ -239,13 +234,10 @@ def handle_callback_query(cq: dict):
             f"<code>{_html.escape(product_url or '')}</code>\n\n"
             f"🔍 <b>4. INSTAGRAM 'Aa' GÖRÜNMEZ SEO KELİMELERİ (Dokun & Kopyala):</b>\n"
             f"<code>{_html.escape(seo_str)}</code>\n\n"
-            f"📩 <b>5. 'LİNK' YAZANLARA ATILACAK DM CEVABI (Dokun & Kopyala):</b>\n"
-            f"<code>{_html.escape(dm_reply_str)}</code>\n\n"
             f"💡 <b>Keşfet Taktikleri:</b>\n"
             f"1️⃣ <b>Trend Ses:</b> Reels'e popüler bir müziği <b>%2 ses</b> seviyesinde ekle.\n"
             f"2️⃣ <b>Görünmez SEO:</b> 4. kutudaki kelimeleri Instagram'ın 'Aa' metin aracına yapıştır, ekranın köşesine küçültüp gizle!\n"
-            f"3️⃣ <b>Hikaye:</b> Gönderilen Story kartını paylaşıp anket çıkartması ve link çıkartması ekle.\n"
-            f"4️⃣ <b>Auto-DM:</b> Yoruma 'LİNK' yazanlara 5. kutudaki metni tek dokunuşla yapıştırıp göndererek doğrudan takipçiye dönüştür!"
+            f"3️⃣ <b>Hikaye:</b> Gönderilen Story kartını paylaşıp anket çıkartması ve link çıkartması ekle."
         )
         send_telegram_text(chat_id, studio_msg)
         return True
@@ -736,20 +728,6 @@ def handle_user_message(msg: dict):
         threading.Thread(target=_run_auto, daemon=True).start()
         return
 
-    # 1.7 /dm Komutu (Instagram Yorumlarını Tara ve DM Gönder)
-    if text.startswith("/dm") or text.startswith("/autodm"):
-        send_telegram_text(chat_id, "🔍 <b>Instagram Reels yorumları taranıyor...</b>\n\n'LİNK', 'FİYAT' yazan takipçilere DM ile doğrudan ürün linkleri gönderiliyor...")
-        import threading
-        def _run_dm():
-            try:
-                from instagram_auto_dm import check_and_reply_comments
-                count = check_and_reply_comments()
-                send_telegram_text(chat_id, f"✅ <b>Auto-DM Tamamlandı!</b>\nToplam <b>{count}</b> takipçiye link DM ile iletildi.")
-            except Exception as ex:
-                send_telegram_text(chat_id, f"❌ Auto-DM hatası: {ex}")
-        threading.Thread(target=_run_dm, daemon=True).start()
-        return
-
     # 1.8 /top3 Komutu (Durduruldu - Tekli Video Modu Aktif)
     if text.startswith("/top3"):
         send_telegram_text(
@@ -769,7 +747,6 @@ def handle_user_message(msg: dict):
             "💡 <b>Yönetim Komutları:</b>\n"
             "• <code>/otopilot</code> - Hemen otomatik tekli video üret ve onaya sun\n"
             "• <code>/program</code> - Sıradaki otomatik yayın zamanı\n"
-            "• <code>/dm</code> - Instagram Reels yorumlarını tara ve link isteyenlere Auto-DM at\n"
             "• <code>/stats</code> - Web paneli ve ziyaretçi istatistikleri\n"
             "• <code>/denetle</code> - Canlı vitrin stok ve fiyat kontrolü\n"
             "• <code>/takip [link]</code> - İstediğin ürünü fiyat takibine al\n"

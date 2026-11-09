@@ -10,7 +10,6 @@ data/*
 !data/autopilot_history.json
 !data/pending_deals.json
 !data/meme_history.json
-!data/replied_comments.json
 *.db
 
 # Geçici ve Çıktı Dosyaları

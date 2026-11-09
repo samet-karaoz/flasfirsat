@@ -127,7 +127,7 @@ jobs:
 
       - name: 🌐 Canlı Web Vitrinini, Video Varlıklarını ve Geçmişi Commit & Push Et
         run: |
-          git add index.html data/deals.json data/autopilot_history.json data/pending_deals.json data/meme_history.json data/replied_comments.json assets/products/ assets/videos/ history_deals.json || true
+          git add index.html data/deals.json data/autopilot_history.json data/pending_deals.json data/meme_history.json assets/products/ assets/videos/ history_deals.json || true
           if git diff --staged --quiet; then
             echo "Değişiklik yok, commit atlanıyor."
           else

@@ -103,10 +103,6 @@ def index():
                     <span class="val">{uptime}</span>
                 </div>
                 <div class="stats-item">
-                    <span>Auto-DM Radarı:</span>
-                    <span class="val">Her 2 Dakikada Bir</span>
-                </div>
-                <div class="stats-item">
                     <span>Telegram Servisi:</span>
                     <span class="val">Aktif (@flasfirsat)</span>
                 </div>

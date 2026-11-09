@@ -394,26 +394,15 @@ def call_gemini(prompt: str, json_mode: bool = True, image_path: str = None) -> 
         json.dump(payload, f, ensure_ascii=False)
 
     for model in MODEL_CANDIDATES:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY.strip()}"
         data = None
-        network_failed = False
+        # Doğrudan curl -4 ile tek seferde güvenli çağrı (Windows SSL ve Bulut IPv6 hatalarını %100 önler)
+        cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
         try:
-            r = requests.post(url, json=payload, timeout=15)
-            if r.status_code == 200:
-                data = r.json()
-            elif r.status_code == 429:
-                continue
+            data = json.loads(res.stdout)
         except Exception:
-            network_failed = True
-
-        # Fallback: curl subprocess (yalnızca bağlantı/SSL hatası yaşandığında devreye girer)
-        if not data and network_failed:
-            cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
-            res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
-            try:
-                data = json.loads(res.stdout)
-            except Exception:
-                continue
+            continue
         
         try:
             if data and "candidates" in data and len(data["candidates"]) > 0:

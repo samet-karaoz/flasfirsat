@@ -1739,5 +1739,13 @@
     "success": false,
     "platforms": {},
     "error": "Uygun kriterde (yeterli indirim ve stok) fırsat ürünü bulunamadı."
+  },
+  {
+    "timestamp": "2026-11-09 12:57:05",
+    "slot": "15:00 YouTube Gaming & Donanım",
+    "target_platform": "youtube",
+    "success": false,
+    "platforms": {},
+    "error": "Uygun kriterde (yeterli indirim ve stok) fırsat ürünü bulunamadı."
   }
 ]

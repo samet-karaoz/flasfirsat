@@ -58,18 +58,27 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
     except Exception as e:
         print(f"[Verifier] Gemini killer hook üretme uyarısı: {e}")
     # Deterministik Killer Hook Yedeği (Gemini kotası doluysa gerçek özelliklerden üret)
+    t_low = (title or "").lower()
     combined = f"{title} {raw_specs}".lower()
-    if "anc" in combined or "gürültü" in combined:
-        return "AKTİF GÜRÜLTÜ ENGELLEME (ANC)!"
-    if "hz" in combined and ("ips" in combined or "monitör" in combined):
-        return "YÜKSEK HZ OYUNCU EKRANI!"
-    if "wireless" in combined or "kablosuz" in combined or "bluetooth" in combined:
-        return "KABLOSUZ YÜKSEK PERFORMANS!"
-    if "mekanik" in combined or "switch" in combined:
+    if "mousepad" in t_low or "mouse pad" in t_low or "glide" in t_low:
+        return "KAYMAZ TABAN MİKRO DOKUMA MOUSEPAD!"
+    if "mouse" in t_low or "fare" in t_low:
+        return "KABLOSUZ GAMING MOUSE!" if ("wireless" in combined or "kablosuz" in combined) else "YÜKSEK HASSASİYETLİ GAMING MOUSE!"
+    if "klavye" in t_low or "keyboard" in t_low:
         return "RGB MEKANİK OYUNCU KLAVYESİ!"
-    if "termos" in combined or "paslanmaz" in combined or "stanley" in combined:
+    if "kulaklık" in t_low or "headset" in t_low or "airpods" in t_low or "buds" in t_low:
+        return "AKTİF GÜRÜLTÜ ENGELLEME (ANC)!" if ("anc" in combined or "gürültü" in combined) else "YÜKSEK SES & MİKROFON KALİTESİ!"
+    if "hoparlör" in t_low or "speaker" in t_low:
+        return "GÜÇLÜ BAS & TAŞINABİLİR BLUETOOTH SES!"
+    if "monitör" in t_low or "monitor" in t_low:
+        return "YÜKSEK HZ IPS OYUNCU MONİTÖRÜ!"
+    if "kol" in t_low or "gamepad" in t_low or "dualsense" in t_low or "controller" in t_low:
+        return "KABLOSUZ HASSAS OYUN KOLU!"
+    if "kahve" in t_low or "espresso" in t_low or "moka" in t_low:
+        return "GERÇEK ESPRESSO & KAHVE LEZZETİ!"
+    if "termos" in t_low or "stanley" in t_low or "matara" in t_low:
         return "PASLANMAZ ÇELİK VAKUM İZOLASYON!"
-    if "spf" in combined or "güneş" in combined or "serum" in combined or "nemlendirici" in combined:
+    if "spf" in combined or "güneş" in combined or "serum" in combined or "nemlendirici" in combined or "şampuan" in t_low:
         return "DERMATOLOJİK GÜNLÜK BAKIM!"
     return "ORİJİNAL AMAZON TR FIRSATI!"
 
@@ -87,30 +96,22 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     url = f"https://www.amazon.com.tr/dp/{asin}" if asin else asin_or_url
 
     html_text = ""
-    try:
-        r = requests.get(
-            url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                "Accept-Language": "tr-TR,tr;q=0.9"
-            },
-            timeout=10
-        )
-        if r.status_code == 200:
-            html_text = r.text
-    except Exception:
-        pass
-
-    if not html_text:
+    for _ua in [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0",
+    ]:
         cmd = get_curl_cmd([
             "-s", "-L", "--compressed",
-            "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "-H", f"User-Agent: {_ua}",
+            "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
             url
         ])
         res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-        html_text = res.stdout
+        if res.returncode == 0 and len(res.stdout) > 15000 and "validatecaptcha" not in res.stdout.lower():
+            html_text = res.stdout
+            break
 
     out_low = html_text.lower()
 

@@ -218,7 +218,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             )
             if p_res and p_res.get("video_path"):
                 prod_res = p_res
-                deal = cand
+                deal = p_res.get("deal") or cand
                 title = cand_title
                 print(f"🎉 Aday {idx} başarıyla doğrulandı ve video hazırlandı: {title}")
                 break

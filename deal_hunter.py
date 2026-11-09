@@ -24,7 +24,7 @@ DEFAULT_CHANNELS = [
 ]
 
 BORING_REGEX = re.compile(
-    r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\bkablo(su)?\b(?!lu)|"
+    r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\badaptör(ü)?\b|\bkablo(su)?\b(?!lu)|"
     r"kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme\s*spreyi|temizleme\s*bezi|çorap|askı(lık)?|"
     r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık\s*tableti|yumuşatıcı|mendil|pijama|çanta(sı)?|"
@@ -41,7 +41,9 @@ BORING_REGEX = re.compile(
     r"defter|kalem|dosya|klasör|zarf|\bkitap\b|roman|dergi|kedi\s*kumu|köpek|tasma|külot|boxer|atlet|eldiven|bere|şemsiye|"
     r"oto\s*kokusu|silecek|bijon|kordon|kayış|"
     r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
-    r"tıraş\s*başlığı|conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
+    r"tıraş\s*başlığı|fırça\s*başlığı|yedek\s*başlık|diş\s*fırçası\s*başlığı|şarj\s*kiti|oyun\s*ve\s*şarj|"
+    r"bilek\s*destek|monitör\s*tutucu|monitör\s*kolu|monitör\s*stand|laptop\s*stand|laptop\s*sehpa|notebook\s*soğutucu|"
+    r"conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
 )
 
@@ -268,10 +270,11 @@ def get_product_subtype(title: str) -> str:
     return "general"
 
 def parse_price_to_float(price_str: str) -> float:
-    """Türkçe para birimi metinlerini ('1.949,00 TL' vb.) floata dönüştürür."""
+    """Türkçe para birimi metinlerini ('1.949,00 TL' veya çift tekrarlı '1.567,00TL1.567,00TL' vb.) floata dönüştürür."""
     if not price_str:
         return 0.0
-    cleaned = re.sub(r"[^\d,.]", "", str(price_str)).strip()
+    m = re.search(r"\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})|\d+(?:\.\d{1,2})?", str(price_str))
+    cleaned = m.group(0).strip() if m else re.sub(r"[^\d,.]", "", str(price_str)).strip()
     if not cleaned:
         return 0.0
     if "," in cleaned and "." in cleaned:
@@ -562,21 +565,23 @@ def download_file(url: str, output_path: str) -> bool:
     return res.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
 AMAZON_CATALOG_SOURCES = [
-    ("FIRSATLAR_DEALS", "https://www.amazon.com.tr/deals"),
-    ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
-    ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
-    ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
+    ("KULAKLIKLAR", "https://www.amazon.com.tr/gp/bestsellers/electronics/17471820031"),
+    ("KLAVYELER_VE_FARELER", "https://www.amazon.com.tr/gp/bestsellers/computers/12601919031"),
+    ("PC_OYUN_DONANIM", "https://www.amazon.com.tr/gp/bestsellers/computers/12601923031"),
+    ("HOPARLÖRLER", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709886031"),
+    ("KLAVYE_MOUSE_AKSESUAR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601894031"),
+    ("MONİTÖRLER", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
     ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
-    ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
+    ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
     ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
-    ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
-    ("KULAKLIK_SES", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709880031"),
+    ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
+    ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
+    ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
+    ("ÇAY_KAHVE_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13511256031"),
+    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen"),
     ("PATLAYAN_MUTFAK", "https://www.amazon.com.tr/gp/movers-and-shakers/kitchen"),
-    ("ELEKTRİKLİ_MUTFAK", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13844654031"),
-    ("KAHVE_ÇAY_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13844656031"),
-    ("KİŞİSEL_BAKIM_TIRAŞ", "https://www.amazon.com.tr/gp/bestsellers/personal-care"),
-    ("OFİS_ERGONOMİ_MASA", "https://www.amazon.com.tr/gp/bestsellers/office"),
-    ("PATLAYAN_KİŞİSEL_BAKIM", "https://www.amazon.com.tr/gp/movers-and-shakers/personal-care")
+    ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
+    ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031")
 ]
 
 CAT_ROTATION_FILE = os.path.join(TEMP_DIR, "amazon_cat_rot.txt")
@@ -621,22 +626,25 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         url_categories = [("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")]
     elif category in ("beauty", "cosmetics", "care", "skincare"):
         url_categories = [
+            ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
+            ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031"),
             ("GÜZELLİK_CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty"),
-            ("PATLAYAN_GÜZELLİK", "https://www.amazon.com.tr/gp/movers-and-shakers/beauty"),
-            ("KİŞİSEL_BAKIM", "https://www.amazon.com.tr/gp/bestsellers/personal-care")
+            ("PATLAYAN_GÜZELLİK", "https://www.amazon.com.tr/gp/movers-and-shakers/beauty")
         ]
     elif category in ("tech", "gaming_tech"):
         _tech_list = [
-            ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
-            ("KULAKLIK_SES", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709880031"),
-            ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
-            ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
-            ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
-            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
+            ("KULAKLIKLAR", "https://www.amazon.com.tr/gp/bestsellers/electronics/17471820031"),
+            ("KLAVYELER_VE_FARELER", "https://www.amazon.com.tr/gp/bestsellers/computers/12601919031"),
+            ("PC_OYUN_DONANIM", "https://www.amazon.com.tr/gp/bestsellers/computers/12601923031"),
+            ("KLAVYE_MOUSE_AKSESUAR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601894031"),
+            ("HOPARLÖRLER", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709886031"),
             ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
-            ("MONİTÖR", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
-            ("ELEKTRİKLİ_MUTFAK", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13844654031"),
-            ("KAHVE_ÇAY_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13844656031")
+            ("MONİTÖRLER", "https://www.amazon.com.tr/gp/bestsellers/computers/12601904031"),
+            ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
+            ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
+            ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
+            ("ÇAY_KAHVE_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13511256031"),
+            ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")
         ]
         _t_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_tech_list)
         url_categories = _tech_list[_t_idx:] + _tech_list[:_t_idx]
@@ -652,15 +660,24 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             break
 
         print(f"[Deal Hunter] Doğrudan Amazon TR ({cat_name}) taranıyor: {target_url}...")
-        cmd = get_curl_cmd([
-            "--compressed", "-s", "-L",
-            "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
-            target_url
-        ])
-        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-        if res.returncode != 0:
+        _ua_pool = [
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0",
+        ]
+        res = None
+        for _ua in _ua_pool:
+            cmd = get_curl_cmd([
+                "--compressed", "-s", "-L",
+                "-H", f"User-Agent: {_ua}",
+                "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
+                target_url
+            ])
+            res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+            if res.returncode == 0 and len(res.stdout) > 20000 and "validatecaptcha" not in res.stdout.lower():
+                break
+        if not res or res.returncode != 0 or len(res.stdout) < 10000:
             continue
 
         parsed_candidates = []
@@ -933,17 +950,18 @@ def _normalize_title_tokens(t: str) -> str:
     s = t.translate(tr_map).lower()
     s = re.sub(r"[^a-z0-9\s]", " ", s)
     stop_words = {"oyuncu", "gaming", "kablosuz", "wireless", "kablolu", "siyah", "beyaz", "orijinal", "yeni", "nesil", "model", "turkiye", "garantili", "mouse", "klavye", "kulaklik", "kulakligi", "monitor", "termos", "filtre", "bellek"}
-    tokens = [w for w in s.split() if len(w) >= 2 and w not in stop_words]
+    tokens = [w for w in s.split() if (len(w) >= 2 or w.isdigit()) and w not in stop_words]
     return " ".join(tokens[:3])
 
 def is_deal_already_shared(title: str, url: str, exclude_urls: set) -> bool:
-    """Ürünün URL, ASIN veya marka/model başlığı bazında daha önce paylaşılıp paylaşılmadığını denetler."""
+    """Ürünün URL, ASIN veya marka+model başlığı bazında daha önce paylaşılıp paylaşılmadığını denetler."""
     if not exclude_urls:
         return False
     url_clean = (url or "").split("?")[0].strip().lower()
     asin_m = re.search(r"/(?:dp|gp/product)/([A-Z0-9]{10})", url or "", re.IGNORECASE)
     asin = asin_m.group(1).upper() if asin_m else ""
     norm_cand = _normalize_title_tokens(title)
+    cand_words = norm_cand.split() if norm_cand else []
 
     for ex in exclude_urls:
         if not ex:
@@ -954,9 +972,10 @@ def is_deal_already_shared(title: str, url: str, exclude_urls: set) -> bool:
             return True
         if asin and asin.lower() in ex_low:
             return True
-        if not ex_str.startswith("http") and norm_cand and len(norm_cand) >= 5:
+        if not ex_str.startswith("http") and len(cand_words) >= 2:
             norm_ex = _normalize_title_tokens(ex_str)
-            if norm_ex and len(norm_ex) >= 5 and (norm_cand == norm_ex or norm_cand in norm_ex or norm_ex in norm_cand):
+            ex_words = norm_ex.split() if norm_ex else []
+            if len(ex_words) >= 2 and norm_cand == norm_ex:
                 return True
     return False
 

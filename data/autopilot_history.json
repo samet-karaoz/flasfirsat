@@ -1835,5 +1835,38 @@
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261109_153631_jbl_wave_flex_youtube.mp4",
     "caption_text": "🔥 JBL Wave Flex fırsatı yayında!\n#işbirliği #reklam\n\n❌ Eski Fiyat: 2.439 TL\n\n✅ Satış Fiyatı: 1.729 TL (-29% İndirim)\n\n🔢 Fırsat Kodu: 165 (Sitede arama kutusuna 165 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet",
     "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_29_amz_B0BHDQJQVQ.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-11-09 17:06:07",
+    "slot": "20:00 TikTok Akşam Özel Bakım",
+    "target_platform": "tiktok",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "tiktok": {
+        "status": "ok",
+        "post_id": "6af1fdc16de9b6a6d7824495",
+        "channel": "flasfirsat.tr"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "CeraVe Nemlendirici Krem 340g",
+      "new_price": "799,00 TL",
+      "old_price": "1.250 TL",
+      "discount_pct": "-36%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07CH9XWHR?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261109_170631_cerave_nemlendirici_krem_340g.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261109_170631_cerave_nemlendirici_krem_340g_youtube.mp4",
+    "caption_text": "🔥 CeraVe Nemlendirici Krem 340g fırsatı yayında!\n#işbirliği #reklam\n\n❌ Eski Fiyat: 1.250 TL\n\n✅ Satış Fiyatı: 799,00 TL (-36% İndirim)\n\n🔢 Fırsat Kodu: 166 (Sitede arama kutusuna 166 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_36_amz_B07CH9XWHR.jpg.jpg"
   }
 ]

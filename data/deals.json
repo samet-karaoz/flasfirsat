@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794238626_57",
+    "deal_code": "#165",
+    "title": "JBL Wave Flex",
+    "old_price": "2.439 TL",
+    "new_price": "1.729 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BHDQJQVQ?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 576 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/jbl_wave_flex_451c0e4b.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "09.11.2026 15:37"
+  },
+  {
     "id": "deal_1794237153_56",
     "deal_code": "#164",
     "title": "adidas Advantage Base Erkek Spor Ayakkabı",

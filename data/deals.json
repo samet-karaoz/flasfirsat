@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794234025_56",
+    "deal_code": "#164",
+    "title": "Bialetti Venus 4 Cups Çelik Espresso Makinesi",
+    "old_price": "3.107 TL",
+    "new_price": "2.019,77 TL",
+    "discount_pct": "-35%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B08556XV39?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 673 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/bialetti_venus_4_cups__el_2e3cb098.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "09.11.2026 17:20"
+  },
+  {
     "id": "deal_1794172518_55",
     "deal_code": "#163",
     "title": "Stanley Legendary 2.3L Termos",

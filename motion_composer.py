@@ -171,8 +171,8 @@ def generate_staggered_banner_frames(
     bg_img = bg_rgb.convert("RGBA")
     draw_a = ImageDraw.Draw(bg_img, "RGBA")
 
-    # Sol Rozet
-    left_badge = badge_text if badge_text else "DEV İNDİRİM"
+    # Sol Rozet (Her zaman vurucu başlık: DEV İNDİRİM vb.)
+    left_badge = badge_text if (badge_text and badge_text.strip().upper() not in ("AMAZON FIRSATI", "GÜNÜN FIRSATI", "FIRSAT ÜRÜNÜ")) else "DEV İNDİRİM"
     b_w = draw_a.textlength(left_badge, font=f_badge)
     b1_x2 = int(54 + b_w + 64)
     draw_a.rounded_rectangle((54, 90, b1_x2, 140), radius=14, fill=theme["badge_left_bg"])
@@ -241,26 +241,80 @@ def generate_staggered_banner_frames(
     draw_a.text((W - 20, 930), cta_tag, font=f_tiny, fill=(148, 163, 184), anchor="rm")
 
     # -------------------------------------------------------------------------
-    # KATMAN B: Ürün Stüdyo Kartı (Beyaz Kart + Spotlight + Ürün + Rozetler)
+    # KATMAN B: Ürün Stüdyo Kartı (Her Zaman Saf Beyaz Kart + Ürün + Sarı Killer Hook)
     # -------------------------------------------------------------------------
     CARD_W, CARD_H = 972, 498
     card_img = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
     draw_card = ImageDraw.Draw(card_img, "RGBA")
-    is_dark_theme = bool(theme["bg_top"][0] < 60 and theme["bg_top"][1] < 60)
-    card_fill = theme.get("card_bg") or ((15, 23, 42, 245) if is_dark_theme else (255, 255, 255, 255))
-    card_outline = theme.get("card_border", (56, 189, 248, 220))
-    draw_card.rounded_rectangle((0, 0, CARD_W, CARD_H), radius=24, fill=card_fill, outline=card_outline, width=2 if is_dark_theme else 3)
-    if is_dark_theme:
-        draw_card.line([(28, 1), (CARD_W - 28, 1)], fill=(255, 255, 255, 180), width=2)
+    is_dark_theme = False
+    card_fill = (255, 255, 255, 255)
+    card_outline = theme.get("card_border", (129, 140, 248))
+    draw_card.rounded_rectangle((0, 0, CARD_W, CARD_H), radius=24, fill=card_fill, outline=card_outline, width=3)
 
-    # Spotlight Işıma
-    glow_layer = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
-    glow_draw = ImageDraw.Draw(glow_layer)
-    gcx, gcy = CARD_W // 2, CARD_H // 2 + 6
-    glow_draw.ellipse((gcx - 210, gcy - 185, gcx + 210, gcy + 185), fill=theme["glow_color"])
-    glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=55))
-    card_img.paste(glow_layer, (0, 0), glow_layer)
-    draw_card = ImageDraw.Draw(card_img, "RGBA")
+    # Ürün Görseli & Akıllı Stüdyo Arka Plan Kesimi
+    p_img = None
+    is_transparent_cutout = False
+    if image_path and os.path.exists(image_path):
+        try:
+            cutout_p = f"{os.path.splitext(image_path)[0]}_cutout.png"
+            if not skip_rembg and not os.path.exists(cutout_p):
+                try:
+                    from rembg import remove
+                    with open(image_path, "rb") as f_in:
+                        cutout_data = remove(f_in.read())
+                    with open(cutout_p, "wb") as f_out:
+                        f_out.write(cutout_data)
+                    print(f"[MotionBanner] Otomatik rembg cutout üretildi: {cutout_p}")
+                except Exception as ex_rem:
+                    try:
+                        # Bulut ortamında rembg yoksa 4 kenar boyunca hızlı PIL stüdyo beyaz arka plan silici
+                        _raw_im = Image.open(image_path).convert("RGBA")
+                        _w, _h = _raw_im.size
+                        seed_pts = [(0, 0), (_w - 1, 0), (0, _h - 1), (_w - 1, _h - 1)]
+                        for _sx in range(0, _w, max(1, _w // 12)):
+                            seed_pts.append((_sx, 0))
+                            seed_pts.append((_sx, _h - 1))
+                        for _sy in range(0, _h, max(1, _h // 12)):
+                            seed_pts.append((0, _sy))
+                            seed_pts.append((_w - 1, _sy))
+                        for _cx, _cy in seed_pts:
+                            _px = _raw_im.getpixel((_cx, _cy))
+                            if _px[0] > 235 and _px[1] > 235 and _px[2] > 235 and _px[3] > 0:
+                                ImageDraw.floodfill(_raw_im, (_cx, _cy), (0, 0, 0, 0), thresh=24)
+                        _raw_im.save(cutout_p, "PNG")
+                        print(f"[MotionBanner] Hızlı PIL stüdyo kesimi üretildi: {cutout_p}")
+                    except Exception:
+                        print(f"[MotionBanner] rembg otomatik üretim uyarısı: {ex_rem}")
+            load_p = cutout_p if (not skip_rembg and os.path.exists(cutout_p)) else image_path
+            p_img = Image.open(load_p).convert("RGBA")
+            alpha = p_img.split()[-1]
+            bbox = alpha.getbbox()
+            if bbox and (bbox[2] - bbox[0] >= 60) and (bbox[3] - bbox[1] >= 60):
+                p_img = p_img.crop(bbox)
+            elif load_p != image_path:
+                p_img = Image.open(image_path).convert("RGBA")
+
+            # Köşelerin şeffaf olup olmadığını kontrol et (Şeffaf değilse beyaz stüdyo kartıyla %100 kaynaşması için gölge/glow çizilmez)
+            _pw, _ph = p_img.size
+            _corner_alphas = [
+                p_img.getpixel((0, 0))[3],
+                p_img.getpixel((_pw - 1, 0))[3],
+                p_img.getpixel((0, _ph - 1))[3],
+                p_img.getpixel((_pw - 1, _ph - 1))[3]
+            ]
+            is_transparent_cutout = (sum(1 for a in _corner_alphas if a < 30) >= 3)
+        except Exception as e:
+            print(f"[MotionBanner] Görsel yükleme uyarısı: {e}")
+
+    # Spotlight Işıma (Yalnızca arka planı şeffaf kesilmiş ürünlerde uygulanır; kesilmemiş beyaz kare görsellerin saf beyaz kartla %100 kaynaşmasını sağlar)
+    if is_transparent_cutout:
+        glow_layer = Image.new("RGBA", (CARD_W, CARD_H), (0, 0, 0, 0))
+        glow_draw = ImageDraw.Draw(glow_layer)
+        gcx, gcy = CARD_W // 2, CARD_H // 2 + 6
+        glow_draw.ellipse((gcx - 210, gcy - 185, gcx + 210, gcy + 185), fill=theme["glow_color"])
+        glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=55))
+        card_img.paste(glow_layer, (0, 0), glow_layer)
+        draw_card = ImageDraw.Draw(card_img, "RGBA")
 
     # Satıcı Rozeti (Sol Üst)
     trust_text = seller_badge_text if seller_badge_text else ("AMAZON TR RESMİ SATICI" if "amazon" in store_name.lower() else f"{store_name.upper()} DOĞRULANMIŞ")
@@ -278,86 +332,42 @@ def generate_staggered_banner_frames(
         draw_vector_trend_down(draw_card, lx1 + 20, 33, (225, 29, 72))
         draw_card.text((lx1 + 36 + low_w // 2, 33), top_badge_text, font=f_trust, fill=(225, 29, 72), anchor="mm")
 
-    # Ürün Görseli & 3D Zemin Gölgesi
-    if image_path and os.path.exists(image_path):
+    if p_img is not None:
         try:
-            cutout_p = f"{os.path.splitext(image_path)[0]}_cutout.png"
-            if not skip_rembg and not os.path.exists(cutout_p):
-                try:
-                    from rembg import remove
-                    with open(image_path, "rb") as f_in:
-                        cutout_data = remove(f_in.read())
-                    with open(cutout_p, "wb") as f_out:
-                        f_out.write(cutout_data)
-                    print(f"[MotionBanner] Otomatik rembg cutout üretildi: {cutout_p}")
-                except Exception as ex_rem:
-                    try:
-                        # Bulut ortamında rembg yoksa 0.02s hızlı PIL stüdyo beyaz arka plan silici
-                        _raw_im = Image.open(image_path).convert("RGBA")
-                        _w, _h = _raw_im.size
-                        for _cx, _cy in [(0, 0), (_w - 1, 0), (0, _h - 1), (_w - 1, _h - 1)]:
-                            _px = _raw_im.getpixel((_cx, _cy))
-                            if _px[0] > 238 and _px[1] > 238 and _px[2] > 238 and _px[3] > 0:
-                                ImageDraw.floodfill(_raw_im, (_cx, _cy), (0, 0, 0, 0), thresh=22)
-                        _raw_im.save(cutout_p, "PNG")
-                        print(f"[MotionBanner] Hızlı PIL stüdyo kesimi üretildi: {cutout_p}")
-                    except Exception:
-                        print(f"[MotionBanner] rembg otomatik üretim uyarısı: {ex_rem}")
-            load_p = cutout_p if (not skip_rembg and os.path.exists(cutout_p)) else image_path
-            p_img = Image.open(load_p).convert("RGBA")
-            alpha = p_img.split()[-1]
-            bbox = alpha.getbbox()
-            if bbox and (bbox[2] - bbox[0] >= 60) and (bbox[3] - bbox[1] >= 60):
-                p_img = p_img.crop(bbox)
-            elif load_p != image_path:
-                p_img = Image.open(image_path).convert("RGBA")
-
             p_img.thumbnail((CARD_W - 70, CARD_H - 135), Image.Resampling.LANCZOS)
             px = (CARD_W - p_img.width) // 2
             py = (CARD_H - p_img.height) // 2 - 10
 
-            # 3D Zemin Gölgesi
-            sh_w = max(80, int(p_img.width * 0.82))
-            sh_layer = Image.new("RGBA", (sh_w + 80, 90), (0, 0, 0, 0))
-            sh_draw = ImageDraw.Draw(sh_layer)
-            shadow_col = (0, 0, 0, 160) if is_dark_theme else (15, 23, 42, 85)
-            sh_draw.ellipse((40, 30, 40 + sh_w, 60), fill=shadow_col)
-            sh_layer = sh_layer.filter(ImageFilter.GaussianBlur(radius=13))
-            card_img.paste(sh_layer, ((CARD_W - sh_layer.width) // 2, py + p_img.height - 20), sh_layer)
+            if is_transparent_cutout:
+                sh_w = max(80, int(p_img.width * 0.82))
+                sh_layer = Image.new("RGBA", (sh_w + 80, 90), (0, 0, 0, 0))
+                sh_draw = ImageDraw.Draw(sh_layer)
+                sh_draw.ellipse((40, 30, 40 + sh_w, 60), fill=(15, 23, 42, 75))
+                sh_layer = sh_layer.filter(ImageFilter.GaussianBlur(radius=13))
+                card_img.paste(sh_layer, ((CARD_W - sh_layer.width) // 2, py + p_img.height - 20), sh_layer)
             card_img.paste(p_img, (px, py), p_img)
             draw_card = ImageDraw.Draw(card_img, "RGBA")
         except Exception as e:
-            print(f"[MotionBanner] Görsel yükleme uyarısı: {e}")
+            print(f"[MotionBanner] Görsel yerleştirme uyarısı: {e}")
 
-    # Kart İçi Alt Kısım: Killer Hook veya Standart Taksit/Mağaza Rozetleri
-    has_killer_hook = bool(feature_text and len(feature_text.strip()) > 3)
-    if has_killer_hook:
-        feat_clean = re.sub(r'[\U00010000-\U0010ffff]', '', feature_text)
-        feat_clean = re.sub(r'[\u2600-\u27BF]', '', feat_clean).strip().upper()
-        feat_w = draw_card.textlength(feat_clean, font=f_killer)
-        fbox_w = min(CARD_W - 80, int(feat_w + 56))
-        fbox_h = 44
-        fx = (CARD_W - fbox_w) // 2
-        # Fiyat kutularıyla çakışmayı kesinlikle önlemek için kart içine 18px yukarı alındı
-        fy = CARD_H - 74
-        draw_card.rounded_rectangle((fx, fy, fx + fbox_w, fy + fbox_h), radius=14, fill=(15, 23, 42, 245), outline=(250, 204, 21), width=2)
-        draw_vector_bolt(draw_card, fx + 20, fy + fbox_h // 2, (250, 204, 21))
-        draw_card.text((fx + 34 + feat_w // 2, fy + fbox_h // 2), feat_clean, font=f_killer, fill=(254, 240, 138), anchor="mm")
-    else:
-        # Dinamik Mağaza Rozeti (Sağ Alt)
-        tag_text = f"{store_name.upper()}  •  @flasfirsat.tr"
-        t_w = draw_card.textlength(tag_text, font=f_label)
-        sx1 = int(CARD_W - t_w - 40)
-        draw_card.rounded_rectangle((sx1, CARD_H - 48, CARD_W - 16, CARD_H - 14), radius=9, fill=(15, 23, 42))
-        draw_card.text(((sx1 + CARD_W - 16) // 2, CARD_H - 31), tag_text, font=f_label, fill=(255, 255, 255), anchor="mm")
+    # Kart İçi Alt Kısım: Her Zaman Sarı Çerçeveli Vurucu Killer Hook Rozeti (⚡ ...)
+    if not feature_text or len(feature_text.strip()) <= 3:
+        try:
+            from product_verifier import extract_product_killer_hook
+            feature_text = extract_product_killer_hook(title=title, new_price=new_price, old_price=old_price, discount_pct=discount_pct)
+        except Exception:
+            feature_text = "ORİJİNAL AMAZON TR FIRSATI!"
 
-        # Taksit Rozeti (Sol Alt - Gizli fiyatı ele vermemek için 'x 397 TL' kısmı sadece fiyat açılınca gösterilir)
-        raw_inst = re.sub(r'[^\w\s.,xX+\-/%]', '', installment).strip() if installment else "Peşin Fiyatına 3 Taksit"
-        clean_inst = re.sub(r'\s*[xX]\s*[\d.,]+\s*(?:TL|tl)?', '', raw_inst).strip() or "Peşin Fiyatına Taksit"
-        it_w = draw_card.textlength(clean_inst, font=f_label)
-        ix2 = int(16 + 44 + it_w)
-        draw_card.rounded_rectangle((16, CARD_H - 48, ix2, CARD_H - 14), radius=9, fill=theme["inst_bg"], outline=(16, 185, 129), width=1)
-        draw_card.text(((16 + ix2) // 2, CARD_H - 31), clean_inst, font=f_label, fill=theme["inst_fg"], anchor="mm")
+    feat_clean = re.sub(r'[\U00010000-\U0010ffff]', '', feature_text or "ORİJİNAL AMAZON TR FIRSATI!")
+    feat_clean = re.sub(r'[\u2600-\u27BF]', '', feat_clean).strip().upper() or "ORİJİNAL AMAZON TR FIRSATI!"
+    feat_w = draw_card.textlength(feat_clean, font=f_killer)
+    fbox_w = min(CARD_W - 80, int(feat_w + 56))
+    fbox_h = 44
+    fx = (CARD_W - fbox_w) // 2
+    fy = CARD_H - 74
+    draw_card.rounded_rectangle((fx, fy, fx + fbox_w, fy + fbox_h), radius=14, fill=(15, 23, 42, 245), outline=(250, 204, 21), width=2)
+    draw_vector_bolt(draw_card, fx + 20, fy + fbox_h // 2, (250, 204, 21))
+    draw_card.text((fx + 34 + feat_w // 2, fy + fbox_h // 2), feat_clean, font=f_killer, fill=(254, 240, 138), anchor="mm")
 
     # -------------------------------------------------------------------------
     # KATMAN C & D: FİYAT KUTULARI (İki Kutulu veya Tek Hero Kutulu)

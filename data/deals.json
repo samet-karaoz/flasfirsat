@@ -1,24 +1,5 @@
 [
   {
-    "id": "deal_1794229723_56",
-    "deal_code": "#164",
-    "title": "Xbox Oyun ve Şarj Kiti",
-    "old_price": "1.829 TL",
-    "new_price": "1.297 TL",
-    "discount_pct": "-29%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B08FCXLB8Z?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 432 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/xbox_oyun_ve__arj_kiti_6b3bb65c.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "09.11.2026 13:08"
-  },
-  {
     "id": "deal_1794172518_55",
     "deal_code": "#163",
     "title": "Stanley Legendary 2.3L Termos",

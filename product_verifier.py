@@ -196,8 +196,8 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     real_strike_val = parse_price_to_float(strike_el.text) if strike_el else 0.0
 
     # 3. RESMİ SATICI / AMAZON TR ROZETİ KONTROLÜ
-    merchant_el = soup.select_one("#merchant-info")
-    merchant_text = merchant_el.text.lower() if merchant_el else ""
+    merchant_els = soup.select("#merchant-info, #tabular-buybox, #merchantInfoFeature_feature_div, #fulfillerInfoFeature_feature_div")
+    merchant_text = " ".join(el.get_text(" ", strip=True).lower() for el in merchant_els)
     is_sold_by_amazon = "amazon tarafından satılır" in merchant_text or "amazon.com.tr" in merchant_text
     
     if is_sold_by_amazon:

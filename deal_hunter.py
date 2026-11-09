@@ -117,14 +117,45 @@ HIGH_DEMAND_KEYWORDS = [
 
 # 1. TEMEL KURAL: GENİŞ KİTLEYE HİTAP EDEN ÜRÜNLER (MASS-APPEAL DIRECTIVE)
 BROAD_AUDIENCE_KEYWORDS = [
-    "kulaklık", "headset", "airpods", "buds", "earbuds", "soundcore", "anc", "bluetooth",
-    "hoparlör", "speaker", "soundbar", "powerbank", "akıllı saat", "smart watch",
-    "kahve makinesi", "espresso", "airfryer", "fritöz", "termos", "quencher", "iceflow",
-    "tost makinesi", "blender", "robot süpürge", "dikey süpürge", "süpürge",
+    "kulaklık", "headset", "airpods", "buds", "earbuds", "soundcore", "anc",
+    "hoparlör", "speaker", "soundbar", "powerbank", "power bank", "akıllı saat", "smart watch", "smartwatch", "akıllı bileklik",
+    "kahve makinesi", "espresso", "airfryer", "fritöz", "termos", "quencher", "iceflow", "matara",
+    "tost makinesi", "blender", "robot süpürge", "dikey süpürge", "şarjlı süpürge",
     "monitör", "monitor", "mouse", "fare", "klavye", "keyboard", "oyun kolu", "gamepad",
-    "dualsense", "controller", "oyuncu kulaklığı", "gaming laptop", "laptop",
-    "tıraş", "oneblade", "diş fırçası", "oral-b", "airwrap"
+    "dualsense", "wireless controller", "oyuncu kulaklığı", "gaming laptop", "laptop", "mousepad", "mouse pad",
+    "tıraş makinesi", "oneblade", "diş fırçası", "oral-b", "sonicare", "airwrap",
+    "serum", "nemlendirici", "güneş kremi", "şampuan", "saç kurutma", "saç düzleştirici", "epilatör"
 ]
+
+MASS_APPEAL_PRODUCT_REGEX = re.compile(
+    r"(kulaklık|headset|airpods|earbuds|\bbuds\b|soundcore|"
+    r"hoparlör|speaker|soundbar|"
+    r"akıllı\s*saat|smart\s*watch|smartwatch|akıllı\s*bileklik|galaxy\s*watch|apple\s*watch|watch\s*fit|mi\s*band|"
+    r"powerbank|power\s*bank|taşınabilir\s*şarj|"
+    r"kahve\s*makine|espresso|lattego|nespresso|magnifica|dedica|"
+    r"airfryer|air\s*fryer|fritöz|"
+    r"\btermos\b|quencher|iceflow|\bmatara\b|termos\s*bardak|"
+    r"robot\s*süpürge|dikey\s*süpürge|şarjlı\s*süpürge|kablosuz\s*süpürge|"
+    r"tost\s*makine|elektrikli\s*ızgara|\bblender\b|mutfak\s*robotu|çay\s*makine|"
+    r"\bmouse\b|\bfare(si)?\b|\bklavye(si)?\b|\bkeyboard\b|mouse\s*pad|mousepad|"
+    r"\bmonitör(ü)?\b|\bmonitor\b|"
+    r"oyun\s*kolu|\bgamepad\b|\bdualsense\b|wireless\s*controller|oyun\s*kontrolcü|direksiyon\s*seti|"
+    r"\blaptop\b|\bnotebook\b|taşınabilir\s*ssd|nvme\s*ssd|"
+    r"\bserum(u)?\b|yüz\s*kremi|nemlendirici|güneş\s*kremi|yüz\s*temizleme|\btonik\b|\bpeeling\b|\bşampuan(ı)?\b|saç\s*bakım|saç\s*maskesi|cilt\s*bakım|"
+    r"diş\s*fırçası|oral-b|sonicare|"
+    r"tıraş\s*makine|traş\s*makine|\boneblade\b|saç\s*kesme\s*makine|sakal\s*kesme|\bepilatör\b|\bipl\b|"
+    r"saç\s*kurutma|fön\s*makine|saç\s*düzleştirici|saç\s*şekillendirici|\bairwrap\b|saç\s*maşası)",
+    re.IGNORECASE
+)
+
+def is_mass_appeal_product(title: str) -> bool:
+    """AGENTS.md Kural 1: Ürünün dar/niş aksesuar veya sarf malzemesi olmadığını, doğrudan geniş kitleye hitap eden ana ürün kategorilerinden biri olduğunu doğrular."""
+    t = (title or "").strip()
+    if not t or len(t) < 5:
+        return False
+    if BORING_REGEX.search(t) or VAGUE_TITLE_REGEX.search(t):
+        return False
+    return bool(MASS_APPEAL_PRODUCT_REGEX.search(t))
 
 KNOWN_BRANDS = [
     "stanley", "logitech", "steelseries", "razer", "gamesir", "philips", "karaca",
@@ -463,10 +494,8 @@ def _deterministic_analyze_amazon_deal(raw_title: str, raw_price: str, prod_url:
     is_broad = any(kw in t_low for kw in BROAD_AUDIENCE_KEYWORDS)
     is_high_demand = any(kw in t_low for kw in HIGH_DEMAND_KEYWORDS)
 
-    # Geniş kitleye hitap etmeyen veya bilinen marka olmayan ürünleri kesinlikle ele
-    if not (is_t1 or is_broad or is_high_demand):
-        return None
-    if BORING_REGEX.search(raw_title) or is_vague_deal(raw_title):
+    # AGENTS.md Kural 1: Geniş kitleye hitap eden ana ürün kategorisinde olmayan ürünleri kesinlikle ele
+    if not is_mass_appeal_product(raw_title):
         return None
 
     new_p_val = parse_price_to_float(raw_price)
@@ -800,9 +829,8 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             if len(raw_title) < 6 or "TL" not in raw_price:
                 continue
 
-            # Ön Filtre: Geniş kitleye veya A-Sınıfı markalara uymayan sıradan ürünleri AI kotası harcamadan ele!
-            _t_low = raw_title.lower()
-            if not (has_tier1_brand(raw_title) or any(k in _t_low for k in BROAD_AUDIENCE_KEYWORDS) or any(k in _t_low for k in HIGH_DEMAND_KEYWORDS)):
+            # Ön Filtre (AGENTS.md Kural 1): Yalnızca geniş kitleye hitap eden ana ürünleri kabul et (aksesuar/kit/parça elenir)!
+            if not is_mass_appeal_product(raw_title):
                 continue
 
             print(f"[Deal Hunter] Aday Ürün Analiz Ediliyor ({cat_name}): {raw_title[:45]} | {raw_price}")
@@ -1059,8 +1087,8 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
                 print(f"[Deal Hunter] ⏭️ Düşük Cazibe / Sıradan Ürün Elendi (Puan: {des_score}/10): {deal_data.get('title')}")
                 continue
 
-            if is_vague_deal(deal_data.get("title", ""), raw_text):
-                print(f"[Deal Hunter] ⏭️ Belirsiz Başlık Elendi: {deal_data.get('title')}")
+            if is_vague_deal(deal_data.get("title", ""), raw_text) or not (is_mass_appeal_product(deal_data.get("title", "")) or is_mass_appeal_product(raw_text)):
+                print(f"[Deal Hunter] ⏭️ Geniş Kitle Dışı / Niş Ürün Elendi: {deal_data.get('title')}")
                 continue
 
             # Minimum indirim kontrolü

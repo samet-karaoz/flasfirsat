@@ -118,9 +118,9 @@ def generate_staggered_banner_frames(
         try:
             from deal_hunter import detect_deal_archetype
             arch = detect_deal_archetype(deal)
-            badge_text = arch.get("badge_text") or "FİYAT HATASI / DİP SEPET"
+            badge_text = arch.get("badge_text") or "DİP FİYAT FIRSATI"
         except Exception:
-            badge_text = "FİYAT HATASI / DİP SEPET"
+            badge_text = "DİP FİYAT FIRSATI"
     installment = sanitize_text(deal.get("installment", ""))
     coupon_text = sanitize_text(deal.get("coupon_info", ""))
     deal_code = sanitize_text(deal.get("deal_code", "#101"))
@@ -363,9 +363,9 @@ def generate_staggered_banner_frames(
         try:
             from deal_hunter import detect_deal_archetype
             arch = detect_deal_archetype(deal or {"title": title, "new_price": new_price, "old_price": old_price, "discount_pct": discount_pct})
-            feature_text = arch.get("killer_pill") or "FİYAT DÜZELTİLMEDEN YAKALA!"
+            feature_text = arch.get("killer_pill") or "SON ZAMANLARIN EN DİP FİYATI!"
         except Exception:
-            feature_text = "FİYAT DÜZELTİLMEDEN YAKALA!"
+            feature_text = "SON ZAMANLARIN EN DİP FİYATI!"
 
     feat_clean = re.sub(r'[\U00010000-\U0010ffff]', '', feature_text or "ORİJİNAL AMAZON TR FIRSATI!")
     feat_clean = re.sub(r'[\u2600-\u27BF]', '', feat_clean).strip().upper() or "ORİJİNAL AMAZON TR FIRSATI!"

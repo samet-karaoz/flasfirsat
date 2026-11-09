@@ -57,25 +57,35 @@ Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİ
 
 ---
 
-## 3. İÇERİK STRATEJİSİ: 3'LÜ VİRAL MOTOR (STANDART İNDİRİM PAYLAŞIMI KESİNLİKLE YASAKTIR)
-Sosyal medyada sıradan "indirim var alın" diliyle izlenme ve satış gelmez. Paylaşılan HER içerik aşağıdaki 3 viral arketipten (konseptten) BİRİNE girmek zorundadır:
+## 3. İÇERİK STRATEJİSİ: 3+1 VİRAL VE DÜRÜST FIRSAT MOTORU (STANDART İNDİRİM DİLİ YASAKTIR)
+Sosyal medyada sıradan "indirim var alın" diliyle izlenme ve satış gelmez; ancak sahte iddialarla takipçi güvenini sarsmak da kesinlikle yasaktır (`deal-truthfulness`). Paylaşılan HER içerik aşağıdaki 4 arketipten birine girmek zorundadır:
 
-### 1. Konsept: FİYAT HATASI & KUPON AÇIĞI (`price_glitch`)
+### 1. Konsept: GERÇEK FİYAT HATASI & KUPON AÇIĞI (`price_glitch` - SIKI DOĞRULAMA KURALI)
 - **Tetiklenen Duygu:** Panik, acele, fırsatı kaçırma korkusu (FOMO).
-- **Hedef:** Kullanıcıların videoyu birbirine DM atmasını ve hemen sepete koşmasını sağlamak.
-- **Kart İçi Rozet:** `🚨 FİYAT HATASI / DİP SEPET` veya `⚠️ FİYAT DÜZELTİLMEDEN KOŞUN!`
-- **Kanca & Dil:** *"Satıcı fiyatı yanlış girmiş, fark etmeden yetişin!", "Sepette gizli kupon açığıyla dip fiyata indi!", "Bu fiyata çorap vermiyorlar, koşun!"*
+- **Zorunlu Şart:** YALNIZCA gerçek, teyitli ve devasa anomalilerde kullanılır (İndirim oranı en az **%48 ve üzeri** veya net tasarruf **2.000 TL+** olup %40+ olan şok düşüşler veya açık kupon çöküşü). Normal %20-%35 indirimlere KESİNLİKLE "fiyat hatası" denilemez!
+- **Kart İçi Rozet:** `🚨 GERÇEK FİYAT HATASI`
+- **Killer Rozet:** `⚡ FİYAT DÜZELTİLMEDEN YAKALA!`
+- **Kanca & Dil:** *"Satıcı fiyatı resmen yanlış girmiş, fark etmeden yetişin!", "Sepetteki kupon açığıyla fiyat resmen çöktü, düzeltilmeden koşun!"*
 
-### 2. Konsept: HAYAT KURTARAN İLGİNÇ GADGET (`viral_gadget`)
+### 2. Konsept: DOĞRULANMIŞ DİP FİYAT FIRSATI (`verified_deal` - DÜRÜSTLÜK & KALİTE)
+- **Tetiklenen Duygu:** Güven, akıllı alışveriş, kaçırılmayacak fırsat tatmini.
+- **Kullanım Alanı:** Fiyat hatası eşiğine (%48+) ulaşmayan ancak son zamanların en sağlam dip fiyatına inen popüler F/P ürünler (Örn: Adidas %37, Razer %35, Kingston SSD %30 vb.).
+- **Kart İçi Rozet:** `⚡ DİP FİYAT FIRSATI` veya `🎟️ SEPETTE EK KUPON`
+- **Killer Rozet:** `⚡ SON ZAMANLARIN EN DİP FİYATI!` veya `⚡ SEPETTE EK İNDİRİMİ KAP!`
+- **Kanca & Dil:** *"Son zamanların en dip fiyatına indi, stok erimeden koşun!", "Orijinal kalitede beklenen büyük indirim nihayet geldi..."* (Sahte fiyat hatası yalanı KESİNLİKLE SÖYLENMEZ).
+
+### 3. Konsept: HAYAT KURTARAN İLGİNÇ GADGET (`viral_gadget`)
 - **Tetiklenen Duygu:** Merak, şaşkınlık ve sahip olma arzusu ("Bunu hemen almalıyım!").
 - **Hedef:** Kullanıcıların yoruma "Link nerede?" yazmasını ve profildeki siteye koşmasını sağlamak.
-- **Kart İçi Rozet:** `🚀 HAYAT KURTARAN BULUŞ` veya `🔥 İLGİNÇ TREND GADGET`
+- **Kart İçi Rozet:** `🚀 HAYAT KURTARAN BULUŞ`
+- **Killer Rozet:** `⚡ BUNU TÜRKİYE'DE KİMSE BİLMİYOR!`
 - **Kanca & Dil:** *"Bunu Türkiye'de kimse bilmiyor!", "Gördüğüm an siparişi patlattığım o hayat kurtaran alet...", "Masanızda / çantanızda olması gereken o mucize"*
 
-### 3. Konsept: PAHALI MARKA MUADİLİ / KAZIKLANMA REHBERİ (`expensive_dupe`)
+### 4. Konsept: PAHALI MARKA MUADİLİ / KAZIKLANMA REHBERİ (`expensive_dupe`)
 - **Tetiklenen Duygu:** Akıllı tasarruf, öfke ve tatmin ("Boşuna kazıklanmayın").
 - **Hedef:** Kullanıcıların videoyu kaydetmesini ve arkadaşlarına göndermesini sağlamak.
-- **Kart İçi Rozet:** `🛡️ KAZIKLANMA REHBERİ` veya `⚡ DEV MARKA MUADİLİ`
+- **Kart İçi Rozet:** `🛡️ KAZIKLANMA REHBERİ`
+- **Killer Rozet:** `⚡ AIRPODS'A / PAHALI MARKAYA SERVET ÖDEMEYİN!`
 - **Kanca & Dil:** *"X markasına 15.000 TL bağlamayın, 5'te 1 fiyatına birebir aynı canavar!", "Parasını çöpe atmak istemeyenlerin gizli tercihi..."*
 
 ---

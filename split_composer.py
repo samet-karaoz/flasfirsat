@@ -1108,8 +1108,10 @@ def create_product_banner(
     t_low = (title or "").lower()
 
     if not clean_badge or clean_badge in ["DEV İNDİRİM", "SÜPER FIRSAT", "GÜNÜN FIRSATI"]:
-        if pct_val >= 40:
-            clean_badge = "FİYAT HATASI OLABİLİR"
+        if pct_val >= 48:
+            clean_badge = "GERÇEK FİYAT HATASI"
+        elif pct_val >= 30:
+            clean_badge = "DİP FİYAT FIRSATI"
         elif any(k in t_low for k in ["monitör", "monitor", "klavye", "mouse", "kulaklık", "gaming", "oyuncu", "gamepad", "ekran kartı", "ps5", "xbox"]):
             clean_badge = "OYUNCU FIRSATI"
         elif any(k in t_low for k in ["kahve", "termos", "stanley", "airfryer", "tencere", "tava", "blender", "mutfak", "süpürge", "fırın", "çay"]):

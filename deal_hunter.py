@@ -274,6 +274,7 @@ def get_product_subtype(title: str) -> str:
 ARCHETYPE_PRICE_GLITCH = "price_glitch"
 ARCHETYPE_VIRAL_GADGET = "viral_gadget"
 ARCHETYPE_EXPENSIVE_DUPE = "expensive_dupe"
+ARCHETYPE_VERIFIED_DEAL = "verified_deal"
 
 def detect_deal_archetype(deal: dict) -> dict:
     """
@@ -344,20 +345,49 @@ def detect_deal_archetype(deal: dict) -> dict:
             "style_prompt": "pahalı lüks markalara gereksiz servet ödemek istemeyen akıllı tüketici kancası (Muadil / Kazıklanmama)"
         }
 
-    # 3. FİYAT HATASI & KUPON AÇIĞI / DİP SEPET (VARSAYILAN VE EN YÜKSEK FOMO)
-    if coupon or pct >= 35 or savings >= 800:
-        pill = "FİYAT DÜZELTİLMEDEN YAKALA!" if not coupon else "SEPETTE DİP FİYATA İNDİ!"
-        hook_msg = "Satıcı fiyatı yanlış girmiş, fark etmeden yetişin:" if not coupon else "Sepette gizli kuponu aktif edince fiyatı resmen çökerttiler:"
+    # 3. GERÇEK FİYAT HATASI & SİSTEM ANOMALİSİ (YALNIZCA GERÇEK ŞOK DÜŞÜŞLER!)
+    # Gerçek Fiyat Hatası Kriterleri (deal-truthfulness Kuralı):
+    # - İndirim oranı %48 ve üzeri (Örn: %50, %60, %72)
+    # - VEYA Net tasarruf 2.000 TL ve üzeri olup indirim %40+ olan dev düşüşler
+    # - VEYA Açıkça başlık/açıklamada 'fiyat hatası' / 'glitch' tespiti
+    is_real_price_glitch = (
+        pct >= 48 or 
+        (savings >= 2000.0 and pct >= 40) or 
+        any(k in combined for k in ["fiyat hatası", "glitch", "fiyatı yanlış", "kupon açığı"])
+    )
+
+    if is_real_price_glitch:
+        pill = "FİYAT DÜZELTİLMEDEN YAKALA!"
+        hook_msg = "Satıcı fiyatı resmen yanlış girmiş, fark etmeden yetişin:" if not coupon else "Sepetteki kupon açığıyla fiyat resmen çöktü, düzeltilmeden koşun:"
+        return {
+            "archetype": ARCHETYPE_PRICE_GLITCH,
+            "badge_text": "GERÇEK FİYAT HATASI",
+            "killer_pill": pill,
+            "reaction_hook": hook_msg,
+            "style_prompt": "satıcı fiyatı yanlış girmiş veya sistem hatasıyla dip fiyata çökmüş acil fırsat kancası (Panik / FOMO)"
+        }
+
+    # 4. DOĞRULANMIŞ DİP FİYAT FIRSATI (VERIFIED DEAL - DÜRÜSTLÜK & GERÇEKÇİLİK İLKESİ)
+    # Sahte fiyat hatası iddiası yerine güven inşa eden, dürüst ve güçlü fırsat dili
+    if coupon:
+        pill = "SEPETTE EK İNDİRİMİ KAP!"
+        hook_msg = "Sepetteki kuponu aktif edince son zamanların en dip fiyatına indi:"
+        badge = "SEPETTE EK KUPON"
+    elif pct >= 30:
+        pill = "SON ZAMANLARIN EN DİP FİYATI!"
+        hook_msg = "Son zamanların en dip fiyatına indi, stok erimeden koşun:"
+        badge = "DİP FİYAT FIRSATI"
     else:
-        pill = "DİP FİYAT DÜZELTİLMEDEN KOŞUN!"
-        hook_msg = "Bu fiyata bir daha asla düşmez, stok erimeden koşun:"
+        pill = "BEKLENEN BÜYÜK İNDİRİM GELDİ!"
+        hook_msg = "Bu fiyata bir daha zor düşer, ihtiyacı olan kaçırmasın:"
+        badge = "DİP FİYAT FIRSATI"
 
     return {
-        "archetype": ARCHETYPE_PRICE_GLITCH,
-        "badge_text": "FİYAT HATASI / DİP SEPET",
+        "archetype": ARCHETYPE_VERIFIED_DEAL,
+        "badge_text": badge,
         "killer_pill": pill,
         "reaction_hook": hook_msg,
-        "style_prompt": "fiyat hatası, sepet açığı veya satıcı düzeltmeden hemen kapma acele kancası (Panik / FOMO)"
+        "style_prompt": "doğrulanmış dürüst dip fiyat indirimi, orijinal ürün ve stok erimeden yakalama kancası (Güven / Kalite)"
     }
 
 

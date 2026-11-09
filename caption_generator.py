@@ -36,7 +36,7 @@ def generate_viral_caption(product_title: str, old_price: str, new_price: str, d
         "coupon_info": coupon_info,
         "hook": deal_details
     })
-    active_archetype = archetype or arch_info.get("archetype", "price_glitch")
+    active_archetype = archetype or arch_info.get("archetype", "verified_deal")
     arch_style_hint = arch_info.get("style_prompt", "fiyat hatası ve acele kancası")
     
     system_prompt = """Sen Instagram, TikTok ve YouTube Shorts'ta yüz binlerce takipçisi olan, aşırı samimi, sıcak, esprili ve içten bir fırsat sayfası yöneticisisin. Takipçilerinle sanki WhatsApp grubundaki en yakın arkadaşınla konuşuyormuş gibi konuşursun.
@@ -47,7 +47,8 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
 1. İLK SATIR (3'LÜ VİRAL KONSEPT HOOK'U):
    - Asla soğuk, resmi veya klişe yazma ('İnanılmaz fırsat!', 'Kaçırmayın!').
    - İçerik türüne (Arketipe) göre tam hedef kitle psikolojisini tetikle:
-     * FİYAT HATASI / DİP SEPET (price_glitch): "Fiyatı resmen yanlış girmişler / sepette gizli kupon açığıyla bedavadan biraz pahalıya düştü, satıcı fark edip düzeltmeden koşun 👇" / "Bu fiyata çorap vermiyorlar, ihtiyacı olan arkadaşına acil gönder..."
+     * GERÇEK FİYAT HATASI (price_glitch): YALNIZCA gerçek ve aşırı şok indirimlerde kullanılır: "Fiyatı resmen yanlış girmişler / sepette gizli kupon açığıyla bedavadan biraz pahalıya düştü, satıcı fark edip düzeltmeden koşun 👇" / "Bu fiyata çorap vermiyorlar, ihtiyacı olan arkadaşına acil gönder..."
+     * DOĞRULANMIŞ DİP FİYAT (verified_deal): Normal sağlam indirimlerde (%20-%45) kullanılır: "Son zamanların en dip fiyatına indi, bu fiyata orijinal ürün bir daha zor gelir..." / "Aylardır beklenen büyük indirim nihayet geldi, stoklar tükenmeden değerlendirin 👇" (DÜRÜSTLÜK KURALI: Normal indirimde ASLA sahte fiyat hatası iddiasında bulunma!)
      * HAYAT KURTARAN İLGİNÇ GADGET (viral_gadget): "Bunu Türkiye'de kimse bilmiyor, gördüğüm an siparişi patlattığım o hayat kurtaran alet..." / "Masanızda veya çantanızda kesinlikle olması gereken o alet dip fiyata indi..."
      * PAHALI MARKA MUADİLİ (expensive_dupe): "X markasına 15-20 bin TL bağlamayın, 5'te 1 fiyatına birebir aynı işi gören canavar bulundu..." / "Parasını çöpe atmak istemeyenlerin gizli tercihi, aynı performans..."
 2. YASAL ZORUNLULUK (REKLAM KURULU UYUMU):
@@ -199,9 +200,12 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
     elif active_archetype == "expensive_dupe":
         hook_fb = f"🛡️ Boşuna servet ödemeyin! {product_title}"
         sub_fb = "Pahalı markalara 5 katı para vermeyin, birebir aynı performansı veren F/P canavarı!"
-    else:
+    elif active_archetype == "price_glitch":
         hook_fb = f"🚨 Fiyatı yanlış girmişler kesin! {product_title}"
         sub_fb = "Satıcı fiyatı fark edip düzeltmeden önce sepeti kapın, bu fiyata bir daha asla düşmez!"
+    else:
+        hook_fb = f"⚡ {product_title} - Son Zamanların En Dip Fiyatında!"
+        sub_fb = "Orijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!"
 
     fallback = (
         f"{hook_fb}\n"

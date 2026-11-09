@@ -1747,5 +1747,37 @@
     "success": false,
     "platforms": {},
     "error": "Uygun kriterde (yeterli indirim ve stok) fırsat ürünü bulunamadı."
+  },
+  {
+    "timestamp": "2026-11-09 13:08:07",
+    "slot": "15:00 YouTube Gaming & Donanım",
+    "target_platform": "youtube",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/GRvW0w1JBEQ"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Xbox Oyun ve Şarj Kiti",
+      "new_price": "1.297 TL",
+      "old_price": "1.829 TL",
+      "discount_pct": "-29%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B08FCXLB8Z?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261109_130815_xbox_oyun_ve_sarj_kiti.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261109_130815_xbox_oyun_ve_sarj_kiti_youtube.mp4",
+    "caption_text": "Beyler şaka değil, kolun şarjı bitince oyunun en heyecanlı yerinde yarı yolda kalanlar bu fiyata kesinlikle kaçırmasın, bedavadan biraz pahalı olmuş bu set... 👇\n#işbirliği #reklam\n\n1.829 TL’den 1.297 TL’ye düşmüş, yani %29 indirim var! Sürekli pil değiştirmekten kurtulmanın tam zamanı. Sitedeki arama kutusuna 164 yazıp ürüne saniyeler içinde ulaşabilirsiniz.\n\n👉 Yoruma \"LİNK\" yazın, satın alma linkini anında DM kutunuza gönderelim! 📩\n\n📌 Fiyat tekrar uçmadan videoyu KAYDET, ihtiyacı olan arkadaşına GÖNDER! ✈️\n\n🔗 Ürün bağlantısı Hikayemizde ve profilimizdeki linkte aktif!\n\n#indirim #xbox #fırsat",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_29_amz_B08FCXLB8Z.jpg.jpg"
   }
 ]

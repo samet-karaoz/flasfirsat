@@ -82,8 +82,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
     t_plat = (target_platform or "auto").lower()
     if t_plat == "auto":
         s_low = slot_name.lower()
-        from datetime import datetime as _dt
-        utc_h = _dt.utcnow().hour
+        from datetime import datetime as _dt, timezone as _tz
+        utc_h = _dt.now(_tz.utc).hour
         if "tiktok" in s_low or utc_h in (10, 17):
             t_plat = "tiktok"
         else:

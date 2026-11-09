@@ -218,8 +218,10 @@ def verify_amazon_product(asin_or_url: str) -> dict:
         tl_m = re.search(r"(\d+[\.,]?\d*)\s*TL", coupon_text, re.IGNORECASE)
         if pct_m:
             coupon_amount_tl = round(price_val * (float(pct_m.group(1)) / 100.0), 2)
+            coupon_text = f"Sepette %{pct_m.group(1)} Ek İndirim"
         elif tl_m:
             coupon_amount_tl = parse_price_to_float(tl_m.group(1))
+            coupon_text = f"{tl_m.group(1)} TL Kupon İndirimi"
 
     # 5.SOSYAL KANIT: YILDIZ PUANI, YORUM SAYISI & "GEÇEN AY X+ SATIN ALINDI" ETİKETİ
     rating_val = 0.0
@@ -443,8 +445,11 @@ def verify_deal_before_publish(deal: dict) -> dict:
             print(f"[Doğrulama] 🎟️ Kupon Bilgilendirmesi: {deal.get('coupon_info')}")
 
         # Canlı özellik özeti / Killer Hook varsa ekle
+        existing_pill = (deal.get("feature_pill") or deal.get("killer_hook") or "").strip()
         if v_res.get("killer_hook") or v_res.get("feature_pill"):
             hook = v_res.get("killer_hook") or v_res.get("feature_pill")
+            if existing_pill and "ORİJİNAL AMAZON TR" in hook.upper():
+                hook = existing_pill
             deal["feature_pill"] = hook
             deal["killer_hook"] = hook
             print(f"[Doğrulama] ✨ Gerçek Ürün Özelliği / Killer Hook: {hook}")

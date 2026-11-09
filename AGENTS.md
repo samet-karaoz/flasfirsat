@@ -1,58 +1,54 @@
 # Antigravity Proje Kuralları & Temel Direktifler
 
-## 1. TEMEL KURAL: GENİŞ KİTLEYE HİTAP EDEN ÜRÜN SEÇİMİ (1. ÖNCELİK - MASS-APPEAL DIRECTIVE)
+## 1. TEMEL KURAL: F/P TEKNOLOJİK ÜRÜNLER VE SPOR AYAKKABI / SNEAKER SEÇİMİ (1. ÖNCELİK)
 
-Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral erişimi ve dönüşüm oranlarının maksimize edilmesi için **1. ÖNCELİĞİMİZ HER ZAMAN GENİŞ BİR KİTLEYE HİTAP EDEN ÜRÜNLERDİR**.
+Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral erişimi ve dönüşüm oranlarının maksimize edilmesi için **1. ÖNCELİĞİMİZ HER ZAMAN FİYAT/PERFORMANS (F/P) TEKNOLOJİK ÜRÜNLER VE POPÜLER SPOR AYAKKABI / SNEAKER MODELLERİDİR**.
 
-İster otomatik tarama (`--auto`, `autopilot_engine.py`), ister manuel ürün seçimi olsun; **asla dar, niş, teknik veya az sayıda kişinin ilgileneceği ürünler seçilemez.**
+İster otomatik tarama (`--auto`, `autopilot_engine.py`), ister manuel ürün seçimi olsun; **kahve/espresso makineleri, mutfak tencere/çay/tost gereçleri veya dar/niş aksesuarlar KESİNLİKLE SEÇİLEMEZ.**
 
 ---
 
-### A. Aranılan ve Öncelikli Ürün Kategorileri (Geniş Kitle / Kitlesel Talep):
-1. **Popüler Tüketici Elektroniği & Aksesuarları:**
-   - Bluetooth kulaklıklar (Apple AirPods, Anker Soundcore, JBL, Sony, Marshall)
-   - Bluetooth hoparlörler (JBL Flip/Charge, Anker Motion, Marshall)
+### A. Aranılan ve Öncelikli Ürün Kategorileri (F/P Teknoloji & Ayakkabı):
+1. **F/P Tüketici Elektroniği & Mobil Teknoloji:**
+   - Bluetooth kulaklıklar (Apple AirPods, Anker Soundcore, JBL, Sony, Marshall, QCY, Xiaomi, Samsung Buds)
+   - Bluetooth hoparlörler (JBL Flip/Charge/Go, Anker Motion, Marshall)
    - Akıllı saat ve bileklikler (Apple Watch, Huawei, Xiaomi, Samsung Galaxy Watch)
-   - Güçlü powerbank ve hızlı şarj istasyonları (Anker, Baseus, Ugreen)
-2. **Viral & Popüler Mutfak & Yaşam Teknolojileri:**
-   - Kahve ve espresso makineleri (De'Longhi Dedica/Magnifica, Philips LatteGo, Nespresso)
-   - Airfryer / Sıcak hava fritözleri (Cosori, Philips XXL, Xiaomi)
-   - Viral termoslar ve mataralar (Stanley Quencher, IceFlow vb.)
-   - Robot süpürgeler ve dikey şarjlı süpürgeler (Dyson, Roborock, Dreame, Xiaomi)
-   - Popüler ızgara/tost makineleri ve döküm plakalar (Karaca, Tefal, Arzum, Philips)
-3. **Popüler Oyuncu (Gaming) & Bilgisayar Donanımları:**
-   - Geniş kitleye hitap eden oyuncu faresi ve klavyeler (Logitech G serisi, Razer, SteelSeries)
-   - Popüler oyuncu kulaklıkları (HyperX Cloud, SteelSeries Arctis, Logitech G435/G733)
-   - Popüler gaming monitörler (Asus TUF, AOC, ViewSonic, Samsung Odyssey)
-   - Oyun kolları (Sony DualSense, Xbox Wireless Controller)
-4. **Popüler Kişisel Bakım & Kozmetik Teknolojileri:**
-   - Kadın cilt ve saç bakımı (The Purest Solutions, CeraVe, Bioderma, La Roche-Posay, L'Oreal)
-   - Şarjlı diş fırçaları (Oral-B iO / Pro serisi, Philips Sonicare)
+   - Güçlü powerbank ve hızlı şarj istasyonları (Anker, Baseus, Ugreen, Spigen)
+2. **F/P Oyuncu (Gaming) & Bilgisayar Donanımları:**
+   - F/P oyuncu faresi ve klavyeler (Logitech G serisi, Razer, SteelSeries, Attack Shark, Ajazz, Aula, Royal Kludge)
+   - Popüler oyuncu kulaklıkları (HyperX Cloud, SteelSeries Arctis, Logitech G435/G733, Razer BlackShark)
+   - Popüler gaming monitörler (Asus TUF, AOC, ViewSonic, Samsung Odyssey, Lenovo Legion, LG UltraGear, MSI)
+   - Oyun kolları / Gamepad (Sony DualSense, Xbox Wireless Controller, GameSir, 8BitDo)
+   - Yüksek hızlı taşınabilir SSD / NVMe SSD ve E-Spor Mousepad modelleri (Kingston, SanDisk, Klasse)
+3. **Popüler F/P Spor Ayakkabı & Sneaker Modelleri:**
+   - Erkek / Unisex / Kadın spor ayakkabı, koşu ayakkabısı ve sneaker modelleri (Adidas, Puma, Nike, Under Armour, Skechers, New Balance, Vans, Reebok, Columbia, Salomon)
+4. **Popüler Kişisel Bakım Teknolojileri & Cilt Bakımı:**
    - Tıraş ve saç kesim makineleri (Philips OneBlade, Braun Series)
-   - Saç şekillendirme ve kurutma (Dyson Airwrap muadilleri, Philips)
+   - Şarjlı diş fırçaları (Oral-B iO / Pro serisi, Philips Sonicare)
+   - Kadın cilt ve saç bakımı (The Purest Solutions, CeraVe, Bioderma, La Roche-Posay, L'Oreal)
+   - Viral termoslar (Stanley Quencher, IceFlow)
 
 ---
 
-### B. KESİNLİKLE YASAKLI DAR / NİŞ ÜRÜNLER (Banned Niche Items):
+### B. KESİNLİKLE YASAKLI ÜRÜNLER (Banned Items):
 Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİN SEÇİLMEZ**:
-1. **Yedek Parça, Conta, Vida ve Sarf Malzemeleri:**
-   - Kahve makinesi su filtresi kiti, conta, kireç çözücü tablet, tıraş başlığı, toz torbası vb.
-2. **Dar / Teknik / Sanayi / Atölye Ekipmanları:**
+1. **Kahve Makineleri ve Mutfak Pişirme Gereçleri:**
+   - Kahve makinesi, espresso makinesi, moka pot (Bialetti vb.), çay makinesi, tost makinesi, blender, tencere, tava vb. (Kanal kitlesiyle uyuşmadığı için kesinlikle paylaşılmaz!)
+2. **Yedek Parça, Conta, Vida, Şarj Kiti ve Sarf Malzemeleri:**
+   - Şarj kiti (`Xbox Oyun ve Şarj Kiti` vb.), yedek fırça başlığı, su filtresi, conta, kireç çözücü tablet, tıraş başlığı, toz torbası, laptop standı, monitör kolu, bilek desteği vb.
+3. **Dar / Teknik / Sanayi / Atölye Ekipmanları:**
    - Spesifik araba parçası, bijon anahtarı, oto contası, kaynak makinesi ucu, sunucu kablosu, lehim teli vb.
-3. **Aşırı Niş / Marjinal Ürünler:**
-   - Medikal cihazlar, özel veteriner ekipmanları, belirli bir meslek grubuna özel teknik aparatlar.
 4. **Markasız veya Karmaşık / Anlaşılmaz Ürünler:**
    - Ne olduğu 2 saniyede başlık ve görselden anlaşılamayan, anlatması uzun süren karmaşık aletler.
 
 ---
 
 ## 2. FORMAT KURALI: VİRAL BÖLÜNMÜŞ EKRAN (SPLIT-SCREEN MOTION + VIRAL MEME)
-- **Ana Şablon (1080x1920 Dikey Full HD):**
-  - **Üst Yarı (1080x960):** Kademeli Hareket Grafikleri (Staggered Motion Card). Ürün stüdyo görseli, akıcı yaylanma (`ease_out_back`), eski fiyat soldan kayar, indirimli yeşil fırsat kutusu sağdan kayar, kırmızı üst çizgi, net tasarruf rozeti, kademeli fiyat açılışı (`??? TL` -> gerçek indirimli fiyat) ve alt CTA bandı (Fırsat Kodu `#XXX`, Profildeki Linkte / BİO).
-  - **Alt Yarı (1080x960):** Viral MEME videosu (`bebek_dans.mp4`, `piyano_davul.mp4`, `polat_memati_kosu.mp4`, `cat_vibing.mp4`, `dugunde_cosan_cocuk.mp4`, `kemal_efendi_dans.mp4`, `otobuste_oynayan_dayi.mp4` vb.) ve akıllı reaksiyon kancası (Reaction Hook overlay).
-  - **Ses & Ritim:** KESİNLİKLE DIŞARIDAN PHONK, MÜZİK VEYA SES EFEKTİ KULLANILMAZ! Bütün videolarda istisnasız alt videodaki meme'in kendi orijinal doğal sesi kullanılır (tüm videolarda zaten orijinal ses mevcuttur).
+- **Ana Şablon (1080x1920 Dikey Full HD - Açık Stüdyo Kart Tasarımı):**
+  - **Üst Yarı (1080x960):** Açık renkli (`#EEF2FF`) ferah arka plan üzerinde bembeyaz stüdyo kartı (`255, 255, 255`), ürün stüdyo görseli, kartın altında sarı çerçeveli `⚡ KILLER HOOK` hapı, solda beyaz eski fiyat kutusu, sağda nane yeşili indirimli fırsat kutusu (`??? TL` -> gerçek indirimli fiyat) ve alt CTA bandı (Fırsat Kodu `#XXX`, Profildeki Linkte / BİO). Koyu lacivert/siyah kart temaları KESİNLİKLE KULLANILMAZ!
+  - **Alt Yarı (1080x960):** Viral MEME videosu (`kovboy_sapka_kedi.mp4`, `bebek_dans.mp4`, `piyano_davul.mp4`, `polat_memati_kosu.mp4`, `cat_vibing.mp4`, `dugunde_cosan_cocuk.mp4`, `kemal_efendi_dans.mp4`, `otobuste_oynayan_dayi.mp4` vb.) ve akıllı reaksiyon kancası (Reaction Hook overlay).
+  - **Ses & Ritim:** KESİNLİKLE DIŞARIDAN PHONK, MÜZİK VEYA SES EFEKTİ KULLANILMAZ! Bütün videolarda istisnasız alt videodaki meme'in kendi orijinal doğal sesi kullanılır.
   - **Sıfır Blur:** Alt meme tam 1080x960 oranında kesilmiş, net ve kenarları blursuz olmalıdır.
-  - **Asla Yapılmayacak:** Ortaya statik ürün kutusu koyup alt ve üste koyu mavi kartlar yerleştiren sıkıcı reklam şablonları KESİNLİKLE KULLANILMAZ!
 
 ---
 

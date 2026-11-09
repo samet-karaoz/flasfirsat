@@ -447,14 +447,14 @@ def generate_staggered_banner_frames(
         if sub_str:
             draw_new.text((ncx, HEADROOM + 116), sub_str, font=f_net, fill=theme["new_label_col"], anchor="mm")
 
-        # Floating Rozet (Kupon veya Net İndirim)
+        # Floating Rozet (Öncelik: Net TL İndirim, yoksa kısa kupon)
         pill_txt = ""
-        if clean_coupon:
-            up_c = clean_coupon.upper()
-            pill_txt = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
-        elif savings > 0:
+        if savings > 0:
             sav_fmt = f"{int(savings):,} TL".replace(',', '.')
             pill_txt = f"{sav_fmt} NET İNDİRİM"
+        elif clean_coupon:
+            up_c = clean_coupon.upper()[:26]
+            pill_txt = up_c if up_c.startswith("KUPON") else f"KUPON: {up_c}"
 
         if pill_txt:
             sw = draw_new.textlength(pill_txt, font=f_savings)

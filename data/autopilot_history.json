@@ -1775,5 +1775,33 @@
         "status": "ok"
       }
     }
+  },
+  {
+    "timestamp": "2026-11-09T18:12:00",
+    "slot": "15:00 YouTube F/P Ayakkabı & Teknoloji (#164)",
+    "category": "fashion",
+    "meme": "kovboy_sapka_kedi.mp4",
+    "success": true,
+    "dry_run": false,
+    "deal": {
+      "title": "adidas Advantage Base Erkek Spor Ayakkabı",
+      "new_price": "2.100 TL",
+      "old_price": "3.329 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B09VT1NQBW?tag=flasfirsat04-21"
+    },
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/cHB6nu2mS1o"
+      },
+      "telegram": {
+        "status": "ok"
+      }
+    }
   }
 ]

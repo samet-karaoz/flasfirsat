@@ -43,6 +43,8 @@ BORING_REGEX = re.compile(
     r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
     r"tıraş\s*başlığı|fırça\s*başlığı|yedek\s*başlık|diş\s*fırçası\s*başlığı|şarj\s*kiti|oyun\s*ve\s*şarj|"
     r"bilek\s*destek|monitör\s*tutucu|monitör\s*kolu|monitör\s*stand|laptop\s*stand|laptop\s*sehpa|notebook\s*soğutucu|"
+    r"kahve|espresso|moka\s*pot|bialetti|lattego|nespresso|çay\s*makine|çaycı|tost\s*makine|blender|mutfak\s*robotu|"
+    r"terlik|sandalet|çorap|iç\s*çamaşır|"
     r"conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
 )
@@ -90,6 +92,8 @@ TIER_1_BRANDS = [
     "oral-b", "spigen", "baseus", "ugreen", "belkin", "tp-link", "sandisk", "kingston", "crucial", "wd", "seagate",
     "nintendo", "playstation", "dualsense", "xbox", "casio", "garmin", "huawei", "honor", "anker", "north bayou",
     "keychron", "epomaker", "ajazz", "attack shark", "wraith", "aula", "fifine", "elgato", "rode", "shure",
+    "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "salomon", "columbia", "asics",
+    "qcy", "soundpeats", "klasse", "royal kludge", "gamesir", "8bitdo",
     "the purest solutions", "l'oreal", "maybelline", "cerave", "bioderma", "la roche-posay", "garnier", "nivea", "bioxcin", "opalescence", "marvis"
 ]
 
@@ -134,11 +138,9 @@ MASS_APPEAL_PRODUCT_REGEX = re.compile(
     r"hoparlör|speaker|soundbar|"
     r"akıllı\s*saat|smart\s*watch|smartwatch|akıllı\s*bileklik|galaxy\s*watch|apple\s*watch|watch\s*fit|mi\s*band|"
     r"powerbank|power\s*bank|taşınabilir\s*şarj|"
-    r"kahve\s*makine|espresso|lattego|nespresso|magnifica|dedica|"
-    r"airfryer|air\s*fryer|fritöz|"
+    r"ayakkabı|sneaker|koşu\s*ayakkabısı|spor\s*ayakkabı|yürüyüş\s*ayakkabısı|basketbol\s*ayakkabısı|tenis\s*ayakkabısı|"
     r"\btermos\b|quencher|iceflow|\bmatara\b|termos\s*bardak|"
     r"robot\s*süpürge|dikey\s*süpürge|şarjlı\s*süpürge|kablosuz\s*süpürge|"
-    r"tost\s*makine|elektrikli\s*ızgara|\bblender\b|mutfak\s*robotu|çay\s*makine|"
     r"\bmouse\b|\bfare(si)?\b|\bklavye(si)?\b|\bkeyboard\b|mouse\s*pad|mousepad|"
     r"\bmonitör(ü)?\b|\bmonitor\b|"
     r"oyun\s*kolu|\bgamepad\b|\bdualsense\b|wireless\s*controller|oyun\s*kontrolcü|direksiyon\s*seti|"
@@ -164,7 +166,7 @@ KNOWN_BRANDS = [
     "the purest solutions", "delonghi", "de'longhi", "anker", "jbl", "sony", "apple",
     "cosori", "xiaomi", "roborock", "dreame", "dyson", "hyperx", "corsair", "asus", "msi",
     "lenovo", "dell", "samsung", "huawei", "oral-b", "braun", "cerave", "bioderma",
-    "tefal", "arzum", "fakir", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc"
+    "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc"
 ]
 
 def extract_brand(title: str) -> str:
@@ -247,8 +249,8 @@ def get_product_subtype(title: str) -> str:
         return "monitor_arm"
     if any(k in t for k in ["stanley", "termos", "matara", "mug", "quencher", "iceflow"]):
         return "thermos"
-    if any(k in t for k in ["kahve", "espresso", "lattego"]):
-        return "coffee"
+    if any(k in t for k in ["ayakkabı", "sneaker"]):
+        return "shoes"
     if any(k in t for k in ["airfryer", "fritöz"]):
         return "airfryer"
     if any(k in t for k in ["tıraş", "traş", "oneblade", "epilasyon"]):
@@ -577,9 +579,8 @@ AMAZON_CATALOG_SOURCES = [
     ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
     ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
     ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
-    ("ÇAY_KAHVE_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13511256031"),
-    ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen"),
-    ("PATLAYAN_MUTFAK", "https://www.amazon.com.tr/gp/movers-and-shakers/kitchen"),
+    ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
+    ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031"),
     ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
     ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031")
 ]
@@ -643,8 +644,8 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             ("BİLGİSAYAR", "https://www.amazon.com.tr/gp/bestsellers/computers"),
             ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
             ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
-            ("ÇAY_KAHVE_MAKİNELERİ", "https://www.amazon.com.tr/gp/bestsellers/kitchen/13511256031"),
-            ("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")
+            ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
+            ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031")
         ]
         _t_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_tech_list)
         url_categories = _tech_list[_t_idx:] + _tech_list[:_t_idx]

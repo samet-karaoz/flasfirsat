@@ -423,14 +423,14 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         yt_info = result["platforms"].get("youtube", {})
         if yt_info.get("status") == "ok":
             status_lines.append(f"• 📺 <b>YouTube Shorts:</b> <a href=\"{yt_info.get('url')}\">İzle</a>")
-        else:
+        elif yt_info:
             status_lines.append(f"• 📺 <b>YouTube Shorts:</b> ❌ {yt_info.get('error', 'Hata')}")
 
         # Instagram
         ig_info = result["platforms"].get("instagram", {})
         if ig_info.get("status") == "ok":
             status_lines.append(f"• 🎬 <b>Instagram Reels:</b> ✅ Yayınlandı (@flasfirsat)")
-        else:
+        elif ig_info:
             status_lines.append(f"• 🎬 <b>Instagram Reels:</b> ❌ {ig_info.get('error', 'Hata')}")
 
         # Instagram Story
@@ -467,6 +467,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 ]
             ]
         }
+        send_telegram_admin_summary(report_msg, reply_markup=markup, dry_run=dry_run)
+
         # Fırsatı geçmiş listesine ekle (Sonraki döngülerde aynı ürünün tekrar seçilmesini önler)
         try:
             from deal_bot import load_history, save_history, set_last_product, set_last_subtype, get_product_subtype

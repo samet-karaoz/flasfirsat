@@ -24,7 +24,7 @@ DEFAULT_CHANNELS = [
 ]
 
 BORING_REGEX = re.compile(
-    r"(şarj\s*kablosu|data\s*kablosu|\bkablo(su)?\b(?!lu)|"
+    r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\bkablo(su)?\b(?!lu)|"
     r"kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme\s*spreyi|temizleme\s*bezi|çorap|askı(lık)?|"
     r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
     r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık\s*tableti|yumuşatıcı|mendil|pijama|çanta(sı)?|"

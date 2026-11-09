@@ -164,7 +164,7 @@ def publish_reel_via_instagrapi(video_path: str, caption: str, first_comment: st
         if media_pk:
             try:
                 time.sleep(3)
-                fc_text = first_comment or "📌 Fırsat ve indirim şu an aktif! Doğrudan satın alma linkini DM'den almak için yoruma 'Link gönder' veya 'Bana da at' yazabilirsiniz 👇 Sizce fiyat nasıl?"
+                fc_text = first_comment or "📌 Fırsat ve indirim şu an aktif! Doğrudan satın alma linkine profilimizdeki bağlantıdan (BİO) ve Hikayemizden hemen ulaşabilirsiniz 👇 Sizce fiyat nasıl?"
                 cl.media_comment(media_pk, fc_text)
                 print("💬 [Instagram Publisher] ✅ Otomatik ilk kanca yorumu başarıyla paylaşıldı!")
             except Exception as efc:

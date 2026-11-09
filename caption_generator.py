@@ -7,7 +7,7 @@ from config import GEMINI_API_KEY, TEMP_DIR, get_curl_cmd, SITE_URL, safe_run_su
 
 MODEL_CANDIDATES = [
     "gemini-flash-lite-latest",
-    "gemini-3.1-flash-lite",
+    "gemini-2.5-flash",
     "gemini-flash-latest"
 ]
 
@@ -44,7 +44,6 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
 3. FİYAT VE TASARRUF VURGUSU (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve Net Kazanç / İndirim Oranı).
 4. Varsa Kupon ve Taksit bilgisini net belirt (🎟️ Kupon Uyarısı, 💳 Peşin fiyatına 3 taksit).
 5. Eylem Çağrısı (Samimi Etkileşim Kancası):
-   - '👉 Yoruma "LİNK" yaz, satın alma linkini anında DM kutuna gönderelim! 📩'
    - "📌 Fiyat tekrar uçmadan videoyu KAYDET, lazım olur diye arkadaşına GÖNDER! ✈️"
    - "💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇"
    - "🔗 Ürün bağlantısı Hikayemizde (Story) ve profilimizdeki bağlantıda aktif!"
@@ -64,7 +63,8 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
     price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
     user_prompt = (
         f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\n"
-        f"ÖNEMLİ: Açıklamaya KESİNLİKLE web linki/URL yazma (tıklanmıyor). İzleyiciyi yoruma 'LİNK' yazmaya veya Hikayeye yönlendir.\n"
+        f"ÖNEMLİ: Açıklamaya KESİNLİKLE web linki/URL yazma (tıklanmıyor). İzleyiciyi profildeki bağlantıya (BİO) tıklayıp fırsat kodunu aratmaya yönlendir.\n"
+        f"KESİNLİKLE 'Yoruma LİNK yaz DM gönderelim' YAZMA (Auto-DM kullanılmıyor!).\n"
         f"YASAL VE ETİKET KURALI: İlk satır kancasının hemen altına '#işbirliği #reklam' ekle. Açıklamada bu iki etiket dahil TOPLAMDA EN FAZLA 5 ETİKET yer almalıdır (en sonda 2-3 kategori etiketi, asla 5'i geçme)."
     )
 
@@ -117,9 +117,9 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         if code_clean and code_clean.lower() not in body_full_text:
             body_lines.append(f"🔢 Fırsat Kodu: {code_clean} (Profilimizdeki sitede arama kutusuna {code_clean} yazarak da bulabilirsiniz!)")
 
-        # DM ve LİNK yorum kancası yoksa ekle
-        if "yoruma" not in body_full_text or "link" not in body_full_text:
-            body_lines.append('👉 Yoruma "LİNK" yaz, satın alma linkini anında DM kutuna gönderelim! 📩')
+        # Profil / BİO yönlendirme kancası yoksa ekle (Auto-DM kapalı)
+        if "profil" not in body_full_text and "bio" not in body_full_text and "hikaye" not in body_full_text:
+            body_lines.append("🔗 Ürün bağlantısı profilimizdeki linkte (BİO) aktif! Sitedeki arama kutusuna fırsat kodunu yazarak hemen ulaşabilirsiniz 🌐")
 
         # Kaydet ve Paylaş kancası yoksa ekle
         if "kaydet" not in body_full_text and "gönder" not in body_full_text:
@@ -152,23 +152,21 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
 
         return final_caption
 
+    from deal_hunter import _GEMINI_COOLDOWN_UNTIL
+    import time as _time
     for model in MODEL_CANDIDATES:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        if _time.time() < _GEMINI_COOLDOWN_UNTIL:
+            break
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY.strip()}"
         data = None
+        cmd = get_curl_cmd(["--max-time", "12", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
+        res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
         try:
-            r = requests.post(url, json=payload, timeout=15)
-            if r.status_code == 200:
-                data = r.json()
-        except Exception:
-            pass
-
-        if not data:
-            cmd = get_curl_cmd(["--max-time", "15", "-s", "-H", "Content-Type: application/json", "-X", "POST", "-d", f"@{req_file}", url])
-            res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
-            try:
-                data = json.loads(res.stdout)
-            except Exception:
+            data = json.loads(res.stdout)
+            if isinstance(data, dict) and "error" in data:
                 continue
+        except Exception:
+            continue
 
         try:
             if data and "candidates" in data and len(data["candidates"]) > 0:
@@ -190,7 +188,6 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{coupon_line}"
         f"{code_line}\n"
-        f"👉 Yoruma \"LİNK\" yaz, ürün linkini anında DM ile gönderelim! 📩\n"
         f"💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n"
         f"🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n"
         f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n"

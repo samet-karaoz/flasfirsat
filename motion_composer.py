@@ -212,14 +212,14 @@ def generate_staggered_banner_frames(
     clean_code = f"#{re.sub(r'[^a-zA-Z0-9]', '', deal_code)}" if deal_code else "#101"
 
     if cta_type == "youtube":
-        cta_prefix = "Satın alma linki "
-        cta_highlight = "YORUMLARDA & BİO'DA"
-        cta_suffix = f" • KOD: {clean_code} • Kaçırma!"
+        cta_prefix = "ÜRÜN LİNKİ "
+        cta_highlight = "PROFİLDEKİ LİNKTE (BİO)"
+        cta_suffix = f" • FIRSAT KODU: {clean_code}"
         cta_tag = "#Shorts"
     else:
-        cta_prefix = "LİNK İÇİN YORUMA "
-        cta_highlight = '"LİNK" YAZ'
-        cta_suffix = f" ➔ DM'NE GELSİN! • KOD: {clean_code}"
+        cta_prefix = "ÜRÜN LİNKİ "
+        cta_highlight = "PROFİLDEKİ LİNKTE (BİO)"
+        cta_suffix = f" • FIRSAT KODU: {clean_code}"
         cta_tag = "#işbirliği #reklam"
 
     cp_w = draw_a.textlength(cta_prefix, font=f_cta_bold)

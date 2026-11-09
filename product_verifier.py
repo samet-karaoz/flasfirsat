@@ -57,7 +57,21 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
                 return clean.upper()
     except Exception as e:
         print(f"[Verifier] Gemini killer hook üretme uyarısı: {e}")
-    return ""
+    # Deterministik Killer Hook Yedeği (Gemini kotası doluysa gerçek özelliklerden üret)
+    combined = f"{title} {raw_specs}".lower()
+    if "anc" in combined or "gürültü" in combined:
+        return "AKTİF GÜRÜLTÜ ENGELLEME (ANC)!"
+    if "hz" in combined and ("ips" in combined or "monitör" in combined):
+        return "YÜKSEK HZ OYUNCU EKRANI!"
+    if "wireless" in combined or "kablosuz" in combined or "bluetooth" in combined:
+        return "KABLOSUZ YÜKSEK PERFORMANS!"
+    if "mekanik" in combined or "switch" in combined:
+        return "RGB MEKANİK OYUNCU KLAVYESİ!"
+    if "termos" in combined or "paslanmaz" in combined or "stanley" in combined:
+        return "PASLANMAZ ÇELİK VAKUM İZOLASYON!"
+    if "spf" in combined or "güneş" in combined or "serum" in combined or "nemlendirici" in combined:
+        return "DERMATOLOJİK GÜNLÜK BAKIM!"
+    return "ORİJİNAL AMAZON TR FIRSATI!"
 
 def verify_amazon_product(asin_or_url: str) -> dict:
     """

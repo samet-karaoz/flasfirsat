@@ -291,7 +291,18 @@ def generate_staggered_banner_frames(
                         f_out.write(cutout_data)
                     print(f"[MotionBanner] Otomatik rembg cutout üretildi: {cutout_p}")
                 except Exception as ex_rem:
-                    print(f"[MotionBanner] rembg otomatik üretim hatası: {ex_rem}")
+                    try:
+                        # Bulut ortamında rembg yoksa 0.02s hızlı PIL stüdyo beyaz arka plan silici
+                        _raw_im = Image.open(image_path).convert("RGBA")
+                        _w, _h = _raw_im.size
+                        for _cx, _cy in [(0, 0), (_w - 1, 0), (0, _h - 1), (_w - 1, _h - 1)]:
+                            _px = _raw_im.getpixel((_cx, _cy))
+                            if _px[0] > 238 and _px[1] > 238 and _px[2] > 238 and _px[3] > 0:
+                                ImageDraw.floodfill(_raw_im, (_cx, _cy), (0, 0, 0, 0), thresh=22)
+                        _raw_im.save(cutout_p, "PNG")
+                        print(f"[MotionBanner] Hızlı PIL stüdyo kesimi üretildi: {cutout_p}")
+                    except Exception:
+                        print(f"[MotionBanner] rembg otomatik üretim uyarısı: {ex_rem}")
             load_p = cutout_p if (not skip_rembg and os.path.exists(cutout_p)) else image_path
             p_img = Image.open(load_p).convert("RGBA")
             alpha = p_img.split()[-1]

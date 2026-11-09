@@ -1,23 +1,11 @@
 name: ⚡ Flaş Fırsat 7/24 Bulut Otopilotu (YouTube Shorts & TikTok)
 
 on:
-  schedule:
-    # Türkiye Saati (UTC+3) -> GitHub Actions Cron (UTC)
-    # NOT: GitHub Actions sunucularında :00 ve :30 tam saatlerinde global yoğunluk nedeniyle
-    # cron atlamalarını %100 önlemek için dakikalar :05 ve :35 olarak ayarlanmıştır.
-    # 1. YouTube Shorts (Sabah F/P Teknoloji & Kulaklık/Şarj) -> 11:05 TS (08:05 UTC)
-    - cron: '5 8 * * *'
-    # 2. TikTok (Öğle Kadın Cilt Bakımı & Kozmetik / Viral Ev) -> 13:05 TS (10:05 UTC)
-    - cron: '5 10 * * *'
-    # 3. YouTube Shorts (Öğleden Sonra Gaming Gear & Donanım) -> 15:05 TS (12:05 UTC)
-    - cron: '5 12 * * *'
-    # 4. YouTube Shorts (Prime Time Çok Satan Teknoloji & Bestseller) -> 18:35 TS (15:35 UTC)
-    - cron: '35 15 * * *'
-    # 5. TikTok (Akşam Prime Time Viral Güzellik, Saç Bakımı & Estetik Yaşam) -> 20:05 TS (17:05 UTC)
-    - cron: '5 17 * * *'
-    # 6. YouTube Shorts (Gece Yıldız Fırsat / F/P Gadget) -> 21:35 TS (18:35 UTC)
-    - cron: '35 18 * * *'
-
+  # 🛡️ HARİCİ SIFIR-GECİKME TETİKLEYİCİ (cron-job.org):
+  # Tüm 6 günlük kuşak (11:05, 13:05, 15:05, 18:35, 20:05, 21:35 TSİ) cron-job.org üzerinden
+  # tam saniyesinde workflow_dispatch API'si ile tetiklenmektedir.
+  # GitHub'ın kendi gecikmeli dahili cron zamanlayıcısının 1 saat rötarla ikinci kez (çift)
+  # tetikleme yapmasını önlemek için dahili schedule devre dışı bırakılmıştır.
   workflow_dispatch:
     inputs:
       target_platform:

@@ -264,8 +264,6 @@ def handle_callback_query(cq: dict):
             yt_target = item.get("youtube_video_path")
             yt_upload = yt_target if (yt_target and os.path.exists(yt_target)) else target_video
             yt_desc = caption_text
-            if "BİO" not in yt_desc and "bio" not in yt_desc:
-                yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
             yt_res = publish_shorts_to_youtube(yt_upload, title=title, description=yt_desc)
             if yt_res.get("success"):
                 yt_url = yt_res.get("url")
@@ -493,8 +491,6 @@ def handle_callback_query(cq: dict):
         upload_video = yt_custom_video if (yt_custom_video and os.path.exists(yt_custom_video)) else target_video
 
         yt_desc = caption_text
-        if "BİO" not in yt_desc and "bio" not in yt_desc:
-            yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
 
         from youtube_publisher import publish_shorts_to_youtube
         yt_res = publish_shorts_to_youtube(upload_video, title=title, description=yt_desc)

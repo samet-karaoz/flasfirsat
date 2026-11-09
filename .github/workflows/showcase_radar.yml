@@ -6,10 +6,9 @@ name: 🌐 Vitrin Stok & Fiyat Radarı (flasfirsat.com.tr)
 # Stoğu biten veya indirimi sona eren ürünleri otomatik olarak "Tükendi" yapar.
 
 on:
-  schedule:
-    # Her 4 saatte bir 15. dakikada otomatik denetim (00:15, 04:15, 08:15, 12:15, 16:15, 20:15 UTC)
-    # Deal hunter kuşakları (:00 ve :30) ile çakışmayı %100 önler
-    - cron: '15 */4 * * *'
+  # 🛡️ HARİCİ SIFIR-GECİKME TETİKLEYİCİ (cron-job.org):
+  # Her 4 saatte bir (00:20, 04:20, 08:20, 12:20, 16:20, 20:20 TSİ) cron-job.org üzerinden
+  # gecikmesiz olarak workflow_dispatch API'si ile tetiklenir.
   workflow_dispatch:
     inputs:
       reason:

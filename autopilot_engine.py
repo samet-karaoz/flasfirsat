@@ -346,8 +346,6 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 from youtube_publisher import publish_shorts_to_youtube
                 yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
                 yt_desc = caption_text
-                if "BİO" not in yt_desc and "bio" not in yt_desc:
-                    yt_desc = f"👉 İndirim linkine kanal profilimizdeki (BİO) linkten hemen ulaşabilirsiniz! 🌐\n\n{yt_desc}"
     
                 yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
                 if yt_res.get("success"):

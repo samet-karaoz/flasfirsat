@@ -643,6 +643,12 @@ def select_smart_reaction_hook(
     gaming_kw = ["mouse", "fare", "kulaklık", "headset", "klavye", "keyboard", "gaming", "ps5", "gamepad", "kol", "oyuncu", "monitor", "ekran kartı", "kulak", "oyun"]
     is_gaming = any(k in title_low for k in gaming_kw)
 
+    # 0. 3'lü Viral Motor Arketip Kancası (Özel olarak belirlenmişse)
+    if deal and (deal.get("reaction_hook") or deal.get("reaction_text")):
+        rh = deal.get("reaction_hook") or deal.get("reaction_text")
+        if rh and not any(rh.startswith(p) for p in ["Bu fiyata", "İndirimi kapıp"]):
+            return str(rh).replace("{sav_fmt}", sav_fmt)
+
     # 1. Meme Özelinde Spesifik & Komik Kanca Eşleştirmesi
     for k, hook_group in MEME_SPECIFIC_HOOKS.items():
         if k in meme_key or (k == "otobuste_oynayan_dayi" and ("otobus" in meme_key or "dayi" in meme_key)) or (k == "bebek_dans" and "bebek" in meme_key):

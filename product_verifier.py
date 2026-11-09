@@ -444,26 +444,30 @@ def verify_deal_before_publish(deal: dict) -> dict:
         elif deal.get("coupon_info"):
             print(f"[Doğrulama] 🎟️ Kupon Bilgilendirmesi: {deal.get('coupon_info')}")
 
-        # Canlı özellik özeti / Killer Hook varsa ekle
+        # 3'lü Viral Motor Arketip Tespiti (Fiyat Hatası / Gadget / Muadil)
+        from deal_hunter import detect_deal_archetype
+        arch = detect_deal_archetype(deal)
+        deal["archetype"] = arch["archetype"]
+        deal["archetype_badge"] = arch["badge_text"]
+        deal["badge"] = arch["badge_text"]
+        if not deal.get("reaction_text"):
+            deal["reaction_text"] = arch["reaction_hook"]
+            deal["reaction_hook"] = arch["reaction_hook"]
+
         existing_pill = (deal.get("feature_pill") or deal.get("killer_hook") or "").strip()
         if v_res.get("killer_hook") or v_res.get("feature_pill"):
             hook = v_res.get("killer_hook") or v_res.get("feature_pill")
             if existing_pill and "ORİJİNAL AMAZON TR" in hook.upper():
                 hook = existing_pill
+            elif "ORİJİNAL AMAZON TR" in hook.upper():
+                hook = arch["killer_pill"]
             deal["feature_pill"] = hook
             deal["killer_hook"] = hook
-            print(f"[Doğrulama] ✨ Gerçek Ürün Özelliği / Killer Hook: {hook}")
+            print(f"[Doğrulama] ✨ [{arch['archetype'].upper()}] Killer Hook: {hook}")
         elif not deal.get("killer_hook"):
-            k_hook = extract_product_killer_hook(
-                title=deal.get("title", ""),
-                new_price=deal.get("new_price", ""),
-                old_price=deal.get("old_price", ""),
-                discount_pct=deal.get("discount_pct", "")
-            )
-            if k_hook:
-                deal["killer_hook"] = k_hook
-                deal["feature_pill"] = k_hook
-                print(f"[Doğrulama] ✨ Dinamik Killer Hook Üretildi: {k_hook}")
+            deal["feature_pill"] = arch["killer_pill"]
+            deal["killer_hook"] = arch["killer_pill"]
+            print(f"[Doğrulama] ✨ [{arch['archetype'].upper()}] Arketip Killer Hook: {arch['killer_pill']}")
 
         # Canlı ürün görseli kontrolü ve otomatik indirme
         if v_res.get("image_url"):

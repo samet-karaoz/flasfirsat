@@ -11,7 +11,7 @@ MODEL_CANDIDATES = [
     "gemini-flash-latest"
 ]
 
-def generate_viral_caption(product_title: str, old_price: str, new_price: str, discount_pct: str, deal_details: str = "", store_url: str = "", bank_campaign: str = "", net_cost: str = "", coupon_info: str = "", deal_code: str = "") -> str:
+def generate_viral_caption(product_title: str, old_price: str, new_price: str, discount_pct: str, deal_details: str = "", store_url: str = "", bank_campaign: str = "", net_cost: str = "", coupon_info: str = "", deal_code: str = "", archetype: str = "") -> str:
     """
     Instagram Reels ve TikTok için etkileşimi patlatan, merak uyandıran,
     yoruma teşvik eden açıklama metni (caption) üretir.
@@ -25,19 +25,31 @@ def generate_viral_caption(product_title: str, old_price: str, new_price: str, d
     coupon_clean = str(coupon_info).strip() if coupon_info else ""
     code_raw = str(deal_code).strip() if deal_code else ""
     code_clean = code_raw.lstrip("#") if code_raw else ""
+
+    # 3'lü Viral Motor Arketip Tespiti
+    from deal_hunter import detect_deal_archetype
+    arch_info = detect_deal_archetype({
+        "title": product_title,
+        "old_price": old_price,
+        "new_price": new_price,
+        "discount_pct": discount_pct,
+        "coupon_info": coupon_info,
+        "hook": deal_details
+    })
+    active_archetype = archetype or arch_info.get("archetype", "price_glitch")
+    arch_style_hint = arch_info.get("style_prompt", "fiyat hatası ve acele kancası")
     
     system_prompt = """Sen Instagram, TikTok ve YouTube Shorts'ta yüz binlerce takipçisi olan, aşırı samimi, sıcak, esprili ve içten bir fırsat sayfası yöneticisisin. Takipçilerinle sanki WhatsApp grubundaki en yakın arkadaşınla konuşuyormuş gibi konuşursun.
 
 Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay zeka tarafından yazıldığı ASLA belli olmayan, tamamen insan eliyle yazılmış gibi aşırı samimi, doğal ve kışkırtıcı bir açıklama metni (caption) üretmek.
 
 ÖNEMLİ YAZIM VE YASAL KURALLAR:
-1. İLK SATIR (AŞIRI SAMİMİ VE DOĞAL KANCA - HOOK):
-   - Asla soğuk veya yapay zeka klişeleri kullanma ('İnanılmaz fırsat kapınızda!', 'Fırsat fırtınası!', 'Kaçırmayın üzülürsünüz!').
-   - Kategoriye göre en sıcak, samimi hitapla başla:
-     * Kadın bakım / Kozmetik / Saç: "Kızlar koşun, stoklar tükenmeden bu fiyata kapın derim, fiyata inanamayacaksınız 👇" / "Çeyize veya banyoya stok yapmak isteyenler kesinlikle baksın..."
-     * Oyuncu / Teknoloji / Gaming: "Beyler şaka değil, bu canavar bu fiyata gerçekten bedavadan biraz pahalı..." / "Setup'ını yenilemek isteyen varsa bu fiyata kaçmaz, stok bitmeden bakın..."
-     * Kahve / Mutfak / Yaşam: "Sabahları güne mis gibi kahveyle başlamak isteyenler buraya, fiyatı inanılmaz düşmüş..." / "Mutfakta hayat kurtaran o alet dip fiyata inmiş, arkadaşına haber et..."
-     * Genel Fırsatlar: "Fiyatı yanlış girmişler kesin, bu fiyata görünce sepete fırlattım..." / "İhtiyacı olan arkadaşına acil gönder, bu fiyata bir daha asla düşmez 👇"
+1. İLK SATIR (3'LÜ VİRAL KONSEPT HOOK'U):
+   - Asla soğuk, resmi veya klişe yazma ('İnanılmaz fırsat!', 'Kaçırmayın!').
+   - İçerik türüne (Arketipe) göre tam hedef kitle psikolojisini tetikle:
+     * FİYAT HATASI / DİP SEPET (price_glitch): "Fiyatı resmen yanlış girmişler / sepette gizli kupon açığıyla bedavadan biraz pahalıya düştü, satıcı fark edip düzeltmeden koşun 👇" / "Bu fiyata çorap vermiyorlar, ihtiyacı olan arkadaşına acil gönder..."
+     * HAYAT KURTARAN İLGİNÇ GADGET (viral_gadget): "Bunu Türkiye'de kimse bilmiyor, gördüğüm an siparişi patlattığım o hayat kurtaran alet..." / "Masanızda veya çantanızda kesinlikle olması gereken o alet dip fiyata indi..."
+     * PAHALI MARKA MUADİLİ (expensive_dupe): "X markasına 15-20 bin TL bağlamayın, 5'te 1 fiyatına birebir aynı işi gören canavar bulundu..." / "Parasını çöpe atmak istemeyenlerin gizli tercihi, aynı performans..."
 2. YASAL ZORUNLULUK (REKLAM KURULU UYUMU):
    - Kancanın (ilk satırın) hemen altına MUTLAKA '#işbirliği #reklam' ibaresini ekle.
    - Ticaret Bakanlığı mevzuatı gereği bu etiketler 'devamını gör' katlamasının arkasına (metnin sonuna) saklanamaz, en başta açıkça görünür olmalıdır.
@@ -62,7 +74,7 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         extra_info += f"\nFırsat Kodu: {code_clean} (İzleyiciye profilimizdeki sitemizde arama kutusuna {code_clean} yazarak da ürünü saniyeler içinde bulabileceğini belirt)"
     price_clause = f"Eski Fiyat (Doğrulanmış Liste): {old_price}\n" if old_price else "Eski Fiyat: Bilinmiyor (Yalnızca güncel indirimli fiyatı vurgula)\n"
     user_prompt = (
-        f"Ürün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\n"
+        f"VİRAL ARKETİP: {active_archetype.upper()} ({arch_style_hint})\nÜrün: {product_title}\n{price_clause}Yeni Fiyat: {new_price}\nİndirim Oranı: {discount_pct}\nDetay: {deal_details}{extra_info}\n"
         f"ÖNEMLİ: Açıklamaya KESİNLİKLE web linki/URL yazma (tıklanmıyor). İzleyiciyi profildeki bağlantıya (BİO) tıklayıp fırsat kodunu aratmaya yönlendir.\n"
         f"KESİNLİKLE 'Yoruma LİNK yaz DM gönderelim' YAZMA (Auto-DM kullanılmıyor!).\n"
         f"YASAL VE ETİKET KURALI: İlk satır kancasının hemen altına '#işbirliği #reklam' ekle. Açıklamada bu iki etiket dahil TOPLAMDA EN FAZLA 5 ETİKET yer almalıdır (en sonda 2-3 kategori etiketi, asla 5'i geçme)."
@@ -181,9 +193,20 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
     old_line = f"❌ Eski Fiyat: {old_price}\n" if old_price else ""
     pct_line = f" ({discount_pct} İndirim)" if discount_pct and discount_pct != "0%" else ""
 
+    if active_archetype == "viral_gadget":
+        hook_fb = f"🚀 {product_title} - Bunu Türkiye'de kimse bilmiyor!"
+        sub_fb = "Gördüğüm an siparişi patlattığım, hayatı aşırı kolaylaştıran o efsane alet dip fiyata indi!"
+    elif active_archetype == "expensive_dupe":
+        hook_fb = f"🛡️ Boşuna servet ödemeyin! {product_title}"
+        sub_fb = "Pahalı markalara 5 katı para vermeyin, birebir aynı performansı veren F/P canavarı!"
+    else:
+        hook_fb = f"🚨 Fiyatı yanlış girmişler kesin! {product_title}"
+        sub_fb = "Satıcı fiyatı fark edip düzeltmeden önce sepeti kapın, bu fiyata bir daha asla düşmez!"
+
     fallback = (
-        f"🔥 {product_title} fırsatı yayında!\n"
+        f"{hook_fb}\n"
         f"#işbirliği #reklam\n\n"
+        f"{sub_fb}\n\n"
         f"{old_line}"
         f"✅ Satış Fiyatı: {new_price}{pct_line}\n"
         f"{coupon_line}"

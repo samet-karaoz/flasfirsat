@@ -112,7 +112,15 @@ def generate_staggered_banner_frames(
     new_price = sanitize_text(deal.get("new_price", "İndirimde"))
     discount_pct = sanitize_text(deal.get("discount_pct", "-30%"))
     store_name = sanitize_text(deal.get("store_name", "Amazon TR"))
-    badge_text = sanitize_text(deal.get("badge", "DEV İNDİRİM"))
+    # 3'lü Viral Motor Arketip Kontrolü (Fiyat Hatası / Gadget / Muadil)
+    badge_text = sanitize_text(deal.get("archetype_badge") or deal.get("badge", ""))
+    if not badge_text or badge_text.strip().upper() in ("DEV İNDİRİM", "AMAZON FIRSATI", "GÜNÜN FIRSATI", "FIRSAT ÜRÜNÜ"):
+        try:
+            from deal_hunter import detect_deal_archetype
+            arch = detect_deal_archetype(deal)
+            badge_text = arch.get("badge_text") or "FİYAT HATASI / DİP SEPET"
+        except Exception:
+            badge_text = "FİYAT HATASI / DİP SEPET"
     installment = sanitize_text(deal.get("installment", ""))
     coupon_text = sanitize_text(deal.get("coupon_info", ""))
     deal_code = sanitize_text(deal.get("deal_code", "#101"))
@@ -351,12 +359,13 @@ def generate_staggered_banner_frames(
             print(f"[MotionBanner] Görsel yerleştirme uyarısı: {e}")
 
     # Kart İçi Alt Kısım: Her Zaman Sarı Çerçeveli Vurucu Killer Hook Rozeti (⚡ ...)
-    if not feature_text or len(feature_text.strip()) <= 3:
+    if not feature_text or len(feature_text.strip()) <= 3 or "ORİJİNAL AMAZON" in feature_text.upper():
         try:
-            from product_verifier import extract_product_killer_hook
-            feature_text = extract_product_killer_hook(title=title, new_price=new_price, old_price=old_price, discount_pct=discount_pct)
+            from deal_hunter import detect_deal_archetype
+            arch = detect_deal_archetype(deal or {"title": title, "new_price": new_price, "old_price": old_price, "discount_pct": discount_pct})
+            feature_text = arch.get("killer_pill") or "FİYAT DÜZELTİLMEDEN YAKALA!"
         except Exception:
-            feature_text = "ORİJİNAL AMAZON TR FIRSATI!"
+            feature_text = "FİYAT DÜZELTİLMEDEN YAKALA!"
 
     feat_clean = re.sub(r'[\U00010000-\U0010ffff]', '', feature_text or "ORİJİNAL AMAZON TR FIRSATI!")
     feat_clean = re.sub(r'[\u2600-\u27BF]', '', feat_clean).strip().upper() or "ORİJİNAL AMAZON TR FIRSATI!"

@@ -271,6 +271,96 @@ def get_product_subtype(title: str) -> str:
         return "storage"
     return "general"
 
+ARCHETYPE_PRICE_GLITCH = "price_glitch"
+ARCHETYPE_VIRAL_GADGET = "viral_gadget"
+ARCHETYPE_EXPENSIVE_DUPE = "expensive_dupe"
+
+def detect_deal_archetype(deal: dict) -> dict:
+    """
+    3'lü Viral Motor (AGENTS.md Kural 3):
+    1. EXPENSIVE_DUPE: Pahalı Markaların Birebir Muadilleri / Kazıklanma Rehberi
+    2. VIRAL_GADGET: Hayat Kurtaran Problem Çözen Trend Ürünler
+    3. PRICE_GLITCH: Fiyat Hatası & Kupon Açığı / Sepet Çökertme
+    """
+    title = str(deal.get("title") or "").lower()
+    details = str(deal.get("hook") or deal.get("feature_pill") or deal.get("market_highlight") or "").lower()
+    combined = f"{title} {details}"
+    
+    coupon = str(deal.get("coupon_info") or deal.get("coupon_text") or "").strip()
+    pct = get_deal_discount_pct(deal)
+    savings = get_deal_savings_tl(deal)
+
+    # 1. HAYAT KURTARAN İLGİNÇ GADGET / TREND ÜRÜN KONTROLÜ
+    gadget_regex = re.compile(
+        r"(yazıcı|printer|termal\s*yaz|etiket\s*makine|"
+        r"temizleme\s*jel|toz\s*üfleyi|hava\s*kompresör|mini\s*süpürge|"
+        r"manyetik|anti-gravity|havada\s*duran|rgb\s*ışık|neon\s*lamba|masa\s*lamba|"
+        r"şarj\s*istasyon|kablo\s*düzenleyi|kablo\s*toplayı|usb\s*hub|docking|"
+        r"lazer\s*metre|akıllı\s*tornavida|dijital\s*ölçer|"
+        r"bardak\s*ısıtıcı|akıllı\s*matara|katlanabilir\s*klavye)",
+        re.IGNORECASE
+    )
+    if gadget_regex.search(combined):
+        return {
+            "archetype": ARCHETYPE_VIRAL_GADGET,
+            "badge_text": "HAYAT KURTARAN BULUŞ",
+            "killer_pill": "BUNU TÜRKİYE'DE KİMSE BİLMİYOR!",
+            "reaction_hook": "Gördüğüm an siparişi patlattığım o hayat kurtaran alet:",
+            "style_prompt": "insanın görünce 'bunu hemen almam lazım' dediği ilginç, problem çözen gadget kancası (Merak / Arzu)"
+        }
+
+    # 2. PAHALI MARKA MUADİLİ / KAZIKLANMA REHBERİ KONTROLÜ
+    dupe_indicators = [
+        "muadil", "alternatif", "benzeri", "muadili", "çakma değil",
+        "qcy", "soundpeats", "soundcore", "redmi buds", "buds fe",
+        "gamesir", "8bitdo", "flydigi", "gulikit",
+        "watch fit", "redmi watch", "xiaomi band", "galaxy fit",
+        "dyson muadil", "airwrap muadil", "saç şekillendirici",
+        "klasse", "attack shark", "ajazz", "aula", "royal kludge",
+        "stanley muadil", "contigo"
+    ]
+    if any(k in combined for k in dupe_indicators):
+        if any(b in combined for b in ["qcy", "soundpeats", "soundcore", "buds"]):
+            pill = "AIRPODS'A SERVET ÖDEMEYİN!"
+            hook_msg = "Aynı ses kalitesini veren 5'te 1 fiyatına canavar:"
+        elif any(b in combined for b in ["gamesir", "8bitdo", "flydigi"]):
+            pill = "PAHALI OYUN KOLLARINA SON!"
+            hook_msg = "DualSense'e 4.000 TL vermek yerine profesyonellerin tercihi:"
+        elif any(b in combined for b in ["watch", "band"]):
+            pill = "APPLE WATCH ULTRA MUADİLİ!"
+            hook_msg = "Pahalı akıllı saatlere binlerce lira bağlamayın:"
+        elif any(b in combined for b in ["dyson", "şekillendirici", "airwrap"]):
+            pill = "DYSON AIRWRAP MUADİLİ!"
+            hook_msg = "30.000 TL vermek yerine aynı işi gören bu alet:"
+        else:
+            pill = "PAHALI MARKAYA SERVET ÖDEMEYİN!"
+            hook_msg = "Aynı işi gören 5'te 1 fiyatına F/P canavarı:"
+
+        return {
+            "archetype": ARCHETYPE_EXPENSIVE_DUPE,
+            "badge_text": "KAZIKLANMA REHBERİ",
+            "killer_pill": pill,
+            "reaction_hook": hook_msg,
+            "style_prompt": "pahalı lüks markalara gereksiz servet ödemek istemeyen akıllı tüketici kancası (Muadil / Kazıklanmama)"
+        }
+
+    # 3. FİYAT HATASI & KUPON AÇIĞI / DİP SEPET (VARSAYILAN VE EN YÜKSEK FOMO)
+    if coupon or pct >= 35 or savings >= 800:
+        pill = "FİYAT DÜZELTİLMEDEN YAKALA!" if not coupon else "SEPETTE DİP FİYATA İNDİ!"
+        hook_msg = "Satıcı fiyatı yanlış girmiş, fark etmeden yetişin:" if not coupon else "Sepette gizli kuponu aktif edince fiyatı resmen çökerttiler:"
+    else:
+        pill = "DİP FİYAT DÜZELTİLMEDEN KOŞUN!"
+        hook_msg = "Bu fiyata bir daha asla düşmez, stok erimeden koşun:"
+
+    return {
+        "archetype": ARCHETYPE_PRICE_GLITCH,
+        "badge_text": "FİYAT HATASI / DİP SEPET",
+        "killer_pill": pill,
+        "reaction_hook": hook_msg,
+        "style_prompt": "fiyat hatası, sepet açığı veya satıcı düzeltmeden hemen kapma acele kancası (Panik / FOMO)"
+    }
+
+
 def parse_price_to_float(price_str: str) -> float:
     """Türkçe para birimi metinlerini ('1.949,00 TL' veya çift tekrarlı '1.567,00TL1.567,00TL' vb.) floata dönüştürür."""
     if not price_str:

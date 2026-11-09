@@ -1,28 +1,33 @@
 # Antigravity Proje Kuralları & Temel Direktifler
 
-## 1. TEMEL KURAL: F/P TEKNOLOJİK ÜRÜNLER VE SPOR AYAKKABI / SNEAKER SEÇİMİ (1. ÖNCELİK)
+## 1. TEMEL KURAL: F/P TEKNOLOJİK ÜRÜNLER, GADGET'LAR VE SPOR AYAKKABI / SNEAKER SEÇİMİ (1. ÖNCELİK)
 
-Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral erişimi ve dönüşüm oranlarının maksimize edilmesi için **1. ÖNCELİĞİMİZ HER ZAMAN FİYAT/PERFORMANS (F/P) TEKNOLOJİK ÜRÜNLER VE POPÜLER SPOR AYAKKABI / SNEAKER MODELLERİDİR**.
+Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral erişimi ve dönüşüm oranlarının maksimize edilmesi için **1. ÖNCELİĞİMİZ HER ZAMAN FİYAT/PERFORMANS (F/P) TEKNOLOJİK ÜRÜNLER, PROBLEM ÇÖZEN İLGİNÇ GADGET'LAR VE POPÜLER SPOR AYAKKABI / SNEAKER MODELLERİDİR**.
 
 İster otomatik tarama (`--auto`, `autopilot_engine.py`), ister manuel ürün seçimi olsun; **kahve/espresso makineleri, mutfak tencere/çay/tost gereçleri veya dar/niş aksesuarlar KESİNLİKLE SEÇİLEMEZ.**
 
 ---
 
-### A. Aranılan ve Öncelikli Ürün Kategorileri (F/P Teknoloji & Ayakkabı):
+### A. Aranılan ve Öncelikli Ürün Kategorileri:
 1. **F/P Tüketici Elektroniği & Mobil Teknoloji:**
    - Bluetooth kulaklıklar (Apple AirPods, Anker Soundcore, JBL, Sony, Marshall, QCY, Xiaomi, Samsung Buds)
    - Bluetooth hoparlörler (JBL Flip/Charge/Go, Anker Motion, Marshall)
    - Akıllı saat ve bileklikler (Apple Watch, Huawei, Xiaomi, Samsung Galaxy Watch)
    - Güçlü powerbank ve hızlı şarj istasyonları (Anker, Baseus, Ugreen, Spigen)
-2. **F/P Oyuncu (Gaming) & Bilgisayar Donanımları:**
+2. **Viral & Hayat Kurtaran Problem Çözen Gadget'lar:**
+   - Cep tipi mini termal fotoğraf/etiket yazıcıları
+   - Akıllı klavye ve araç temizleme gereçleri (sihirli jel, elektrikli toz üfleyici)
+   - Masaüstü manyetik havada duran / neon tasarım aletleri
+   - Çok fonksiyonlu dijital aletler, şarj istasyonları ve akıllı kablo toplayıcılar
+3. **F/P Oyuncu (Gaming) & Bilgisayar Donanımları:**
    - F/P oyuncu faresi ve klavyeler (Logitech G serisi, Razer, SteelSeries, Attack Shark, Ajazz, Aula, Royal Kludge)
    - Popüler oyuncu kulaklıkları (HyperX Cloud, SteelSeries Arctis, Logitech G435/G733, Razer BlackShark)
    - Popüler gaming monitörler (Asus TUF, AOC, ViewSonic, Samsung Odyssey, Lenovo Legion, LG UltraGear, MSI)
    - Oyun kolları / Gamepad (Sony DualSense, Xbox Wireless Controller, GameSir, 8BitDo)
    - Yüksek hızlı taşınabilir SSD / NVMe SSD ve E-Spor Mousepad modelleri (Kingston, SanDisk, Klasse)
-3. **Popüler F/P Spor Ayakkabı & Sneaker Modelleri:**
+4. **Popüler F/P Spor Ayakkabı & Sneaker Modelleri:**
    - Erkek / Unisex / Kadın spor ayakkabı, koşu ayakkabısı ve sneaker modelleri (Adidas, Puma, Nike, Under Armour, Skechers, New Balance, Vans, Reebok, Columbia, Salomon)
-4. **Popüler Kişisel Bakım Teknolojileri & Cilt Bakımı:**
+5. **Popüler Kişisel Bakım Teknolojileri & Cilt Bakımı:**
    - Tıraş ve saç kesim makineleri (Philips OneBlade, Braun Series)
    - Şarjlı diş fırçaları (Oral-B iO / Pro serisi, Philips Sonicare)
    - Kadın cilt ve saç bakımı (The Purest Solutions, CeraVe, Bioderma, La Roche-Posay, L'Oreal)
@@ -45,14 +50,37 @@ Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİ
 
 ## 2. FORMAT KURALI: VİRAL BÖLÜNMÜŞ EKRAN (SPLIT-SCREEN MOTION + VIRAL MEME)
 - **Ana Şablon (1080x1920 Dikey Full HD - Açık Stüdyo Kart Tasarımı):**
-  - **Üst Yarı (1080x960):** Açık renkli (`#EEF2FF`) ferah arka plan üzerinde bembeyaz stüdyo kartı (`255, 255, 255`), ürün stüdyo görseli, kartın altında sarı çerçeveli `⚡ KILLER HOOK` hapı, solda beyaz eski fiyat kutusu, sağda nane yeşili indirimli fırsat kutusu (`??? TL` -> gerçek indirimli fiyat) ve alt CTA bandı (Fırsat Kodu `#XXX`, Profildeki Linkte / BİO). Koyu lacivert/siyah kart temaları KESİNLİKLE KULLANILMAZ!
+  - **Üst Yarı (1080x960):** Açık renkli (`#EEF2FF`) ferah arka plan üzerinde bembeyaz stüdyo kartı (`255, 255, 255`), ürün stüdyo görseli, kartın altında sarı çerçeveli `⚡ KILLER HOOK / VİRAL ROZET` hapı, solda beyaz eski fiyat kutusu, sağda nane yeşili indirimli fırsat kutusu (`??? TL` -> gerçek indirimli fiyat) ve alt CTA bandı (Fırsat Kodu `#XXX`, Profildeki Linkte / BİO). Koyu lacivert/siyah kart temaları KESİNLİKLE KULLANILMAZ!
   - **Alt Yarı (1080x960):** Viral MEME videosu (`kovboy_sapka_kedi.mp4`, `bebek_dans.mp4`, `piyano_davul.mp4`, `polat_memati_kosu.mp4`, `cat_vibing.mp4`, `dugunde_cosan_cocuk.mp4`, `kemal_efendi_dans.mp4`, `otobuste_oynayan_dayi.mp4` vb.) ve akıllı reaksiyon kancası (Reaction Hook overlay).
   - **Ses & Ritim:** KESİNLİKLE DIŞARIDAN PHONK, MÜZİK VEYA SES EFEKTİ KULLANILMAZ! Bütün videolarda istisnasız alt videodaki meme'in kendi orijinal doğal sesi kullanılır.
   - **Sıfır Blur:** Alt meme tam 1080x960 oranında kesilmiş, net ve kenarları blursuz olmalıdır.
 
 ---
 
-## 3. AÇIKLAMA (CAPTION) & ETİKET (HASHTAG) KURALI (MAKSİMUM 5 ETİKET & YASAL UYUM)
+## 3. İÇERİK STRATEJİSİ: 3'LÜ VİRAL MOTOR (STANDART İNDİRİM PAYLAŞIMI KESİNLİKLE YASAKTIR)
+Sosyal medyada sıradan "indirim var alın" diliyle izlenme ve satış gelmez. Paylaşılan HER içerik aşağıdaki 3 viral arketipten (konseptten) BİRİNE girmek zorundadır:
+
+### 1. Konsept: FİYAT HATASI & KUPON AÇIĞI (`price_glitch`)
+- **Tetiklenen Duygu:** Panik, acele, fırsatı kaçırma korkusu (FOMO).
+- **Hedef:** Kullanıcıların videoyu birbirine DM atmasını ve hemen sepete koşmasını sağlamak.
+- **Kart İçi Rozet:** `🚨 FİYAT HATASI / DİP SEPET` veya `⚠️ FİYAT DÜZELTİLMEDEN KOŞUN!`
+- **Kanca & Dil:** *"Satıcı fiyatı yanlış girmiş, fark etmeden yetişin!", "Sepette gizli kupon açığıyla dip fiyata indi!", "Bu fiyata çorap vermiyorlar, koşun!"*
+
+### 2. Konsept: HAYAT KURTARAN İLGİNÇ GADGET (`viral_gadget`)
+- **Tetiklenen Duygu:** Merak, şaşkınlık ve sahip olma arzusu ("Bunu hemen almalıyım!").
+- **Hedef:** Kullanıcıların yoruma "Link nerede?" yazmasını ve profildeki siteye koşmasını sağlamak.
+- **Kart İçi Rozet:** `🚀 HAYAT KURTARAN BULUŞ` veya `🔥 İLGİNÇ TREND GADGET`
+- **Kanca & Dil:** *"Bunu Türkiye'de kimse bilmiyor!", "Gördüğüm an siparişi patlattığım o hayat kurtaran alet...", "Masanızda / çantanızda olması gereken o mucize"*
+
+### 3. Konsept: PAHALI MARKA MUADİLİ / KAZIKLANMA REHBERİ (`expensive_dupe`)
+- **Tetiklenen Duygu:** Akıllı tasarruf, öfke ve tatmin ("Boşuna kazıklanmayın").
+- **Hedef:** Kullanıcıların videoyu kaydetmesini ve arkadaşlarına göndermesini sağlamak.
+- **Kart İçi Rozet:** `🛡️ KAZIKLANMA REHBERİ` veya `⚡ DEV MARKA MUADİLİ`
+- **Kanca & Dil:** *"X markasına 15.000 TL bağlamayın, 5'te 1 fiyatına birebir aynı canavar!", "Parasını çöpe atmak istemeyenlerin gizli tercihi..."*
+
+---
+
+## 4. AÇIKLAMA (CAPTION) & ETİKET (HASHTAG) KURALI (MAKSİMUM 5 ETİKET & YASAL UYUM)
 - **Maksimum 5 Etiket Sınırı:** Üretilen veya paylaşılan tüm içeriklerde (Instagram Reels, TikTok, YouTube Shorts vb.) açıklamada `#işbirliği` ve `#reklam` dahil **TOPLAMDA EN FAZLA 5 ADET HASHTAG** bulunabilir. Asla 5'ten fazla etiket eklenemez veya yükleyiciler tarafından sonradan otomatik etiket basılamaz!
 - **Yasal Reklam İbaresi Konumu (Reklam Kurulu Zorunluluğu):** `#işbirliği #reklam` etiketleri açıklamanın en altına ("daha fazla gör" katlamasının arkasına) KESİNLİKLE saklanamaz. İlk satırdaki kancanın (hook) hemen altına (ilk 2 satırda, fold öncesinde) açık ve seçik yerleştirilmelidir.
 - **Etiket Dağılımı:**

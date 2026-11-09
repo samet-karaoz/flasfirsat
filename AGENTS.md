@@ -53,3 +53,14 @@ Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİ
   - **Ses & Ritim:** KESİNLİKLE DIŞARIDAN PHONK, MÜZİK VEYA SES EFEKTİ KULLANILMAZ! Bütün videolarda istisnasız alt videodaki meme'in kendi orijinal doğal sesi kullanılır (tüm videolarda zaten orijinal ses mevcuttur).
   - **Sıfır Blur:** Alt meme tam 1080x960 oranında kesilmiş, net ve kenarları blursuz olmalıdır.
   - **Asla Yapılmayacak:** Ortaya statik ürün kutusu koyup alt ve üste koyu mavi kartlar yerleştiren sıkıcı reklam şablonları KESİNLİKLE KULLANILMAZ!
+
+---
+
+## 3. AÇIKLAMA (CAPTION) & ETİKET (HASHTAG) KURALI (MAKSİMUM 5 ETİKET & YASAL UYUM)
+- **Maksimum 5 Etiket Sınırı:** Üretilen veya paylaşılan tüm içeriklerde (Instagram Reels, TikTok, YouTube Shorts vb.) açıklamada `#işbirliği` ve `#reklam` dahil **TOPLAMDA EN FAZLA 5 ADET HASHTAG** bulunabilir. Asla 5'ten fazla etiket eklenemez veya yükleyiciler tarafından sonradan otomatik etiket basılamaz!
+- **Yasal Reklam İbaresi Konumu (Reklam Kurulu Zorunluluğu):** `#işbirliği #reklam` etiketleri açıklamanın en altına ("daha fazla gör" katlamasının arkasına) KESİNLİKLE saklanamaz. İlk satırdaki kancanın (hook) hemen altına (ilk 2 satırda, fold öncesinde) açık ve seçik yerleştirilmelidir.
+- **Etiket Dağılımı:**
+  - 2 adet zorunlu yasal reklam etiketi (kancanın hemen altında): `#işbirliği #reklam`
+  - En fazla 3 adet kategori/ürün etiketi (açıklamanın en sonunda): Örn: `#indirim #fırsat #teknoloji`
+  - **Toplam:** KESİNLİKLE EN FAZLA 5 ETİKET.
+- **Fırsat Kodu Formatı:** Fırsat kodu açıklama metni içine yazılırken hashtag olarak değil (Örn: `#158` yerine `158` veya `Fırsat Kodu: 158`), yalın metin olarak eklenir; böylece 5 etiketlik değerli kotayı gereksiz harcamaz.

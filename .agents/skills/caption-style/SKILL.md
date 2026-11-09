@@ -42,8 +42,7 @@ Kullanıcının linke nasıl ulaşacağını anlatan açık yönlendirme:
 - *"Ürün satın alma linki profildeki biyografide ve Telegram kanalımızda sabitli!"*
 - *"Fiyat alarmı kurmak veya indirimi kaçırmamak için bildirimleri açmayı unutmayın."*
 
-### 4. Etiketler (Hashtag'ler)
-- **Kural:** Maksimum 4-5 adet odaklı etiket.
-- **Zorunlu:** `#işbirliği` veya `#reklam`
-- **Tematik:** `#indirim #fırsat #teknoloji`
-- Onlarca ilgisiz etiketi arka arkaya dizmek Instagram ve YouTube algoritmasında spam cezası doğurur.
+### 4. Etiketler (Hashtag'ler - KESİNLİKLE EN FAZLA 5 ETİKET)
+- **Maksimum Sınır:** Açıklamada `#işbirliği` ve `#reklam` dahil **TOPLAMDA EN FAZLA 5 ADET HASHTAG** bulunabilir. Asla 5'ten fazla etiket yazılamaz veya sonradan eklenemez.
+- **Konumlandırma:** Ticaret Bakanlığı Reklam Kurulu kılavuzu gereği `#işbirliği #reklam` kancanın hemen altına (ilk 2 satırda, fold öncesinde) yerleştirilmelidir.
+- **Dağılım:** 2 adet yasal etiket (`#işbirliği #reklam`) + en fazla 3 adet kategori/indirim etiketi (`#indirim #fırsat #teknoloji`) = **Toplam 5 Etiket**.

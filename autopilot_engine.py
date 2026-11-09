@@ -321,11 +321,12 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             try:
                 from tiktok_publisher import publish_video_to_tiktok
                 tt_code = deal.get("deal_code", "")
-                code_str = str(tt_code) if str(tt_code).startswith("#") else (f"#{tt_code}" if tt_code else "")
+                code_clean = str(tt_code).lstrip("#") if tt_code else ""
                 tt_caption = (
-                    f"Fiyata inanamayacaksınız! {title} dip fiyata indi 💥 "
-                    f"Profilimizdeki sitemizin arama çubuğuna {code_str} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n\n"
-                    f"#keşfet #fırsat #indirim #ürüninceleme #işbirliği"
+                    f"Fiyata inanamayacaksınız! {title} dip fiyata indi 💥\n"
+                    f"#işbirliği #reklam\n\n"
+                    f"Profilimizdeki sitemizin arama çubuğuna {code_clean} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n\n"
+                    f"#keşfet #fırsat #indirim"
                 )
                 tt_res = publish_video_to_tiktok(video_path, caption=tt_caption, mode="shareNow")
                 if tt_res.get("success"):

@@ -19,7 +19,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-    <!-- Google Analytics ID ayarlanmadı. Yerel telemetri ve etkileşim motoru çalışıyor. -->
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6FTHRHYFR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-E6FTHRHYFR');
+    </script>
     <style>
         :root {
             --bg-base: #0B0D12;
@@ -3773,6 +3781,10 @@
     </main>
 
     <footer>
+        <div class="legal-disclosure" style="max-width: 860px; margin: 0 auto 20px auto; padding: 14px 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-size: 0.76rem; line-height: 1.6; color: #94A3B8; text-align: center;">
+            <p style="margin: 0 0 6px 0; font-weight: 600; color: #CBD5E1;">⚖️ Yasal Aydınlatma & Gelir Ortaklığı (Affiliate) Bildirimi</p>
+            <p style="margin: 0;">flasfirsat.com.tr bir <strong>Amazon Gelir Ortaklığı (Affiliate)</strong> katılımcısıdır. Sitemizde yer alan yönlendirme bağlantıları üzerinden gerçekleştirilen uygun satın alımlardan komisyon geliri elde edilebilir. Sitede listelenen ürün fiyatları, kuponlar ve stok durumları anlık değişkenlik gösterebilir; nihai fiyat ve koşullar yönlendirilen resmi e-ticaret (Amazon.com.tr) ürün sayfasında geçerlidir.</p>
+        </div>
         <p>© 2026 Flaş Fırsat • Fiyatlar anlık olarak değişebilir. Fırsatları kaçırmamak için Telegram'ı takip edin.</p>
         <div id="footerStatsTrigger" class="footer-stats-trigger">
             <button class="footer-stats-btn" onclick="openStatsModal()">
@@ -3923,8 +3935,8 @@
 
         // --- 2. ZİYARETÇİ VE ETKİLEŞİM TELEMETRİ MOTORU ---
         const STATS_KEY = 'flas_stats_v1';
-        const gaConfigured = false;
-        const gaIdSafe = '';
+        const gaConfigured = true;
+        const gaIdSafe = 'G-E6FTHRHYFR';
 
         function getStoredStats() {
             try {

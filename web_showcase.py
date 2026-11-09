@@ -1841,6 +1841,10 @@ def render_web_html(deals: list = None):
     </main>
 
     <footer>
+        <div class="legal-disclosure" style="max-width: 860px; margin: 0 auto 20px auto; padding: 14px 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-size: 0.76rem; line-height: 1.6; color: #94A3B8; text-align: center;">
+            <p style="margin: 0 0 6px 0; font-weight: 600; color: #CBD5E1;">⚖️ Yasal Aydınlatma & Gelir Ortaklığı (Affiliate) Bildirimi</p>
+            <p style="margin: 0;">flasfirsat.com.tr bir <strong>Amazon Gelir Ortaklığı (Affiliate)</strong> katılımcısıdır. Sitemizde yer alan yönlendirme bağlantıları üzerinden gerçekleştirilen uygun satın alımlardan komisyon geliri elde edilebilir. Sitede listelenen ürün fiyatları, kuponlar ve stok durumları anlık değişkenlik gösterebilir; nihai fiyat ve koşullar yönlendirilen resmi e-ticaret (Amazon.com.tr) ürün sayfasında geçerlidir.</p>
+        </div>
         <p>© 2026 Flaş Fırsat • Fiyatlar anlık olarak değişebilir. Fırsatları kaçırmamak için Telegram'ı takip edin.</p>
         <div id="footerStatsTrigger" class="footer-stats-trigger">
             <button class="footer-stats-btn" onclick="openStatsModal()">

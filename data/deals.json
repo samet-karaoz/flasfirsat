@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794312402_62",
+    "deal_code": "#170",
+    "title": "JBL Tune 520BT Multi Connect",
+    "old_price": "2.289 TL",
+    "new_price": "1.624,92 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BYWMLVG1?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 541 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/jbl_tune_520bt_multi_conn_bf836c9b.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "10.11.2026 12:06"
+  },
+  {
     "id": "deal_1794305239_61",
     "deal_code": "#169",
     "title": "Powertec TR-758 Profesyonel",

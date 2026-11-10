@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794325118_63",
+    "deal_code": "#171",
+    "title": "SoundPEATS Air6 HS Hi-Res",
+    "old_price": "2.359 TL",
+    "new_price": "1.675 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0GZH8J5T7?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 558 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/soundpeats_air6_hs_hi_res_2eb5d350.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "10.11.2026 15:38"
+  },
+  {
     "id": "deal_1794312402_62",
     "deal_code": "#170",
     "title": "JBL Tune 520BT Multi Connect",

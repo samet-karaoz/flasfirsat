@@ -546,8 +546,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/karaca_gastro_gourmet_d_k_ac952adc.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "21.10.2026 19:48"
   },
   {
@@ -740,7 +740,7 @@
     "category": "gaming",
     "image_url": "assets/products/logitech_g502_hero_mouse_ff932a6b.webp",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "18.10.2026 16:46"
   },
   {

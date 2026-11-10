@@ -470,8 +470,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/lego_speed_champions_ferr_cde1bef3.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "03.11.2026 14:34"
   },
   {
@@ -489,8 +489,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/lego_speed_champions_delo_fbdfae13.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "03.11.2026 14:15"
   },
   {

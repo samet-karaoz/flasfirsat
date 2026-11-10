@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794305239_61",
+    "deal_code": "#169",
+    "title": "Powertec TR-758 Profesyonel",
+    "old_price": "1.969 TL",
+    "new_price": "1.459 TL",
+    "discount_pct": "-26%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B087Y95SC4?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 486 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/powertec_tr_758_profesyon_b4471927.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "10.11.2026 10:07"
+  },
+  {
     "id": "deal_1794298191_60",
     "deal_code": "#168",
     "title": "Logitech Z150 1+1 Speaker 6W",

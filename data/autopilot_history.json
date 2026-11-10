@@ -1900,5 +1900,37 @@
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261109_183619_philips_spk7448_kablosuz_youtube.mp4",
     "caption_text": "🔥 Philips SPK7448 Kablosuz fırsatı yayında!\n#işbirliği #reklam\n\n❌ Eski Fiyat: 699 TL\n\n✅ Satış Fiyatı: 499 TL (-29% İndirim)\n\n🔢 Fırsat Kodu: 167 (Sitede arama kutusuna 167 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet",
     "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_29_amz_B0G2M3Z38D.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-11-10 08:09:01",
+    "slot": "11:00 YouTube Sabah F/P",
+    "target_platform": "youtube",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/a_gvOoe2gnI"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Logitech Z150 1+1 Speaker 6W",
+      "new_price": "1.754 TL",
+      "old_price": "2.469 TL",
+      "discount_pct": "-29%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B00EUUXFFS?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261110_080921_logitech_z150_11_speaker_6w.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261110_080921_logitech_z150_11_speaker_6w_youtube.mp4",
+    "caption_text": "⚡ Logitech Z150 1+1 Speaker 6W - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n❌ Eski Fiyat: 2.469 TL\n\n✅ Satış Fiyatı: 1.754 TL (-29% İndirim)\n\n🔢 Fırsat Kodu: 168 (Sitede arama kutusuna 168 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_29_amz_B00EUUXFFS.jpg.jpg"
   }
 ]

@@ -546,8 +546,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/soundcore_by_anker_k20i_b_6a6c410e.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "26.10.2026 13:16"
   },
   {

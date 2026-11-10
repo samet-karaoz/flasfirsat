@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794335822_65",
+    "deal_code": "#173",
+    "title": "Razer Ornata V3 Tenkeyless",
+    "old_price": "3.239 TL",
+    "new_price": "2.299 TL",
+    "discount_pct": "-29%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CCYX7BYL?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 766 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/razer_ornata_v3_tenkeyles_69f839b0.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "10.11.2026 18:37"
+  },
+  {
     "id": "deal_1794330411_64",
     "deal_code": "#172",
     "title": "Vichy Dercos Şampuan",

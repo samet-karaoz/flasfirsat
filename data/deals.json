@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794330411_64",
+    "deal_code": "#172",
+    "title": "Vichy Dercos Şampuan",
+    "old_price": "1.799 TL",
+    "new_price": "1.190,49 TL",
+    "discount_pct": "-34%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B004SBLR4U?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 397 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/vichy_dercos__ampuan_db45a5c2.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "10.11.2026 17:06"
+  },
+  {
     "id": "deal_1794325118_63",
     "deal_code": "#171",
     "title": "SoundPEATS Air6 HS Hi-Res",

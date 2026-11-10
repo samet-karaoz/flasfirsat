@@ -994,8 +994,8 @@
     "date_added": "13.10.2026 22:11",
     "category": "gaming",
     "deal_code": "#108",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi"
   },
   {
     "id": "deal_1791917454_7",

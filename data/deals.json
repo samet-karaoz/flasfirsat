@@ -508,8 +508,8 @@
     "coupon_info": "",
     "category": "hardware",
     "image_url": "assets/products/huawei_matebook_d16__i5_1_9cddaebe.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 20:26"
   },
   {
@@ -603,8 +603,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/logitech_g305_lightspeed__0ef2e425.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "01.11.2026 15:02"
   },
   {
@@ -641,8 +641,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_quencher_h2_0_flo_ee96145e.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "24.10.2026 22:17"
   },
   {

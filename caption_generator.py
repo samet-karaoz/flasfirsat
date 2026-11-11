@@ -59,7 +59,7 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
 5. Eylem Çağrısı (Samimi Etkileşim Kancası):
    - "📌 Fiyat tekrar uçmadan videoyu KAYDET, lazım olur diye arkadaşına GÖNDER! ✈️"
    - "💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇"
-   - "🔗 Ürün bağlantısı Hikayemizde (Story) ve profilimizdeki bağlantıda aktif!"
+   - "🔗 Ürün bağlantısı kanal/profil açıklamamızdaki bağlantıda (BİO) aktif!"
    - KESİNLİKLE AÇIKLAMAYA LİNK (URL / HTTP / HTTPS / WWW) YAZMA! Instagram ve TikTok açıklamalarında linkler tıklanamaz.
 6. KESİNLİKLE EN FAZLA 5 ETİKET (HASHTAG LİMİTİ):
    - Başta yer alan '#işbirliği #reklam' dahil olmak üzere açıklamada TOPLAMDA EN FAZLA 5 ETİKET bulunabilir.
@@ -216,7 +216,7 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         f"{coupon_line}"
         f"{code_line}\n"
         f"💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n"
-        f"🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n"
+        f"🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n"
         f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n"
         f"#indirim #fırsat #keşfet"
     )

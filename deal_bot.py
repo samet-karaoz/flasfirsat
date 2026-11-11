@@ -258,27 +258,18 @@ def process_deal_to_reel(
         if attempt > 1:
             print(f"\n🔄 [Auto-Repair] Deneme {attempt}/{max_attempts}: Onarılmış metinlerle yeniden derleniyor...")
 
-        # 1a. Instagram / TikTok Kademeli Hareketli Viral Video Derle
-        print("[1/2] 🎥 Kademeli Hareketli Viral Video (Instagram Reels / TikTok) derleniyor...")
-        ok_ig = build_motion_deal_video(
+        # 1. YouTube Shorts & TikTok Kademeli Hareketli Viral Video Derle (Tek Render - %50 Daha Hızlı)
+        print("[1/2] 🎥 Kademeli Hareketli Viral Video (YouTube Shorts & TikTok) derleniyor...")
+        ok_vid = build_motion_deal_video(
             deal=deal,
             meme_name=chosen_meme,
             output_filename=video_filename,
-            cta_type="instagram",
-            reaction_text=deal.get("reaction_text")
-        )
-
-        # 1b. YouTube Shorts Özel Videosu Derle (YouTube CTA Bandı ile)
-        print("[1/2] 🎥 YouTube Shorts Özel Videosu derleniyor...")
-        ok_yt = build_motion_deal_video(
-            deal=deal,
-            meme_name=chosen_meme,
-            output_filename=yt_video_filename,
             cta_type="youtube",
             reaction_text=deal.get("reaction_text")
         )
+        youtube_video_path = video_path
 
-        if not ok_ig or not ok_yt:
+        if not ok_vid:
             print("[Deal Bot] ⚠️ Video derleme hatası, tekrar deneniyor...")
             continue
 
@@ -325,15 +316,7 @@ def process_deal_to_reel(
     with open(caption_path, "w", encoding="utf-8") as f:
         f.write(caption_text)
 
-    # 3b. 1080x1920 Dikey Instagram Story Kartı Üret
     story_card_path = None
-    try:
-        from story_composer import create_story_card
-        story_target = os.path.join(OUTPUT_DIR, f"{base_name}_story.jpg")
-        story_card_path = create_story_card(deal, output_path=story_target)
-        print(f"📸 [Story Composer] Story kartı hazırlandı: {story_card_path}")
-    except Exception as es:
-        print(f"[Deal Bot] Story kartı üretim uyarısı: {es}")
 
     # Geçmişe kaydet (Hem URL hem ürün başlığı kaydedilir, mükerrer paylaşım 0'a indirilir)
     sig = get_deal_sig(deal)

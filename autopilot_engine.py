@@ -249,14 +249,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         result["youtube_video_path"] = youtube_video_path
         result["caption_text"] = caption_text
 
-        # Instagram Story Görselini Oluştur (Hem testte hem yayında hazır olsun)
         story_img = None
-        try:
-            from story_composer import create_story_card
-            story_img = create_story_card(deal)
-            result["story_image_path"] = story_img
-        except Exception as est:
-            print(f"[Autopilot Engine] Story kartı oluşturma uyarısı: {est}")
 
         if dry_run:
             print("\n[Autopilot Engine] 🧪 DRY-RUN Aktif: Sosyal medya ve Telegram yayınlama adımları atlandı.")

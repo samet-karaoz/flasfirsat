@@ -169,15 +169,27 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             )
 
         if not candidates:
-            print("[Autopilot Engine] ⚠️ %25 üzeri taze Amazon fırsatı bulunamadı. Genel kanallara bakılıyor...")
+            print(f"[Autopilot Engine] ⚠️ %25 üzeri taze fırsat bulunamadı ({hunt_cat.upper()}). Eşik -%15 yapılarak taranıyor...")
             candidates = hunt_best_deals(
                 limit=5,
-                platform="all",
-                category="all",
+                platform="amazon",
+                category=hunt_cat,
                 exclude_urls=history,
                 exclude_subtypes=recent_subs,
                 exclude_brands=recent_brands,
-                min_discount=20
+                min_discount=15
+            )
+
+        if not candidates and target_platform == "tiktok":
+            print("[Autopilot Engine] ⚠️ TikTok için alternatif F/P Sneaker & Moda taranıyor...")
+            candidates = hunt_best_deals(
+                limit=5,
+                platform="amazon",
+                category="fashion",
+                exclude_urls=history,
+                exclude_subtypes=recent_subs,
+                exclude_brands=recent_brands,
+                min_discount=15
             )
 
         if not candidates:

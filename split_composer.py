@@ -134,11 +134,13 @@ WOMEN_KEYWORDS = [
     "maşa", "epilatör", "epilasyon", "ağda", "parfüm", "parfümeri", "manikür", "pedikür",
     "oje", "makyaj", "şampuan", "saç kremi", "saç bakım", "vücut losyonu", "kolajen",
     "dudak balmı", "lip gloss", "tint", "kirpik", "kaş wax", "bb krem", "cc krem",
-    "saç köpüğü", "arganyağı", "argan", "biberiye yağı", "saç şekillendirici"
+    "saç köpüğü", "arganyağı", "argan", "biberiye yağı", "saç şekillendirici",
+    "edt", "edp", "eau de", "body mist", "vücut spreyi", "dudak parlatıcı", "dudak yağı",
+    "omuz çantası", "kol çantası", "victoria's secret", "privacy gold women", "vichy"
 ]
 
 WOMEN_CATEGORIES = [
-    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim"
+    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim", "parfum", "parfüm", "parfümeri"
 ]
 
 def is_women_deal(title: str = "", category: str = "") -> bool:
@@ -146,6 +148,8 @@ def is_women_deal(title: str = "", category: str = "") -> bool:
     cat_low = (category or "").lower().strip()
     title_low = (title or "").lower().strip()
     
+    if "kadın" in title_low or "women" in title_low:
+        return True
     if any(c in cat_low for c in WOMEN_CATEGORIES):
         return True
     for kw in WOMEN_KEYWORDS:

@@ -32,13 +32,16 @@ ZORUNLU KURALLAR:
 5. Başında veya sonunda gereksiz tırnak, emoji, ön ek veya açıklama olmasın. Sadece tek satır metni döndür.
 
 Örnek Çıktılar:
-- Tost Makinesi: 6 DİLİM DÖKÜM GRANİT IZGARA!
-- Kamera: 2K 360° GECE GÖRÜŞLÜ AKILLI KAMERA!
-- Monitör: 200Hz 0.5ms FAST IPS GAMING EKRAN!
-- Mousepad: 90x40 CM SU GEÇİRMEZ MİKRO DOKUMA!
-- Airfryer: 8L DİJİTAL DOKUNMATİK EKRAN!
-- Termos: 48 SAAT ISI KORUMALI ÇELİK VAKUM!
-- Klavye: HOT-SWAP RGB GASKET MEKANİK!
+- Sneaker: ORİJİNAL RAHAT TABAN SNEAKER!
+- Parfüm: KALICI ETKİ & İMZA PARFÜM KOKUSU!
+- Kol Saati: SU GEÇİRMEZ RETRO KLASİK TASARIM!
+- Çanta: SUYA DAYANIKLI GENİŞ SIRT ÇANTASI!
+- Hoodie: %100 PAMUKLU RAHAT KESİM HOODIE!
+- Kulaklık: AKTİF GÜRÜLTÜ ENGELLEME & NET SES!
+- Klavye: HOT-SWAP RGB MEKANİK OYUNCU KLAVYESİ!
+- Mouse: HAFİF KABLOSUZ HIZLI SENSÖR!
+- Monitör: 240HZ FAST IPS OYUNCU EKRANI!
+- Projektör: TAŞINABİLİR FULL HD SİNEMA KEYFİ!
 
 Ürün Başlığı: {title}
 Ürün Detayları/Teknik Veriler:
@@ -57,9 +60,29 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
                 return clean.upper()
     except Exception as e:
         print(f"[Verifier] Gemini killer hook üretme uyarısı: {e}")
-    # Deterministik Killer Hook Yedeği (Gemini kotası doluysa gerçek özelliklerden üret)
+    # Deterministik Killer Hook Yedeği (Kategoriye ve teknik özelliklere tam uyumlu)
     t_low = (title or "").lower()
     combined = f"{title} {raw_specs}".lower()
+    if any(k in t_low for k in ["parfüm", "eau de", "edt", "edp"]):
+        return "KALICI ETKİ & İMZA PARFÜM KOKUSU!"
+    if any(k in t_low for k in ["body mist", "vücut spreyi"]):
+        return "FERAH & KALICI VÜCUT SPREYİ!"
+    if any(k in t_low for k in ["ayakkabı", "sneaker", "koşu ayakkabısı", "spor ayakkabı"]):
+        return "ORİJİNAL HAFİF & RAHAT TABAN SNEAKER!"
+    if any(k in t_low for k in ["saat", "casio", "g-shock", "edifice", "kol saati"]):
+        return "SU GEÇİRMEZ RETRO KLASİK TASARIM!"
+    if any(k in t_low for k in ["çanta", "sırt çantası", "duffle", "omuz çantası"]):
+        return "SUYA DAYANIKLI GENİŞ HACİMLİ ÇANTA!"
+    if any(k in t_low for k in ["cüzdan", "kartlık"]):
+        return "HAKİKİ DERİ ÇOK BÖLMELİ CÜZDAN!"
+    if any(k in t_low for k in ["hoodie", "sweatshirt", "polar", "eşofman"]):
+        return "%100 PAMUKLU RAHAT KESİM HOODIE!"
+    if any(k in t_low for k in ["projektör", "projeksiyon"]):
+        return "TAŞINABİLİR FULL HD EV SİNEMASI!"
+    if any(k in t_low for k in ["monitör lambası", "ekran lambası"]):
+        return "GÖZ YORMAYAN ASİMETRİK EKRAN IŞIĞI!"
+    if any(k in t_low for k in ["maskara", "rimel", "lip gloss", "ruj", "fondöten"]):
+        return "GÜN BOYU KALICI MAKYAJ ETKİSİ!"
     if "mousepad" in t_low or "mouse pad" in t_low or "glide" in t_low:
         return "KAYMAZ TABAN MİKRO DOKUMA MOUSEPAD!"
     if "mouse" in t_low or "fare" in t_low:
@@ -74,10 +97,6 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
         return "YÜKSEK HZ IPS OYUNCU MONİTÖRÜ!"
     if "kol" in t_low or "gamepad" in t_low or "dualsense" in t_low or "controller" in t_low:
         return "KABLOSUZ HASSAS OYUN KOLU!"
-    if "kahve" in t_low or "espresso" in t_low or "moka" in t_low:
-        return "GERÇEK ESPRESSO & KAHVE LEZZETİ!"
-    if "termos" in t_low or "stanley" in t_low or "matara" in t_low:
-        return "PASLANMAZ ÇELİK VAKUM İZOLASYON!"
     if "spf" in combined or "güneş" in combined or "serum" in combined or "nemlendirici" in combined or "şampuan" in t_low:
         return "DERMATOLOJİK GÜNLÜK BAKIM!"
     return "ORİJİNAL AMAZON TR FIRSATI!"
@@ -409,12 +428,10 @@ def verify_deal_before_publish(deal: dict) -> dict:
         chosen_old = 0.0
         source_lbl = ""
         # En az %10 fiyat farkı olmalı, aksi halde eski fiyat olarak kabul edilemez
+        # DÜRÜSTLÜK KURALI: Uydurma/tahmini taranan eski fiyatlar ASLA kabul edilmez! Yalnızca Amazon canlı üstü çizili liste fiyatı veya DB geçmiş fiyatı geçerlidir.
         if real_strike > 0 and real_strike >= live_val * 1.10:
             chosen_old = real_strike
             source_lbl = "Gerçek Amazon Liste Fiyatı"
-        elif orig_old_val > 0 and orig_old_val >= live_val * 1.10:
-            chosen_old = orig_old_val
-            source_lbl = "Taranan Piyasa/Liste Fiyatı"
         elif db_prev > 0 and db_prev >= live_val * 1.15:
             chosen_old = db_prev
             source_lbl = "Veritabanı Geçmiş Fiyatı"
@@ -429,6 +446,12 @@ def verify_deal_before_publish(deal: dict) -> dict:
             deal["old_price"] = ""
             deal["has_verified_old_price"] = False
             print(f"[Doğrulama] ℹ️ Eski fiyat bulunamadı veya mevcut fiyata çok yakın. Tek fiyat olarak işlenecek.")
+
+        coupon_tl = v_res.get("coupon_amount_tl", 0.0)
+        # DÜRÜSTLÜK KONTROLÜ: Ne doğrulanmış eski fiyat ne de kupon indirimi varsa bu bir indirim değildir!
+        if not deal.get("has_verified_old_price") and coupon_tl <= 0:
+            print(f"[Doğrulama] ❌ GERÇEK İNDİRİM VEYA KUPON BULUNAMADI! Dürüstlük kuralı (deal-truthfulness) gereği paylaşım iptal ediliyor: {deal.get('title')}")
+            return {"valid": False, "reason": "Gerçek indirim veya kupon bulunamadı (normal liste fiyatı)"}
 
         # Gerçek Satıcı Rozeti
         deal["seller_badge"] = v_res.get("seller_badge", "Amazon TR")

@@ -504,8 +504,12 @@ def calculate_deal_viral_score(deal: dict) -> float:
         "playstation", "ps5", "xbox", "gamepad", "kolu",
         "razer", "logitech", "steelseries", "hyperx", "corsair", "asus rog",
         "kulaklık", "headset", "mouse", "klavye",
-        "kahve", "espresso", "delonghi", "philips", "nespresso",
-        "robot", "süpürge", "dyson", "roborock", "dreame",
+        "ayakkabı", "sneaker", "adidas", "puma", "nike", "under armour", "skechers",
+        "parfüm", "edp", "edt", "body mist", "calvin klein", "versace", "davidoff", "slazenger", "privacy",
+        "casio", "g-shock", "edifice", "saat",
+        "çanta", "sırt çantası", "cüzdan", "eastpak", "herschel",
+        "hoodie", "sweatshirt", "polar", "columbia", "jack & jones", "levi's",
+        "projektör", "projeksiyon", "monitör lambası", "maskara", "lip gloss",
         "anker", "jbl", "sony", "marshall",
         "lenovo", "legion", "msi", "acer nitro", "hp victus"
     ]
@@ -643,7 +647,8 @@ def _deterministic_analyze_amazon_deal(raw_title: str, raw_price: str, prod_url:
     short_title = _build_short_clean_title(raw_title)
     old_p_val = 0.0
 
-    # Canlı ürün sayfasından gerçek üstü çizili fiyatı (basisPrice) sorgula
+    # Canlı ürün sayfasından gerçek üstü çizili fiyatı (basisPrice) veya kuponu sorgula
+    coupon_amount = 0.0
     try:
         from product_verifier import verify_amazon_product
         v_live = verify_amazon_product(prod_url)
@@ -651,23 +656,23 @@ def _deterministic_analyze_amazon_deal(raw_title: str, raw_price: str, prod_url:
             return None
         strike = float(v_live.get("real_strike_val") or 0.0)
         live_p = float(v_live.get("live_price_val") or 0.0)
+        coupon_amount = float(v_live.get("coupon_amount_tl") or 0.0)
         if live_p > 0:
             new_p_val = live_p
             raw_price = f"{int(new_p_val):,} TL".replace(",", ".")
-        if strike >= new_p_val * 1.15:
+        if strike >= new_p_val * 1.10:
             old_p_val = strike
+        elif coupon_amount > 0:
+            old_p_val = new_p_val + coupon_amount
     except Exception:
         pass
 
-    # Eğer sayfada üstü çizili fiyat yoksa piyasa liste fiyatı (MSRP) referansını hesapla
-    if old_p_val < new_p_val * 1.15:
-        factor = 0.71 if is_t1 else 0.74
-        old_p_val = round((new_p_val / factor) / 10.0) * 10.0 - 1.0
-        if old_p_val <= new_p_val:
-            old_p_val = round(new_p_val * 1.35)
+    # DÜRÜSTLÜK İLKESİ (deal-truthfulness): Sayfada gerçek indirim veya kupon yoksa sahte liste fiyatı uydurma!
+    if old_p_val < new_p_val * 1.10 and coupon_amount <= 0:
+        return None
 
-    pct = int(round(((old_p_val - new_p_val) / old_p_val) * 100))
-    if pct < 15:
+    pct = int(round(((old_p_val - new_p_val) / old_p_val) * 100)) if old_p_val > new_p_val else 0
+    if pct < 15 and coupon_amount <= 0:
         return None
 
     old_price_str = f"{int(old_p_val):,} TL".replace(",", ".")
@@ -996,24 +1001,24 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
 
             print(f"[Deal Hunter] Aday Ürün Analiz Ediliyor ({cat_name}): {raw_title[:45]} | {raw_price}")
 
-            prompt = f"""Şu popüler Amazon Türkiye ürününün gerçek piyasa değerini, indirimini ve sosyal medyada satın alınma cazibesini analiz et:
+            prompt = f"""Şu popüler Amazon Türkiye ürününün başlığını temizle ve sosyal medyada satın alınma cazibesini puanla:
 Ürün: {raw_title}
 Amazon Satış Fiyatı: {raw_price}
 
 GÖREV:
-1. Bu ürünün Türkiye teknoloji/perakende pazarındaki gerçek piyasa / tavsiye edilen liste satış fiyatını (MSRP) belirle.
-2. Amazon fiyatı ({raw_price}) ile piyasa liste fiyatı arasındaki indirim oranını gerçekçi hesapla.
-3. VİTRİN & ARZU TESTİ (desirability_score: 1-10): Bu ürün Instagram Reels'te paylaşıldığında insanların "Oha çok iyi ürün/marka, bu fiyata kaçmaz!" deyip satın almak isteyeceği arzu edilen, havalı ve popüler bir ürün mü? Yoksa kimsenin heyecanlanmayacağı sıkıcı, tuhaf, niş veya sıradan bir ürün mü? (Sadece gerçek anlamda ilgi çekici, insanların görünce almak isteyeceği ürünlere 8, 9 veya 10 puan ver; sıradan/saçma ürünlere 1-6 ver!)
+1. Ürünün maksimum 28 karakterlik, net ve temiz marka + model başlığını yaz (Asla uzun e-ticaret metni bırakma!).
+2. DÜRÜSTLÜK KURALI (deal-truthfulness): Sayfada gerçek indirim yoksa kafadan eski piyasa fiyatı uydurma!
+3. VİTRİN & ARZU TESTİ (desirability_score: 1-10): Bu ürün Shorts ve TikTok'ta paylaşıldığında insanların "Bu fiyata kaçmaz!" deyip sepete atacağı popüler bir ürün mü? (Gerçekten cazip ürünlere 8-10, sıradan/ilgisiz ürünlere 1-6 ver).
 
 Şu JSON formatında döndür:
 {{
-  "title": "Ürünün kısa, vurucu ve net adı (maksimum 30 karakter, örn: Asus TUF Monitör, Stanley Termos, Razer Basilisk Mouse vb.)",
-  "old_price": "Türkiye piyasa/liste fiyatı (örn: 2.499 TL)",
+  "title": "Ürünün kısa, vurucu ve net adı (maksimum 28 karakter, örn: Adidas Advantage Sneaker, Casio Retro Saat, JBL Wave Flex vb.)",
+  "old_price": "",
   "new_price": "{raw_price}",
-  "discount_pct": "Hesaplanan indirim yüzdesi (örn: -38% veya -45%)",
+  "discount_pct": "",
   "desirability_score": 9,
-  "badge": "İndirim %45 üzeriyse 'DİP FİYAT', %35 üzeriyse 'DEV İNDİRİM', diğerinde 'AMAZON FIRSATI'",
-  "hook": "Kullanıcıların neden bu ürüne akın ettiğini anlatan tek cümle"
+  "badge": "AMAZON FIRSATI",
+  "hook": "Kullanıcıların bu ürünü neden kaçırmaması gerektiğini anlatan tek cümle"
 }}
 """
             deal_data = call_gemini(prompt, json_mode=True)

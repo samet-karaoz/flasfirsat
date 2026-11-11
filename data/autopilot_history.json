@@ -2094,5 +2094,37 @@
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261110_183636_razer_ornata_v3_tenkeyless_youtube.mp4",
     "caption_text": "⚡ Razer Ornata V3 Tenkeyless - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n❌ Eski Fiyat: 3.239 TL\n\n✅ Satış Fiyatı: 2.299 TL (-29% İndirim)\n\n🔢 Fırsat Kodu: 173 (Sitede arama kutusuna 173 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet",
     "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_29_amz_B0CCYX7BYL.jpg.jpg"
+  },
+  {
+    "timestamp": "2026-11-11 08:06:20",
+    "slot": "11:00 YouTube Sabah F/P",
+    "target_platform": "youtube",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/o3nCXPEGRF8"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Attack Shark X11 Oyuncu Faresi",
+      "new_price": "1.565,22 TL",
+      "old_price": "2.499 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0D3D5BKN2?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261111_080653_attack_shark_x11_oyuncu_faresi.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261111_080653_attack_shark_x11_oyuncu_faresi_youtube.mp4",
+    "caption_text": "🚀 Attack Shark X11 Oyuncu Faresi - Bunu Türkiye'de kimse bilmiyor!\n#işbirliği #reklam\n\nGördüğüm an siparişi patlattığım, hayatı aşırı kolaylaştıran o efsane alet dip fiyata indi!\n\n❌ Eski Fiyat: 2.499 TL\n\n✅ Satış Fiyatı: 1.565,22 TL (-37% İndirim)\n\n🔢 Fırsat Kodu: 174 (Sitede arama kutusuna 174 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an Hikayemizde (Story) ve profilimizdeki bağlantıda aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet",
+    "story_image_path": "/home/runner/work/flasfirsat/flasfirsat/temp/story_37_amz_B0D3D5BKN2.jpg.jpg"
   }
 ]

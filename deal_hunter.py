@@ -44,7 +44,7 @@ BORING_REGEX = re.compile(
     r"tıraş\s*başlığı|fırça\s*başlığı|yedek\s*başlık|diş\s*fırçası\s*başlığı|şarj\s*kiti|oyun\s*ve\s*şarj|"
     r"bilek\s*destek|monitör\s*tutucu|monitör\s*kolu|monitör\s*stand|laptop\s*stand|laptop\s*sehpa|notebook\s*soğutucu|"
     r"kahve|espresso|moka\s*pot|bialetti|lattego|nespresso|çay\s*makine|çaycı|tost\s*makine|blender|mutfak\s*robotu|"
-    r"terlik|sandalet|çorap|iç\s*çamaşır|"
+    r"terlik|sandalet|çorap|iç\s*çamaşır|\bslip\b|lohusa|emzirme|sütyen|çakmak\s*sıvısı|cam\s*şişe\s*su|maskot\s*su|"
     r"kolonya|bidon|aseton|makyaj\s*pamuğu|kulak\s*çubuğu|tıraş\s*köpüğü|tıraş\s*jeli|"
     r"conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
@@ -94,6 +94,7 @@ TIER_1_BRANDS = [
     "nintendo", "playstation", "dualsense", "xbox", "casio", "garmin", "huawei", "honor", "anker", "north bayou",
     "keychron", "epomaker", "ajazz", "attack shark", "wraith", "aula", "fifine", "elgato", "rode", "shure",
     "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "salomon", "columbia", "asics",
+    "levi's", "jack & jones", "tommy hilfiger", "guess", "eastpak", "herschel", "lorus", "seiko", "g-shock",
     "qcy", "soundpeats", "klasse", "royal kludge", "gamesir", "8bitdo",
     "calvin klein", "versace", "davidoff", "burberry", "hugo boss", "armani", "victoria's secret", "slazenger", "privacy", "jagler", "bargello", "rebul", "nyx", "kiko", "pastel", "flormar", "golden rose", "vichy",
     "the purest solutions", "l'oreal", "maybelline", "cerave", "bioderma", "la roche-posay", "garnier", "nivea", "bioxcin", "opalescence", "marvis"
@@ -140,7 +141,11 @@ MASS_APPEAL_PRODUCT_REGEX = re.compile(
     r"hoparlör|speaker|soundbar|"
     r"akıllı\s*saat|smart\s*watch|smartwatch|akıllı\s*bileklik|galaxy\s*watch|apple\s*watch|watch\s*fit|mi\s*band|"
     r"powerbank|power\s*bank|taşınabilir\s*şarj|"
-    r"ayakkabı|sneaker|koşu\s*ayakkabısı|spor\s*ayakkabı|yürüyüş\s*ayakkabısı|basketbol\s*ayakkabısı|tenis\s*ayakkabısı|"
+    r"ayakkabı|sneaker|koşu\s*ayakkabısı|spor\s*ayakkabı|yürüyüş\s*ayakkabısı|basketbol\s*ayakkabısı|tenis\s*ayakkabısı|outdoor\s*ayakkabı|"
+    r"kol\s*saati|erkek\s*saat|kadın\s*saat|dijital\s*saat|\bcasio\b|g-shock|edifice|"
+    r"sırt\s*çantası|omuz\s*çantası|spor\s*çanta|\bduffle\b|bel\s*çantası|\bcüzdan(ı)?\b|\bkartlık\b|"
+    r"sweatshirt|\bhoodie\b|kapüşonlu|\bpolar\b|eşofman|\bjogger\b|"
+    r"projektör|projeksiyon|monitör\s*lambası|ekran\s*lambası|ambiyans\s*aydınlatma|rgb\s*şerit|"
     r"\btermos\b|quencher|iceflow|\bmatara\b|termos\s*bardak|"
     r"robot\s*süpürge|dikey\s*süpürge|şarjlı\s*süpürge|kablosuz\s*süpürge|"
     r"\bmouse\b|\bfare(si)?\b|\bklavye(si)?\b|\bkeyboard\b|mouse\s*pad|mousepad|"
@@ -507,14 +512,14 @@ def calculate_deal_viral_score(deal: dict) -> float:
     if any(k in title for k in VIRAL_KEYWORDS):
         score += 30
 
-    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Tatlı Nokta: 350 TL - 2.200 TL)
-    # Sosyal medyada insanların anında ve düşünmeden alabileceği uygun fiyatlara öncelik ver
-    if 350 <= new_p <= 2200:
-        score += 35.0  # Anında satın alma tatlı noktası (+35 Puan)
-    elif 2200 < new_p <= 2900:
-        score += 15.0  # Makul orta bütçe
-    elif new_p > 3500:
-        score -= 50.0  # Aşırı pahalı ürün cezası (-50 Puan: sosyal medyada anlık satışı zor)
+    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Altın Nokta: 250 TL - 1.500 TL, Tavan: 2.250 TL)
+    # Sosyal medyada izleyicinin düşünmeden anında sepete atabileceği ulaşılabilir F/P fiyatlara en yüksek önceliği ver
+    if 250 <= new_p <= 1500:
+        score += 45.0  # Altın Dürtüsel Satın Alma Bandı (+45 Puan)
+    elif 1500 < new_p <= 2250:
+        score += 15.0  # Makul orta bütçe (Sneaker / Klavye / Kulaklık tavanı)
+    elif new_p > 2250:
+        score -= 80.0  # Pahalı ürün cezası (2.250 TL üzeri ürünler sosyal medyada anlık satılmaz)
     elif new_p < 250:
         score -= 30.0  # Çok ucuz/önemsiz sarf malzemesi cezası
 
@@ -524,8 +529,8 @@ def calculate_deal_viral_score(deal: dict) -> float:
 
     return score
 
-MIN_PRODUCT_PRICE_TL = 250   # 250 TL alt sınır (The Purest Solutions, kaliteli bakım/aksesuarlar için)
-MAX_PRODUCT_PRICE_TL = 3200  # 3.200 TL üst sınır (İmpulsif/hızlı satın alma tavanı - pahalı ürünleri engeller)
+MIN_PRODUCT_PRICE_TL = 250   # 250 TL alt sınır
+MAX_PRODUCT_PRICE_TL = 2250  # 2.250 TL kesin üst sınır (Kimse Shorts/TikTok kaydırırken 3.000 TL+ ürün almaz)
 
 def detect_store(url: str, text: str = "") -> str:
     """Ürün linkinden veya metninden mağazayı (Trendyol, Hepsiburada, Amazon TR) tespit eder."""
@@ -708,6 +713,8 @@ AMAZON_CATALOG_SOURCES = [
     ("ELEKTRONİK", "https://www.amazon.com.tr/gp/bestsellers/electronics"),
     ("PATLAYAN_ELEKTRONİK", "https://www.amazon.com.tr/gp/movers-and-shakers/electronics"),
     ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
+    ("MODA_CANTA_SAAT_HOODIE", "https://www.amazon.com.tr/gp/bestsellers/fashion/69340196031"),
+    ("SPOR_OUTDOOR_CANTA", "https://www.amazon.com.tr/gp/bestsellers/sporting-goods"),
     ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031"),
     ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
     ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
@@ -779,6 +786,8 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             ("PATLAYAN_GAMING", "https://www.amazon.com.tr/gp/movers-and-shakers/videogames"),
             ("PATLAYAN_BİLGİSAYAR", "https://www.amazon.com.tr/gp/movers-and-shakers/computers"),
             ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
+            ("MODA_CANTA_SAAT_HOODIE", "https://www.amazon.com.tr/gp/bestsellers/fashion/69340196031"),
+            ("SPOR_OUTDOOR_CANTA", "https://www.amazon.com.tr/gp/bestsellers/sporting-goods"),
             ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031")
         ]
         _t_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_tech_list)

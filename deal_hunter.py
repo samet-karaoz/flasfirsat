@@ -45,6 +45,7 @@ BORING_REGEX = re.compile(
     r"bilek\s*destek|monitör\s*tutucu|monitör\s*kolu|monitör\s*stand|laptop\s*stand|laptop\s*sehpa|notebook\s*soğutucu|"
     r"kahve|espresso|moka\s*pot|bialetti|lattego|nespresso|çay\s*makine|çaycı|tost\s*makine|blender|mutfak\s*robotu|"
     r"terlik|sandalet|çorap|iç\s*çamaşır|"
+    r"kolonya|bidon|aseton|makyaj\s*pamuğu|kulak\s*çubuğu|tıraş\s*köpüğü|tıraş\s*jeli|"
     r"conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
 )
@@ -94,6 +95,7 @@ TIER_1_BRANDS = [
     "keychron", "epomaker", "ajazz", "attack shark", "wraith", "aula", "fifine", "elgato", "rode", "shure",
     "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "salomon", "columbia", "asics",
     "qcy", "soundpeats", "klasse", "royal kludge", "gamesir", "8bitdo",
+    "calvin klein", "versace", "davidoff", "burberry", "hugo boss", "armani", "victoria's secret", "slazenger", "privacy", "jagler", "bargello", "rebul", "nyx", "kiko", "pastel", "flormar", "golden rose", "vichy",
     "the purest solutions", "l'oreal", "maybelline", "cerave", "bioderma", "la roche-posay", "garnier", "nivea", "bioxcin", "opalescence", "marvis"
 ]
 
@@ -146,6 +148,8 @@ MASS_APPEAL_PRODUCT_REGEX = re.compile(
     r"oyun\s*kolu|\bgamepad\b|\bdualsense\b|wireless\s*controller|oyun\s*kontrolcü|direksiyon\s*seti|"
     r"\blaptop\b|\bnotebook\b|taşınabilir\s*ssd|nvme\s*ssd|"
     r"\bserum(u)?\b|yüz\s*kremi|nemlendirici|güneş\s*kremi|yüz\s*temizleme|\btonik\b|\bpeeling\b|\bşampuan(ı)?\b|saç\s*bakım|saç\s*maskesi|cilt\s*bakım|"
+    r"parfüm|eau\s*de\s*parfum|eau\s*de\s*toilette|\bedp\b|\bedt\b|vücut\s*spreyi|body\s*mist|deodorant\s*set|"
+    r"maskara|rimel|\bruj\b|lip\s*gloss|dudak\s*parlatıcı|dudak\s*yağı|kapatıcı|concealer|fondöten|\ballık\b|aydınlatıcı|highlighter|"
     r"diş\s*fırçası|oral-b|sonicare|"
     r"tıraş\s*makine|traş\s*makine|\boneblade\b|saç\s*kesme\s*makine|sakal\s*kesme|\bepilatör\b|\bipl\b|"
     r"saç\s*kurutma|fön\s*makine|saç\s*düzleştirici|saç\s*şekillendirici|\bairwrap\b|saç\s*maşası)",
@@ -263,6 +267,10 @@ def get_product_subtype(title: str) -> str:
         return "powerbank"
     if any(k in t for k in ["serum", "nemlendirici", "cilt", "tonik", "güneş kremi", "leke karşıtı"]):
         return "skincare"
+    if any(k in t for k in ["parfüm", "edt", "edp", "eau de", "body mist", "vücut spreyi"]):
+        return "perfume"
+    if any(k in t for k in ["maskara", "rimel", "ruj", "lip gloss", "kapatıcı", "fondöten", "allık", "concealer"]):
+        return "makeup"
     if any(k in t for k in ["şampuan", "saç bakım", "saç kremi", "düzleştirici", "airwrap"]):
         return "haircare"
     if any(k in t for k in ["epilatör", "yüz epilatörü", "ipl"]):
@@ -702,6 +710,8 @@ AMAZON_CATALOG_SOURCES = [
     ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
     ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031"),
     ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
+    ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
+    ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),
     ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031")
 ]
 
@@ -746,12 +756,16 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
     elif category == "kitchen":
         url_categories = [("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")]
     elif category in ("beauty", "cosmetics", "care", "skincare"):
-        url_categories = [
+        _b_list = [
             ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
+            ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
+            ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),
             ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031"),
             ("GÜZELLİK_CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty"),
             ("PATLAYAN_GÜZELLİK", "https://www.amazon.com.tr/gp/movers-and-shakers/beauty")
         ]
+        _b_idx = (datetime.now().day + datetime.now().hour) % len(_b_list)
+        url_categories = _b_list[_b_idx:] + _b_list[:_b_idx]
     elif category in ("tech", "gaming_tech"):
         _tech_list = [
             ("KULAKLIKLAR", "https://www.amazon.com.tr/gp/bestsellers/electronics/17471820031"),

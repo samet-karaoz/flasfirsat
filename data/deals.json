@@ -603,8 +603,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/karaca_gastro_gourmet_d_k_ac952adc.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "21.10.2026 19:48"
   },
   {

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794391669_67",
+    "deal_code": "#175",
+    "title": "UA Charged Pursuit 3",
+    "old_price": "2.499 TL",
+    "new_price": "1.395,00 TL",
+    "discount_pct": "-44%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B096917J3M?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 465 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/ua_charged_pursuit_3_7283f367.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "11.11.2026 10:07"
+  },
+  {
     "id": "deal_1794384463_66",
     "deal_code": "#174",
     "title": "Attack Shark X11 Oyuncu Faresi",

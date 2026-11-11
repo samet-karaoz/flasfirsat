@@ -1273,8 +1273,8 @@
     "installment": "3 Taksit x 1.619 TL",
     "category": "gaming",
     "deal_code": "#102",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_logitech_g305",

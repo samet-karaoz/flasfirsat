@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794384463_66",
+    "deal_code": "#174",
+    "title": "Attack Shark X11 Oyuncu Faresi",
+    "old_price": "2.499 TL",
+    "new_price": "1.565,22 TL",
+    "discount_pct": "-37%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0D3D5BKN2?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 522 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/attack_shark_x11_oyuncu_f_eb234559.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "11.11.2026 08:07"
+  },
+  {
     "id": "deal_1794335822_65",
     "deal_code": "#173",
     "title": "Razer Ornata V3 Tenkeyless",

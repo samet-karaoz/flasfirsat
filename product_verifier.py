@@ -83,10 +83,20 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
         return "GÖZ YORMAYAN ASİMETRİK EKRAN IŞIĞI!"
     if any(k in t_low for k in ["maskara", "rimel"]):
         return "EKSTRA HACİM & UZUN KİRPİK ETKİSİ!"
-    if any(k in t_low for k in ["lip gloss", "ruj", "dudak yağı", "dudak parlatıcı"]):
-        return "DOLGUNLAŞTIRICI & PARLAK DUDAK ETKİSİ!"
-    if any(k in t_low for k in ["fondöten", "kapatıcı", "concealer", "allık", "pudra"]):
-        return "GÜN BOYU KALICI MAKYAJ ETKİSİ!"
+    if any(k in t_low for k in ["gloss", "lip gloss", "dudak yağı", "dudak parlatıcı"]):
+        return "DOLGUNLAŞTIRICI & PARLAK VİRAL GLOSS!"
+    if any(k in t_low for k in ["ruj", "dudak kalemi", "tint"]):
+        return "YÜKSEK PİGMENTLİ KALICI RENK ETKİSİ!"
+    if any(k in t_low for k in ["allık", "blush", "glotion"]):
+        return "DOĞAL IŞILTI & KALICI LİKİT ALLIK!"
+    if any(k in t_low for k in ["aydınlatıcı", "highlighter"]):
+        return "DOĞAL IŞILTI & CAM CİLT ETKİSİ!"
+    if any(k in t_low for k in ["kapatıcı", "concealer"]):
+        return "YÜKSEK KAPATICILIK & AYDINLIK ETKİ!"
+    if any(k in t_low for k in ["fondöten", "bb krem", "cc krem", "pudra"]):
+        return "PÜRÜZSÜZ & DOĞAL CİLT BİTİŞİ!"
+    if any(k in t_low for k in ["eyeliner", "göz kalemi"]):
+        return "GÜN BOYU AKMAYAN SUYA DAYANIKLI TASARIM!"
     if "mousepad" in t_low or "mouse pad" in t_low or "glide" in t_low:
         return "KAYMAZ TABAN MİKRO DOKUMA MOUSEPAD!"
     if "mouse" in t_low or "fare" in t_low:

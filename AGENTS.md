@@ -27,11 +27,12 @@ Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral eri
    - Şarjlı diş fırçaları (Oral-B iO / Pro serisi, Philips Sonicare)
    - Kadın cilt ve saç bakımı (The Purest Solutions, CeraVe, Bioderma, La Roche-Posay, L'Oreal)
    - Viral termoslar (Stanley Quencher, IceFlow)
-5. **TikTok Özel Önceliği: Viral Maskara, Göz/Dudak Makyajı & İkonik Parfümler:**
-   - Viral maskara ve rimeller (Maybelline Sky High / Lash Sensational, L'Oreal Telescopic / Panorama, Golden Rose, Essence Lash Princess)
-   - Dudak parlatıcıları, lip gloss ve dudak yağları (Maybelline Lifter Gloss, Kiko Milano, Golden Rose, NYX)
-   - Ulaşılabilir F/P parfümler (Calvin Klein, Davidoff, Slazenger, Privacy, Antonio Banderas)
-   - **Altın Satın Alma Aralığı:** 150 TL - 1.500 TL (TikTok izleyicisinin düşünmeden sepete attığı dürtüsel satın alma bandı; tavan 2.250 TL).
+5. **TikTok & Sosyal Medya Süper Önceliği: Viral Makyaj & Kozmetik Dünyası (Gloss, Maskara, Likit Allık, Kapatıcı):**
+   - **Dudak Makyajı & Gloss:** Lip gloss, dudak yağları, dolgunlaştırıcılar, dudak kalemleri ve lip tintler (Maybelline Lifter Gloss, Kiko Milano, Golden Rose, NYX Fat Oil, Flormar)
+   - **Göz Makyajı & Maskara:** Viral rimeller, suya dayanıklı jel eyelinerlar, kaş sabitleyiciler (Maybelline Sky High / Lash Sensational, L'Oreal Telescopic / Panorama, Essence Lash Princess, Golden Rose)
+   - **Yüz Makyajı & Işıltı:** Likit allıklar, glotion/aydınlatıcılar, yüksek kapatıcılı concealer ve pudralar (L'Oreal Glotion, Maybelline Instant Anti Age Eraser / Fit Me, Revolution Blush)
+   - **Ulaşılabilir F/P İkonik Parfümler:** (Calvin Klein, Davidoff, Slazenger, Privacy, Antonio Banderas)
+   - **Altın Dürtüsel Satın Alma Aralığı:** 100 TL - 1.500 TL (TikTok izleyicisinin 'sepete atıp geçme' refleksini tetikleyen en hızlı satış ve en yüksek dönüşüm bandı; tavan 2.250 TL).
 
 ---
 

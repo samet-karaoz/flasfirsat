@@ -27,9 +27,9 @@ BORING_REGEX = re.compile(
     r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\badaptör(ü)?\b|\bkablo(su)?\b(?!lu)|"
     r"kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme\s*spreyi|temizleme\s*bezi|çorap|askı(lık)?|"
     r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
-    r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık\s*tableti|yumuşatıcı|mendil|pijama|çanta(sı)?|"
+    r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık\s*tableti|yumuşatıcı|mendil|pijama|(?<!sırt\s)(?<!omuz\s)(?<!spor\s)(?<!bel\s)çanta(sı)?|"
     r"tartı(sı)?|terazi(si)?|baskül|ölçüm|termometre|ateş\s*ölçer|"
-    r"saklama\s*kabı|kavanoz|rende|süzgeç|açacak|maşa|spatula|kesme\s*tahtası|sünger|"
+    r"saklama\s*kabı|kavanoz|rende|süzgeç|açacak|maşa|spatula|kesme\s*tahtası|(?<!makyaj\s)sünger|"
     r"flaş\s*bellek|usb\s*bellek|flash\s*bellek|hafıza\s*kartı|sd\s*kart|microsd|flash\s*drive|usb\s*drive|kart\s*okuyucu|"
     r"bebek\s*maması|mama(sı)?|devam\s*sütü|vitamin|omega|balık\s*yağı|takviye|"
     r"bisküvi|kek|gofret|çikolata|cips|makarna|salça|bakliyat|kuruyemiş|çekirdek|ton\s*balığı|baharat|"
@@ -38,7 +38,7 @@ BORING_REGEX = re.compile(
     r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|"
     r"kartuş|toner|koli|kutu|folyo|termal\s*macun|vida|dübel|somun|aparat[ıi]?|"
     r"musluk|duş\s*başlığı|hortum|gider|paspas|mandal|priz|uzatma\s*kablosu|ampul|duy|bant|yapıştırıcı|silikon|"
-    r"defter|kalem|dosya|klasör|zarf|\bkitap\b|roman|dergi|kedi\s*kumu|köpek|tasma|külot|boxer|atlet|eldiven|bere|şemsiye|"
+    r"defter|(?<!göz\s)(?<!dudak\s)(?<!kaş\s)\bkalem(i)?\b|dosya|klasör|zarf|\bkitap\b|roman|dergi|kedi\s*kumu|köpek|tasma|külot|boxer|atlet|eldiven|bere|şemsiye|"
     r"oto\s*kokusu|silecek|bijon|kordon|kayış|"
     r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
     r"tıraş\s*başlığı|fırça\s*başlığı|yedek\s*başlık|diş\s*fırçası\s*başlığı|şarj\s*kiti|oyun\s*ve\s*şarj|"
@@ -154,7 +154,7 @@ MASS_APPEAL_PRODUCT_REGEX = re.compile(
     r"\blaptop\b|\bnotebook\b|taşınabilir\s*ssd|nvme\s*ssd|"
     r"\bserum(u)?\b|yüz\s*kremi|nemlendirici|güneş\s*kremi|yüz\s*temizleme|\btonik\b|\bpeeling\b|\bşampuan(ı)?\b|saç\s*bakım|saç\s*maskesi|cilt\s*bakım|"
     r"parfüm|eau\s*de\s*parfum|eau\s*de\s*toilette|\bedp\b|\bedt\b|vücut\s*spreyi|body\s*mist|deodorant\s*set|"
-    r"maskara|rimel|\bruj\b|lip\s*gloss|dudak\s*parlatıcı|dudak\s*yağı|kapatıcı|concealer|fondöten|\ballık\b|aydınlatıcı|highlighter|"
+    r"maskara|rimel|\bruj\b|\bgloss\b|lip\s*gloss|dudak\s*parlatıcı|dudak\s*yağı|dudak\s*kalemi|kapatıcı|concealer|fondöten|\ballık\b|likit\s*allık|\bblush\b|aydınlatıcı|highlighter|\bglotion\b|eyeliner|göz\s*kalemi|kaş\s*maskara|kaş\s*sabitleyici|sabitleme\s*spreyi|makyaj\s*bazı|bb\s*krem|cc\s*krem|\bpudra\b|far\s*paleti|tint\b|lip\s*tint|lip\s*balm|"
     r"diş\s*fırçası|oral-b|sonicare|"
     r"tıraş\s*makine|traş\s*makine|\boneblade\b|saç\s*kesme\s*makine|sakal\s*kesme|\bepilatör\b|\bipl\b|"
     r"saç\s*kurutma|fön\s*makine|saç\s*düzleştirici|saç\s*şekillendirici|\bairwrap\b|saç\s*maşası)",
@@ -278,10 +278,14 @@ def get_product_subtype(title: str) -> str:
         return "perfume"
     if any(k in t for k in ["maskara", "rimel"]):
         return "mascara"
-    if any(k in t for k in ["lip gloss", "ruj", "dudak yağı", "dudak parlatıcı"]):
+    if any(k in t for k in ["gloss", "lip gloss", "ruj", "dudak yağı", "dudak parlatıcı", "dudak kalemi", "lip tint"]):
         return "lip_makeup"
-    if any(k in t for k in ["kapatıcı", "fondöten", "allık", "concealer", "pudra"]):
+    if any(k in t for k in ["allık", "blush", "glotion", "aydınlatıcı", "highlighter"]):
+        return "blush_highlighter"
+    if any(k in t for k in ["kapatıcı", "concealer", "fondöten", "bb krem", "cc krem", "pudra", "makyaj bazı"]):
         return "face_makeup"
+    if any(k in t for k in ["eyeliner", "göz kalemi", "far paleti", "kaş maskara", "kaş sabitleyici"]):
+        return "eye_makeup"
     if any(k in t for k in ["şampuan", "saç bakım", "saç kremi", "düzleştirici", "airwrap"]):
         return "haircare"
     if any(k in t for k in ["epilatör", "yüz epilatörü", "ipl"]):
@@ -522,23 +526,26 @@ def calculate_deal_viral_score(deal: dict) -> float:
     if any(k in title for k in VIRAL_KEYWORDS):
         score += 30
 
-    # TikTok Viral Kozmetik & Maskara / Dudak Makyajı Bonusu (+35 Puan)
+    # TikTok Viral Makyaj & Kozmetik Dünyası Bonusu (+35 Puan - Gloss, Maskara, Allık, Kapatıcı)
     is_viral_beauty = any(k in title for k in [
         "maskara", "rimel", "sky high", "lash sensational", "telescopic", "panorama",
-        "lip gloss", "dudak yağı", "maybelline", "golden rose", "kiko", "flormar", "essence"
+        "gloss", "lip gloss", "dudak yağı", "dudak parlatıcı", "ruj", "dudak kalemi", "lip tint",
+        "allık", "blush", "glotion", "aydınlatıcı", "highlighter", "kapatıcı", "concealer",
+        "fondöten", "eyeliner", "göz kalemi", "kaş maskarası",
+        "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "essence", "nyx", "revolution", "pastel"
     ])
     if is_viral_beauty:
         score += 35.0
 
-    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Altın Nokta: 150 TL - 1.500 TL, Tavan: 2.250 TL)
-    # Kozmetikte ve F/P aksesuarlarda 150-450 TL arası sosyal medyada düşünmeden sepete atılan en tatlı noktadır
-    if 150 <= new_p <= 1500:
+    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Altın Nokta: 100 TL - 1.500 TL, Tavan: 2.250 TL)
+    # Kozmetikte (gloss, maskara, dudak kalemi) 100-450 TL arası izleyicinin düşünmeden anında sepete attığı altın banddır
+    if 100 <= new_p <= 1500:
         score += 45.0  # Altın Dürtüsel Satın Alma Bandı (+45 Puan)
     elif 1500 < new_p <= 2250:
         score += 15.0  # Makul orta bütçe (Sneaker / Klavye / Kulaklık tavanı)
     elif new_p > 2250:
         score -= 80.0  # Pahalı ürün cezası (2.250 TL üzeri ürünler sosyal medyada anlık satılmaz)
-    elif new_p < 150:
+    elif new_p < 100:
         score -= 40.0  # Çok ucuz sarf malzemesi/vida cezası
 
     # Stanley / Termos Yorgunluğu Koruması (Aynı markanın farklı litre varyasyonlarının sürekli çıkmasını engelle)
@@ -547,7 +554,7 @@ def calculate_deal_viral_score(deal: dict) -> float:
 
     return score
 
-MIN_PRODUCT_PRICE_TL = 150   # 150 TL alt sınır (Kozmetik/Maskara ve F/P ürünler için ideal)
+MIN_PRODUCT_PRICE_TL = 100   # 100 TL alt sınır (Viral Gloss/Makyaj ve F/P ürünler için ideal)
 MAX_PRODUCT_PRICE_TL = 2250  # 2.250 TL kesin üst sınır (Kimse Shorts/TikTok kaydırırken 3.000 TL+ ürün almaz)
 
 def detect_store(url: str, text: str = "") -> str:
@@ -737,6 +744,7 @@ AMAZON_CATALOG_SOURCES = [
     ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031"),
     ("GÖZ_MAKYAJI_MASKARA", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571758031"),
     ("DUDAK_LIP_GLOSS", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571757031"),
+    ("YÜZ_MAKYAJI_ALLIK", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571763031"),
     ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
     ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
     ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),
@@ -784,18 +792,21 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
     elif category == "kitchen":
         url_categories = [("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")]
     elif category in ("beauty", "cosmetics", "care", "skincare"):
-        _b_list = [
+        _top_makeup = [
             ("GÖZ_MAKYAJI_MASKARA", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571758031"),
             ("DUDAK_LIP_GLOSS", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571757031"),
-            ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
-            ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
+            ("YÜZ_MAKYAJI_ALLIK", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571763031"),
             ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),
-            ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031"),
-            ("GÜZELLİK_CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty"),
-            ("PATLAYAN_GÜZELLİK", "https://www.amazon.com.tr/gp/movers-and-shakers/beauty")
         ]
-        _b_idx = (datetime.now().day + datetime.now().hour) % len(_b_list)
-        url_categories = _b_list[_b_idx:] + _b_list[:_b_idx]
+        _other_beauty = [
+            ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
+            ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
+            ("PATLAYAN_GÜZELLİK", "https://www.amazon.com.tr/gp/movers-and-shakers/beauty"),
+            ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031")
+        ]
+        # TikTok ve kadın fırsatlarında 1. öncelik her zaman viral makyajdır (Göz, Dudak/Gloss, Allık)
+        _m_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_top_makeup)
+        url_categories = (_top_makeup[_m_idx:] + _top_makeup[:_m_idx]) + _other_beauty
     elif category in ("tech", "gaming_tech"):
         _tech_list = [
             ("KULAKLIKLAR", "https://www.amazon.com.tr/gp/bestsellers/electronics/17471820031"),

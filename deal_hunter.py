@@ -175,7 +175,9 @@ KNOWN_BRANDS = [
     "the purest solutions", "delonghi", "de'longhi", "anker", "jbl", "sony", "apple",
     "cosori", "xiaomi", "roborock", "dreame", "dyson", "hyperx", "corsair", "asus", "msi",
     "lenovo", "dell", "samsung", "huawei", "oral-b", "braun", "cerave", "bioderma",
-    "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc"
+    "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc",
+    "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "revolution", "nyx", "essence", "pastel", "beaulis",
+    "calvin klein", "versace", "davidoff", "slazenger", "privacy", "casio", "g-shock", "eastpak"
 ]
 
 def extract_brand(title: str) -> str:
@@ -274,8 +276,12 @@ def get_product_subtype(title: str) -> str:
         return "skincare"
     if any(k in t for k in ["parfüm", "edt", "edp", "eau de", "body mist", "vücut spreyi"]):
         return "perfume"
-    if any(k in t for k in ["maskara", "rimel", "ruj", "lip gloss", "kapatıcı", "fondöten", "allık", "concealer"]):
-        return "makeup"
+    if any(k in t for k in ["maskara", "rimel"]):
+        return "mascara"
+    if any(k in t for k in ["lip gloss", "ruj", "dudak yağı", "dudak parlatıcı"]):
+        return "lip_makeup"
+    if any(k in t for k in ["kapatıcı", "fondöten", "allık", "concealer", "pudra"]):
+        return "face_makeup"
     if any(k in t for k in ["şampuan", "saç bakım", "saç kremi", "düzleştirici", "airwrap"]):
         return "haircare"
     if any(k in t for k in ["epilatör", "yüz epilatörü", "ipl"]):
@@ -516,16 +522,24 @@ def calculate_deal_viral_score(deal: dict) -> float:
     if any(k in title for k in VIRAL_KEYWORDS):
         score += 30
 
-    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Altın Nokta: 250 TL - 1.500 TL, Tavan: 2.250 TL)
-    # Sosyal medyada izleyicinin düşünmeden anında sepete atabileceği ulaşılabilir F/P fiyatlara en yüksek önceliği ver
-    if 250 <= new_p <= 1500:
+    # TikTok Viral Kozmetik & Maskara / Dudak Makyajı Bonusu (+35 Puan)
+    is_viral_beauty = any(k in title for k in [
+        "maskara", "rimel", "sky high", "lash sensational", "telescopic", "panorama",
+        "lip gloss", "dudak yağı", "maybelline", "golden rose", "kiko", "flormar", "essence"
+    ])
+    if is_viral_beauty:
+        score += 35.0
+
+    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Altın Nokta: 150 TL - 1.500 TL, Tavan: 2.250 TL)
+    # Kozmetikte ve F/P aksesuarlarda 150-450 TL arası sosyal medyada düşünmeden sepete atılan en tatlı noktadır
+    if 150 <= new_p <= 1500:
         score += 45.0  # Altın Dürtüsel Satın Alma Bandı (+45 Puan)
     elif 1500 < new_p <= 2250:
         score += 15.0  # Makul orta bütçe (Sneaker / Klavye / Kulaklık tavanı)
     elif new_p > 2250:
         score -= 80.0  # Pahalı ürün cezası (2.250 TL üzeri ürünler sosyal medyada anlık satılmaz)
-    elif new_p < 250:
-        score -= 30.0  # Çok ucuz/önemsiz sarf malzemesi cezası
+    elif new_p < 150:
+        score -= 40.0  # Çok ucuz sarf malzemesi/vida cezası
 
     # Stanley / Termos Yorgunluğu Koruması (Aynı markanın farklı litre varyasyonlarının sürekli çıkmasını engelle)
     if "stanley" in title:
@@ -533,7 +547,7 @@ def calculate_deal_viral_score(deal: dict) -> float:
 
     return score
 
-MIN_PRODUCT_PRICE_TL = 250   # 250 TL alt sınır
+MIN_PRODUCT_PRICE_TL = 150   # 150 TL alt sınır (Kozmetik/Maskara ve F/P ürünler için ideal)
 MAX_PRODUCT_PRICE_TL = 2250  # 2.250 TL kesin üst sınır (Kimse Shorts/TikTok kaydırırken 3.000 TL+ ürün almaz)
 
 def detect_store(url: str, text: str = "") -> str:
@@ -721,6 +735,8 @@ AMAZON_CATALOG_SOURCES = [
     ("MODA_CANTA_SAAT_HOODIE", "https://www.amazon.com.tr/gp/bestsellers/fashion/69340196031"),
     ("SPOR_OUTDOOR_CANTA", "https://www.amazon.com.tr/gp/bestsellers/sporting-goods"),
     ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031"),
+    ("GÖZ_MAKYAJI_MASKARA", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571758031"),
+    ("DUDAK_LIP_GLOSS", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571757031"),
     ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
     ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
     ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),
@@ -769,6 +785,8 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         url_categories = [("MUTFAK_YAŞAM", "https://www.amazon.com.tr/gp/bestsellers/kitchen")]
     elif category in ("beauty", "cosmetics", "care", "skincare"):
         _b_list = [
+            ("GÖZ_MAKYAJI_MASKARA", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571758031"),
+            ("DUDAK_LIP_GLOSS", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571757031"),
             ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
             ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
             ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),

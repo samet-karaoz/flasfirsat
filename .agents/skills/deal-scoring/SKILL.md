@@ -12,7 +12,7 @@ Bu skill, botun rastgele veya niş ürün seçmesini engelleyerek her zaman **en
 ## 1. 1. ÖNCELİK VE KURAL: GENİŞ KİTLEYE HİTAP (MASS-APPEAL DIRECTIVE)
 
 Her aday ürünün öncelikle **kitlesel talep ve bilinirlik** filtresinden geçmesi zorunludur:
-- **Hedef Kitle:** Milyonlarca insanın evinde, cebinde, masasında kullanabileceği veya görünce heves edeceği genel tüketici elektroniği, popüler kahve/mutfak aletleri, Stanley termos, gaming ekipmanları.
+- **Hedef Kitle:** Milyonlarca insanın evinde, cebinde, masasında kullanabileceği veya görünce heves edeceği F/P tüketici elektroniği, popüler sneaker modelleri, gaming ekipmanları ve viral maskara/kozmetik ürünleri.
 - **Yasaklı Niş Ürünler:** Sanayi aparatları, yedek parça, filtre kiti, conta, spesifik araba parçası, profesyonel sunucu kablosu gibi dar kitle ürünleri indirim oranı %90 olsa bile **0 puan alır ve elenir.**
 
 ---
@@ -23,7 +23,7 @@ Her aday ürün için 0-100 arasında bir `Deal Score` hesaplanır:
 
 | Kriter | Ağırlık | Açıklama |
 | :--- | :--- | :--- |
-| **Geniş Kitleye Hitap (Kitlesellik)** | **%35 (1. Öncelik)** | Tüketici elektroniği, trend mutfak, popüler gaming ve termos gibi herkesin ilgisini çeken kategoriler tam puan alır. |
+| **Geniş Kitleye Hitap (Kitlesellik)** | **%35 (1. Öncelik)** | Tüketici elektroniği, F/P sneaker, TikTok viral maskara/kozmetik ve popüler gaming gibi herkesin ilgisini çeken kategoriler tam puan alır. |
 | **İndirim Oranı & Derinliği** | **%25** | %30-%50 arası yüksek oranlar ve 500 TL+ net TL tasarrufu. |
 | **Marka Bilinirliği (Tier-1)** | **%20** | A-Sınıfı küresel markalar (Apple, Sony, Philips, Stanley, Logitech, Karaca, Anker vb.). |
 | **Satıcı Güvenilirliği** | **%10** | Doğrudan Amazon TR veya Resmi Distribütör yetkili satıcısı. |

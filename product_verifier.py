@@ -81,7 +81,11 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
         return "TAŞINABİLİR FULL HD EV SİNEMASI!"
     if any(k in t_low for k in ["monitör lambası", "ekran lambası"]):
         return "GÖZ YORMAYAN ASİMETRİK EKRAN IŞIĞI!"
-    if any(k in t_low for k in ["maskara", "rimel", "lip gloss", "ruj", "fondöten"]):
+    if any(k in t_low for k in ["maskara", "rimel"]):
+        return "EKSTRA HACİM & UZUN KİRPİK ETKİSİ!"
+    if any(k in t_low for k in ["lip gloss", "ruj", "dudak yağı", "dudak parlatıcı"]):
+        return "DOLGUNLAŞTIRICI & PARLAK DUDAK ETKİSİ!"
+    if any(k in t_low for k in ["fondöten", "kapatıcı", "concealer", "allık", "pudra"]):
         return "GÜN BOYU KALICI MAKYAJ ETKİSİ!"
     if "mousepad" in t_low or "mouse pad" in t_low or "glide" in t_low:
         return "KAYMAZ TABAN MİKRO DOKUMA MOUSEPAD!"

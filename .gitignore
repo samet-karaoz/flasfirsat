@@ -50,3 +50,5 @@ send_*.py
 
 assets/voice_cache/
 archive/
+
+scratch/

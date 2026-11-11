@@ -21,5 +21,5 @@ Her üretilen ve paylaşılan fırsat için şu veriler kayıt altına alınır:
 
 ## 2. Ağırlık Güncelleme Kuralları (`deal-scoring` Entegrasyonu)
 
-- **Yüksek Kaydetme (Save) Alan Kategoriler:** Stanley/Termos, Gaming Ekipman (Mouse, Kulaklık, Monitör) ve Mutfak/Airfryer ürünlerinde kaydetme oranı ortalamanın üzerindeyse `calculate_deal_viral_score` içinde kategori çarpanı (`+15..+25 puan`) korunur veya artırılır.
+- **Yüksek Kaydetme & Viral Erişim Alan Kategoriler:** TikTok üzerinde Viral Maskara/Göz Makyajı (150-450 TL), F/P Sneaker, Gaming Ekipman (Mouse, Kulaklık, Monitör) ve Parfümlerde kaydetme oranı ortalamanın üzerindeyse `calculate_deal_viral_score` içinde kategori çarpanı (`+15..+25 puan`) korunur veya artırılır.
 - **Düşük Etkileşimli Ürün Filtresi:** Arka arkaya düşük etkileşim alan jenerik/markasız ürünler otomatik olarak elenir; yalnızca bilinen A+ markalar ve doğrulanmış piyasa en ucuz fiyatları önceliklendirilir.

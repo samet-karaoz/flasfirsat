@@ -11,12 +11,14 @@ Bu skill, Türkiye'deki sosyal medya ve e-ticaret kullanıcılarının aktif old
 
 ## 1. Altın Paylaşım Kuşakları (UTC+3 Türkiye Saati)
 
-| Kuşak | İdeal Saat Aralığı | Hedef Kitle Durumu | En İyi Ürün Kategorileri |
-|---|---|---|---|
-| **1. Kuşak (Sabah / Kafein & Ofis)** | **10:00 – 10:45** | İşe/okula başlangıç, masa başı mola | Termos (Stanley), Kahve Makinesi, Ofis/Bilgisayar Aksesuarları, Kişisel Bakım |
-| **2. Kuşak (Öğle Molası - Ana Pik)** | **12:15 – 13:00** | Öğle yemeği ve alışveriş molası | Mutfak & Ev Aletleri (Airfryer, Blender), Süpermarket/Deterjan, Genel Teknoloji |
-| **3. Kuşak (Akşamüstü / Mesai Çıkışı)** | **17:30 – 18:30** | Toplu taşıma, eve dönüş yolu | Kulaklık, Powerbank, Giyim/Ayakkabı, Kamp & Outdoor |
-| **4. Kuşak (Prime Time - Rekor Etkileşim)** | **20:00 – 21:30** | Evde dinlenme, uzun Reels/Shorts kaydırma | Gaming & Setup (Monitör, Mouse, Klavye, PS5), Fiyat Hataları (%40+ Dev İndirimler), TOP 3 Liste Videoları |
+| Kuşak | Saat (TSİ) | Platform | Hedef Kitle & Algoritma Durumu | En İyi Ürün Kategorisi |
+|---|---|---|---|---|
+| **1. Kuşak (Sabah Tech)** | **11:05** | 📺 YouTube Shorts | Masa başı başlangıç, ilk mola | F/P Oyuncu Ekipmanları, Kulaklık, Taşınabilir SSD |
+| **2. Kuşak (Öğle Molası / Makyaj)** | **13:05** | 🎵 TikTok (1. Video) | Yemek & alışveriş molası (Kadın / Genç kitle) | **Viral Maskara & Dudak Parlatıcı (Gloss)** (100–350 TL) |
+| **3. Kuşak (İkindi F/P Donanım)** | **15:05** | 📺 YouTube Shorts | Çay/kahve molası, donanım meraklıları | F/P Sneaker, Gaming Monitör, Mouse/Klavye |
+| **4. Kuşak (Mesai / Okul Çıkışı)** | **18:35** | 🎵 TikTok (2. Video) | Metrobüs, servis, eve dönüş hızlı akış | **Likit Allık, Glotion, Kapatıcı veya F/P Sneaker** |
+| **5. Kuşak (Akşam Prime Time Tech)** | **20:05** | 📺 YouTube Shorts | Evde dinlenme, masa başı YouTube gezintisi | Akıllı Saat, Bluetooth Hoparlör, Gamepad |
+| **6. Kuşak (Gece Prime Time Makyaj)** | **21:35** | 🎵 TikTok (3. Video) | Yatakta kaydırma, Keşfet (FYP) tepe noktası | **İkonik F/P Parfümler & Gece Makyajı / Lip Oil** |
 
 ---
 

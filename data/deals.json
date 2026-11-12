@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794487626_75",
+    "deal_code": "#183",
+    "title": "Anker Soundcore Q20i Bluetooth Kulaklık",
+    "old_price": "3.004 TL",
+    "new_price": "2.499 TL",
+    "discount_pct": "-17%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0C3HCD34R?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 833 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/anker_soundcore_q20i_blue_75d5b3f8.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "12.11.2026 15:47"
+  },
+  {
     "id": "deal_1794486357_74",
     "deal_code": "#182",
     "title": "Razer Wireless Charging Puck",

@@ -1025,7 +1025,7 @@
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_47l_2e8c9707.webp",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "18.10.2026 08:11"
   },
   {
@@ -1317,8 +1317,8 @@
     "date_added": "13.10.2026 22:11",
     "category": "gaming",
     "deal_code": "#108",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791917454_7",
@@ -1353,8 +1353,8 @@
     "date_added": "13.10.2026 19:49",
     "category": "general",
     "deal_code": "#106",
-    "is_expired": false,
-    "expired_reason": ""
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi"
   },
   {
     "id": "deal_1791840416_4",

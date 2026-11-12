@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794503404_76",
+    "deal_code": "#184",
+    "title": "Maybelline New York Fit Me",
+    "old_price": "267 TL",
+    "new_price": "192 TL",
+    "discount_pct": "-28%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FDWT4TLG?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/maybelline_new_york_fit_m_091000dc.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "12.11.2026 17:10"
+  },
+  {
     "id": "deal_1794487626_75",
     "deal_code": "#183",
     "title": "Anker Soundcore Q20i Bluetooth Kulaklık",

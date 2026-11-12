@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794470859_71",
+    "deal_code": "#179",
+    "title": "Kiko Milano Dudak",
+    "old_price": "",
+    "new_price": "595 TL",
+    "discount_pct": "-25%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0C3VLSVGR?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "200 TL Kupon İndirimi",
+    "category": "general",
+    "image_url": "assets/products/kiko_milano_dudak_b1cc2501.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "12.11.2026 08:07"
+  },
+  {
     "id": "deal_1794422247_70",
     "deal_code": "#178",
     "title": "Hawk %75 Kablosuz Klavye",

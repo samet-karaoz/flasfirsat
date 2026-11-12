@@ -99,7 +99,9 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
         return "GÜN BOYU AKMAYAN SUYA DAYANIKLI TASARIM!"
     if "mousepad" in t_low or "mouse pad" in t_low or "glide" in t_low:
         return "KAYMAZ TABAN MİKRO DOKUMA MOUSEPAD!"
-    if "mouse" in t_low or "fare" in t_low:
+    if "puck" in t_low or "şarj diski" in t_low or "şarj yuvası" in t_low:
+        return "KABLOSUZ MANYETİK ŞARJ DİSKİ!"
+    if ("mouse" in t_low or "fare" in t_low) and "puck" not in t_low:
         return "KABLOSUZ GAMING MOUSE!" if ("wireless" in combined or "kablosuz" in combined) else "YÜKSEK HASSASİYETLİ GAMING MOUSE!"
     if "klavye" in t_low or "keyboard" in t_low:
         return "RGB MEKANİK OYUNCU KLAVYESİ!"

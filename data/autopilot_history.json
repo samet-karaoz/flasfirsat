@@ -2439,5 +2439,37 @@
     "success": false,
     "platforms": {},
     "error": "Uygun kriterde (yeterli indirim ve stok) fırsat ürünü bulunamadı."
+  },
+  {
+    "timestamp": "2026-11-12 17:06:11",
+    "slot": "20:00 TikTok Akşam Özel Bakım",
+    "target_platform": "tiktok",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "tiktok": {
+        "status": "ok",
+        "post_id": "6af5f2f251cc3cd582723591",
+        "channel": "flasfirsat.tr"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Maybelline New York Fit Me",
+      "new_price": "192 TL",
+      "old_price": "267 TL",
+      "discount_pct": "-28%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0FDWT4TLG?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261112_170945_maybelline_new_york_fit_me.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261112_170945_maybelline_new_york_fit_me.mp4",
+    "caption_text": "⚡ Maybelline New York Fit Me - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n❌ Eski Fiyat: 267 TL\n\n✅ Satış Fiyatı: 192 TL (-28% İndirim)\n\n🔢 Fırsat Kodu: 184 (Sitede arama kutusuna 184 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet"
   }
 ]

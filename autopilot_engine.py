@@ -151,8 +151,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             from deal_bot import load_history
 
             history = load_history()
-            recent_subs = get_recent_subtypes_from_history(limit=4)
-            recent_brands = get_recent_brands_from_history(limit=3)
+            recent_subs = get_recent_subtypes_from_history(limit=2, target_platform=target_platform)
+            recent_brands = get_recent_brands_from_history(limit=2, target_platform=target_platform)
 
             print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Alt Kategoriler: {list(recent_subs)}")
             print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Markalar (Stanley vb.): {list(recent_brands)}")
@@ -181,15 +181,51 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 min_discount=15
             )
 
-        if not candidates and target_platform == "tiktok":
-            print("[Autopilot Engine] ⚠️ TikTok için alternatif F/P Sneaker & Moda taranıyor...")
+        if not candidates:
+            if target_platform in ("youtube", "all", "auto"):
+                print("[Autopilot Engine] ⚠️ Tech fırsatları beklemede, YouTube için alternatif F/P Sneaker & Spor Ayakkabı taranıyor...")
+                candidates = hunt_best_deals(
+                    limit=5,
+                    platform="amazon",
+                    category="fashion",
+                    exclude_urls=history,
+                    exclude_subtypes=recent_subs,
+                    exclude_brands=recent_brands,
+                    min_discount=15
+                )
+            elif target_platform == "tiktok":
+                print("[Autopilot Engine] ⚠️ TikTok için alternatif F/P Sneaker & Moda taranıyor...")
+                candidates = hunt_best_deals(
+                    limit=5,
+                    platform="amazon",
+                    category="fashion",
+                    exclude_urls=history,
+                    exclude_subtypes=recent_subs,
+                    exclude_brands=recent_brands,
+                    min_discount=15
+                )
+
+        if not candidates:
+            print(f"[Autopilot Engine] ⚠️ Çeşitlilik koruması gevşetiliyor (mükerrer URL koruması devrede, kategori: {hunt_cat.upper()})...")
+            candidates = hunt_best_deals(
+                limit=5,
+                platform="amazon",
+                category=hunt_cat,
+                exclude_urls=history,
+                exclude_subtypes=None,
+                exclude_brands=None,
+                min_discount=15
+            )
+
+        if not candidates and target_platform in ("youtube", "all", "auto"):
+            print("[Autopilot Engine] ⚠️ F/P Sneaker & Spor Ayakkabı (Çeşitlilik gevşetilmiş) taranıyor...")
             candidates = hunt_best_deals(
                 limit=5,
                 platform="amazon",
                 category="fashion",
                 exclude_urls=history,
-                exclude_subtypes=recent_subs,
-                exclude_brands=recent_brands,
+                exclude_subtypes=None,
+                exclude_brands=None,
                 min_discount=15
             )
 

@@ -204,7 +204,7 @@ def extract_brand(title: str) -> str:
             return "delonghi" if b == "de'longhi" else b
     return ""
 
-def get_recent_subtypes_from_history(limit: int = 4) -> set:
+def get_recent_subtypes_from_history(limit: int = 2, target_platform: str = None) -> set:
     """Son başarılı paylaşımlardaki alt kategorileri döner (Çeşitlilik koruması)."""
     subtypes = set()
     from config import DATA_DIR
@@ -216,6 +216,10 @@ def get_recent_subtypes_from_history(limit: int = 4) -> set:
                 count = 0
                 for it in reversed(items):
                     if it.get("success") and not it.get("dry_run") and not it.get("skipped"):
+                        platforms = it.get("platforms", {})
+                        if target_platform and target_platform not in ("auto", "all"):
+                            if target_platform not in platforms or platforms.get(target_platform, {}).get("status") != "ok":
+                                continue
                         deal_info = it.get("deal")
                         t = deal_info.get("title", "") if isinstance(deal_info, dict) else str(deal_info or "")
                         sub = get_product_subtype(t)
@@ -228,7 +232,7 @@ def get_recent_subtypes_from_history(limit: int = 4) -> set:
             pass
     return subtypes
 
-def get_recent_brands_from_history(limit: int = 3) -> set:
+def get_recent_brands_from_history(limit: int = 2, target_platform: str = None) -> set:
     """Son başarılı paylaşımlardaki markaları döner (Stanley, Logitech vb. marka yorgunluğu koruması)."""
     brands = set()
     from config import DATA_DIR
@@ -240,6 +244,10 @@ def get_recent_brands_from_history(limit: int = 3) -> set:
                 count = 0
                 for it in reversed(items):
                     if it.get("success") and not it.get("dry_run") and not it.get("skipped"):
+                        platforms = it.get("platforms", {})
+                        if target_platform and target_platform not in ("auto", "all"):
+                            if target_platform not in platforms or platforms.get(target_platform, {}).get("status") != "ok":
+                                continue
                         deal_info = it.get("deal")
                         t = deal_info.get("title", "") if isinstance(deal_info, dict) else str(deal_info or "")
                         b = extract_brand(t)
@@ -831,6 +839,10 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         url_categories = (_top_makeup[_m_idx:] + _top_makeup[:_m_idx]) + _other_beauty
     elif category in ("tech", "gaming_tech"):
         _tech_list = [
+            ("FIRSAT_KULAKLIK", "https://www.amazon.com.tr/s?k=kulakl%C4%B1k&rh=p_n_deal_type%3A26901188031"),
+            ("FIRSAT_GAMING", "https://www.amazon.com.tr/s?k=oyuncu&rh=p_n_deal_type%3A26901188031"),
+            ("FIRSAT_SNEAKER", "https://www.amazon.com.tr/s?k=spor+ayakkab%C4%B1&rh=p_n_deal_type%3A26901188031"),
+            ("FIRSAT_KLAVYE", "https://www.amazon.com.tr/s?k=klavye&rh=p_n_deal_type%3A26901188031"),
             ("KULAKLIKLAR", "https://www.amazon.com.tr/gp/bestsellers/electronics/17471820031"),
             ("KLAVYELER_VE_FARELER", "https://www.amazon.com.tr/gp/bestsellers/computers/12601919031"),
             ("PC_OYUN_DONANIM", "https://www.amazon.com.tr/gp/bestsellers/computers/12601923031"),
@@ -923,7 +935,7 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
 
         # 2. Standart HTML ürün kartlarını tara (Modern Amazon DOM + Legacy Destekli)
         soup = BeautifulSoup(res.stdout, "html.parser")
-        items = soup.select("div[id*='gridItemRoot'], .p13n-grid-content, .zg-grid-general-faceout, .p13n-sc-uncoverable-faceout, div[data-asin]")
+        items = soup.select("div[data-component-type='s-search-result'], div[id*='gridItemRoot'], .p13n-grid-content, .zg-grid-general-faceout, .p13n-sc-uncoverable-faceout, div[data-asin]")
 
         for it in items:
             title_el = it.select_one("div[class*='line-clamp-'], h2, div._cDEzb_p13n-sc-css-line-clamp-1_1Fn1y, div._cDEzb_p13n-sc-css-line-clamp-2_EWgt-") or it.find("h2") or it.find("span")
@@ -948,6 +960,22 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
                 h_url = "https://www.amazon.com.tr" + h_href.split("?")[0]
 
             h_card_text = it.get_text(" ", strip=True)
+            strike_el = it.select_one("span.a-price.a-text-price span.a-offscreen, .basisPrice .a-offscreen, span[class*='basisPrice']")
+            h_strike_price = strike_el.text.strip() if strike_el else ""
+            h_discount_pct = ""
+            h_discount_val = 0
+            if h_strike_price and h_price:
+                s_f = parse_price_to_float(h_strike_price)
+                p_f = parse_price_to_float(h_price)
+                if s_f > p_f > 0:
+                    h_discount_val = round(((s_f - p_f) / s_f) * 100)
+                    h_discount_pct = f"-{h_discount_val}%"
+            if not h_discount_pct:
+                pct_m = re.search(r"-\s*(\d+)%", h_card_text)
+                if pct_m:
+                    h_discount_val = int(pct_m.group(1))
+                    h_discount_pct = f"-{h_discount_val}%"
+
             h_rating = 0.0
             h_reviews = 0
             r_match = re.search(r"([12345][.,]\d)\s*(?:/\s*5|yıldız)", h_card_text)
@@ -968,6 +996,9 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             parsed_candidates.append({
                 "raw_title": h_title,
                 "raw_price": h_price,
+                "raw_strike_price": h_strike_price,
+                "discount_pct": h_discount_pct,
+                "discount_val": h_discount_val,
                 "big_img": h_big_img,
                 "raw_img": h_img,
                 "prod_url": h_url,
@@ -1096,8 +1127,28 @@ GÖREV:
                 print(f"[Deal Hunter] ⏭️ Mükerrer Ürün Koruması (Başlık eşleşmesi): {deal_data.get('title')}")
                 continue
 
+            if cand.get("raw_strike_price") and not deal_data.get("old_price"):
+                deal_data["old_price"] = cand["raw_strike_price"]
+            if cand.get("discount_pct") and not deal_data.get("discount_pct"):
+                deal_data["discount_pct"] = cand["discount_pct"]
+
             # Minimum İndirim Oranı Kontrolü
             pct_val = get_deal_discount_pct(deal_data)
+            if pct_val < min_discount and ("FIRSAT" in cat_name or "deals" in target_url):
+                try:
+                    from product_verifier import verify_amazon_product
+                    quick_v = verify_amazon_product(prod_url, expected_title=deal_data.get("title", raw_title))
+                    if quick_v.get("success") and quick_v.get("real_strike_val", 0) > 0:
+                        live_p = quick_v.get("live_price_val") or parse_price_to_float(raw_price)
+                        real_s = quick_v["real_strike_val"]
+                        if real_s > live_p > 0:
+                            calc_pct = round(((real_s - live_p) / real_s) * 100)
+                            deal_data["old_price"] = f"{int(real_s):,} TL".replace(',', '.')
+                            deal_data["discount_pct"] = f"-{calc_pct}%"
+                            pct_val = calc_pct
+                except Exception:
+                    pass
+
             deal_data["discount_val"] = pct_val
             if pct_val < min_discount:
                 print(f"[Deal Hunter] ⏭️ Düşük İndirim Elendi (-%{pct_val} < -%{min_discount}): {deal_data.get('title')}")

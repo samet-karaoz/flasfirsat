@@ -69,7 +69,7 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
         return "FERAH & KALICI VÜCUT SPREYİ!"
     if any(k in t_low for k in ["ayakkabı", "sneaker", "koşu ayakkabısı", "spor ayakkabı"]):
         return "ORİJİNAL HAFİF & RAHAT TABAN SNEAKER!"
-    if any(k in t_low for k in ["saat", "casio", "g-shock", "edifice", "kol saati"]):
+    if any(k in t_low for k in ["kol saati", "akıllı saat", "casio", "g-shock", "edifice"]) or (re.search(r'\bsaat\b', t_low) and not any(w in t_low for w in ["pil", "şarj", "çalma", "kulaklık"])):
         return "SU GEÇİRMEZ RETRO KLASİK TASARIM!"
     if any(k in t_low for k in ["çanta", "sırt çantası", "duffle", "omuz çantası"]):
         return "SUYA DAYANIKLI GENİŞ HACİMLİ ÇANTA!"
@@ -117,7 +117,7 @@ SADECE tek satırlık vurucu teknik özellik başlığını döndür:"""
         return "DERMATOLOJİK GÜNLÜK BAKIM!"
     return "ORİJİNAL AMAZON TR FIRSATI!"
 
-def verify_amazon_product(asin_or_url: str) -> dict:
+def verify_amazon_product(asin_or_url: str, expected_title: str = "") -> dict:
     """
     Amazon TR ürün sayfasını canlı olarak sorgular:
     1. Gerçek stok durumunu doğrular (Tükendi mi?)
@@ -297,7 +297,22 @@ def verify_amazon_product(asin_or_url: str) -> dict:
     # 7. GERÇEK VERİLERDEN TEK SATIRLIK VURUCU ÖZELLİK (Gemini)
     feature_pill = ""
     raw_specs = "\n".join(bullets[:4] + overview[:4])
-    prod_title = soup.title.text if soup.title else ""
+    pt_el = soup.select_one("#productTitle") or soup.select_one("#title")
+    og_title = soup.find("meta", property="og:title")
+    if pt_el and pt_el.get_text(strip=True):
+        prod_title = pt_el.get_text(strip=True)
+    elif og_title and og_title.get("content"):
+        prod_title = og_title["content"].strip()
+    elif expected_title:
+        prod_title = expected_title
+    elif soup.title and soup.title.text:
+        prod_title = soup.title.text.replace("Amazon.com.tr", "").replace(":", "").strip()
+    else:
+        prod_title = ""
+
+    if not prod_title and expected_title:
+        prod_title = expected_title
+
     if raw_specs or prod_title:
         feature_pill = extract_product_killer_hook(
             title=prod_title,
@@ -365,7 +380,7 @@ def verify_deal_before_publish(deal: dict) -> dict:
 
     if "amazon" in store_url.lower() or store_name == "Amazon TR":
         print(f"[Doğrulama] 🔍 Ürün sayfası canlı kontrol ediliyor: {store_url}...")
-        v_res = verify_amazon_product(store_url)
+        v_res = verify_amazon_product(store_url, expected_title=deal.get("title", ""))
         if not v_res.get("success", False) or not v_res.get("in_stock", False):
             reason = v_res.get("reason", "Stokta yok veya doğrulanamadı")
             is_cloud = os.getenv("GITHUB_ACTIONS", "").lower() == "true"

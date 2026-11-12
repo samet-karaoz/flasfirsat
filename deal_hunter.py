@@ -23,6 +23,22 @@ DEFAULT_CHANNELS = [
     "firsatkulubu"
 ]
 
+
+BEAUTY_MAKEUP_KEYWORDS = [
+    "maskara", "rimel", "gloss", "lip gloss", "dudak", "ruj", "allık", "blush",
+    "glotion", "kapatıcı", "concealer", "fondöten", "eyeliner", "göz kalemi",
+    "kaş", "far paleti", "parfüm", "edt", "edp", "body mist", "serum", "nemlendirici",
+    "cilt", "tonik", "şampuan", "saç bakım", "saç kremi", "oje", "manikür", "epilatör", "ağda",
+    "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "revolution", "nyx",
+    "essence", "pastel", "beaulis", "vichy", "cerave", "bioderma", "la roche", "dercos",
+    "yüz temizleme", "güneş kremi", "el kremi", "vücut losyonu", "peeling"
+]
+
+def is_beauty_product(title: str) -> bool:
+    """Verilen ürünün makyaj, kozmetik, cilt/saç bakımı veya kadın güzellik ürünü olduğunu doğrular."""
+    t = (title or "").lower()
+    return any(k in t for k in BEAUTY_MAKEUP_KEYWORDS)
+
 BORING_REGEX = re.compile(
     r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\badaptör(ü)?\b|\bkablo(su)?\b(?!lu)|"
     r"kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme\s*spreyi|temizleme\s*bezi|çorap|askı(lık)?|"
@@ -458,7 +474,7 @@ def get_deal_savings_tl(deal: dict) -> float:
     new_p = parse_price_to_float(deal.get("new_price", ""))
     return max(0.0, old_p - new_p)
 
-def calculate_deal_viral_score(deal: dict) -> float:
+def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> float:
     """
     Fırsat Puanlama (Deal Scoring) Motoru:
     Sosyal medyada (Reels/Shorts) viral olma ve satışa dönüşme potansiyelini 0-100 puan üzerinden hesaplar:
@@ -471,6 +487,12 @@ def calculate_deal_viral_score(deal: dict) -> float:
     savings_tl = get_deal_savings_tl(deal)
     new_p = parse_price_to_float(deal.get("new_price", ""))
     title = str(deal.get("title") or "").lower()
+    plat = (target_platform or deal.get("target_platform") or "auto").lower()
+
+    # 🛑 YOUTUBE KESİN GÜVENLİK FİLTRESİ:
+    # YouTube hedefli paylaşımlarda güzellik, makyaj, dudak, ruj, şampuan vb. ürünler KESİNLİKLE YASAKTIR!
+    if plat == "youtube" and is_beauty_product(title):
+        return -999.0
 
     score = 0.0
 
@@ -1384,12 +1406,16 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
                 continue
             if "stanley" in d.get("title", "").lower() and ("stanley" in (exclude_brands or set()) or "thermos" in (exclude_subtypes or set())):
                 continue
+            # YouTube / Tech kategorisi için kozmetik/makyaj filtresi
+            if category in ("tech", "gaming", "computers", "electronics", "monitors") and is_beauty_product(d.get("title", "")):
+                print(f"[Deal Hunter] 🛡️ YouTube/Tech Filtresi: Online kanaldan gelen kozmetik ürünü elendi -> {d.get('title')}")
+                continue
             candidates.append(d)
 
     # Eğer ilk taramada aday bulunamadıysa eşiği %15'e indirip çeşitlilik kısıtını gevşeterek TEK SEFERLİK genel tarama yap (Sonsuz döngü ve çift tarama korumalı!)
     if not candidates and (min_discount > 15 or exclude_subtypes or exclude_brands):
         print("[Deal Hunter] ⚠️ İlk turda uygun ürün bulunamadı. İndirim eşiği %15'e ve çeşitlilik filtresi esnetilerek tek seferlik genel tarama yapılıyor...")
-        return hunt_best_deals(limit=limit, platform=platform, category="all", exclude_urls=exclude_urls, exclude_subtypes=None, exclude_brands=None, min_discount=15)
+        return hunt_best_deals(limit=limit, platform=platform, category=category, exclude_urls=exclude_urls, exclude_subtypes=None, exclude_brands=None, min_discount=15)
 
     if not candidates:
         return []
@@ -1483,6 +1509,9 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
 
         return score
 
+    if category in ("tech", "gaming", "computers", "electronics", "monitors"):
+        candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+
     candidates.sort(key=score_deal, reverse=True)
 
     # Çeşitlilik süzgeci: Tek bir listede aynı ürün tipinden veya markadan birden fazla olmasın
@@ -1515,6 +1544,9 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
                 if "stanley" in d.get("title", "").lower() and ("stanley" in seen_b or "thermos" in seen_types):
                     continue
                 best_deals.append(d)
+
+    if category in ("tech", "gaming", "computers", "electronics", "monitors"):
+        best_deals = [c for c in best_deals if not is_beauty_product(c.get("title", ""))]
 
     print(f"\n[Deal Hunter] 🏆 EN YÜKSEK İNDİRİMLİ {len(best_deals)} FIRSAT SEÇİLDİ:")
     for i, d in enumerate(best_deals, 1):

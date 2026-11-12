@@ -142,6 +142,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             # 1. En iyi fırsatı tara
             print("\n[Adım 1/4] 🔍 En yüksek indirimli taze fırsat avlanıyor...")
             from deal_hunter import (
+    is_beauty_product,
                 hunt_best_deals,
                 get_product_subtype,
                 get_recent_subtypes_from_history,
@@ -200,9 +201,20 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             record_autopilot_run(result)
             return result
 
-        # Deal Scoring (Viral Potansiyel, Net TL Tasarruf ve Kategoriye Göre Puanla)
-        from deal_hunter import calculate_deal_viral_score, get_deal_discount_pct, get_deal_savings_tl
-        candidates.sort(key=lambda d: calculate_deal_viral_score(d), reverse=True)
+        # 🛡️ YOUTUBE PLATFORM GÜVENLİK FİLTRESİ:
+        # YouTube Shorts KESİNLİKLE VE KESİNLİKLE F/P Teknoloji & Sneaker kanalıdır! Makyaj/Kozmetik ASLA yüklenemez!
+        from deal_hunter import is_beauty_product, calculate_deal_viral_score, get_deal_discount_pct, get_deal_savings_tl
+        if target_platform == "youtube":
+            tech_only = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+            if tech_only:
+                candidates = tech_only
+            else:
+                print("[Autopilot Engine] 🛡️ YouTube Filtresi: Adayların tümü kozmetikti, acil F/P Teknoloji avlanıyor...")
+                candidates = hunt_best_deals(limit=5, platform="amazon", category="tech", min_discount=15)
+                candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+
+        # Deal Scoring (Viral Potansiyel, Net TL Tasarruf ve Platforma Göre Puanla)
+        candidates.sort(key=lambda d: calculate_deal_viral_score(d, target_platform=target_platform), reverse=True)
         print("\n🏆 [DEAL SCORING] Adaylar Viral Puanlarına Göre Sıralandı:")
         for rank, c in enumerate(candidates, 1):
             c_score = calculate_deal_viral_score(c)
@@ -347,21 +359,26 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # A) YouTube Shorts (Platforma Özel: BİO Link CTA Bandı & Açıklama)
         if target_platform in ("youtube", "all"):
             print("\n--- 1. YouTube Shorts ---")
-            try:
-                from youtube_publisher import publish_shorts_to_youtube
-                yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
-                yt_desc = caption_text
-    
-                yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
-                if yt_res.get("success"):
-                    result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
-                    print(f"✅ YouTube Shorts Başarılı: {yt_res.get('url')}")
-                else:
-                    result["platforms"]["youtube"] = {"status": "error", "error": yt_res.get("error")}
-                    print(f"❌ YouTube Shorts Hatası: {yt_res.get('error')}")
-            except Exception as ey:
-                result["platforms"]["youtube"] = {"status": "error", "error": str(ey)}
-                print(f"❌ YouTube Shorts İstisna: {ey}")
+            from deal_hunter import is_beauty_product
+            if is_beauty_product(title):
+                print(f"🛑 [YOUTUBE GÜVENLİK FİLTRESİ] '{title}' bir kadın/kozmetik ürünüdür ve YouTube Shorts'a yüklenmesi KESİNLİKLE ENGELLENDİ!")
+                result["platforms"]["youtube"] = {"status": "skipped", "reason": "beauty_product_strictly_forbidden_on_youtube"}
+            else:
+                try:
+                    from youtube_publisher import publish_shorts_to_youtube
+                    yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
+                    yt_desc = caption_text
+        
+                    yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
+                    if yt_res.get("success"):
+                        result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
+                        print(f"✅ YouTube Shorts Başarılı: {yt_res.get('url')}")
+                    else:
+                        result["platforms"]["youtube"] = {"status": "error", "error": yt_res.get("error")}
+                        print(f"❌ YouTube Shorts Hatası: {yt_res.get('error')}")
+                except Exception as ey:
+                    result["platforms"]["youtube"] = {"status": "error", "error": str(ey)}
+                    print(f"❌ YouTube Shorts İstisna: {ey}")
 
         # B) Instagram Reels (İsteğe bağlı veya hepsi modunda)
         if target_platform in ("instagram", "all"):

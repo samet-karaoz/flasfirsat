@@ -36,6 +36,16 @@ Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral eri
 
 ---
 
+### C. KESİN PLATFORM AYRIMI (YouTube Shorts vs. TikTok Güvenlik Duvarı):
+1. **YouTube Shorts Kanalı = %100 F/P TEKNOLOJİ, GAMING DONANIM & POPÜLER SNEAKER:**
+   - Kulaklık, klavye, fare, monitör, gamepad, akıllı saat, hoparlör, powerbank, SSD ve popüler spor ayakkabılar.
+   - **KADIN MAKYAJI, KOZMETİK VE KADIN CİLT BAKIMI (Gloss, Dudak Kalemi, Ruj, Maskara, Allık, Kapatıcı, Şampuan vb.) YOUTUBE SHORTS İÇİN KESİNLİKLE VE %100 YASAKTIR!**
+2. **TikTok Kanalı = VİRAL MAKYAJ DÜNYASI, PARFÜM & F/P SNEAKER:**
+   - Gloss, dudak yağı, viral maskara, likit allık, glotion, kapatıcı, parfümler ve sneaker modelleri.
+3. **Sıfır Geçiş:** İki platformun algoritmik ürün havuzu kod seviyesinde güvenlik duvarı (is_beauty_product) ile izole edilmiştir; YouTube kuşağına asla kozmetik ürünü sızamaz.
+
+---
+
 ### B. KESİNLİKLE YASAKLI ÜRÜNLER (Banned Items):
 Aşağıdaki ürünler %90 indirimde dahi olsa **ASLA VİDEO VE PAYLAŞIM İÇİN SEÇİLMEZ**:
 1. **Kahve Makineleri ve Mutfak Pişirme Gereçleri:**

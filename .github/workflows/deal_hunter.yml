@@ -100,21 +100,27 @@ jobs:
           PLATFORM="${{ inputs.target_platform || 'auto' }}"
           SLOT="${{ inputs.slot_name || '' }}"
 
-          # Eğer otomatik cron tetiklemişse, saate göre akıllı kuşak ismi ver
+          # Eğer otomatik cron tetiklemişse, saate göre akıllı kuşak ismi ve platform ver
           if [ -z "$SLOT" ] || [ "$SLOT" = "Manuel Bulut Tetikleme" ]; then
             UTC_H=$(date -u +%H)
             if [ "$UTC_H" = "08" ]; then
               SLOT="11:00 YouTube Sabah F/P"
+              PLATFORM="youtube"
             elif [ "$UTC_H" = "10" ]; then
               SLOT="13:00 TikTok Güzellik & Bakım"
+              PLATFORM="tiktok"
             elif [ "$UTC_H" = "12" ]; then
               SLOT="15:00 YouTube Gaming & Donanım"
+              PLATFORM="youtube"
             elif [ "$UTC_H" = "15" ]; then
-              SLOT="18:30 YouTube Prime Time Fırsat"
+              SLOT="18:30 TikTok Akşam Viral Fırsat"
+              PLATFORM="tiktok"
             elif [ "$UTC_H" = "17" ]; then
-              SLOT="20:00 TikTok Akşam Özel Bakım"
+              SLOT="20:00 YouTube Prime Time F/P"
+              PLATFORM="youtube"
             elif [ "$UTC_H" = "18" ]; then
-              SLOT="21:30 YouTube Gece F/P"
+              SLOT="21:30 TikTok Gece Makyaj & Bakım"
+              PLATFORM="tiktok"
             else
               SLOT="Bulut Otopilotu (${UTC_H}:00 UTC)"
             fi

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794584307_80",
+    "deal_code": "#188",
+    "title": "Stevig 4 Camp Klasik Vakumlu",
+    "old_price": "1.899 TL",
+    "new_price": "1.199 TL",
+    "discount_pct": "-37%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0HPY7XXFX?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 400 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/stevig_4_camp_klasik_vaku_2fd09716.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "13.11.2026 15:38"
+  },
+  {
     "id": "deal_1794571677_79",
     "deal_code": "#187",
     "title": "STANLEY Classic Legendary",

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794564458_78",
+    "deal_code": "#186",
+    "title": "L'Oreal Paris Infaillible",
+    "old_price": "529 TL",
+    "new_price": "350 TL",
+    "discount_pct": "-34%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CNQ4DJRV?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/l_oreal_paris_infaillible_4882bd80.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "13.11.2026 10:07"
+  },
+  {
     "id": "deal_1794557248_77",
     "deal_code": "#185",
     "title": "Kablolu Kulak İçi Kulaklık 3",

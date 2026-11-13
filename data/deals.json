@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794595193_81",
+    "deal_code": "#189",
+    "title": "Anker Soundcore Select 4 Go",
+    "old_price": "1.799 TL",
+    "new_price": "1.299 TL",
+    "discount_pct": "-28%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DB1753RZ?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 433 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/anker_soundcore_select_4__b9c78c50.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "13.11.2026 18:39"
+  },
+  {
     "id": "deal_1794584307_80",
     "deal_code": "#188",
     "title": "Stevig 4 Camp Klasik Vakumlu",

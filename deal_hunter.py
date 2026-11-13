@@ -26,11 +26,14 @@ DEFAULT_CHANNELS = [
 
 BEAUTY_MAKEUP_KEYWORDS = [
     "maskara", "rimel", "gloss", "lip gloss", "dudak", "ruj", "allık", "blush",
-    "glotion", "kapatıcı", "concealer", "fondöten", "eyeliner", "göz kalemi",
-    "kaş", "far paleti", "parfüm", "edt", "edp", "body mist", "serum", "nemlendirici",
-    "cilt", "tonik", "şampuan", "saç bakım", "saç kremi", "oje", "manikür", "epilatör", "ağda",
+    "glotion", "kapatıcı", "concealer", "fondöten", "foundation", "bb krem", "cc krem",
+    "eyeliner", "göz kalemi", "kaş", "far paleti", "parfüm", "edt", "edp", "body mist",
+    "serum", "nemlendirici", "cilt", "tonik", "şampuan", "saç bakım", "saç kremi",
+    "oje", "manikür", "epilatör", "ağda", "pudra", "powder", "bronzer", "highlighter",
+    "kontür", "primer", "makyaj", "makeup", "lipstick", "lipliner", "lip liner", "lash",
     "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "revolution", "nyx",
     "essence", "pastel", "beaulis", "vichy", "cerave", "bioderma", "la roche", "dercos",
+    "true match", "fit me", "sky high", "infaillible", "lifter gloss",
     "yüz temizleme", "güneş kremi", "el kremi", "vücut losyonu", "peeling"
 ]
 
@@ -322,17 +325,30 @@ ARCHETYPE_PRICE_GLITCH = "price_glitch"
 ARCHETYPE_VIRAL_GADGET = "viral_gadget"
 ARCHETYPE_EXPENSIVE_DUPE = "expensive_dupe"
 ARCHETYPE_VERIFIED_DEAL = "verified_deal"
+ARCHETYPE_BESTSELLER_RADAR = "bestseller_radar"
 
 def detect_deal_archetype(deal: dict) -> dict:
     """
-    3'lü Viral Motor (AGENTS.md Kural 3):
-    1. EXPENSIVE_DUPE: Pahalı Markaların Birebir Muadilleri / Kazıklanma Rehberi
-    2. VIRAL_GADGET: Hayat Kurtaran Problem Çözen Trend Ürünler
-    3. PRICE_GLITCH: Fiyat Hatası & Kupon Açığı / Sepet Çökertme
+    3'lü Viral Motor + Çok Satan Radarı:
+    1. BESTSELLER_RADAR: Amazon #1 Çok Satan ve Viral Trend Ürünler
+    2. EXPENSIVE_DUPE: Pahalı Markaların Birebir Muadilleri / Kazıklanma Rehberi
+    3. VIRAL_GADGET: Hayat Kurtaran Problem Çözen Trend Ürünler
+    4. PRICE_GLITCH: Fiyat Hatası & Kupon Açığı / Sepet Çökertme
     """
     title = str(deal.get("title") or "").lower()
     details = str(deal.get("hook") or deal.get("feature_pill") or deal.get("market_highlight") or "").lower()
     combined = f"{title} {details}"
+
+    if deal.get("is_bestseller") or "çok satan" in str(deal.get("badge") or "").lower():
+        is_beauty = is_beauty_product(title)
+        hook_msg = "Kızların sepetleri doldurduğu o viral çok satan:" if is_beauty else "Amazon'da herkesin kapış kapış aldığı 1 numaralı o ürün:"
+        return {
+            "archetype": ARCHETYPE_BESTSELLER_RADAR,
+            "badge_text": "🔥 #1 ÇOK SATAN",
+            "killer_pill": "TÜRKİYE'DE EN ÇOK SATAN #1!",
+            "reaction_hook": hook_msg,
+            "style_prompt": "Amazon'da rekor kıran çok satan ürün radarı, viral sosyal kanıt ve kapış kapış giden popülerlik kancası"
+        }
     
     coupon = str(deal.get("coupon_info") or deal.get("coupon_text") or "").strip()
     pct = get_deal_discount_pct(deal)
@@ -510,6 +526,10 @@ def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> flo
         score += 40.0
     if BORING_REGEX.search(title):
         score -= 120.0
+
+    # Amazon #1 Çok Satan / Viral Sosyal Kanıt Bonusu
+    if deal.get("is_bestseller") or "çok satan" in str(deal.get("badge") or "").lower():
+        score += 35.0
 
     # 1. Net TL Tasarruf Puanı (Maks 40 puan)
     if savings_tl >= 2500:
@@ -1606,6 +1626,173 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
         print(f"  {i}. [{d.get('store_name', 'Fırsat')}] {d.get('title')} | {d.get('new_price')} (İndirim: -%{pct} | Tasarruf: {int(savings)} TL)")
 
     return best_deals
+
+def hunt_bestseller_deals(limit: int = 3, category: str = "tech", exclude_urls: list = None) -> list:
+    """
+    Normal indirim bulunamadığında devreye giren Emniyet Sibopu:
+    Amazon TR'deki resmi Çok Satanlar (Best Sellers) sayfalarını tarar ve
+    en yüksek puanlı, en popüler 1 numaralı kahraman ürünleri getirir.
+    Sahte indirim üretmez, '🔥 #1 ÇOK SATAN' şablonuyla dürüstçe sunar.
+    """
+    if exclude_urls is None:
+        exclude_urls = []
+
+    cat_low = (category or "tech").lower()
+    if cat_low in ("beauty", "cosmetics", "skincare"):
+        bestseller_catalogs = [
+            ("MAKYAJ_ALLIK_KAPATICI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571763031"),
+            ("GOZ_MAKYAJI_MASKARA", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571764031"),
+            ("DUDAK_GLOSS", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571765031"),
+            ("PARFUM", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571766031"),
+            ("GENEL_GUZELLIK", "https://www.amazon.com.tr/gp/bestsellers/beauty")
+        ]
+    elif cat_low in ("fashion", "sneaker"):
+        bestseller_catalogs = [
+            ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
+            ("MODA_CANTA", "https://www.amazon.com.tr/gp/bestsellers/fashion/69340196031")
+        ]
+    else: # tech / gaming
+        bestseller_catalogs = [
+            ("KULAKLIKLAR", "https://www.amazon.com.tr/gp/bestsellers/electronics/17471820031"),
+            ("KLAVYELER_VE_FARELER", "https://www.amazon.com.tr/gp/bestsellers/computers/12601919031"),
+            ("PC_OYUN_DONANIM", "https://www.amazon.com.tr/gp/bestsellers/computers/12601923031"),
+            ("HOPARLÖRLER", "https://www.amazon.com.tr/gp/bestsellers/electronics/13709886031"),
+            ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
+            ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031")
+        ]
+
+    deals = []
+    seen_asins = set()
+    _ua_pool = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+    ]
+
+    for cat_name, target_url in bestseller_catalogs:
+        if len(deals) >= limit:
+            break
+
+        print(f"[Bestseller Radar] 🏆 Amazon TR ({cat_name}) Çok Satanlar taranıyor: {target_url}...")
+        res = None
+        for _ua in _ua_pool:
+            cmd = get_curl_cmd([
+                "--compressed", "-s", "-L",
+                "-H", f"User-Agent: {_ua}",
+                "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "-H", "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8",
+                target_url
+            ])
+            res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+            if res.returncode == 0 and len(res.stdout) > 20000 and "validatecaptcha" not in res.stdout.lower():
+                break
+
+        if not res or res.returncode != 0 or len(res.stdout) < 10000:
+            continue
+
+        soup = BeautifulSoup(res.stdout, "html.parser")
+        items = soup.select("div[data-component-type='s-search-result'], div[id*='gridItemRoot'], .p13n-grid-content, .zg-grid-general-faceout, .p13n-sc-uncoverable-faceout, div[data-asin]")
+
+        for it in items:
+            if len(deals) >= limit:
+                break
+
+            title_el = it.select_one("div[class*='line-clamp-'], h2, div._cDEzb_p13n-sc-css-line-clamp-1_1Fn1y, div._cDEzb_p13n-sc-css-line-clamp-2_EWgt-") or it.find("h2") or it.find("span")
+            price_el = it.select_one(".a-price .a-offscreen, span[class*='price'], .p13n-sc-price") or it.find("span", class_=lambda c: c and "price" in c)
+            img_el = it.find("img")
+            link_el = it.select_one("a[href*='/dp/']") or it.find("a", href=re.compile(r"/dp/"))
+
+            if not (title_el and price_el and img_el and link_el):
+                continue
+
+            raw_title = title_el.text.strip()
+            raw_price = price_el.text.strip()
+            raw_img = img_el.get("src", "")
+            big_img = re.sub(r'\._AC_.*?_\.', '._AC_SL1000_.', raw_img)
+            href = link_el.get("href", "")
+            asin_m = re.search(r"/dp/([A-Z0-9]{10})", href, re.IGNORECASE)
+            asin = asin_m.group(1).upper() if asin_m else None
+            if asin and asin in seen_asins:
+                continue
+            prod_url = f"https://www.amazon.com.tr/dp/{asin}" if asin else ("https://www.amazon.com.tr" + href.split("?")[0])
+
+            if BORING_REGEX.search(raw_title):
+                continue
+            if not is_mass_appeal_product(raw_title):
+                continue
+            if cat_low in ("tech", "gaming_tech") and is_beauty_product(raw_title):
+                continue
+            if is_deal_already_shared(raw_title, prod_url, exclude_urls):
+                continue
+
+            try:
+                p_clean = re.sub(r"[^\d]", "", raw_price.split(",")[0])
+                if p_clean:
+                    p_num = int(p_clean)
+                    min_p = 100 if cat_low == "beauty" else 300
+                    max_p = 2500 if cat_low == "beauty" else 8500
+                    if p_num < min_p or p_num > max_p:
+                        continue
+            except Exception:
+                pass
+
+            strike_el = it.select_one("span.a-price.a-text-price span.a-offscreen, .basisPrice .a-offscreen")
+            raw_strike = strike_el.text.strip() if strike_el else ""
+            disc_pct = ""
+            if raw_strike and raw_price:
+                s_f = parse_price_to_float(raw_strike)
+                p_f = parse_price_to_float(raw_price)
+                if s_f > p_f > 0:
+                    pct_calc = round(((s_f - p_f) / s_f) * 100)
+                    disc_pct = f"-{pct_calc}%"
+
+            clean_title = raw_title[:34]
+            prompt = f"Şu ürünün başlığını temizle. Sadece net marka ve model adını yaz, başka hiçbir açıklama, yorum veya parantez içi not yazma (Örnek: Apple EarPods USB-C): {raw_title}"
+            ai_title = call_gemini(prompt, json_mode=False)
+            if isinstance(ai_title, str) and ai_title.strip():
+                clean_title = ai_title.strip().replace('"', '').replace("'", "")
+            clean_title = re.sub(r"\(\s*\d+\s*karakter.*?\)", "", clean_title, flags=re.IGNORECASE)
+            clean_title = re.sub(r"[\*\"\'`]", "", clean_title).strip()
+            if len(clean_title) > 34:
+                parts = clean_title[:34].rsplit(' ', 1)
+                clean_title = parts[0].strip() if len(parts) > 1 else clean_title[:34].strip()
+
+            if asin:
+                seen_asins.add(asin)
+
+            prod_id = asin or f"bs_{len(deals)+1}_{int(datetime.now().timestamp())}"
+            img_path = os.path.join(TEMP_DIR, f"amz_{prod_id}.jpg")
+            if not download_file(big_img, img_path):
+                if not download_file(raw_img, img_path):
+                    continue
+
+            from campaign_calculator import calculate_campaign_and_net_cost
+            camp = calculate_campaign_and_net_cost(raw_price, "Amazon TR")
+
+            deal_obj = {
+                "title": clean_title,
+                "old_price": raw_strike if disc_pct else "",
+                "new_price": raw_price,
+                "discount_pct": disc_pct if disc_pct else "🔥 #1 ÇOK SATAN",
+                "badge": "🔥 #1 ÇOK SATAN",
+                "badge_text": "🔥 #1 ÇOK SATAN",
+                "archetype": "bestseller_radar",
+                "is_bestseller": True,
+                "has_verified_old_price": bool(disc_pct),
+                "image_path": img_path,
+                "store_name": "Amazon TR",
+                "store_url": prod_url,
+                "asin": asin,
+                "bank_campaign": camp["bank_campaign"],
+                "net_cost": camp["net_cost"],
+                "installment": camp["installment"],
+                "source_channel": f"Amazon Bestsellers ({cat_name})",
+                "killer_hook": "AMAZON #1 ÇOK SATAN!" if not disc_pct else "",
+                "feature_pill": "AMAZON #1 ÇOK SATAN!" if not disc_pct else ""
+            }
+            deals.append(deal_obj)
+            print(f"[Bestseller Radar] 🌟 #1 Çok Satan Adayı Eklendi: {clean_title} | {raw_price} | {prod_url}")
+
+    return deals
 
 def parse_deal_from_image(image_path: str) -> dict:
     """

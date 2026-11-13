@@ -1134,7 +1134,9 @@ def create_product_banner(
     # 2. Sağ Üst Rozet: % İNDİRİM (Varsa) (Reels Safe Zone: Sağdan 54px ve Üstten 90px)
     clean_pct = discount_pct.strip()
     if clean_pct and clean_pct != "0%" and clean_pct != "-0%":
-        if not clean_pct.endswith("İNDİRİM") and not clean_pct.endswith("FİYAT"):
+        if "ÇOK SATAN" in clean_pct.upper() or clean_pct.startswith("🔥"):
+            pass  # Zaten çok satan veya özel rozet metni, İNDİRİM ekleme
+        elif not clean_pct.endswith("İNDİRİM") and not clean_pct.endswith("FİYAT"):
             clean_pct = f"{clean_pct} İNDİRİM"
         p_w = draw.textlength(clean_pct, font=f_pct)
         b2_x1 = int(W - 54 - p_w - 44)
@@ -1382,7 +1384,12 @@ def create_product_banner(
         draw.rounded_rectangle(new_box, radius=20, fill=theme["new_box_bg"], outline=theme["new_box_border"], width=3)
         box_center_x = (new_box[0] + new_box[2]) // 2
 
-        lbl_single = "KUPONLU FIRSAT FİYATI" if clean_coupon else "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
+        if "ÇOK SATAN" in clean_badge.upper() or "ÇOK SATAN" in str(badge_text).upper():
+            lbl_single = "AMAZON #1 ÇOK SATAN SATIŞ FİYATI"
+        elif clean_coupon:
+            lbl_single = "KUPONLU FIRSAT FİYATI"
+        else:
+            lbl_single = "GÜNÜN ÖNE ÇIKAN SATIŞ FİYATI"
         draw.text((box_center_x, 770), lbl_single, font=f_new_label, fill=theme["new_label_col"], anchor="mm")
 
         price_cy = 818 if sub_str else 828

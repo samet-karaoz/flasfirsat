@@ -51,6 +51,7 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
      * DOĞRULANMIŞ DİP FİYAT (verified_deal): Normal sağlam indirimlerde (%20-%45) kullanılır: "Son zamanların en dip fiyatına indi, bu fiyata orijinal ürün bir daha zor gelir..." / "Aylardır beklenen büyük indirim nihayet geldi, stoklar tükenmeden değerlendirin 👇" (DÜRÜSTLÜK KURALI: Normal indirimde ASLA sahte fiyat hatası iddiasında bulunma!)
      * HAYAT KURTARAN İLGİNÇ GADGET (viral_gadget): "Bunu Türkiye'de kimse bilmiyor, gördüğüm an siparişi patlattığım o hayat kurtaran alet..." / "Masanızda veya çantanızda kesinlikle olması gereken o alet dip fiyata indi..."
      * PAHALI MARKA MUADİLİ (expensive_dupe): "X markasına 15-20 bin TL bağlamayın, 5'te 1 fiyatına birebir aynı işi gören canavar bulundu..." / "Parasını çöpe atmak istemeyenlerin gizli tercihi, aynı performans..."
+     * ÇOK SATAN REKORU & SOSYAL KANIT (bestseller_radar): "Amazon'da herkesin kapış kapış aldığı Türkiye'nin 1 numaralı çok satan o ürünü..." / "Kızların sepetleri doldurduğu viral 1 numaralı çok satan..." (Sosyal kanıtı ve popülerliği öne çıkar, eski fiyat yoksa sahte indirim uydurma, güncel satış fiyatını vurgula!)
 2. YASAL ZORUNLULUK (REKLAM KURULU UYUMU):
    - Kancanın (ilk satırın) hemen altına MUTLAKA '#işbirliği #reklam' ibaresini ekle.
    - Ticaret Bakanlığı mevzuatı gereği bu etiketler 'devamını gör' katlamasının arkasına (metnin sonuna) saklanamaz, en başta açıkça görünür olmalıdır.

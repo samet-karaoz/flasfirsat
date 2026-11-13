@@ -230,7 +230,25 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             )
 
         if not candidates:
-            err = "Uygun kriterde (yeterli indirim ve stok) fırsat ürünü bulunamadı."
+            print(f"\n[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] %15 üzeri indirimli ürün kalmadı. Kuşağın boş geçmemesi için {hunt_cat.upper()} kategorisinde Amazon #1 ÇOK SATAN ürün devreye alınıyor...")
+            from deal_hunter import hunt_bestseller_deals
+            candidates = hunt_bestseller_deals(limit=5, category=hunt_cat, exclude_urls=history)
+            if target_platform == "youtube":
+                candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+
+        if not candidates and target_platform in ("youtube", "all", "auto"):
+            print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] Sneaker & Spor Ayakkabı Çok Satanlar taranıyor...")
+            from deal_hunter import hunt_bestseller_deals
+            candidates = hunt_bestseller_deals(limit=5, category="fashion", exclude_urls=history)
+            candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+
+        if not candidates and target_platform == "tiktok":
+            print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] TikTok için Güzellik & Makyaj Çok Satanlar taranıyor...")
+            from deal_hunter import hunt_bestseller_deals
+            candidates = hunt_bestseller_deals(limit=5, category="beauty", exclude_urls=history)
+
+        if not candidates:
+            err = "Uygun kriterde (yeterli indirim ve stok) fırsat veya çok satan ürün bulunamadı."
             print(f"[Autopilot Engine] ❌ {err}")
             send_telegram_admin_summary(f"⚠️ <b>[OTOPİLOT UYARISI]</b>\nKuşak: {slot_name}\n\n{err}", dry_run=dry_run)
             result["error"] = err
@@ -248,6 +266,10 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 print("[Autopilot Engine] 🛡️ YouTube Filtresi: Adayların tümü kozmetikti, acil F/P Teknoloji avlanıyor...")
                 candidates = hunt_best_deals(limit=5, platform="amazon", category="tech", min_discount=15)
                 candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+                if not candidates:
+                    from deal_hunter import hunt_bestseller_deals
+                    candidates = hunt_bestseller_deals(limit=5, category="tech", exclude_urls=history)
+                    candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
 
         # Deal Scoring (Viral Potansiyel, Net TL Tasarruf ve Platforma Göre Puanla)
         candidates.sort(key=lambda d: calculate_deal_viral_score(d, target_platform=target_platform), reverse=True)

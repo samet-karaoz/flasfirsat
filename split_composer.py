@@ -16,15 +16,14 @@ AUDIO_DIR = os.path.join(BASE_DIR, "assets", "audio")
 
 # 1. KADIN & GÜZELLİK / MAKYAJ / CİLT BAKIMI HAVUZU (SADECE Kadın Ürünlerinde Kullanılır!)
 WOMEN_MEME_ORDER = [
-    "scooter_kaskli_bebek.mp4",       # 1. Sarı Kasklı & Çantalı Tatlı Bebek Scooter Keyfi
+    "spa_gozluklu_bebek.mp4",         # 1. Alışveriş Poşetleri & Güneş Gözlüklü VIP Spa Bebek
     "market_arabasi_bebek.mp4",       # 2. Market Arabasıyla Dans Eden Tatlı Kız Bebek
-    "spa_gozluklu_bebek.mp4",         # 3. Alışveriş Poşetleri & Güneş Gözlüklü VIP Spa Bebek
-    "gozluklu_kopek_araba.mp4",       # 4. Şapkalı & Gözlüklü Tatlı Köpek Akülü Araba Keyfi
-    "arda_guler_soyunma_odasi.mp4",   # 4. Arda Güler Soyunma Odası Tarihi Konuşma (Kızların Favorisi)
-    "dugunde_oynayan_kiz.mp4",        # 5. Düğünde Oynayan Şık Kız Dansı (Zarif & Trend)
-    "pembe_vespa_kiz.mp4",            # 6. Pembe Vespa Süren Tatlı Kız (Yazısız Temiz Kırpım)
-    "pembe_cip_kiz.mp4",              # 7. Pembe Brabus Akülü Cip Süren Kız
-    "motorcu_tatli_kiz.mp4",          # 8. Tünelde Motor Süren Havalı Kız
+    "scooter_kaskli_bebek.mp4",       # 3. Sarı Kasklı & Çantalı Tatlı Bebek Scooter Keyfi
+    "dugunde_oynayan_kiz.mp4",        # 4. Düğünde Oynayan Şık Kız Dansı (Zarif & Trend)
+    "pembe_vespa_kiz.mp4",            # 5. Pembe Vespa Süren Tatlı Kız (Yazısız Temiz Kırpım)
+    "pembe_cip_kiz.mp4",              # 6. Pembe Brabus Akülü Cip Süren Kız
+    "motorcu_tatli_kiz.mp4",          # 7. Tünelde Motor Süren Havalı Kız
+    "gozluklu_kopek_araba.mp4",       # 8. Şapkalı & Gözlüklü Tatlı Köpek Akülü Araba Keyfi
 ]
 
 # 2. ERKEK / GAMING / TEKNOLOJİ / DONANIM & GENEL HAVUZ (Asla Kadın Memeleri Karışmaz!)
@@ -32,7 +31,8 @@ MEN_GENERAL_MEME_ORDER = [
     "polat_memati_kosu.mp4",         # 1. Polat Alemdar Koşusu & Memati Kaleci Uçuşu (Kurtlar Vadisi)
     "piyano_davul.mp4",               # 2. Piyano Çalan Kız & Davulcu Dayı
     "ghost_stare_cod.mp4",            # 3. CoD Ghost Stare & Soap Bakışı (Gaming İkonu)
-    "cg_motorcu_cocuk.mp4",           # 4. Modifiye Işıklı CG Motorlu Çocuk (Peak Erkek Mizahı)
+    "arda_guler_soyunma_odasi.mp4",   # 4. Arda Güler Soyunma Odası Tarihi Konuşma (Futbol / Spor / Erkek)
+    "cg_motorcu_cocuk.mp4",           # 5. Modifiye Işıklı CG Motorlu Çocuk (Peak Erkek Mizahı)
     "dugunde_cosan_cocuk.mp4",       # 5. Düğünde Kopan Çocuk (Pist Dansı)
     "kovboy_sapka_kedi.mp4",          # 6. Kovboy Şapkalı Göz Kırpan Kedi (Komik Reaksiyon)
     "kemal_efendi_dans.mp4",         # 7. Kemal Efendi (Fesli Dans)
@@ -376,15 +376,11 @@ MEME_SPECIFIC_HOOKS = {
         ]
     },
     "arda_guler_soyunma_odasi": {
-        "beauty": [
-            "Kızlar bu indirimi görünce odada verdiğim o tarihi konuşma:",
-            "Kızlar grubuna 'ACİL BU FİYATTAN ALIN' diye gaz verirken ben:",
-            "Stok bitmeden önce kız kardeşime acil sipariş taktiği verirken bendeki ciddiyet:",
-            "Bu markada böyle indirimi yakalayınca ekibe yaptığım o motivasyon konuşması:"
-        ],
         "general": [
             "İndirimi yakalayınca gruba 'BEYLER ACİL ÇÖKÜN' konuşması çeken ben:",
-            "Stok bitmeden siparişi kapmak için takıma taktik veren kaptan gibi ben:"
+            "Stok bitmeden siparişi kapmak için takıma taktik veren kaptan gibi ben:",
+            "Discord'daki arkadaşlara 'bu fiyata kaçmaz hemen alın' diye gaz verirken ben:",
+            "Masaüstünü ucuza toplayınca beylerle kutlama moduna geçen ben:"
         ]
     },
     "dugunde_oynayan_kiz": {

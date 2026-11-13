@@ -280,8 +280,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/jbl_tune_520bt_multi_conn_bf836c9b.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "10.11.2026 12:06"
   },
   {
@@ -1226,8 +1226,8 @@
     "image_url": "assets/products/stanley_transit_termos_88819170.webp",
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "deal_code": "#113"
   },
   {

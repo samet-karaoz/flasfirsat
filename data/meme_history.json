@@ -1,9 +1,8 @@
 {
-  "next_index": 22,
-  "next_index_men": 22,
+  "next_index": 0,
+  "next_index_men": 0,
   "next_index_women": 6,
   "recent_used": [
-    "piyano_davul.mp4",
     "ghost_stare_cod.mp4",
     "pembe_vespa_kiz.mp4",
     "cg_motorcu_cocuk.mp4",
@@ -32,7 +31,8 @@
     "arda_guler_soyunma_odasi.mp4",
     "angaraya_mi_geldin.mp4",
     "pembe_cip_kiz.mp4",
-    "limon_halay.mp4"
+    "limon_halay.mp4",
+    "bebek_dans.mp4"
   ],
   "recent_used_men": [
     "polat_memati_kosu.mp4",
@@ -56,7 +56,8 @@
     "bale_nod.mp4",
     "angaraya_mi_geldin.mp4",
     "arda_guler_soyunma_odasi.mp4",
-    "limon_halay.mp4"
+    "limon_halay.mp4",
+    "bebek_dans.mp4"
   ],
   "recent_used_women": [
     "dugunde_oynayan_kiz.mp4",

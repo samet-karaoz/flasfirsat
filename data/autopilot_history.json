@@ -2573,5 +2573,36 @@
     "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261113_120742_stanley_classic_legendary.mp4",
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261113_120742_stanley_classic_legendary.mp4",
     "caption_text": "⚡ STANLEY Classic Legendary - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n❌ Eski Fiyat: 1.749 TL\n\n✅ Satış Fiyatı: 1.154 TL (-34% İndirim)\n\n🔢 Fırsat Kodu: 187 (Sitede arama kutusuna 187 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet"
+  },
+  {
+    "timestamp": "2026-11-13 15:35:58",
+    "slot": "18:30 YouTube Prime Time Fırsat",
+    "target_platform": "youtube",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "youtube": {
+        "status": "ok",
+        "url": "https://www.youtube.com/shorts/v7eytAXQVDY"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Stevig 4 Camp Klasik Vakumlu",
+      "new_price": "1.199 TL",
+      "old_price": "1.899 TL",
+      "discount_pct": "-37%",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0HPY7XXFX?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261113_153812_stevig_4_camp_klasik_vakumlu.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261113_153812_stevig_4_camp_klasik_vakumlu.mp4",
+    "caption_text": "⚡ Stevig 4 Camp Klasik Vakumlu - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n❌ Eski Fiyat: 1.899 TL\n\n✅ Satış Fiyatı: 1.199 TL (-37% İndirim)\n\n🔢 Fırsat Kodu: 188 (Sitede arama kutusuna 188 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n#indirim #fırsat #keşfet"
   }
 ]

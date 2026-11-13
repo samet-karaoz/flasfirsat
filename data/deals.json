@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794557248_77",
+    "deal_code": "#185",
+    "title": "Kablolu Kulak İçi Kulaklık 3",
+    "old_price": "149 TL",
+    "new_price": "124 TL",
+    "discount_pct": "-17%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0HPB8XRY2?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/kablolu_kulak___i_kulakl__7dde654f.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "13.11.2026 08:07"
+  },
+  {
     "id": "deal_1794503404_76",
     "deal_code": "#184",
     "title": "Maybelline New York Fit Me",

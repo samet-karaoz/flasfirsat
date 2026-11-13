@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794571677_79",
+    "deal_code": "#187",
+    "title": "STANLEY Classic Legendary",
+    "old_price": "1.749 TL",
+    "new_price": "1.154 TL",
+    "discount_pct": "-34%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FZVHKQNC?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 385 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_classic_legendary_ba7ec6c3.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "13.11.2026 12:07"
+  },
+  {
     "id": "deal_1794564458_78",
     "deal_code": "#186",
     "title": "L'Oreal Paris Infaillible",

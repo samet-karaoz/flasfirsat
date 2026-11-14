@@ -242,8 +242,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/vichy_dercos_sa__serumu_7046604e.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "11.11.2026 17:07"
   },
   {
@@ -1340,8 +1340,8 @@
     "date_added": "14.10.2026 08:13",
     "category": "lifestyle",
     "deal_code": "#112",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
+    "is_expired": false,
+    "expired_reason": ""
   },
   {
     "id": "deal_1791954453_10",

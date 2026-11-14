@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794643708_82",
+    "deal_code": "#190",
+    "title": "Stanley Quencher Pipetli",
+    "old_price": "1.799 TL",
+    "new_price": "1.402,50 TL",
+    "discount_pct": "-22%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DFWVN7KM?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 467 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_quencher_pipetli_089098bd.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "14.11.2026 08:08"
+  },
+  {
     "id": "deal_1794595193_81",
     "deal_code": "#189",
     "title": "Anker Soundcore Select 4 Go",

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794676031_86",
+    "deal_code": "#194",
+    "title": "Flormar Mat Bitişli Suya",
+    "old_price": "150 TL",
+    "new_price": "111 TL",
+    "discount_pct": "-26%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07F5YGFBT?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/flormar_mat_biti_li_suya_079e1172.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "14.11.2026 17:07"
+  },
+  {
     "id": "deal_1794670838_85",
     "deal_code": "#193",
     "title": "Klasse Feel Pro IEM Kulaklık",

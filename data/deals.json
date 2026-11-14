@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794658160_84",
+    "deal_code": "#192",
+    "title": "Volume Up Mascara Yoğun",
+    "old_price": "418 TL",
+    "new_price": "350 TL",
+    "discount_pct": "-16%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FQPCDDLT?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "Sepette %10 Ek İndirim",
+    "category": "general",
+    "image_url": "assets/products/volume_up_mascara_yo_un_7aa4d142.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "14.11.2026 12:09"
+  },
+  {
     "id": "deal_1794650836_83",
     "deal_code": "#191",
     "title": "Kiko Milano RUJ",

@@ -132,6 +132,23 @@ def publish_shorts_to_youtube(
     if not video_path:
         return {"success": False, "error": "Video dosya yolu belirtilmedi."}
 
+    # 🛑 YOUTUBE KESİN GÜVENLİK FİLTRESİ:
+    # YouTube Shorts KESİNLİKLE F/P Teknoloji, Gaming Donanım ve Popüler Sneaker kanalıdır.
+    # Kozmetik, makyaj veya onaylanmamış kategorideki ürünler KESİNLİKLE yüklenemez!
+    try:
+        from deal_hunter import is_beauty_product, is_youtube_approved_product
+        check_str = f"{title} {description}"
+        if is_beauty_product(check_str):
+            err_msg = f"🛑 [YOUTUBE GÜVENLİK DUVARI] '{title}' bir kadın/kozmetik ürünüdür ve YouTube Shorts'a yüklenmesi KESİNLİKLE ENGELLENDİ!"
+            print(err_msg)
+            return {"success": False, "error": err_msg, "skipped": True}
+        if not is_youtube_approved_product(check_str):
+            err_msg = f"🛑 [YOUTUBE GÜVENLİK DUVARI] '{title}' onaylı bir F/P Teknoloji veya Sneaker ürünü olmadığı için YouTube Shorts'a yüklenmesi KESİNLİKLE ENGELLENDİ!"
+            print(err_msg)
+            return {"success": False, "error": err_msg, "skipped": True}
+    except Exception as e_chk:
+        print(f"[YouTube Publisher] ⚠️ Güvenlik filtresi denetim uyarısı: {e_chk}")
+
     if not os.path.exists(video_path):
         if video_path.startswith("http://") or video_path.startswith("https://"):
             temp_vid = os.path.join(DATA_DIR, "temp_yt_upload.mp4")

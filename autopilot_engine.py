@@ -142,7 +142,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             # 1. En iyi fırsatı tara
             print("\n[Adım 1/4] 🔍 En yüksek indirimli taze fırsat avlanıyor...")
             from deal_hunter import (
-    is_beauty_product,
+                is_beauty_product,
+                is_youtube_approved_product,
                 hunt_best_deals,
                 get_product_subtype,
                 get_recent_subtypes_from_history,
@@ -234,13 +235,13 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             from deal_hunter import hunt_bestseller_deals
             candidates = hunt_bestseller_deals(limit=5, category=hunt_cat, exclude_urls=history)
             if target_platform == "youtube":
-                candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+                candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
 
         if not candidates and target_platform in ("youtube", "all", "auto"):
             print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] Sneaker & Spor Ayakkabı Çok Satanlar taranıyor...")
             from deal_hunter import hunt_bestseller_deals
             candidates = hunt_bestseller_deals(limit=5, category="fashion", exclude_urls=history)
-            candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+            candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
 
         if not candidates and target_platform == "tiktok":
             print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] TikTok için Güzellik & Makyaj Çok Satanlar taranıyor...")
@@ -257,19 +258,19 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
 
         # 🛡️ YOUTUBE PLATFORM GÜVENLİK FİLTRESİ:
         # YouTube Shorts KESİNLİKLE VE KESİNLİKLE F/P Teknoloji & Sneaker kanalıdır! Makyaj/Kozmetik ASLA yüklenemez!
-        from deal_hunter import is_beauty_product, calculate_deal_viral_score, get_deal_discount_pct, get_deal_savings_tl
+        from deal_hunter import is_beauty_product, is_youtube_approved_product, calculate_deal_viral_score, get_deal_discount_pct, get_deal_savings_tl
         if target_platform == "youtube":
-            tech_only = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+            tech_only = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
             if tech_only:
                 candidates = tech_only
             else:
-                print("[Autopilot Engine] 🛡️ YouTube Filtresi: Adayların tümü kozmetikti, acil F/P Teknoloji avlanıyor...")
+                print("[Autopilot Engine] 🛡️ YouTube Filtresi: Adayların hiçbiri onaylı teknoloji/sneaker değildi, acil F/P Teknoloji avlanıyor...")
                 candidates = hunt_best_deals(limit=5, platform="amazon", category="tech", min_discount=15)
-                candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+                candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
                 if not candidates:
                     from deal_hunter import hunt_bestseller_deals
                     candidates = hunt_bestseller_deals(limit=5, category="tech", exclude_urls=history)
-                    candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
+                    candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
 
         # Deal Scoring (Viral Potansiyel, Net TL Tasarruf ve Platforma Göre Puanla)
         candidates.sort(key=lambda d: calculate_deal_viral_score(d, target_platform=target_platform), reverse=True)
@@ -417,10 +418,10 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # A) YouTube Shorts (Platforma Özel: BİO Link CTA Bandı & Açıklama)
         if target_platform in ("youtube", "all"):
             print("\n--- 1. YouTube Shorts ---")
-            from deal_hunter import is_beauty_product
-            if is_beauty_product(title):
-                print(f"🛑 [YOUTUBE GÜVENLİK FİLTRESİ] '{title}' bir kadın/kozmetik ürünüdür ve YouTube Shorts'a yüklenmesi KESİNLİKLE ENGELLENDİ!")
-                result["platforms"]["youtube"] = {"status": "skipped", "reason": "beauty_product_strictly_forbidden_on_youtube"}
+            from deal_hunter import is_beauty_product, is_youtube_approved_product
+            if is_beauty_product(title) or not is_youtube_approved_product(title):
+                print(f"🛑 [YOUTUBE GÜVENLİK FİLTRESİ] '{title}' YouTube Shorts standartlarına (Teknoloji & Sneaker) uygun olmadığı için KESİNLİKLE ENGELLENDİ!")
+                result["platforms"]["youtube"] = {"status": "skipped", "reason": "not_approved_for_youtube"}
             else:
                 try:
                     from youtube_publisher import publish_shorts_to_youtube

@@ -25,22 +25,99 @@ DEFAULT_CHANNELS = [
 
 
 BEAUTY_MAKEUP_KEYWORDS = [
-    "maskara", "rimel", "gloss", "lip gloss", "dudak", "ruj", "allık", "blush",
-    "glotion", "kapatıcı", "concealer", "fondöten", "foundation", "bb krem", "cc krem",
-    "eyeliner", "göz kalemi", "kaş", "far paleti", "parfüm", "edt", "edp", "body mist",
-    "serum", "nemlendirici", "cilt", "tonik", "şampuan", "saç bakım", "saç kremi",
-    "oje", "manikür", "epilatör", "ağda", "pudra", "powder", "bronzer", "highlighter",
-    "kontür", "primer", "makyaj", "makeup", "lipstick", "lipliner", "lip liner", "lash",
+    # Göz ve Kirpik (Türkçe & İngilizce)
+    "maskara", "mascara", "rimel", "volume up", "lash", "lashes", "eyelash", "eyelashes",
+    "kirpik", "sky high", "telescopic", "panorama", "lash princess",
+    "eyeliner", "eye liner", "dipliner", "dip liner", "göz kalemi", "eye pencil",
+    "far paleti", "eyeshadow", "göz farı", "kaş", "eyebrow", "brow", "brows",
+    "kaş maskarası", "kaş sabitleyici", "kaş jeli",
+    # Dudak (Türkçe & İngilizce)
+    "gloss", "lip gloss", "lipgloss", "lip oil", "dudak yağı", "dudak parlatıcı",
+    "dudak", "lip", "lips", "ruj", "lipstick", "lipliner", "lip liner", "dudak kalemi",
+    "lip tint", "liptint", "lifter gloss", "matte ink", "superstay", "color sensational",
+    # Yüz ve Ten Makyajı
+    "allık", "blush", "liquid blush", "likit allık", "glotion", "aydınlatıcı", "highlighter",
+    "kapatıcı", "concealer", "fondöten", "foundation", "skin tint", "bb krem", "bb cream",
+    "cc krem", "cc cream", "pudra", "powder", "bronzer", "kontür", "contour",
+    "primer", "makyaj bazı", "makyaj", "makeup", "make up", "cosmetic", "kozmetik",
+    "true match", "fit me", "infaillible",
+    # Parfüm ve Kokular
+    "parfüm", "perfume", "fragrance", "edt", "edp", "cologne", "kolonya",
+    "body mist", "vücut spreyi", "vücut misti", "deodorant", "roll-on", "rollon",
+    # Cilt Bakımı
+    "serum", "cilt serumu", "hyaluronik", "hyaluronic", "niacinamide", "retinol", "kolajen", "collagen",
+    "nemlendirici", "moisturizer", "cilt", "skin", "skincare", "tonik", "tonic", "toner",
+    "micellar", "yüz yıkama", "yüz temizleme", "cleanser", "peeling", "maske", "face mask",
+    "sheet mask", "kil maskesi", "göz altı",
+    # Saç Bakımı
+    "şampuan", "shampoo", "saç bakım", "saç kremi", "hair conditioner", "saç maskesi",
+    "saç serumu", "saç yağı", "saç köpüğü", "saç spreyi", "keratin", "argan", "biberiye",
+    # Tırnak & Epilasyon & Güneş
+    "oje", "nail polish", "manikür", "pedikür", "tırnak", "epilatör", "epilasyon",
+    "ağda", "wax", "tüy dökücü", "güneş kremi", "sunscreen", "sunblock", "spf",
+    "el kremi", "vücut losyonu", "body lotion", "vücut kremi",
+    # Popüler Kozmetik Markaları
     "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "revolution", "nyx",
     "essence", "pastel", "beaulis", "vichy", "cerave", "bioderma", "la roche", "dercos",
-    "true match", "fit me", "sky high", "infaillible", "lifter gloss",
-    "yüz temizleme", "güneş kremi", "el kremi", "vücut losyonu", "peeling"
+    "the purest solutions", "garnier", "nivea", "neutrogena", "sebamed", "yves rocher",
+    "mac cosmetics", "sephora", "fenty", "rare beauty", "benefit", "clinique", "maruderm", "shevec"
+]
+
+YOUTUBE_APPROVED_KEYWORDS = [
+    # 1. Ses, Müzik ve Mobil Teknolojiler
+    "kulaklık", "headphone", "headset", "earphone", "earbuds", "earpods", "airpods", "tws",
+    "hoparlör", "speaker", "soundbar", "mikrofon", "microphone", "ses kartı", "dac", "amfi",
+    # 2. Oyuncu Donanımı ve Bilgisayar Parçaları
+    "mouse", "fare", "klavye", "keyboard", "monitör", "monitor", "ekran",
+    "gamepad", "oyun kolu", "joystick", "direksiyon", "mousepad", "mouse pad",
+    "ssd", "nvme", "m.2", "sata ssd", "ram", "bellek", "ekran kartı", "gpu", "anakart",
+    "işlemci", "cpu", "kasa", "fan", "soğutucu", "cooler", "güç kaynağı", "psu",
+    "gaming", "oyuncu", "playstation", "ps5", "ps4", "xbox", "nintendo", "konsol",
+    "laptop", "notebook", "oyun bilgisayarı",
+    # 3. Akıllı Cihazlar & Mobil Şarj
+    "akıllı saat", "smartwatch", "akıllı bileklik", "smart band",
+    "powerbank", "power bank", "şarj istasyonu", "gan şarj", "hızlı şarj",
+    "projeksiyon", "projektör", "tablet", "ipad", "grafik tablet",
+    "monitör lambası", "screenbar", "webcam", "kamera", "gimbal", "aksiyon kamera",
+    # 4. Popüler Spor Ayakkabı & Sneaker
+    "sneaker", "spor ayakkabı", "koşu ayakkabı", "yürüyüş ayakkabı", "basketbol ayakkabı",
+    "halı saha", "krampon", "sneakers", "ayakkabı",
+    # 5. Kişisel Bakım Teknolojisi & İkonik Termos
+    "tıraş makine", "tıraş aleti", "oneblade", "braun series", "şarjlı diş fırça", "termos", "quencher"
+]
+
+YOUTUBE_APPROVED_BRANDS = [
+    # Teknoloji / Donanım / Ses
+    "apple", "samsung", "anker", "soundcore", "jbl", "sony", "marshall", "qcy", "xiaomi", "huawei",
+    "logitech", "razer", "steelseries", "hyperx", "corsair", "asus", "rog", "tuf", "msi", "lenovo",
+    "legion", "viewsonic", "aoc", "benq", "dell", "alienware", "hp", "omen", "victus", "acer", "nitro",
+    "kingston", "sandisk", "crucial", "klasse", "attack shark", "ajazz", "aula",
+    "redragon", "dareu", "epomaker", "keychron", "royal kludge", "8bitdo", "gamesir",
+    "baseus", "ugreen", "spigen",
+    # Spor Ayakkabı / Sneaker
+    "adidas", "nike", "puma", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "asics", "converse",
+    # İkonik Ürünler
+    "stanley", "philips oneblade", "oral-b"
 ]
 
 def is_beauty_product(title: str) -> bool:
     """Verilen ürünün makyaj, kozmetik, cilt/saç bakımı veya kadın güzellik ürünü olduğunu doğrular."""
     t = (title or "").lower()
     return any(k in t for k in BEAUTY_MAKEUP_KEYWORDS)
+
+def is_youtube_approved_product(title: str) -> bool:
+    """
+    AGENTS.md Kural 1: YouTube Shorts Kanalı = %100 F/P TEKNOLOJİ, GAMING DONANIM & POPÜLER SNEAKER!
+    Ürünün kesinlikle bu kategorilerden birine ait olduğunu pozitif olarak doğrular.
+    Makyaj, kozmetik, tava, kahve makinesi veya alakasız genel ürünler ASLA geçemez.
+    """
+    t = (title or "").lower()
+    # Kesin kozmetik/makyaj ise doğrudan reddet
+    if is_beauty_product(t):
+        return False
+    has_keyword = any(k in t for k in YOUTUBE_APPROVED_KEYWORDS)
+    has_brand = any(b in t for b in YOUTUBE_APPROVED_BRANDS)
+    return bool(has_keyword or has_brand)
 
 BORING_REGEX = re.compile(
     r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|\bpuck\b|şarj\s*diski|şarj\s*yuvası|şarj\s*modülü|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\badaptör(ü)?\b|\bkablo(su)?\b(?!lu)|"
@@ -514,9 +591,10 @@ def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> flo
     plat = (target_platform or deal.get("target_platform") or "auto").lower()
 
     # 🛑 YOUTUBE KESİN GÜVENLİK FİLTRESİ:
-    # YouTube hedefli paylaşımlarda güzellik, makyaj, dudak, ruj, şampuan vb. ürünler KESİNLİKLE YASAKTIR!
-    if plat == "youtube" and is_beauty_product(title):
-        return -999.0
+    # YouTube hedefli paylaşımlarda onaylanmayan veya güzellik/kozmetik ürünleri KESİNLİKLE YASAKTIR!
+    if plat == "youtube":
+        if is_beauty_product(title) or not is_youtube_approved_product(title):
+            return -999.0
 
     score = 0.0
 
@@ -1477,10 +1555,15 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
                 continue
             if "stanley" in d.get("title", "").lower() and ("stanley" in (exclude_brands or set()) or "thermos" in (exclude_subtypes or set())):
                 continue
-            # YouTube / Tech kategorisi için kozmetik/makyaj filtresi
-            if category in ("tech", "gaming", "computers", "electronics", "monitors") and is_beauty_product(d.get("title", "")):
-                print(f"[Deal Hunter] 🛡️ YouTube/Tech Filtresi: Online kanaldan gelen kozmetik ürünü elendi -> {d.get('title')}")
-                continue
+            # YouTube / Tech kategorisi için pozitif kategori ve kozmetik/makyaj filtresi
+            if category in ("tech", "gaming", "computers", "electronics", "monitors"):
+                if is_beauty_product(d.get("title", "")) or not is_youtube_approved_product(d.get("title", "")):
+                    print(f"[Deal Hunter] 🛡️ YouTube/Tech Filtresi: Onaylanmayan veya kozmetik ürün elendi -> {d.get('title')}")
+                    continue
+            if category in ("beauty", "cosmetics", "skincare"):
+                if not is_beauty_product(d.get("title", "")):
+                    print(f"[Deal Hunter] 🛡️ TikTok/Güzellik Filtresi: Kozmetik olmayan ürün elendi -> {d.get('title')}")
+                    continue
             candidates.append(d)
 
     # Eğer ilk taramada aday bulunamadıysa eşiği %15'e indirip çeşitlilik kısıtını gevşeterek TEK SEFERLİK genel tarama yap (Sonsuz döngü ve çift tarama korumalı!)
@@ -1719,7 +1802,7 @@ def hunt_bestseller_deals(limit: int = 3, category: str = "tech", exclude_urls: 
                 continue
             if not is_mass_appeal_product(raw_title):
                 continue
-            if cat_low in ("tech", "gaming_tech") and is_beauty_product(raw_title):
+            if cat_low in ("tech", "gaming_tech") and (is_beauty_product(raw_title) or not is_youtube_approved_product(raw_title)):
                 continue
             if is_deal_already_shared(raw_title, prod_url, exclude_urls):
                 continue

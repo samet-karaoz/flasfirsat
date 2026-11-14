@@ -223,8 +223,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/hawk__75_kablosuz_klavye_a9e27922.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "11.11.2026 18:37"
   },
   {
@@ -489,8 +489,8 @@
     "coupon_info": "Sepette %5 Ek İndirim",
     "category": "general",
     "image_url": "assets/products/adidas_advantage_base_erk_f7047113.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "09.11.2026 18:12"
   },
   {
@@ -774,8 +774,8 @@
     "coupon_info": "",
     "category": "hardware",
     "image_url": "assets/products/acer_aspire_go_15__ryzen__72f5cf9e.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 20:26"
   },
   {

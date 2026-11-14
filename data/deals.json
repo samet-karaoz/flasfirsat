@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794650836_83",
+    "deal_code": "#191",
+    "title": "Kiko Milano RUJ",
+    "old_price": "745 TL",
+    "new_price": "545 TL",
+    "discount_pct": "-27%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B077DHDY5J?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/kiko_milano_ruj_e3d21aad.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "14.11.2026 10:07"
+  },
+  {
     "id": "deal_1794643708_82",
     "deal_code": "#190",
     "title": "Stanley Quencher Pipetli",

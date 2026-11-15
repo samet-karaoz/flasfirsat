@@ -964,8 +964,8 @@
     "coupon_info": "",
     "category": "hardware",
     "image_url": "assets/products/tecno_megabook_t14_air__i_f21d48ea.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 20:26"
   },
   {
@@ -1530,8 +1530,8 @@
     "image_url": "assets/products/stanley_transit_termos_88819170.webp",
     "date_added": "14.10.2026 08:19",
     "category": "lifestyle",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "deal_code": "#113"
   },
   {

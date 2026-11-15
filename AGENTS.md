@@ -22,27 +22,21 @@ Sosyal medya hesaplarımızın (`@flasfirsat.tr`) takipçi büyümesi, viral eri
    - Yüksek hızlı taşınabilir SSD / NVMe SSD ve E-Spor Mousepad modelleri (Kingston, SanDisk, Klasse)
 3. **Popüler F/P Spor Ayakkabı & Sneaker Modelleri:**
    - Erkek / Unisex / Kadın spor ayakkabı, koşu ayakkabısı ve sneaker modelleri (Adidas, Puma, Nike, Under Armour, Skechers, New Balance, Vans, Reebok, Columbia, Salomon)
-4. **Popüler Kişisel Bakım Teknolojileri & Cilt Bakımı:**
+4. **Popüler Kişisel Bakım Teknolojileri & İkonik Hobi/Koleksiyon (LEGO):**
    - Tıraş ve saç kesim makineleri (Philips OneBlade, Braun Series)
    - Şarjlı diş fırçaları (Oral-B iO / Pro serisi, Philips Sonicare)
-   - Kadın cilt ve saç bakımı (The Purest Solutions, CeraVe, Bioderma, La Roche-Posay, L'Oreal)
    - Viral termoslar (Stanley Quencher, IceFlow)
-5. **TikTok & Sosyal Medya Süper Önceliği: Viral Makyaj & Kozmetik Dünyası (Gloss, Maskara, Likit Allık, Kapatıcı):**
-   - **Dudak Makyajı & Gloss:** Lip gloss, dudak yağları, dolgunlaştırıcılar, dudak kalemleri ve lip tintler (Maybelline Lifter Gloss, Kiko Milano, Golden Rose, NYX Fat Oil, Flormar)
-   - **Göz Makyajı & Maskara:** Viral rimeller, suya dayanıklı jel eyelinerlar, kaş sabitleyiciler (Maybelline Sky High / Lash Sensational, L'Oreal Telescopic / Panorama, Essence Lash Princess, Golden Rose)
-   - **Yüz Makyajı & Işıltı:** Likit allıklar, glotion/aydınlatıcılar, yüksek kapatıcılı concealer ve pudralar (L'Oreal Glotion, Maybelline Instant Anti Age Eraser / Fit Me, Revolution Blush)
-   - **Ulaşılabilir F/P İkonik Parfümler:** (Calvin Klein, Davidoff, Slazenger, Privacy, Antonio Banderas)
-   - **Altın Dürtüsel Satın Alma Aralığı:** 100 TL - 1.500 TL (TikTok izleyicisinin 'sepete atıp geçme' refleksini tetikleyen en hızlı satış ve en yüksek dönüşüm bandı; tavan 2.250 TL).
+   - **LEGO Koleksiyon & Yapım Setleri (Speed Champions, Technic, Icons):** İzleyici kitlesiyle yüksek etkileşim getiren ikonik LEGO setleri dahil edilir; **ANCAK arka arkaya LEGO paylaşımı KESİNLİKLE YASAKTIR** (iki LEGO ürünü arasında en az 5 farklı paylaşım olmalıdır: `is_lego_on_cooldown(min_gap_posts=5)`).
+   - **Altın Satın Alma & Donanım Aralığı:** 250 TL - 3.500 TL (taksitli monitör / üst segment donanım tavanı 6.500 TL; 25–44 yaş çalışan yetişkin kitlesi odaklı).
 
 ---
 
-### C. KESİN PLATFORM AYRIMI (YouTube Shorts vs. TikTok Güvenlik Duvarı):
-1. **YouTube Shorts Kanalı = %100 F/P TEKNOLOJİ, GAMING DONANIM & POPÜLER SNEAKER:**
-   - Kulaklık, klavye, fare, monitör, gamepad, akıllı saat, hoparlör, powerbank, SSD ve popüler spor ayakkabılar.
-   - **KADIN MAKYAJI, KOZMETİK VE KADIN CİLT BAKIMI (Gloss, Dudak Kalemi, Ruj, Maskara, Allık, Kapatıcı, Şampuan vb.) YOUTUBE SHORTS İÇİN KESİNLİKLE VE %100 YASAKTIR!**
-2. **TikTok Kanalı = VİRAL MAKYAJ DÜNYASI, PARFÜM & F/P SNEAKER:**
-   - Gloss, dudak yağı, viral maskara, likit allık, glotion, kapatıcı, parfümler ve sneaker modelleri.
-3. **Sıfır Geçiş:** İki platformun algoritmik ürün havuzu kod seviyesinde güvenlik duvarı (is_beauty_product) ile izole edilmiştir; YouTube kuşağına asla kozmetik ürünü sızamaz.
+### C. KESİN PLATFORM AYRIMI & GERÇEK İZLEYİCİ KİTLESİ UYUMU (YouTube Shorts %70 Erkek + TikTok %84 Erkek):
+1. **YouTube Shorts & TikTok Ortak Güvenlik Duvarı = %100 F/P TEKNOLOJİ, GAMING DONANIM, POPÜLER SNEAKER & LEGO:**
+   - Gerçek analitik verilerine göre hem YouTube Shorts (%70 Erkek) hem TikTok (%84 Erkek, %77.7'si 18–34 yaş) ağırlıklı olarak genç ve yetişkin erkek/teknoloji izleyicisine sahiptir.
+   - Kulaklık, klavye, fare (G305 vb.), 90x40 mousepad (Klasse/SteelSeries), 144Hz-240Hz monitör, gamepad, akıllı saat, hoparlör, powerbank, SSD, popüler spor ayakkabılar ve LEGO (cooldown korumalı) önceliklidir.
+   - **KADIN MAKYAJI VE KOZMETİK ÜRÜNLERİ (Gloss, Dudak Kalemi, Ruj, Maskara, Allık, Kapatıcı, Şampuan vb.) HEM YOUTUBE SHORTS HEM DE TİKTOK OTOMASYONU İÇİN DEVRE DIŞIDIR.**
+2. **Erkek/Genel Viral Meme Havuzu:** İki platformda da `MEN_GENERAL_MEME_ORDER` havuzu (`polat_memati_kosu.mp4`, `piyano_davul.mp4`, `arda_guler_sevinme.mp4`, `dugunde_cosan_cocuk.mp4` vb.) kullanılır.
 
 ---
 

@@ -107,7 +107,7 @@ jobs:
               SLOT="11:00 YouTube Sabah F/P"
               PLATFORM="youtube"
             elif [ "$UTC_H" = "10" ]; then
-              SLOT="13:00 TikTok Güzellik & Bakım"
+              SLOT="13:00 TikTok Viral F/P & Teknoloji"
               PLATFORM="tiktok"
             elif [ "$UTC_H" = "12" ]; then
               SLOT="15:00 YouTube Gaming & Donanım"
@@ -119,7 +119,7 @@ jobs:
               SLOT="20:00 YouTube Prime Time F/P"
               PLATFORM="youtube"
             elif [ "$UTC_H" = "18" ]; then
-              SLOT="21:30 TikTok Gece Makyaj & Bakım"
+              SLOT="21:30 TikTok Gece F/P & Gaming"
               PLATFORM="tiktok"
             else
               SLOT="Bulut Otopilotu (${UTC_H}:00 UTC)"

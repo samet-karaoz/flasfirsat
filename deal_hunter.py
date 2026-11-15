@@ -82,8 +82,9 @@ YOUTUBE_APPROVED_KEYWORDS = [
     # 4. Popüler Spor Ayakkabı & Sneaker
     "sneaker", "spor ayakkabı", "koşu ayakkabı", "yürüyüş ayakkabı", "basketbol ayakkabı",
     "halı saha", "krampon", "sneakers", "ayakkabı",
-    # 5. Kişisel Bakım Teknolojisi & İkonik Termos
-    "tıraş makine", "tıraş aleti", "oneblade", "braun series", "şarjlı diş fırça", "termos", "quencher"
+    # 5. Kişisel Bakım Teknolojisi, İkonik Termos & LEGO Koleksiyon
+    "tıraş makine", "tıraş aleti", "oneblade", "braun series", "şarjlı diş fırça", "termos", "quencher",
+    "lego", "speed champions", "technic", "yapım seti"
 ]
 
 YOUTUBE_APPROVED_BRANDS = [
@@ -96,8 +97,8 @@ YOUTUBE_APPROVED_BRANDS = [
     "baseus", "ugreen", "spigen",
     # Spor Ayakkabı / Sneaker
     "adidas", "nike", "puma", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "asics", "converse",
-    # İkonik Ürünler
-    "stanley", "philips oneblade", "oral-b"
+    # İkonik Ürünler & Koleksiyon
+    "stanley", "philips oneblade", "oral-b", "lego"
 ]
 
 def is_beauty_product(title: str) -> bool:
@@ -229,12 +230,14 @@ BROAD_AUDIENCE_KEYWORDS = [
     "tost makinesi", "blender", "robot süpürge", "dikey süpürge", "şarjlı süpürge",
     "monitör", "monitor", "mouse", "fare", "klavye", "keyboard", "oyun kolu", "gamepad",
     "dualsense", "wireless controller", "oyuncu kulaklığı", "gaming laptop", "laptop", "mousepad", "mouse pad",
+    "lego", "speed champions", "technic", "yapım seti",
     "tıraş makinesi", "oneblade", "diş fırçası", "oral-b", "sonicare", "airwrap",
     "serum", "nemlendirici", "güneş kremi", "şampuan", "saç kurutma", "saç düzleştirici", "epilatör"
 ]
 
 MASS_APPEAL_PRODUCT_REGEX = re.compile(
     r"(kulaklık|headset|airpods|earbuds|\bbuds\b|soundcore|"
+    r"\blego\b|speed\s*champions|lego\s*technic|yapım\s*seti|"
     r"hoparlör|speaker|soundbar|"
     r"akıllı\s*saat|smart\s*watch|smartwatch|akıllı\s*bileklik|galaxy\s*watch|apple\s*watch|watch\s*fit|mi\s*band|"
     r"powerbank|power\s*bank|taşınabilir\s*şarj|"
@@ -268,11 +271,11 @@ def is_mass_appeal_product(title: str) -> bool:
     return bool(MASS_APPEAL_PRODUCT_REGEX.search(t))
 
 KNOWN_BRANDS = [
-    "stanley", "logitech", "steelseries", "razer", "gamesir", "philips", "karaca",
+    "stanley", "logitech", "steelseries", "razer", "gamesir", "philips", "karaca", "lego",
     "the purest solutions", "delonghi", "de'longhi", "anker", "jbl", "sony", "apple",
     "cosori", "xiaomi", "roborock", "dreame", "dyson", "hyperx", "corsair", "asus", "msi",
     "lenovo", "dell", "samsung", "huawei", "oral-b", "braun", "cerave", "bioderma",
-    "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc",
+    "adidas", "puma", "nike", "under armour", "skechers", "new balance", "vans", "reebok", "columbia", "salomon", "kingston", "sandisk", "spigen", "baseus", "ugreen", "viewsonic", "aoc", "klasse", "aula", "ajazz", "attack shark",
     "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "revolution", "nyx", "essence", "pastel", "beaulis",
     "calvin klein", "versace", "davidoff", "slazenger", "privacy", "casio", "g-shock", "eastpak"
 ]
@@ -341,12 +344,56 @@ def get_recent_brands_from_history(limit: int = 2, target_platform: str = None) 
             pass
     return brands
 
+def is_lego_on_cooldown(min_gap_posts: int = 5, history_file: str = None, deals_file: str = None) -> bool:
+    """
+    Arka arkaya LEGO paylaşımını önleyen kesin kalkan:
+    autopilot_history.json içindeki son 'min_gap_posts' başarılı gerçek paylaşımda
+    veya deals.json içindeki son 'min_gap_posts' üründe 'lego' varsa True döner.
+    """
+    from config import DATA_DIR
+    hist_path = history_file or os.path.join(DATA_DIR, "autopilot_history.json")
+    if os.path.exists(hist_path):
+        try:
+            with open(hist_path, "r", encoding="utf-8") as f:
+                items = json.load(f)
+            checked = 0
+            for it in reversed(items):
+                if it.get("success") and not it.get("dry_run") and not it.get("skipped"):
+                    deal_info = it.get("deal") or {}
+                    t = (deal_info.get("title", "") if isinstance(deal_info, dict) else str(deal_info or "")).lower()
+                    u = (deal_info.get("affiliate_url", "") or deal_info.get("store_url", "") if isinstance(deal_info, dict) else "").lower()
+                    if "lego" in t or "lego" in u:
+                        return True
+                    checked += 1
+                    if checked >= min_gap_posts:
+                        break
+        except Exception:
+            pass
+
+    d_path = deals_file or os.path.join(DATA_DIR, "deals.json")
+    if os.path.exists(d_path):
+        try:
+            with open(d_path, "r", encoding="utf-8") as f:
+                deals_list = json.load(f)
+            for d in deals_list[:min_gap_posts]:
+                if isinstance(d, dict):
+                    t = str(d.get("title", "")).lower()
+                    u = str(d.get("store_url", "")).lower()
+                    if "lego" in t or "lego" in u:
+                        return True
+        except Exception:
+            pass
+
+    return False
+
 def get_product_subtype(title: str) -> str:
     """
     Ürünün alt kategorisini tespit eder.
     Aynı alt kategorinin (örneğin arka arkaya kol/gamepad veya fare) tekrarlanmasını engeller.
     """
     t = (title or "").lower()
+    if "lego" in t:
+        return "lego"
     if any(k in t for k in ["gamepad", "controller", "dualsense", "joycon", "oyun kolu"]) or re.search(r"\bkol(u)?\b", t):
         return "gamepad"
     if any(k in t for k in ["kulaklık", "headset", "earbuds", "airpods", "buds"]):
@@ -591,11 +638,15 @@ def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> flo
     title = str(deal.get("title") or "").lower()
     plat = (target_platform or deal.get("target_platform") or "auto").lower()
 
-    # 🛑 YOUTUBE KESİN GÜVENLİK FİLTRESİ:
-    # YouTube hedefli paylaşımlarda onaylanmayan veya güzellik/kozmetik ürünleri KESİNLİKLE YASAKTIR!
-    if plat == "youtube":
+    # 🛑 YOUTUBE & TİKTOK KESİN GÜVENLİK FİLTRESİ:
+    # Hem YouTube Shorts (%70 Erkek) hem TikTok (%84 Erkek) için F/P Teknoloji, Gaming, Sneaker ve LEGO zorunludur!
+    if plat in ("youtube", "tiktok", "auto", "all"):
         if is_beauty_product(title) or not is_youtube_approved_product(title):
             return -999.0
+
+    # 🧱 LEGO ARDIŞIK YAYIN KALKANI (Son 5 paylaşımda LEGO varsa kesinlikle ele)
+    if "lego" in title and is_lego_on_cooldown():
+        return -999.0
 
     score = 0.0
 
@@ -648,32 +699,31 @@ def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> flo
         "casio", "g-shock", "edifice", "saat",
         "çanta", "sırt çantası", "cüzdan", "eastpak", "herschel",
         "hoodie", "sweatshirt", "polar", "columbia", "jack & jones", "levi's",
-        "projektör", "projeksiyon", "monitör lambası", "maskara", "lip gloss",
-        "anker", "jbl", "sony", "marshall",
+        "projektör", "projeksiyon", "monitör lambası", "lego", "speed champions", "technic",
+        "anker", "jbl", "sony", "marshall", "klasse", "aula", "ajazz", "attack shark",
         "lenovo", "legion", "msi", "acer nitro", "hp victus"
     ]
     if any(k in title for k in VIRAL_KEYWORDS):
         score += 30
 
-    # TikTok Viral Makyaj & Kozmetik Dünyası Bonusu (+35 Puan - Gloss, Maskara, Allık, Kapatıcı)
-    is_viral_beauty = any(k in title for k in [
-        "maskara", "rimel", "sky high", "lash sensational", "telescopic", "panorama",
-        "gloss", "lip gloss", "dudak yağı", "dudak parlatıcı", "ruj", "dudak kalemi", "lip tint",
-        "allık", "blush", "glotion", "aydınlatıcı", "highlighter", "kapatıcı", "concealer",
-        "fondöten", "eyeliner", "göz kalemi", "kaş maskarası",
-        "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "essence", "nyx", "revolution", "pastel"
-    ])
-    if is_viral_beauty:
-        score += 35.0
+    # 🏆 Şampiyon Kategori Bonusu (+25 Puan - YouTube & TikTok gerçek veri liderleri)
+    CHAMPION_KEYWORDS = [
+        "mouse", "oyuncu faresi", "g305", "attack shark", "klavye", "aula", "ajazz",
+        "mouse pad", "mousepad", "klasse", "qck", "240hz", "180hz", "165hz", "monitör",
+        "lego", "speed champions"
+    ]
+    if any(ck in title for ck in CHAMPION_KEYWORDS):
+        score += 25.0
 
-    # 4. Hızlı Satın Alma (Impulse Buy) Fiyat Puanlaması (Altın Nokta: 100 TL - 1.500 TL, Tavan: 2.250 TL)
-    # Kozmetikte (gloss, maskara, dudak kalemi) 100-450 TL arası izleyicinin düşünmeden anında sepete attığı altın banddır
-    if 100 <= new_p <= 1500:
-        score += 45.0  # Altın Dürtüsel Satın Alma Bandı (+45 Puan)
-    elif 1500 < new_p <= 2250:
-        score += 15.0  # Makul orta bütçe (Sneaker / Klavye / Kulaklık tavanı)
-    elif new_p > 2250:
-        score -= 80.0  # Pahalı ürün cezası (2.250 TL üzeri ürünler sosyal medyada anlık satılmaz)
+    # 4. 25–44 Yaş Çalışan Yetişkin Kitle Fiyat Puanlaması (250 TL - 3.500 TL altın nokta, Tavan: 6.500 TL)
+    if 250 <= new_p <= 3500:
+        score += 45.0  # Altın Dürtüsel & Donanım Satın Alma Bandı (+45 Puan)
+    elif 3500 < new_p <= 6500:
+        score += 25.0  # Taksitli 240Hz Monitör / Üst Segment Donanım / Sneaker bandı
+    elif 100 <= new_p < 250:
+        score += 10.0  # Düşük fiyatlı aksesuar bandı
+    elif new_p > 6500:
+        score -= 80.0  # Çok yüksek bütçe cezası
     elif new_p < 100:
         score -= 40.0  # Çok ucuz sarf malzemesi/vida cezası
 
@@ -683,8 +733,8 @@ def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> flo
 
     return score
 
-MIN_PRODUCT_PRICE_TL = 100   # 100 TL alt sınır (Viral Gloss/Makyaj ve F/P ürünler için ideal)
-MAX_PRODUCT_PRICE_TL = 2250  # 2.250 TL kesin üst sınır (Kimse Shorts/TikTok kaydırırken 3.000 TL+ ürün almaz)
+MIN_PRODUCT_PRICE_TL = 100   # 100 TL alt sınır
+MAX_PRODUCT_PRICE_TL = 6500  # 6.500 TL üst sınır (240Hz Monitör, Mekanik Klavye, Sneaker & LEGO setleri dahil)
 
 def detect_store(url: str, text: str = "") -> str:
     """Ürün linkinden veya metninden mağazayı (Trendyol, Hepsiburada, Amazon TR) tespit eder."""
@@ -871,13 +921,8 @@ AMAZON_CATALOG_SOURCES = [
     ("MODA_CANTA_SAAT_HOODIE", "https://www.amazon.com.tr/gp/bestsellers/fashion/69340196031"),
     ("SPOR_OUTDOOR_CANTA", "https://www.amazon.com.tr/gp/bestsellers/sporting-goods"),
     ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031"),
-    ("GÖZ_MAKYAJI_MASKARA", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571758031"),
-    ("DUDAK_LIP_GLOSS", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571757031"),
-    ("YÜZ_MAKYAJI_ALLIK", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571763031"),
-    ("CİLT_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571730031"),
-    ("PARFÜMLER", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571733031"),
-    ("MAKYAJ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571731031"),
-    ("SAÇ_BAKIMI", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571734031")
+    ("LEGO_SETLER", "https://www.amazon.com.tr/gp/bestsellers/toys/12466939031"),
+    ("ERKEK_BAKIM_TIRAŞ", "https://www.amazon.com.tr/gp/bestsellers/beauty/12571790031")
 ]
 
 CAT_ROTATION_FILE = os.path.join(TEMP_DIR, "amazon_cat_rot.txt")
@@ -936,6 +981,16 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
         # TikTok ve kadın fırsatlarında 1. öncelik her zaman viral makyajdır (Göz, Dudak/Gloss, Allık)
         _m_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_top_makeup)
         url_categories = (_top_makeup[_m_idx:] + _top_makeup[:_m_idx]) + _other_beauty
+    elif category in ("fashion", "sneaker"):
+        _fashion_list = [
+            ("FIRSAT_SNEAKER", "https://www.amazon.com.tr/s?k=spor+ayakkab%C4%B1&rh=p_n_deal_type%3A26901188031"),
+            ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031"),
+            ("MODA_CANTA_SAAT_HOODIE", "https://www.amazon.com.tr/gp/bestsellers/fashion/69340196031"),
+            ("SPOR_OUTDOOR_CANTA", "https://www.amazon.com.tr/gp/bestsellers/sporting-goods"),
+            ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031")
+        ]
+        _f_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_fashion_list)
+        url_categories = _fashion_list[_f_idx:] + _fashion_list[:_f_idx]
     elif category in ("tech", "gaming_tech"):
         _tech_list = [
             ("FIRSAT_KULAKLIK", "https://www.amazon.com.tr/s?k=kulakl%C4%B1k&rh=p_n_deal_type%3A26901188031"),
@@ -957,6 +1012,11 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             ("SPOR_OUTDOOR_CANTA", "https://www.amazon.com.tr/gp/bestsellers/sporting-goods"),
             ("PATLAYAN_AYAKKABI", "https://www.amazon.com.tr/gp/movers-and-shakers/fashion/69339631031")
         ]
+        if not is_lego_on_cooldown():
+            _tech_list.extend([
+                ("FIRSAT_LEGO", "https://www.amazon.com.tr/s?k=lego+speed+champions+technic&rh=p_n_deal_type%3A26901188031"),
+                ("LEGO_ÇOK_SATANLAR", "https://www.amazon.com.tr/gp/bestsellers/toys/12466939031")
+            ])
         _t_idx = (datetime.now().hour * 2 + (1 if datetime.now().minute >= 25 else 0)) % len(_tech_list)
         url_categories = _tech_list[_t_idx:] + _tech_list[:_t_idx]
     else:
@@ -1156,6 +1216,11 @@ def hunt_amazon_deals(limit: int = 3, category: str = "all", exclude_urls: set =
             # Stanley & Termos Özel Koruması (Farklı litre/modellerin üst üste gelmesini %100 engeller)
             if "stanley" in raw_title.lower() and ("stanley" in seen_brands or "thermos" in seen_subtypes):
                 print(f"[Deal Hunter] ⏭️ Stanley Termos Koruması (Yakın zamanda Stanley paylaşıldı): {raw_title[:38]}")
+                continue
+
+            # LEGO Ardışık Paylaşım Koruması (En az 5 farklı ürün paylaşılmadan yeni LEGO seçilemez)
+            if "lego" in raw_title.lower() and is_lego_on_cooldown():
+                print(f"[Deal Hunter] ⏭️ LEGO Cooldown Koruması (Son 5 paylaşımda LEGO mevcut): {raw_title[:38]}")
                 continue
 
             # 3. Minimum Fiyat Kontrolü (350 TL altındaki küçük ıvır zıvırları atla)
@@ -1373,6 +1438,10 @@ def hunt_online_deals(limit: int = 5, channels: list = None, exclude_urls: set =
             if BORING_REGEX.search(raw_text):
                 continue
 
+            # LEGO Ardışık Paylaşım Koruması (Son 5 paylaşımda LEGO varsa kesinlikle ele)
+            if "lego" in raw_text.lower() and is_lego_on_cooldown():
+                continue
+
             # Fiyat içeren mesajları seç
             if "TL" not in raw_text and "tl" not in raw_text and "%" not in raw_text:
                 continue
@@ -1558,6 +1627,9 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
                 continue
             if "stanley" in d.get("title", "").lower() and ("stanley" in (exclude_brands or set()) or "thermos" in (exclude_subtypes or set())):
                 continue
+            if "lego" in d.get("title", "").lower() and is_lego_on_cooldown():
+                print(f"[Deal Hunter] 🛡️ LEGO Cooldown Filtresi (Son 5 paylaşımda LEGO mevcut): {d.get('title')}")
+                continue
             # YouTube / Tech kategorisi için pozitif kategori ve kozmetik/makyaj filtresi
             if category in ("tech", "gaming", "computers", "electronics", "monitors"):
                 if is_beauty_product(d.get("title", "")) or not is_youtube_approved_product(d.get("title", "")):
@@ -1658,6 +1730,15 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
         if any(v in title for v in viral_engagement_kw):
             score += 25.0
 
+        # 🏆 Şampiyon Kategori Bonusu (+25 Puan - Gerçek izlenme liderleri)
+        champion_kw = [
+            "mouse", "oyuncu faresi", "g305", "attack shark", "klavye", "aula", "ajazz",
+            "mouse pad", "mousepad", "klasse", "qck", "240hz", "180hz", "165hz", "monitör",
+            "lego", "speed champions"
+        ]
+        if any(ck in title for ck in champion_kw):
+            score += 25.0
+
         # G. Kupon İndirimi & Amazon TR Affiliate Önceliği
         if deal.get("coupon_info"):
             score += 15.0
@@ -1665,6 +1746,9 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
             score += 35.0
 
         return score
+
+    if is_lego_on_cooldown():
+        candidates = [c for c in candidates if "lego" not in str(c.get("title", "")).lower()]
 
     if category in ("tech", "gaming", "computers", "electronics", "monitors"):
         candidates = [c for c in candidates if not is_beauty_product(c.get("title", ""))]
@@ -1692,13 +1776,16 @@ def hunt_best_deals(limit: int = 3, platform: str = "amazon", category: str = "a
         if b:
             seen_b.add(b)
 
-    # Eğer çeşitlilik kuralı nedeniyle limit dolmadıysa kalan adaylardan tamamla (Stanley hariç)
+    # Eğer çeşitlilik kuralı nedeniyle limit dolmadıysa kalan adaylardan tamamla (Stanley ve LEGO hariç)
     if len(best_deals) < limit:
         for d in candidates:
             if len(best_deals) >= limit:
                 break
             if d not in best_deals:
-                if "stanley" in d.get("title", "").lower() and ("stanley" in seen_b or "thermos" in seen_types):
+                d_low = d.get("title", "").lower()
+                if "stanley" in d_low and ("stanley" in seen_b or "thermos" in seen_types):
+                    continue
+                if "lego" in d_low and ("lego" in seen_b or "lego" in seen_types or is_lego_on_cooldown()):
                     continue
                 best_deals.append(d)
 
@@ -1746,6 +1833,8 @@ def hunt_bestseller_deals(limit: int = 3, category: str = "tech", exclude_urls: 
             ("GAMING", "https://www.amazon.com.tr/gp/bestsellers/videogames"),
             ("SPOR_AYAKKABI_SNEAKER", "https://www.amazon.com.tr/gp/bestsellers/fashion/69339631031")
         ]
+        if not is_lego_on_cooldown():
+            bestseller_catalogs.append(("LEGO_SETLER", "https://www.amazon.com.tr/gp/bestsellers/toys/12466939031"))
 
     deals = []
     seen_asins = set()
@@ -1803,9 +1892,12 @@ def hunt_bestseller_deals(limit: int = 3, category: str = "tech", exclude_urls: 
 
             if BORING_REGEX.search(raw_title):
                 continue
+            if "lego" in raw_title.lower() and is_lego_on_cooldown():
+                print(f"[Bestseller Radar] 🛡️ LEGO Cooldown Koruması: {raw_title[:38]}")
+                continue
             if not is_mass_appeal_product(raw_title):
                 continue
-            if cat_low in ("tech", "gaming_tech") and (is_beauty_product(raw_title) or not is_youtube_approved_product(raw_title)):
+            if cat_low in ("tech", "gaming_tech", "fashion", "sneaker") and (is_beauty_product(raw_title) or not is_youtube_approved_product(raw_title)):
                 continue
             if is_deal_already_shared(raw_title, prod_url, exclude_urls):
                 continue

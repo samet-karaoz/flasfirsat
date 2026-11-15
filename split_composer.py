@@ -142,7 +142,7 @@ WOMEN_KEYWORDS = [
 ]
 
 WOMEN_CATEGORIES = [
-    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim", "parfum", "parfüm", "parfümeri", "tiktok"
+    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim", "parfum", "parfüm", "parfümeri"
 ]
 
 def is_women_deal(title: str = "", category: str = "") -> bool:
@@ -1411,9 +1411,9 @@ def create_product_banner(
     cy_cta = 929
 
     if str(cta_type).strip().lower() == "youtube":
-        cta_prefix = "İndirim linkine "
-        cta_highlight = "BİO'DAN"
-        cta_suffix = f" ulaşın • KOD: {deal_code}" if deal_code else " ulaşabilirsiniz!"
+        cta_prefix = "LİNK "
+        cta_highlight = "PROFİLDE (BİO)"
+        cta_suffix = f" • KOD: {deal_code} • ABONE OL" if deal_code else " • ABONE OL"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)
@@ -1421,7 +1421,7 @@ def create_product_banner(
 
         pill_w = int(h_w + 26)
         total_cta_w = int(34 + p_w + 8 + pill_w + 10 + s_w + 34)
-        start_x = (W - total_cta_w) // 2
+        start_x = (W - total_cta_w) // 2 - 20
 
         draw_vector_link(draw, start_x + 14, cy_cta, theme["cta_line"])
         text_x = int(start_x + 36)
@@ -1438,9 +1438,9 @@ def create_product_banner(
 
         draw_vector_globe(draw, text_x, cy_cta, theme["cta_line"])
     else:
-        cta_prefix = "ÜRÜN LİNKİ "
-        cta_highlight = "PROFİLDEKİ LİNKTE (BİO)"
-        cta_suffix = f" • FIRSAT KODU: {deal_code}" if deal_code else " • KAÇIRMA!"
+        cta_prefix = "LİNK "
+        cta_highlight = "PROFİLDE (BİO)"
+        cta_suffix = f" • KOD: {deal_code} • TAKİP ET" if deal_code else " • TAKİP ET"
 
         p_w = draw.textlength(cta_prefix, font=f_cta_bold)
         h_w = draw.textlength(cta_highlight, font=f_cta_bold)

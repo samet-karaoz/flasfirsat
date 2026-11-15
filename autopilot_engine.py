@@ -74,6 +74,16 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
     4. Yönetici Telegram hesabına anlık başarı raporu iletir.
     """
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Harici tetikleyiciden (cron-job.org) gelebilecek eski güzellik/makyaj slot isimlerini erkek/teknoloji konseptine uyarla
+    for _old_s, _new_s in (
+        ("Güzellik & Bakım", "Viral F/P & Teknoloji"),
+        ("Makyaj & Bakım", "Gece F/P & Gaming"),
+        ("Akşam Özel Bakım", "Akşam Gaming & F/P"),
+        ("Özel Bakım", "Gaming & Donanım"),
+    ):
+        if _old_s in str(slot_name):
+            slot_name = str(slot_name).replace(_old_s, _new_s)
+
     print("\n" + "="*65)
     print(f"🚀 [OTOPİLOT BAŞLATILDI] Kuşak: {slot_name} | Zaman: {now_str}")
     print("="*65)
@@ -152,14 +162,15 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             from deal_bot import load_history
 
             history = load_history()
-            recent_subs = get_recent_subtypes_from_history(limit=2, target_platform=target_platform)
-            recent_brands = get_recent_brands_from_history(limit=2, target_platform=target_platform)
+            recent_subs = get_recent_subtypes_from_history(limit=4, target_platform=None)
+            recent_brands = get_recent_brands_from_history(limit=4, target_platform=None)
 
-            print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Alt Kategoriler: {list(recent_subs)}")
-            print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Markalar (Stanley vb.): {list(recent_brands)}")
+            print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Alt Kategoriler (Son 4): {list(recent_subs)}")
+            print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Markalar (Son 4): {list(recent_brands)}")
 
-            hunt_cat = "beauty" if target_platform == "tiktok" else ("tech" if target_platform == "youtube" else "all")
-            print(f"[Deal Hunter] Hedef platforma özel kategori taranıyor: {hunt_cat.upper()}...")
+            # Gerçek analitik verisi (%84 Erkek TikTok + %70 Erkek YouTube) doğrultusunda her iki platform için F/P Teknoloji, Gaming, Sneaker & LEGO öncelikli
+            hunt_cat = "tech" if target_platform in ("youtube", "tiktok") else "all"
+            print(f"[Deal Hunter] Hedef platforma özel kategori taranıyor ({target_platform.upper()} -> {hunt_cat.upper()})...")
             candidates = hunt_best_deals(
                 limit=5,
                 platform="amazon",
@@ -167,7 +178,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 exclude_urls=history,
                 exclude_subtypes=recent_subs,
                 exclude_brands=recent_brands,
-                min_discount=20 if hunt_cat == "beauty" else 25
+                min_discount=25
             )
 
         if not candidates:
@@ -183,19 +194,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             )
 
         if not candidates:
-            if target_platform in ("youtube", "all", "auto"):
-                print("[Autopilot Engine] ⚠️ Tech fırsatları beklemede, YouTube için alternatif F/P Sneaker & Spor Ayakkabı taranıyor...")
-                candidates = hunt_best_deals(
-                    limit=5,
-                    platform="amazon",
-                    category="fashion",
-                    exclude_urls=history,
-                    exclude_subtypes=recent_subs,
-                    exclude_brands=recent_brands,
-                    min_discount=15
-                )
-            elif target_platform == "tiktok":
-                print("[Autopilot Engine] ⚠️ TikTok için alternatif F/P Sneaker & Moda taranıyor...")
+            if target_platform in ("youtube", "tiktok", "all", "auto"):
+                print(f"[Autopilot Engine] ⚠️ Tech fırsatları beklemede, {target_platform.upper()} için alternatif F/P Sneaker & Spor Ayakkabı taranıyor...")
                 candidates = hunt_best_deals(
                     limit=5,
                     platform="amazon",
@@ -207,7 +207,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 )
 
         if not candidates:
-            print(f"[Autopilot Engine] ⚠️ Çeşitlilik koruması gevşetiliyor (mükerrer URL koruması devrede, kategori: {hunt_cat.upper()})...")
+            print(f"[Autopilot Engine] ⚠️ Çeşitlilik koruması gevşetiliyor (mükerrer URL ve LEGO Cooldown koruması devrede, kategori: {hunt_cat.upper()})...")
             candidates = hunt_best_deals(
                 limit=5,
                 platform="amazon",
@@ -218,7 +218,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 min_discount=15
             )
 
-        if not candidates and target_platform in ("youtube", "all", "auto"):
+        if not candidates and target_platform in ("youtube", "tiktok", "all", "auto"):
             print("[Autopilot Engine] ⚠️ F/P Sneaker & Spor Ayakkabı (Çeşitlilik gevşetilmiş) taranıyor...")
             candidates = hunt_best_deals(
                 limit=5,
@@ -234,19 +234,14 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             print(f"\n[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] %15 üzeri indirimli ürün kalmadı. Kuşağın boş geçmemesi için {hunt_cat.upper()} kategorisinde Amazon #1 ÇOK SATAN ürün devreye alınıyor...")
             from deal_hunter import hunt_bestseller_deals
             candidates = hunt_bestseller_deals(limit=5, category=hunt_cat, exclude_urls=history)
-            if target_platform == "youtube":
+            if target_platform in ("youtube", "tiktok"):
                 candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
 
-        if not candidates and target_platform in ("youtube", "all", "auto"):
+        if not candidates and target_platform in ("youtube", "tiktok", "all", "auto"):
             print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] Sneaker & Spor Ayakkabı Çok Satanlar taranıyor...")
             from deal_hunter import hunt_bestseller_deals
             candidates = hunt_bestseller_deals(limit=5, category="fashion", exclude_urls=history)
             candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
-
-        if not candidates and target_platform == "tiktok":
-            print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] TikTok için Güzellik & Makyaj Çok Satanlar taranıyor...")
-            from deal_hunter import hunt_bestseller_deals
-            candidates = hunt_bestseller_deals(limit=5, category="beauty", exclude_urls=history)
 
         if not candidates:
             err = "Uygun kriterde (yeterli indirim ve stok) fırsat veya çok satan ürün bulunamadı."
@@ -256,27 +251,52 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             record_autopilot_run(result)
             return result
 
-        # 🛡️ YOUTUBE PLATFORM GÜVENLİK FİLTRESİ:
-        # YouTube Shorts KESİNLİKLE VE KESİNLİKLE F/P Teknoloji & Sneaker kanalıdır! Makyaj/Kozmetik ASLA yüklenemez!
-        from deal_hunter import is_beauty_product, is_youtube_approved_product, calculate_deal_viral_score, get_deal_discount_pct, get_deal_savings_tl
-        if target_platform == "youtube":
-            tech_only = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
-            if tech_only:
-                candidates = tech_only
+        # 🛡️ YOUTUBE & TİKTOK PLATFORM GÜVENLİK FİLTRESİ:
+        # Gerçek izleyici verisine göre YouTube (%70 Erkek) ve TikTok (%84 Erkek) kanalları
+        # %100 F/P Teknoloji, Gaming, Sneaker ve LEGO odaklıdır!
+        from deal_hunter import (
+            is_beauty_product,
+            is_youtube_approved_product,
+            is_lego_on_cooldown,
+            calculate_deal_viral_score,
+            get_deal_discount_pct,
+            get_deal_savings_tl,
+        )
+        if target_platform in ("youtube", "tiktok") and not custom_deal:
+            approved_only = [
+                c for c in candidates
+                if is_youtube_approved_product(c.get("title", ""))
+                and not is_beauty_product(c.get("title", ""))
+                and not ("lego" in str(c.get("title", "")).lower() and is_lego_on_cooldown())
+            ]
+            if approved_only:
+                candidates = approved_only
             else:
-                print("[Autopilot Engine] 🛡️ YouTube Filtresi: Adayların hiçbiri onaylı teknoloji/sneaker değildi, acil F/P Teknoloji avlanıyor...")
+                print(f"[Autopilot Engine] 🛡️ {target_platform.upper()} Filtresi: Adayların hiçbiri onaylı teknoloji/sneaker/LEGO değildi, acil F/P Teknoloji avlanıyor...")
                 candidates = hunt_best_deals(limit=5, platform="amazon", category="tech", min_discount=15)
-                candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
+                candidates = [
+                    c for c in candidates
+                    if is_youtube_approved_product(c.get("title", ""))
+                    and not is_beauty_product(c.get("title", ""))
+                    and not ("lego" in str(c.get("title", "")).lower() and is_lego_on_cooldown())
+                ]
                 if not candidates:
                     from deal_hunter import hunt_bestseller_deals
-                    candidates = hunt_bestseller_deals(limit=5, category="tech", exclude_urls=history)
-                    candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
+                    from deal_bot import load_history as _load_hist
+                    _hist = locals().get("history") or _load_hist()
+                    candidates = hunt_bestseller_deals(limit=5, category="tech", exclude_urls=_hist)
+                    candidates = [
+                        c for c in candidates
+                        if is_youtube_approved_product(c.get("title", ""))
+                        and not is_beauty_product(c.get("title", ""))
+                        and not ("lego" in str(c.get("title", "")).lower() and is_lego_on_cooldown())
+                    ]
 
         # Deal Scoring (Viral Potansiyel, Net TL Tasarruf ve Platforma Göre Puanla)
         candidates.sort(key=lambda d: calculate_deal_viral_score(d, target_platform=target_platform), reverse=True)
         print("\n🏆 [DEAL SCORING] Adaylar Viral Puanlarına Göre Sıralandı:")
         for rank, c in enumerate(candidates, 1):
-            c_score = calculate_deal_viral_score(c)
+            c_score = calculate_deal_viral_score(c, target_platform=target_platform)
             c_sav = get_deal_savings_tl(c)
             c_pct = get_deal_discount_pct(c)
             print(f"  {rank}. [{c_score:.0f} Puan] {c.get('title')} | Tasarruf: {int(c_sav):,} TL (-%{c_pct})")
@@ -291,8 +311,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
 
         for idx, cand in enumerate(candidates, 1):
             cand["target_platform"] = target_platform
-            if target_platform == "tiktok" and not cand.get("category"):
-                cand["category"] = "beauty"
+            if not cand.get("category"):
+                cand["category"] = "tech"
             cand_title = cand.get("title", "Fırsat")
             cand_pct = get_deal_discount_pct(cand)
             print(f"\n👉 Aday {idx}/{len(candidates)} deneniyor: {cand_title} (-%{cand_pct})...")
@@ -404,7 +424,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 tt_caption = (
                     f"Fiyata inanamayacaksınız! {title} dip fiyata indi 💥\n"
                     f"#işbirliği #reklam\n\n"
-                    f"Profilimizdeki sitemizin arama çubuğuna {code_clean} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n\n"
+                    f"Profilimizdeki sitemizin arama çubuğuna {code_clean} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n"
+                    f"🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET!\n\n"
                     f"#keşfet #fırsat #indirim"
                 )
                 tt_res = publish_video_to_tiktok(video_path, caption=tt_caption, mode="shareNow")

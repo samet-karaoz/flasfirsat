@@ -241,7 +241,7 @@ def process_deal_to_reel(
     # 0. Akıllı Meme Seçimi (Kademeli Hareketli Banner + Viral Meme Motoru)
     from video_content_validator import validate_rendered_video, auto_repair_deal_for_rerender
     if not meme_choice:
-        effective_cat = deal.get("category", "") or ("beauty" if deal.get("target_platform") == "tiktok" else "")
+        effective_cat = deal.get("category", "")
         effective_title = f"{deal.get('title', '')} {deal.get('raw_title', '')}".strip()
         chosen_meme = select_smart_meme(deal.get("discount_pct", ""), effective_title, effective_cat)
         print(f"[Deal Bot] 🎭 Akıllı Viral Meme seçildi -> {chosen_meme}")
@@ -262,11 +262,12 @@ def process_deal_to_reel(
 
         # 1. YouTube Shorts & TikTok Kademeli Hareketli Viral Video Derle (Tek Render - %50 Daha Hızlı)
         print("[1/2] 🎥 Kademeli Hareketli Viral Video (YouTube Shorts & TikTok) derleniyor...")
+        _cta_plat = "tiktok" if str(deal.get("target_platform", "")).lower() == "tiktok" else "youtube"
         ok_vid = build_motion_deal_video(
             deal=deal,
             meme_name=chosen_meme,
             output_filename=video_filename,
-            cta_type="youtube",
+            cta_type=_cta_plat,
             reaction_text=deal.get("reaction_text")
         )
         youtube_video_path = video_path

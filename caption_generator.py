@@ -57,7 +57,8 @@ Görevin: Verilen indirimli ürün için izleyicinin durup okuyacağı, yapay ze
    - Ticaret Bakanlığı mevzuatı gereği bu etiketler 'devamını gör' katlamasının arkasına (metnin sonuna) saklanamaz, en başta açıkça görünür olmalıdır.
 3. FİYAT VE TASARRUF VURGUSU (Eski Fiyat ❌ -> Yeni Fiyat ✅ ve Net Kazanç / İndirim Oranı).
 4. Varsa Kupon ve Taksit bilgisini net belirt (🎟️ Kupon Uyarısı, 💳 Peşin fiyatına 3 taksit).
-5. Eylem Çağrısı (Samimi Etkileşim Kancası):
+5. Eylem Çağrısı (Samimi Etkileşim & Abone/Takip Kancası):
+   - "🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!"
    - "📌 Fiyat tekrar uçmadan videoyu KAYDET, lazım olur diye arkadaşına GÖNDER! ✈️"
    - "💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇"
    - "🔗 Ürün bağlantısı kanal/profil açıklamamızdaki bağlantıda (BİO) aktif!"
@@ -139,6 +140,10 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         if "kaydet" not in body_full_text and "gönder" not in body_full_text:
             body_lines.append("📌 Fiyat tekrar yükselmeden videoyu KAYDET, lazım olur diye arkadaşına GÖNDER! ✈️")
 
+        # Abone Ol / Takip Et dönüşüm kancası yoksa ekle
+        if "takip" not in body_full_text and "abone" not in body_full_text:
+            body_lines.append("🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!")
+
         # Toplam 5 etiket kuralı: 2 adet zorunlu yasal (#işbirliği #reklam) + EN FAZLA 3 ADET kategori etiketi
         selected_content_tags = general_tags[:3]
         if not selected_content_tags:
@@ -218,7 +223,8 @@ Sadece açıklamayı yaz, başka hiçbir selamlama, tırnak işareti veya ön ek
         f"{code_line}\n"
         f"💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n"
         f"🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n"
-        f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n"
+        f"📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n"
+        f"🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n"
         f"#indirim #fırsat #keşfet"
     )
     return sanitize_caption(fallback)

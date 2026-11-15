@@ -220,14 +220,14 @@ def generate_staggered_banner_frames(
     clean_code = f"#{re.sub(r'[^a-zA-Z0-9]', '', deal_code)}" if deal_code else "#101"
 
     if cta_type == "youtube":
-        cta_prefix = "ÜRÜN LİNKİ "
-        cta_highlight = "PROFİLDEKİ LİNKTE (BİO)"
-        cta_suffix = f" • FIRSAT KODU: {clean_code}"
+        cta_prefix = "LİNK "
+        cta_highlight = "PROFİLDE (BİO)"
+        cta_suffix = f" • KOD: {clean_code} • ABONE OL"
         cta_tag = "#Shorts"
     else:
-        cta_prefix = "ÜRÜN LİNKİ "
-        cta_highlight = "PROFİLDEKİ LİNKTE (BİO)"
-        cta_suffix = f" • FIRSAT KODU: {clean_code}"
+        cta_prefix = "LİNK "
+        cta_highlight = "PROFİLDE (BİO)"
+        cta_suffix = f" • KOD: {clean_code} • TAKİP ET"
         cta_tag = "#işbirliği #reklam"
 
     cp_w = draw_a.textlength(cta_prefix, font=f_cta_bold)
@@ -532,9 +532,9 @@ def generate_staggered_banner_frames(
     target_new_x, target_new_y = 340, 750
     start_new_x = W + 60
 
-    REVEAL_TIME = 2.85
+    REVEAL_TIME = 2.35
     REVEAL_ANIM_DUR = 0.30
-    SETTLE_TIME = REVEAL_TIME + REVEAL_ANIM_DUR + 0.05  # 3.20s
+    SETTLE_TIME = REVEAL_TIME + REVEAL_ANIM_DUR + 0.05  # 2.70s
 
     settled_frame = None
 

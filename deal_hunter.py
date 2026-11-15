@@ -142,6 +142,7 @@ BORING_REGEX = re.compile(
     r"kahve|espresso|moka\s*pot|bialetti|lattego|nespresso|çay\s*makine|çaycı|tost\s*makine|blender|mutfak\s*robotu|"
     r"terlik|sandalet|çorap|iç\s*çamaşır|\bslip\b|lohusa|emzirme|sütyen|çakmak\s*sıvısı|cam\s*şişe\s*su|maskot\s*su|"
     r"kolonya|bidon|aseton|makyaj\s*pamuğu|kulak\s*çubuğu|tıraş\s*köpüğü|tıraş\s*jeli|"
+    r"head\s*&\s*shoulders|head\s*and\s*shoulders|clear\s*men|hacı\s*şakir|dalin|"
     r"conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
 )
@@ -1287,6 +1288,8 @@ GÖREV:
             deal_data["source_channel"] = f"Amazon TR ({cat_name})"
             deal_data["store_name"] = "Amazon TR"
             deal_data["store_url"] = prod_url
+            deal_data["category"] = category
+            deal_data["raw_title"] = raw_title
             deals.append(deal_data)
             print(f"[Deal Hunter] 🔥 Yüksek İndirim Yakalandı: {deal_data['title']} | {deal_data['new_price']} (-%{pct_val}, Net: {camp['net_cost']}) | Link: {prod_url}")
 
@@ -1853,6 +1856,8 @@ def hunt_bestseller_deals(limit: int = 3, category: str = "tech", exclude_urls: 
 
             deal_obj = {
                 "title": clean_title,
+                "raw_title": raw_title,
+                "category": category,
                 "old_price": raw_strike if disc_pct else "",
                 "new_price": raw_price,
                 "discount_pct": disc_pct if disc_pct else "🔥 #1 ÇOK SATAN",

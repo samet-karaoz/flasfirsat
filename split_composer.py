@@ -136,11 +136,13 @@ WOMEN_KEYWORDS = [
     "dudak balmı", "lip gloss", "tint", "kirpik", "kaş wax", "bb krem", "cc krem",
     "saç köpüğü", "arganyağı", "argan", "biberiye yağı", "saç şekillendirici",
     "edt", "edp", "eau de", "body mist", "vücut spreyi", "dudak parlatıcı", "dudak yağı",
-    "omuz çantası", "kol çantası", "victoria's secret", "privacy gold women", "vichy"
+    "omuz çantası", "kol çantası", "victoria's secret", "privacy gold women", "vichy",
+    "mascara", "gloss", "lip", "blush", "concealer", "foundation", "lipliner", "lipstick",
+    "brow", "lash", "skincare", "pantene", "elseve", "elidor", "gliss", "ogx", "urban care"
 ]
 
 WOMEN_CATEGORIES = [
-    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim", "parfum", "parfüm", "parfümeri"
+    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim", "parfum", "parfüm", "parfümeri", "tiktok"
 ]
 
 def is_women_deal(title: str = "", category: str = "") -> bool:
@@ -1551,7 +1553,8 @@ def build_split_screen_video(
                 meme_name += ".mp4"
             bottom_meme_path = os.path.join(MEMES_DIR, meme_name)
     else:
-        chosen = select_smart_meme(discount_pct, product_title)
+        _cat = deal.get("category", "") if isinstance(deal, dict) else ""
+        chosen = select_smart_meme(discount_pct, product_title, _cat)
         bottom_meme_path = os.path.join(MEMES_DIR, chosen)
         print(f"[Montaj] 🤖 Yapay Zeka En Uygun Viral Meme'i Eşleştirdi: {chosen}")
 

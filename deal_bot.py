@@ -241,7 +241,9 @@ def process_deal_to_reel(
     # 0. Akıllı Meme Seçimi (Kademeli Hareketli Banner + Viral Meme Motoru)
     from video_content_validator import validate_rendered_video, auto_repair_deal_for_rerender
     if not meme_choice:
-        chosen_meme = select_smart_meme(deal.get("discount_pct", ""), deal.get("title", ""), deal.get("category", ""))
+        effective_cat = deal.get("category", "") or ("beauty" if deal.get("target_platform") == "tiktok" else "")
+        effective_title = f"{deal.get('title', '')} {deal.get('raw_title', '')}".strip()
+        chosen_meme = select_smart_meme(deal.get("discount_pct", ""), effective_title, effective_cat)
         print(f"[Deal Bot] 🎭 Akıllı Viral Meme seçildi -> {chosen_meme}")
     else:
         chosen_meme = meme_choice

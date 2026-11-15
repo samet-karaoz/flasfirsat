@@ -290,6 +290,9 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         prod_res = None
 
         for idx, cand in enumerate(candidates, 1):
+            cand["target_platform"] = target_platform
+            if target_platform == "tiktok" and not cand.get("category"):
+                cand["category"] = "beauty"
             cand_title = cand.get("title", "Fırsat")
             cand_pct = get_deal_discount_pct(cand)
             print(f"\n👉 Aday {idx}/{len(candidates)} deneniyor: {cand_title} (-%{cand_pct})...")

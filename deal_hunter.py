@@ -27,7 +27,7 @@ DEFAULT_CHANNELS = [
 BEAUTY_MAKEUP_KEYWORDS = [
     # Göz ve Kirpik (Türkçe & İngilizce)
     "maskara", "mascara", "rimel", "volume up", "lash", "lashes", "eyelash", "eyelashes",
-    "kirpik", "sky high", "telescopic", "panorama", "lash princess",
+    "kirpik", "sky high", "l'oreal telescopic", "telescopic maskara", "panorama maskara", "lash princess",
     "eyeliner", "eye liner", "dipliner", "dip liner", "göz kalemi", "eye pencil",
     "far paleti", "eyeshadow", "göz farı", "kaş", "eyebrow", "brow", "brows",
     "kaş maskarası", "kaş sabitleyici", "kaş jeli",
@@ -46,21 +46,23 @@ BEAUTY_MAKEUP_KEYWORDS = [
     "body mist", "vücut spreyi", "vücut misti", "deodorant", "roll-on", "rollon",
     # Cilt Bakımı
     "serum", "cilt serumu", "hyaluronik", "hyaluronic", "niacinamide", "retinol", "kolajen", "collagen",
-    "nemlendirici", "moisturizer", "cilt", "skin", "skincare", "tonik", "tonic", "toner",
-    "micellar", "yüz yıkama", "yüz temizleme", "cleanser", "peeling", "maske", "face mask",
+    "nemlendirici", "moisturizer", "cilt bakım", "cilt temizleme", "skincare", "tonik", "tonic", "toner",
+    "micellar", "yüz yıkama", "yüz temizleme", "cleanser", "peeling", "yüz maskesi", "face mask",
     "sheet mask", "kil maskesi", "göz altı",
     # Saç Bakımı
     "şampuan", "shampoo", "saç bakım", "saç kremi", "hair conditioner", "saç maskesi",
     "saç serumu", "saç yağı", "saç köpüğü", "saç spreyi", "keratin", "argan", "biberiye",
     # Tırnak & Epilasyon & Güneş
     "oje", "nail polish", "manikür", "pedikür", "tırnak", "epilatör", "epilasyon",
-    "ağda", "wax", "tüy dökücü", "güneş kremi", "sunscreen", "sunblock", "spf",
+    "ağda", "kaş wax", "saç wax", "tüy dökücü", "güneş kremi", "sunscreen", "sunblock", "spf",
     "el kremi", "vücut losyonu", "body lotion", "vücut kremi",
     # Popüler Kozmetik Markaları
-    "maybelline", "l'oreal", "golden rose", "kiko", "flormar", "revolution", "nyx",
-    "essence", "pastel", "beaulis", "vichy", "cerave", "bioderma", "la roche", "dercos",
+    "maybelline", "l'oreal", "l'oréal", "loreal", "golden rose", "kiko", "flormar",
+    "makeup revolution", "revolution beauty", "revolution relove", "nyx",
+    "essence lash", "essence make", "pastel profashion", "pastel daylong", "beaulis",
+    "vichy", "cerave", "bioderma", "la roche", "dercos",
     "the purest solutions", "garnier", "nivea", "neutrogena", "sebamed", "yves rocher",
-    "mac cosmetics", "sephora", "fenty", "rare beauty", "benefit", "clinique", "maruderm", "shevec"
+    "mac cosmetics", "sephora", "fenty", "rare beauty", "clinique", "maruderm", "shevec"
 ]
 
 YOUTUBE_APPROVED_KEYWORDS = [
@@ -68,22 +70,23 @@ YOUTUBE_APPROVED_KEYWORDS = [
     "kulaklık", "headphone", "headset", "earphone", "earbuds", "earpods", "airpods", "tws",
     "hoparlör", "speaker", "soundbar", "mikrofon", "microphone", "ses kartı", "dac", "amfi",
     # 2. Oyuncu Donanımı ve Bilgisayar Parçaları
-    "mouse", "fare", "klavye", "keyboard", "monitör", "monitor", "ekran",
+    "mouse", "fare", "klavye", "keyboard", "monitör", "monitor",
     "gamepad", "oyun kolu", "joystick", "direksiyon", "mousepad", "mouse pad",
-    "ssd", "nvme", "m.2", "sata ssd", "ram", "bellek", "ekran kartı", "gpu", "anakart",
-    "işlemci", "cpu", "kasa", "fan", "soğutucu", "cooler", "güç kaynağı", "psu",
+    "ssd", "nvme", "m.2", "sata ssd", "ram", "ekran kartı", "gpu", "anakart",
+    "işlemci", "cpu", "bilgisayar kasası", "oyuncu kasası", "pc kasası", "soğutucu", "cooler", "güç kaynağı", "psu",
     "gaming", "oyuncu", "playstation", "ps5", "ps4", "xbox", "nintendo", "konsol",
     "laptop", "notebook", "oyun bilgisayarı",
     # 3. Akıllı Cihazlar & Mobil Şarj
-    "akıllı saat", "smartwatch", "akıllı bileklik", "smart band",
+    "akıllı saat", "smartwatch", "smart watch", "akıllı bileklik", "smart band", "mi band", "watch fit", "galaxy watch", "apple watch",
     "powerbank", "power bank", "şarj istasyonu", "gan şarj", "hızlı şarj",
-    "projeksiyon", "projektör", "tablet", "ipad", "grafik tablet",
-    "monitör lambası", "screenbar", "webcam", "kamera", "gimbal", "aksiyon kamera",
+    "projeksiyon", "projektör", "projector", "tablet", "ipad", "grafik tablet",
+    "monitör lambası", "screenbar", "webcam", "aksiyon kamera", "gimbal",
     # 4. Popüler Spor Ayakkabı & Sneaker
     "sneaker", "spor ayakkabı", "koşu ayakkabı", "yürüyüş ayakkabı", "basketbol ayakkabı",
     "halı saha", "krampon", "sneakers", "ayakkabı",
     # 5. Kişisel Bakım Teknolojisi, İkonik Termos & LEGO Koleksiyon
-    "tıraş makine", "tıraş aleti", "oneblade", "braun series", "şarjlı diş fırça", "termos", "quencher",
+    "tıraş makine", "traş makine", "tıraş aleti", "oneblade", "braun series", "şarjlı diş fırça", "oral-b", "sonicare",
+    "termos", "quencher", "iceflow",
     "lego", "speed champions", "technic", "yapım seti"
 ]
 
@@ -101,50 +104,79 @@ YOUTUBE_APPROVED_BRANDS = [
     "stanley", "philips oneblade", "oral-b", "lego"
 ]
 
+def _keyword_matches_text(text_low: str, kw: str) -> bool:
+    """
+    Kelime sınırı duyarlı anahtar kelime eşleştirici:
+    - 'lip' kelimesinin 'philips' veya 'jbl flip' içinde eşleşmesini engeller.
+    - 'oje' kelimesinin 'projeksiyon' içinde eşleşmesini engeller.
+    - 'ram', 'msi', 'hp', 'rog' gibi kısa terimlerin 'seramik', 'şemsiye', 'sehpa', 'program' içinde eşleşmesini engeller.
+    - Uzun Türkçe köklerin ('kulaklık', 'hoparlör', 'ayakkabı' vb.) çekim ekleriyle ('kulaklığı', 'ayakkabısı') eşleşmesine izin verir.
+    """
+    kw_low = kw.lower().strip()
+    if not kw_low:
+        return False
+    # Kelime başlangıcı kesinlikle harf/rakam sınırında olmalı
+    prefix = r"(?<![a-zA-Z0-9çğıöşüÇĞİÖŞÜ])"
+    # Kısa (<= 4 karakter) veya İngilizce/marka terimlerinde kelime sonu da tam sınır olmalı (çoğul/iyelik eki hariç)
+    strict_end_terms = {
+        "lip", "lips", "oje", "kaş", "brow", "brows", "lash", "ruj", "edt", "edp", "spf", "wax",
+        "skin", "cilt", "toner", "tonic", "nyx", "kiko",
+        "ram", "ssd", "gpu", "cpu", "psu", "fan", "tws", "dac", "m.2", "ps5", "ps4",
+        "hp", "msi", "rog", "tuf", "aoc", "jbl", "qcy", "dell", "acer", "asus", "sony",
+        "vans", "nike", "puma", "lego", "ipad"
+    }
+    if kw_low in strict_end_terms or len(kw_low) <= 4:
+        suffix = r"(?![a-zA-Z0-9çğıöşüÇĞİÖŞÜ])"
+    else:
+        suffix = r""
+    pattern = prefix + re.escape(kw_low) + suffix
+    return bool(re.search(pattern, text_low))
+
 def is_beauty_product(title: str) -> bool:
     """Verilen ürünün makyaj, kozmetik, cilt/saç bakımı veya kadın güzellik ürünü olduğunu doğrular."""
     t = (title or "").lower()
-    return any(k in t for k in BEAUTY_MAKEUP_KEYWORDS)
+    return any(_keyword_matches_text(t, k) for k in BEAUTY_MAKEUP_KEYWORDS)
 
 def is_youtube_approved_product(title: str) -> bool:
     """
-    AGENTS.md Kural 1: YouTube Shorts Kanalı = %100 F/P TEKNOLOJİ, GAMING DONANIM & POPÜLER SNEAKER!
+    AGENTS.md Kural 1: YouTube Shorts & TikTok Kanalı = %100 F/P TEKNOLOJİ, GAMING DONANIM, POPÜLER SNEAKER & LEGO!
     Ürünün kesinlikle bu kategorilerden birine ait olduğunu pozitif olarak doğrular.
     Makyaj, kozmetik, tava, kahve makinesi veya alakasız genel ürünler ASLA geçemez.
     """
     t = (title or "").lower()
-    # Kesin kozmetik/makyaj ise doğrudan reddet
-    if is_beauty_product(t):
+    # Kesin kozmetik/makyaj veya yasaklı/sıkıcı ürün ise doğrudan reddet
+    if is_beauty_product(t) or BORING_REGEX.search(t):
         return False
-    has_keyword = any(k in t for k in YOUTUBE_APPROVED_KEYWORDS)
-    has_brand = any(b in t for b in YOUTUBE_APPROVED_BRANDS)
+    has_keyword = any(_keyword_matches_text(t, k) for k in YOUTUBE_APPROVED_KEYWORDS)
+    has_brand = any(_keyword_matches_text(t, b) for b in YOUTUBE_APPROVED_BRANDS)
     return bool(has_keyword or has_brand)
 
 BORING_REGEX = re.compile(
     r"(şarj\s*kablosu|data\s*kablosu|şarj\s*kiti|oyun\s*ve\s*şarj|batarya\s*kiti|\bpuck\b|şarj\s*diski|şarj\s*yuvası|şarj\s*modülü|şarj\s*aleti|güç\s*adaptörü|duvar\s*şarj|range\s*extender|menzil\s*genişletici|bluetooth\s*5\.|usb\s*adaptör|\badaptör(ü)?\b|\bkablo(su)?\b(?!lu)|"
-    r"kılıf[ıi]?|ekran\s*koruyucu|koruyucu\s*cam|temizleme\s*spreyi|temizleme\s*bezi|çorap|askı(lık)?|"
-    r"(?<!monitör\s)(?<!laptop\s)stand[ıi]?|"
-    r"çevirici|dönüştürücü|deterjan|bez|havlu|bulaşık\s*tableti|yumuşatıcı|mendil|pijama|(?<!sırt\s)(?<!omuz\s)(?<!spor\s)(?<!bel\s)çanta(sı)?|"
-    r"tartı(sı)?|terazi(si)?|baskül|ölçüm|termometre|ateş\s*ölçer|"
-    r"saklama\s*kabı|kavanoz|rende|süzgeç|açacak|maşa|spatula|kesme\s*tahtası|(?<!makyaj\s)sünger|"
+    r"\bkılıf[ıi]?\b|ekran\s*koruyucu|koruyucu\s*cam|temizleme\s*spreyi|temizleme\s*bezi|\bçorap\b|\baskı(lık)?\b|"
+    r"(?<!monitör\s)(?<!laptop\s)\bstand[ıi]?\b|"
+    r"çevirici|dönüştürücü|deterjan|\bbez(i)?\b|\bhavlu\b|bulaşık\s*tableti|yumuşatıcı|\bmendil\b|\bpijama\b|(?<!sırt\s)(?<!omuz\s)(?<!spor\s)(?<!bel\s)\bçanta(sı)?\b|"
+    r"\btartı(sı)?\b|\bterazi(si)?\b|\bbaskül\b|termometre|ateş\s*ölçer|"
+    r"saklama\s*kabı|\bkavanoz\b|\brende\b|\bsüzgeç\b|\baçacak\b|\bmaşa(sı)?\b|\bspatula\b|kesme\s*tahtası|bulaşık\s*süngeri|temizlik\s*süngeri|"
     r"flaş\s*bellek|usb\s*bellek|flash\s*bellek|hafıza\s*kartı|sd\s*kart|microsd|flash\s*drive|usb\s*drive|kart\s*okuyucu|"
-    r"bebek\s*maması|mama(sı)?|devam\s*sütü|vitamin|omega|balık\s*yağı|takviye|"
-    r"bisküvi|kek|gofret|çikolata|cips|makarna|salça|bakliyat|kuruyemiş|çekirdek|ton\s*balığı|baharat|"
-    r"motosiklet|lastik|kask(ı)?|disk\s*kilidi|sabun|"
-    r"yastık|çarşaf|nevresim|terlik|kolonya|"
-    r"tişört|pantolon|gömlek|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|"
-    r"kartuş|toner|koli|kutu|folyo|termal\s*macun|vida|dübel|somun|aparat[ıi]?|"
-    r"musluk|duş\s*başlığı|hortum|gider|paspas|mandal|priz|uzatma\s*kablosu|ampul|duy|bant|yapıştırıcı|silikon|"
-    r"defter|(?<!göz\s)(?<!dudak\s)(?<!kaş\s)\bkalem(i)?\b|dosya|klasör|zarf|\bkitap\b|roman|dergi|kedi\s*kumu|köpek|tasma|külot|boxer|atlet|eldiven|bere|şemsiye|"
-    r"oto\s*kokusu|silecek|bijon|kordon|kayış|"
-    r"filtre(si)?|kireç|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
+    r"bebek\s*maması|\bmama(sı)?\b|devam\s*sütü|\bvitamin\b|\bomega\b|balık\s*yağı|gıda\s*takviyesi|takviye\s*edici|"
+    r"\bbisküvi\b|\bkek\b|\bgofret\b|\bçikolata\b|\bcips\b|\bmakarna\b|\bsalça\b|\bbakliyat\b|\bkuruyemiş\b|\bçekirdek\b|ton\s*balığı|\bbaharat\b|"
+    r"\bmotosiklet\b|\blastik\b|\bkask(ı)?\b|disk\s*kilidi|\bsabun(u)?\b|"
+    r"(?<!oyuncu\s)\byastık\b|\bçarşaf\b|\bnevresim\b|\bterlik\b|\bkolonya\b|"
+    r"\btişört\b|\bpantolon\b|\bgömlek\b|\bkahve\b(?!\s*makine)|\bpil\b|kalem\s*pil|alkalin|şarj\s*edilebilir\s*pil|"
+    r"\bkartuş\b|\btoner\b|\bkoli\b|karton\s*kutu|saklama\s*kutusu|para\s*kasası|çelik\s*kasa|\bfolyo\b|termal\s*macun|\bvida(sı)?\b|\bdübel\b|\bsomun\b|\baparat[ıi]?\b|"
+    r"\bmusluk\b|duş\s*başlığı|\bhortum\b|lavabo\s*gideri|\bpaspas\b|\bmandal\b|\bpriz(i)?\b|uzatma\s*kablosu|\bampul\b|\bduy\b|koli\s*bandı|çift\s*taraflı\s*bant|yara\s*bandı|yapıştırıcı|derz\s*silikonu|"
+    r"\bdefter\b|(?<!göz\s)(?<!dudak\s)(?<!kaş\s)\bkalem(i)?\b|\bdosya\b|\bklasör\b|\bzarf\b|\bkitap\b|\broman\b|\bdergi(si)?\b|kedi\s*kumu|\bköpek\b|\btasma\b|\bkülot\b|\bboxer\b|\batlet\b|\beldiven\b|\bbere\b|\bşemsiye(si)?\b|"
+    r"oto\s*kokusu|\bsilecek\b|\bbijon\b|\bkordon(u)?\b|\bkayış(ı)?\b|\bsehpa(sı)?\b|"
+    r"\bfiltre(si)?\b|\bkireç\b|su\s*arıtma|aquaclean|maxtra|toz\s*torbası|yedek\s*filtre|yedek\s*parça|yedek\s*bıçak|"
     r"tıraş\s*başlığı|fırça\s*başlığı|yedek\s*başlık|diş\s*fırçası\s*başlığı|şarj\s*kiti|oyun\s*ve\s*şarj|"
     r"bilek\s*destek|monitör\s*tutucu|monitör\s*kolu|monitör\s*stand|laptop\s*stand|laptop\s*sehpa|notebook\s*soğutucu|"
-    r"kahve|espresso|moka\s*pot|bialetti|lattego|nespresso|çay\s*makine|çaycı|tost\s*makine|blender|mutfak\s*robotu|"
-    r"terlik|sandalet|çorap|iç\s*çamaşır|\bslip\b|lohusa|emzirme|sütyen|çakmak\s*sıvısı|cam\s*şişe\s*su|maskot\s*su|"
-    r"kolonya|bidon|aseton|makyaj\s*pamuğu|kulak\s*çubuğu|tıraş\s*köpüğü|tıraş\s*jeli|"
+    r"kahve|espresso|moka\s*pot|bialetti|lattego|nespresso|çay\s*makine|\bçaycı\b|tost\s*makine|blender|mutfak\s*robotu|"
+    r"\btava(sı)?\b|\btencere\b|\bdüdüklü\b|\bsahan\b|döküm\s*ızgara|airfryer|fritöz|\bkettle\b|su\s*ısıtıcı|"
+    r"\bterlik\b|\bsandalet\b|\bçorap\b|iç\s*çamaşır|\bslip\b|lohusa|emzirme|sütyen|çakmak\s*sıvısı|cam\s*şişe\s*su|maskot\s*su|"
+    r"\bkolonya\b|\bbidon\b|\baseton\b|makyaj\s*pamuğu|kulak\s*çubuğu|tıraş\s*köpüğü|tıraş\s*jeli|"
     r"head\s*&\s*shoulders|head\s*and\s*shoulders|clear\s*men|hacı\s*şakir|dalin|"
-    r"conta|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
+    r"\bconta(sı)?\b|temizleme\s*tableti|kireç\s*çözücü|sarf\s*malzeme)",
     re.IGNORECASE
 )
 

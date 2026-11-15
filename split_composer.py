@@ -125,37 +125,47 @@ def save_meme_state(state: dict):
         print(f"[Meme Engine] Durum kaydedilemedi: {e}")
 
 WOMEN_KEYWORDS = [
-    "serum", "cilt bak", "krem", "tonik", "nemlendirici", "ruj", "rimel", "maskara",
+    "serum", "cilt bak", "güneş kremi", "yüz kremi", "el kremi", "vücut kremi", "gece kremi", "göz kremi",
+    "tonik", "nemlendirici", "ruj", "rimel", "maskara",
     "fondöten", "göz kalemi", "eyeliner", "allık", "kapatıcı", "c vitamini", "retinol",
-    "hyalüronik", "hyaluronic", "güneş kremi", "güneş sütü", "leke karşıtı", "yaşlanma karşıtı",
-    "peeling", "maske", "temizleme jeli", "micellar", "the purest", "cerave", "bioderma",
-    "la roche", "l'oreal", "maybelline", "revolution", "kiko", "flormar", "golden rose",
-    "pastel", "nivea", "yves rocher", "dyson airwrap", "saç kurutma", "düzleştirici",
-    "maşa", "epilatör", "epilasyon", "ağda", "parfüm", "parfümeri", "manikür", "pedikür",
+    "hyalüronik", "hyaluronic", "güneş sütü", "leke karşıtı", "yaşlanma karşıtı",
+    "peeling", "yüz maskesi", "saç maskesi", "kil maskesi", "temizleme jeli", "micellar", "the purest", "cerave", "bioderma",
+    "la roche", "l'oreal", "l'oréal", "loreal", "maybelline", "makeup revolution", "revolution beauty", "kiko", "flormar", "golden rose",
+    "pastel profashion", "nivea", "yves rocher", "dyson airwrap", "saç kurutma", "düzleştirici",
+    "saç maşası", "epilatör", "epilasyon", "ağda", "parfüm", "parfümeri", "manikür", "pedikür",
     "oje", "makyaj", "şampuan", "saç kremi", "saç bakım", "vücut losyonu", "kolajen",
-    "dudak balmı", "lip gloss", "tint", "kirpik", "kaş wax", "bb krem", "cc krem",
+    "dudak balmı", "lip gloss", "lip tint", "kirpik", "kaş wax", "bb krem", "cc krem",
     "saç köpüğü", "arganyağı", "argan", "biberiye yağı", "saç şekillendirici",
-    "edt", "edp", "eau de", "body mist", "vücut spreyi", "dudak parlatıcı", "dudak yağı",
+    "edt", "edp", "eau de", "body mist", "vücut spreyi", "dudak parlatıcı", "dudak yağı", "dudak kalemi",
     "omuz çantası", "kol çantası", "victoria's secret", "privacy gold women", "vichy",
     "mascara", "gloss", "lip", "blush", "concealer", "foundation", "lipliner", "lipstick",
     "brow", "lash", "skincare", "pantene", "elseve", "elidor", "gliss", "ogx", "urban care"
 ]
 
 WOMEN_CATEGORIES = [
-    "beauty", "kozmetik", "cilt_bakimi", "kisisel_bakim", "moda", "kadin", "makyaj", "bakim", "kadin_bakim", "parfum", "parfüm", "parfümeri"
+    "beauty", "kozmetik", "cilt_bakimi", "kadin", "makyaj", "kadin_bakim", "parfum", "parfüm", "parfümeri"
 ]
 
 def is_women_deal(title: str = "", category: str = "") -> bool:
     """Ürünün kadın/güzellik/makyaj/cilt bakımına ait olup olmadığını tespit eder."""
     cat_low = (category or "").lower().strip()
     title_low = (title or "").lower().strip()
-    
-    if "kadın" in title_low or "women" in title_low:
-        return True
+
+    # Spor ayakkabı / sneaker / teknoloji / gaming ürünleri (Unisex/Kadın ibaresi geçse dahi) erkek/genel meme havuzunu kullanır
+    if any(s in title_low for s in ("ayakkabı", "sneaker", "krampon", "kulaklık", "hoparlör", "mouse", "klavye", "monitör", "oneblade", "tıraş", "traş", "projeksiyon", "projektör", "lego")):
+        return False
+
     if any(c in cat_low for c in WOMEN_CATEGORIES):
         return True
+
+    prefix = r"(?<![a-zA-Z0-9çğıöşüÇĞİÖŞÜ])"
+    strict_end = {"lip", "oje", "ruj", "edt", "edp", "brow", "lash", "kiko", "nyx", "gloss"}
     for kw in WOMEN_KEYWORDS:
-        if kw in title_low:
+        if kw in strict_end or len(kw) <= 4:
+            pat = prefix + re.escape(kw) + r"(?![a-zA-Z0-9çğıöşüÇĞİÖŞÜ])"
+        else:
+            pat = prefix + re.escape(kw)
+        if re.search(pat, title_low):
             return True
     return False
 

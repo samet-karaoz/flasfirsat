@@ -121,13 +121,15 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
 
         history_items = load_autopilot_history()
         for item in reversed(history_items):
-            if item.get("success") and not item.get("dry_run"):
+            if item.get("success") and not item.get("dry_run") and not item.get("skipped"):
                 ts_str = item.get("timestamp")
                 if ts_str:
                     try:
                         past_dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S")
                         diff_sec = (datetime.now() - past_dt).total_seconds()
-                        if 0 <= diff_sec < 2700: # 45 dakika (2700 saniye)
+                        same_plat = (item.get("target_platform") == target_platform)
+                        guard_sec = 2400 if same_plat else 300  # Aynı platformda 40 dk, farklı platformda (Örn: 14:00 TT -> 14:30 YT) 5 dk koruma
+                        if 0 <= diff_sec < guard_sec:
                             mins_ago = int(diff_sec // 60)
                             deal_title = item.get("deal", {}).get("title", "Ürün") if isinstance(item.get("deal"), dict) else "Ürün"
                             msg = (
@@ -146,31 +148,35 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 break
 
     try:
+        from deal_hunter import (
+            is_beauty_product,
+            is_youtube_approved_product,
+            is_lego_on_cooldown,
+            hunt_best_deals,
+            get_product_subtype,
+            get_recent_subtypes_from_history,
+            get_recent_brands_from_history,
+            calculate_deal_viral_score,
+            get_deal_discount_pct,
+            get_deal_savings_tl,
+        )
+        from deal_bot import load_history
+
+        history = load_history()
+        recent_subs = get_recent_subtypes_from_history(limit=4, target_platform=None)
+        recent_brands = get_recent_brands_from_history(limit=4, target_platform=None)
+        hunt_cat = "tech" if target_platform in ("youtube", "tiktok") else "all"
+
         if custom_deal:
             print(f"\n[Adım 1/4] 🎯 Özel Fırsat Belirtildi: {custom_deal.get('title')}")
             candidates = [custom_deal]
         else:
             # 1. En iyi fırsatı tara
             print("\n[Adım 1/4] 🔍 En yüksek indirimli taze fırsat avlanıyor...")
-            from deal_hunter import (
-                is_beauty_product,
-                is_youtube_approved_product,
-                hunt_best_deals,
-                get_product_subtype,
-                get_recent_subtypes_from_history,
-                get_recent_brands_from_history
-            )
-            from deal_bot import load_history
-
-            history = load_history()
-            recent_subs = get_recent_subtypes_from_history(limit=4, target_platform=None)
-            recent_brands = get_recent_brands_from_history(limit=4, target_platform=None)
-
             print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Alt Kategoriler (Son 4): {list(recent_subs)}")
             print(f"[Otopilot Çeşitlilik] 🛡️ Beklemedeki Markalar (Son 4): {list(recent_brands)}")
 
             # Gerçek analitik verisi (%84 Erkek TikTok + %70 Erkek YouTube) doğrultusunda her iki platform için F/P Teknoloji, Gaming, Sneaker & LEGO öncelikli
-            hunt_cat = "tech" if target_platform in ("youtube", "tiktok") else "all"
             print(f"[Deal Hunter] Hedef platforma özel kategori taranıyor ({target_platform.upper()} -> {hunt_cat.upper()})...")
             candidates = hunt_best_deals(
                 limit=5,
@@ -274,7 +280,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                 candidates = approved_only
             else:
                 print(f"[Autopilot Engine] 🛡️ {target_platform.upper()} Filtresi: Adayların hiçbiri onaylı teknoloji/sneaker/LEGO değildi, acil F/P Teknoloji avlanıyor...")
-                candidates = hunt_best_deals(limit=5, platform="amazon", category="tech", min_discount=15)
+                candidates = hunt_best_deals(limit=5, platform="amazon", category="tech", exclude_urls=history, min_discount=15)
                 candidates = [
                     c for c in candidates
                     if is_youtube_approved_product(c.get("title", ""))
@@ -418,27 +424,31 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # D) TikTok (Buffer API ile Tam Otomatik Dağıtım)
         if target_platform in ("tiktok", "all"):
             print("\n--- 0. TikTok ---")
-            try:
-                from tiktok_publisher import publish_video_to_tiktok
-                tt_code = deal.get("deal_code", "")
-                code_clean = str(tt_code).lstrip("#") if tt_code else ""
-                tt_caption = (
-                    f"Fiyata inanamayacaksınız! {title} dip fiyata indi 💥\n"
-                    f"#işbirliği #reklam\n\n"
-                    f"Profilimizdeki sitemizin arama çubuğuna {code_clean} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n"
-                    f"🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET!\n\n"
-                    f"#keşfet #fırsat #indirim"
-                )
-                tt_res = publish_video_to_tiktok(video_path, caption=tt_caption, mode="shareNow")
-                if tt_res.get("success"):
-                    result["platforms"]["tiktok"] = {"status": "ok", "post_id": tt_res.get("post_id"), "channel": tt_res.get("channel")}
-                    print(f"✅ TikTok Başarılı: Post ID {tt_res.get('post_id')} ({tt_res.get('channel')})")
-                else:
-                    result["platforms"]["tiktok"] = {"status": "error", "error": tt_res.get("error")}
-                    print(f"❌ TikTok Hatası: {tt_res.get('error')}")
-            except Exception as ett:
-                result["platforms"]["tiktok"] = {"status": "error", "error": str(ett)}
-                print(f"❌ TikTok İstisna: {ett}")
+            if is_beauty_product(title) or not is_youtube_approved_product(title):
+                print(f"🛑 [TİKTOK GÜVENLİK FİLTRESİ] '{title}' TikTok F/P Teknoloji & Sneaker standartlarına uygun olmadığı için KESİNLİKLE ENGELLENDİ!")
+                result["platforms"]["tiktok"] = {"status": "skipped", "reason": "not_approved_for_tiktok"}
+            else:
+                try:
+                    from tiktok_publisher import publish_video_to_tiktok
+                    tt_code = deal.get("deal_code", "")
+                    code_clean = str(tt_code).lstrip("#") if tt_code else ""
+                    tt_caption = (
+                        f"Fiyata inanamayacaksınız! {title} dip fiyata indi 💥\n"
+                        f"#işbirliği #reklam\n\n"
+                        f"Profilimizdeki sitemizin arama çubuğuna {code_clean} yazarak doğrudan Amazon resmi sayfasına ulaşabilirsiniz! ✨\n"
+                        f"🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET!\n\n"
+                        f"#keşfet #fırsat #indirim"
+                    )
+                    tt_res = publish_video_to_tiktok(video_path, caption=tt_caption, mode="shareNow")
+                    if tt_res.get("success"):
+                        result["platforms"]["tiktok"] = {"status": "ok", "post_id": tt_res.get("post_id"), "channel": tt_res.get("channel")}
+                        print(f"✅ TikTok Başarılı: Post ID {tt_res.get('post_id')} ({tt_res.get('channel')})")
+                    else:
+                        result["platforms"]["tiktok"] = {"status": "error", "error": tt_res.get("error")}
+                        print(f"❌ TikTok Hatası: {tt_res.get('error')}")
+                except Exception as ett:
+                    result["platforms"]["tiktok"] = {"status": "error", "error": str(ett)}
+                    print(f"❌ TikTok İstisna: {ett}")
 
         # A) YouTube Shorts (Platforma Özel: BİO Link CTA Bandı & Açıklama)
         if target_platform in ("youtube", "all"):

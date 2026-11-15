@@ -463,9 +463,22 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                     yt_upload_file = youtube_video_path if (youtube_video_path and os.path.exists(youtube_video_path)) else video_path
                     yt_desc = caption_text
         
-                    yt_res = publish_shorts_to_youtube(yt_upload_file, title=title, description=yt_desc)
+                    yt_res = publish_shorts_to_youtube(
+                        yt_upload_file,
+                        title=title,
+                        description=yt_desc,
+                        deal_code=deal.get("deal_code", ""),
+                        new_price=deal.get("new_price", ""),
+                        discount_pct=deal.get("discount_pct", ""),
+                    )
                     if yt_res.get("success"):
-                        result["platforms"]["youtube"] = {"status": "ok", "url": yt_res.get("url")}
+                        yt_cmt_info = yt_res.get("comment") or {}
+                        result["platforms"]["youtube"] = {
+                            "status": "ok",
+                            "url": yt_res.get("url"),
+                            "comment_ok": bool(yt_cmt_info.get("success")),
+                            "comment_needs_reauth": bool(yt_cmt_info.get("needs_reauth")),
+                        }
                         print(f"✅ YouTube Shorts Başarılı: {yt_res.get('url')}")
                     else:
                         result["platforms"]["youtube"] = {"status": "error", "error": yt_res.get("error")}
@@ -538,7 +551,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         # YouTube
         yt_info = result["platforms"].get("youtube", {})
         if yt_info.get("status") == "ok":
-            status_lines.append(f"• 📺 <b>YouTube Shorts:</b> <a href=\"{yt_info.get('url')}\">İzle</a>")
+            cmt_tag = " + 💬 İlk Yorum" if yt_info.get("comment_ok") else (" (⚠️ Yorum Yetkisi Gerekli)" if yt_info.get("comment_needs_reauth") else "")
+            status_lines.append(f"• 📺 <b>YouTube Shorts:</b> <a href=\"{yt_info.get('url')}\">İzle</a>{cmt_tag}")
         elif yt_info:
             status_lines.append(f"• 📺 <b>YouTube Shorts:</b> ❌ {yt_info.get('error', 'Hata')}")
 

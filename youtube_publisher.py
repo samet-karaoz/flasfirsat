@@ -1,7 +1,9 @@
 import os
+import re
 import sys
 import time
 import json
+import random
 import subprocess
 import urllib.parse
 from dotenv import load_dotenv
@@ -11,6 +13,7 @@ load_dotenv()
 from config import (
     BASE_DIR,
     DATA_DIR,
+    TEMP_DIR,
     get_curl_cmd,
     safe_run_subprocess
 )
@@ -114,12 +117,195 @@ def sanitize_youtube_text(text: str) -> str:
     t = t.replace("<", "").replace(">", "")
     return t.strip()
 
+
+def _extract_deal_code(deal_code: str = "", description: str = "") -> str:
+    """Açıklama veya deal_code içinden yalın fırsat kodu numarasını (örn: '198') çıkarır."""
+    raw = str(deal_code or "").strip()
+    if raw:
+        m = re.search(r"(\d+)", raw)
+        if m:
+            return m.group(1)
+        return raw.lstrip("#").strip()
+    if description:
+        m = re.search(r"(?:F[ıi]rsat\s*Kodu|Kod)\s*[:#]?\s*#?(\d{2,5})", str(description), re.IGNORECASE)
+        if m:
+            return m.group(1)
+        m2 = re.search(r"#(\d{3,5})\b", str(description))
+        if m2:
+            return m2.group(1)
+    return ""
+
+
+def _sanitize_youtube_comment(text: str) -> str:
+    """Yorum metnini URL, gereksiz hashtag ve yasaklı karakterlerden temizleyerek doğal tutar."""
+    if not text:
+        return ""
+    clean = str(text).strip().strip('"').strip("'").strip()
+    clean = re.sub(r"https?://\S+", "", clean)
+    clean = re.sub(r"www\.\S+", "", clean)
+    clean = re.sub(r"#[a-zA-Z0-9_çğıöşüÇĞİÖŞÜ]+", "", clean)
+    clean = re.sub(r"[ \t]+", " ", clean)
+    clean = re.sub(r"\n{3,}", "\n\n", clean)
+    return sanitize_youtube_text(clean)
+
+
+def generate_friendly_youtube_comment(
+    title: str,
+    new_price: str = "",
+    discount_pct: str = "",
+    deal_code: str = "",
+    description: str = ""
+) -> str:
+    """
+    Reklam botu gibi değil; izleyicilerle sohbet eden, cana yakın ve samimi
+    bir indirim kanalı topluluğu tonunda otomatik ilk yorum metni üretir.
+    """
+    clean_title = sanitize_youtube_text(title or "bu ürün").replace("#Shorts", "").replace("#shorts", "").strip()
+    code_num = _extract_deal_code(deal_code, description)
+
+    if code_num:
+        code_hint = f"(Soranlar olursa ürün kodu {code_num}, kanal profilimizdeki sitemizden arama kutusuna {code_num} yazarak direkt bakabilirsiniz.)"
+    else:
+        code_hint = "(Merak edip incelemek isteyenler kanal profilimizdeki sitemizden güncel haline ulaşabilir.)"
+
+    # 1. Önce Gemini ile ürüne özel samimi bir ilk yorum üretmeyi dene
+    try:
+        from deal_hunter import call_gemini
+        price_note = f" (Şu an {new_price})" if new_price else ""
+        disc_note = f" | İndirim: {discount_pct}" if discount_pct else ""
+        style_seed = random.choice([
+            "Girişte samimi bir gözlemle başla (ör. 'Açık konuşayım...', 'Dürüst olalım...')",
+            "Girişte sıcak bir topluluk selamıyla başla (ör. 'Selam millet...', 'Merhaba ekip...')",
+            "Girişte bütçe/deneyim odağıyla başla (ör. 'Ekipçe listeleri tararken...', 'Bu ara benzer model bakanlar için...')",
+            "Girişte kısa bir kullanıcı sorusu havasıyla başla (ör. 'Aramızda bunu deneyimleyen var mı...', 'Fiyat/performans açısından...')",
+        ])
+        prompt = f"""Sen @flasfirsat.tr YouTube kanalının samimi, esprili ve cana yakın indirim/teknoloji dostusun.
+Görevin: Az önce paylaştığımız Shorts videosunun altına izleyicilerle sohbet başlatacak, ASLA soğuk bir reklam botu gibi durmayan çok sıcak bir İLK YORUM yazmak.
+
+Ürün: {clean_title}{price_note}{disc_note}
+Fırsat Kodu: {code_num if code_num else "Yok (profildeki siteye yönlendir)"}
+Üslup Önerisi: {style_seed} (aynı kalıp girişi tekrar etme, doğal ol).
+
+KESİN TON VE KURALLAR:
+1. Sadece satış/reklam cümlesi kurma; sanki arkadaş grubuna "Bunu denk getirdim, kullanan var mı?" der gibi konuş.
+2. "HEMEN ALIN", "KAÇIRMAYIN", "ŞOK FİYAT", "PATLAYIN" gibi bağırgan pazarlama klişelerini KESİNLİKLE KULLANMA.
+3. İlk 1-2 cümlede ürüne dair samimi bir gözlem yap ve izleyicilere mutlaka doğal bir deneyim/fikir sorusu sor ("Aranızda bu seriyi kullanan var mı, memnun musunuz?", "Sizce bu fiyata değer mi?").
+4. Son cümlede veya parantez içinde nazikçe yardımcı ol: Fırsat kodu varsa "{code_num}" kodunu profilimizdeki sitede arama kutusuna yazarak direkt Amazon sayfasına bakabileceklerini söyle (kod yoksa profilimizdeki linke yönlendir).
+5. Tuhaf/mecazi kelimeler veya mevsime uymayan ifadeler kullanma; sade, akıcı ve doğal Türkçe kullan. Asla URL/link (http/www) ve asla #hashtag kullanma. Toplam 2-3 cümle, en fazla 1-2 sade emoji olsun.
+Sadece yorum metnini yaz."""
+
+        ai_cmt = call_gemini(prompt, json_mode=False)
+        if isinstance(ai_cmt, str):
+            ai_clean = _sanitize_youtube_comment(ai_cmt)
+            bad_hype = any(b in ai_clean.lower() for b in ("hemen al", "kaçırma", "şok fiyat", "acele et"))
+            if len(ai_clean) >= 35 and not bad_hype:
+                if code_num and code_num not in ai_clean:
+                    ai_clean = f"{ai_clean} {code_hint}"
+                return ai_clean[:500]
+    except Exception:
+        pass
+
+    # 2. Akıllı Kategoriye Göre Samimi Fallback Şablonları
+    subtype = "general"
+    try:
+        from deal_hunter import get_product_subtype
+        subtype = get_product_subtype(clean_title)
+    except Exception:
+        pass
+
+    if subtype in ("mouse", "keyboard", "headset", "gamepad", "mousepad"):
+        pool = [
+            f"Selamlar dostlar! Setup dizenler veya ekipman yenilemek isteyenler için {clean_title} fiyat/performans açısından güzel denk geldi. Aranızda bu modeli aktif kullanan varsa artısını eksisini yoruma yazabilir mi, alacaklara çok fikir olur 👇 {code_hint}",
+            f"Açık konuşayım, ekipçe fırsatları tararken {clean_title} fiyatını görünce bizim bile dikkatimizi çekti. Kullananlar memnun mu, sizce bu bütçede daha mantıklı bir alternatif var mı? {code_hint}",
+        ]
+    elif subtype == "monitor":
+        pool = [
+            f"Selamlar! Monitör tarafında fiyatların arttığı şu dönemde {clean_title} mantıklı bir seviyeye inmiş gibi görünüyor. Panel kalitesi ve günlük deneyimi hakkında fikri olanlar yoruma yazarsa herkes faydalanır 🙌 {code_hint}",
+        ]
+    elif subtype == "shoes":
+        pool = [
+            f"Selam millet! Günlük giyimde hem rahat hem de bütçeyi üzmeyen bir model arayanlar için {clean_title} güzel indirime girmiş. Daha önce bu markayı/seriyi giyenler tam numara mı yoksa yarım numara büyük mü önerir? 👟 {code_hint}",
+            f"Merhaba arkadaşlar! Spor ayakkabı tarafında fırsat denk geldikçe seçmeye çalışıyoruz, {clean_title} de bayağı temiz fiyata düşmüş. Tasarımı ve rahatlığı nasıl sizce, günlük kullanıma gider mi? {code_hint}",
+        ]
+    elif subtype == "lego":
+        pool = [
+            f"Koleksiyoncular burada mı? Yapım keyfi ayrı, rafa dizmesi ayrı güzel olan {clean_title} setini indirimde yakalayınca paylaşmadan geçemedik. Sizce bu fiyata koleksiyona eklenir mi, favori seriniz hangisi? 🧱 {code_hint}",
+        ]
+    else:
+        pool = [
+            f"Selamlar dostlar! Günlük hayatta gerçekten iş gören ve kullanıcı yorumları da sağlam olan {clean_title} güzel bir fiyata inmiş. Aranızda daha önce deneyip memnun kalan ya da fikir paylaşmak isteyen var mı? ✨ {code_hint}",
+            f"Merhaba arkadaşlar! Bizim kanalda sadece denk gelip içimize sinen F/P ürünleri paylaşmaya çalışıyoruz. {clean_title} hakkında siz ne düşünüyorsunuz, bu fiyata hakkını verir mi? 💬 {code_hint}",
+        ]
+
+    return sanitize_youtube_text(random.choice(pool))[:500]
+
+
+def post_first_comment_to_youtube(
+    video_id: str,
+    comment_text: str,
+    access_token: str = None
+) -> dict:
+    """YouTube Data API v3 commentThreads.insert ile videonun altına otomatik ilk yorumu gönderir."""
+    if not video_id or not comment_text:
+        return {"success": False, "error": "video_id veya comment_text eksik."}
+
+    if not access_token:
+        access_token = get_valid_access_token()
+
+    os.makedirs(TEMP_DIR, exist_ok=True)
+    comment_temp = os.path.join(TEMP_DIR, "yt_comment_temp.json")
+    payload = {
+        "snippet": {
+            "videoId": video_id,
+            "topLevelComment": {
+                "snippet": {
+                    "textOriginal": sanitize_youtube_text(comment_text)
+                }
+            }
+        }
+    }
+    with open(comment_temp, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False)
+
+    cmd = get_curl_cmd([
+        "-s", "-X", "POST",
+        "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet",
+        "-H", f"Authorization: Bearer {access_token}",
+        "-H", "Content-Type: application/json; charset=UTF-8",
+        "--data-binary", f"@{comment_temp}"
+    ])
+    res = safe_run_subprocess(cmd, capture_output=True, text=True, encoding="utf-8")
+    try:
+        resp_json = json.loads(res.stdout)
+        if resp_json.get("id"):
+            return {
+                "success": True,
+                "comment_id": resp_json["id"],
+                "text": comment_text
+            }
+        err_obj = resp_json.get("error", {})
+        err_msg = err_obj.get("message") or res.stdout
+        err_low = str(resp_json).lower()
+        needs_reauth = any(k in err_low for k in ("insufficient", "permission", "scope", "unauthorized", "invalid_grant"))
+        return {
+            "success": False,
+            "needs_reauth": needs_reauth,
+            "error": err_msg
+        }
+    except Exception as e:
+        return {"success": False, "needs_reauth": False, "error": f"{e} | {res.stdout[:200]}"}
+
+
 def publish_shorts_to_youtube(
     video_path: str,
     title: str,
     description: str,
     privacy_status: str = None,
-    tags: list = None
+    tags: list = None,
+    deal_code: str = "",
+    new_price: str = "",
+    discount_pct: str = "",
+    auto_comment: bool = True
 ) -> dict:
     """
     Hazırlanan MP4 dikey videosunu doğrudan YouTube Shorts olarak kanala yükler.
@@ -267,11 +453,38 @@ def publish_shorts_to_youtube(
             shorts_url = f"https://www.youtube.com/shorts/{video_id}"
             print(f"🎉 [YouTube Publisher] Video başarıyla yüklendi!")
             print(f"🔗 Shorts Linki: {shorts_url}")
+
+            comment_res = None
+            if auto_comment:
+                try:
+                    time.sleep(2)
+                    comment_text = generate_friendly_youtube_comment(
+                        title=clean_title.replace("#Shorts", "").replace("#shorts", "").strip(),
+                        new_price=new_price,
+                        discount_pct=discount_pct,
+                        deal_code=deal_code,
+                        description=clean_desc,
+                    )
+                    comment_res = post_first_comment_to_youtube(
+                        video_id=video_id,
+                        comment_text=comment_text,
+                        access_token=access_token,
+                    )
+                    if comment_res.get("success"):
+                        print(f"💬 [YouTube İlk Yorum] Samimi topluluk yorumu paylaşıldı: {comment_text}")
+                    elif comment_res.get("needs_reauth"):
+                        print("⚠️ [YouTube İlk Yorum] Mevcut token'da yorum yazma izni yok (youtube.force-ssl için 'python youtube_auth.py' yenilemesi gerekir).")
+                    else:
+                        print(f"⚠️ [YouTube İlk Yorum] Yorum eklenemedi (video yayını etkilenmedi): {comment_res.get('error')}")
+                except Exception as e_cmt:
+                    print(f"⚠️ [YouTube İlk Yorum] İstisna (video yayını etkilenmedi): {e_cmt}")
+
             return {
                 "success": True,
                 "video_id": video_id,
                 "url": shorts_url,
-                "privacy": privacy
+                "privacy": privacy,
+                "comment": comment_res
             }
         else:
             print(f"[YouTube Publisher] ❌ Yükleme yanıt hatası: {put_res.stdout}")

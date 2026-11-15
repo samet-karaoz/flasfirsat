@@ -25,7 +25,10 @@ from config import safe_run_subprocess, get_curl_cmd
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, "client_secrets.json")
 TOKEN_FILE = os.path.join(BASE_DIR, "data", "youtube_token.json")
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+]
 PORT = 8088
 REDIRECT_URI = f"http://localhost:{PORT}/"
 

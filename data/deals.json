@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794765736_91",
+    "deal_code": "#200",
+    "title": "Razer Huntsman V3 Pro",
+    "old_price": "9.429 TL",
+    "new_price": "6.499 TL",
+    "discount_pct": "-31%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CDBXR2B2?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 2.166 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/razer_huntsman_v3_pro_329082af.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "15.11.2026 18:02"
+  },
+  {
     "id": "deal_1794758893_90",
     "deal_code": "#199",
     "title": "Anker Soundcore V20i Bluetooth Kul",

@@ -2,7 +2,7 @@ name: ⚡ Flaş Fırsat 7/24 Bulut Otopilotu (YouTube Shorts & TikTok)
 
 on:
   # 🛡️ HARİCİ SIFIR-GECİKME TETİKLEYİCİ (cron-job.org):
-  # Tüm 6 günlük kuşak (11:05, 13:05, 15:05, 18:35, 20:05, 21:35 TSİ) cron-job.org üzerinden
+  # Tüm 6 günlük kuşak (14:00, 14:30, 18:00, 19:00, 21:00, 23:00 TSİ) cron-job.org üzerinden
   # tam saniyesinde workflow_dispatch API'si ile tetiklenmektedir.
   # GitHub'ın kendi gecikmeli dahili cron zamanlayıcısının 1 saat rötarla ikinci kez (çift)
   # tetikleme yapmasını önlemek için dahili schedule devre dışı bırakılmıştır.
@@ -103,23 +103,26 @@ jobs:
           # Eğer otomatik cron tetiklemişse, saate göre akıllı kuşak ismi ve platform ver
           if [ -z "$SLOT" ] || [ "$SLOT" = "Manuel Bulut Tetikleme" ]; then
             UTC_H=$(date -u +%H)
-            if [ "$UTC_H" = "08" ]; then
-              SLOT="11:00 YouTube Sabah F/P"
-              PLATFORM="youtube"
-            elif [ "$UTC_H" = "10" ]; then
-              SLOT="13:00 TikTok Viral F/P & Teknoloji"
-              PLATFORM="tiktok"
-            elif [ "$UTC_H" = "12" ]; then
-              SLOT="15:00 YouTube Gaming & Donanım"
-              PLATFORM="youtube"
+            UTC_M=$(date -u +%M)
+            if [ "$UTC_H" = "11" ]; then
+              if [ "$UTC_M" -lt 20 ]; then
+                SLOT="14:00 TikTok Viral F/P & Teknoloji"
+                PLATFORM="tiktok"
+              else
+                SLOT="14:30 YouTube Öğleden Sonra F/P"
+                PLATFORM="youtube"
+              fi
             elif [ "$UTC_H" = "15" ]; then
-              SLOT="18:30 TikTok Akşam Viral Fırsat"
-              PLATFORM="tiktok"
-            elif [ "$UTC_H" = "17" ]; then
-              SLOT="20:00 YouTube Prime Time F/P"
+              SLOT="18:00 YouTube Akşam Gaming & Donanım"
               PLATFORM="youtube"
+            elif [ "$UTC_H" = "16" ]; then
+              SLOT="19:00 TikTok Akşam Gaming & Sneaker"
+              PLATFORM="tiktok"
             elif [ "$UTC_H" = "18" ]; then
-              SLOT="21:30 TikTok Gece F/P & Gaming"
+              SLOT="21:00 YouTube Prime Time F/P"
+              PLATFORM="youtube"
+            elif [ "$UTC_H" = "20" ]; then
+              SLOT="23:00 TikTok Gece F/P & Gaming"
               PLATFORM="tiktok"
             else
               SLOT="Bulut Otopilotu (${UTC_H}:00 UTC)"

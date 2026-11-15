@@ -93,8 +93,9 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
     if t_plat == "auto":
         s_low = slot_name.lower()
         from datetime import datetime as _dt, timezone as _tz
-        utc_h = _dt.now(_tz.utc).hour
-        if "tiktok" in s_low or utc_h in (10, 15, 18):  # TSİ 13:05, 18:35, 21:35 (Günde 3 TikTok Kuşağı)
+        utc_dt = _dt.now(_tz.utc)
+        utc_h = utc_dt.hour
+        if "tiktok" in s_low or (utc_h == 11 and utc_dt.minute < 20) or utc_h in (16, 20):  # TSİ 14:00, 19:00, 23:00 (Günde 3 TikTok Kuşağı)
             t_plat = "tiktok"
         else:
             t_plat = "youtube"

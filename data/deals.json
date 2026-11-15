@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794737219_88",
+    "deal_code": "#197",
+    "title": "Head & Shoulders Klasik",
+    "old_price": "382 TL",
+    "new_price": "254 TL",
+    "discount_pct": "-33%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DT9VRHPT?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/head___shoulders_klasik_0d92d488.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "15.11.2026 10:06"
+  },
+  {
     "id": "deal_1794730055_87",
     "deal_code": "#196",
     "title": "Black Deer Gaming Mouse Pad",

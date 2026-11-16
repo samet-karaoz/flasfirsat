@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794845136_96",
+    "deal_code": "#205",
+    "title": "Aula N-69 2 * 3W RGB LED",
+    "old_price": "474 TL",
+    "new_price": "399 TL",
+    "discount_pct": "-16%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FX5DQSGN?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/aula_n_69_2___3w_rgb_led_d743df6b.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "16.11.2026 16:05"
+  },
+  {
     "id": "deal_1794841616_95",
     "deal_code": "#204",
     "title": "Aula N-108 1+1 USB/Aux",

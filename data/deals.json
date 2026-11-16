@@ -908,7 +908,7 @@
     "category": "lifestyle",
     "image_url": "assets/products/stanley_iceflow_pipetli_t_87432ec4.webp",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "06.11.2026 17:30"
   },
   {
@@ -1691,8 +1691,8 @@
     "installment": "3 Taksit x 1.166 TL",
     "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.webp",
     "date_added": "12.10.2026 21:18",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "category": "gaming",
     "deal_code": "#104"
   },

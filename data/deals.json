@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794852374_97",
+    "deal_code": "#206",
+    "title": "Claw's Nexus K1 RGB Klavye",
+    "old_price": "599,00 TL",
+    "new_price": "485,19 TL",
+    "discount_pct": "-19%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0D6Z492XV?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/claw_s_nexus_k1_rgb_klavy_17087c2d.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "16.11.2026 18:06"
+  },
+  {
     "id": "deal_1794845136_96",
     "deal_code": "#205",
     "title": "Aula N-69 2 * 3W RGB LED",

@@ -1,16 +1,18 @@
 import os
+import sys
 import time
 import json
+import requests
+import subprocess
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from config import safe_run_subprocess
+from config import safe_run_subprocess, BASE_DIR, DATA_DIR
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
 SESSION_FILE = os.path.join(DATA_DIR, "instagram_session.json")
+BUFFER_API_URL = "https://api.buffer.com"
 
 # instagrapi Giriş Bilgileri (.env)
 INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME", "").strip()
@@ -20,11 +22,105 @@ INSTAGRAM_PASSWORD = os.getenv("INSTAGRAM_PASSWORD", "").strip()
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "").strip()
 INSTAGRAM_USER_ID = os.getenv("INSTAGRAM_USER_ID", "").strip()
 
+def get_buffer_token() -> str:
+    """Buffer Access Token'ı ortam değişkenlerinden alır."""
+    token = os.getenv("BUFFER_ACCESS_TOKEN") or os.getenv("BUFFER_API_KEY", "")
+    return token.strip()
+
+def check_instagram_buffer_credentials() -> dict:
+    """Buffer GraphQL API üzerinden bağlı Instagram Reels kanalını ve yetkisini doğrular."""
+    token = get_buffer_token()
+    if not token:
+        return {
+            "configured": False,
+            "connected": False,
+            "error": "BUFFER_ACCESS_TOKEN bulunamadı. Lütfen .env dosyasına ekleyin."
+        }
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    org_query = """
+    query {
+      account {
+        id
+        email
+        organizations {
+          id
+          name
+        }
+      }
+    }
+    """
+    try:
+        r = requests.post(BUFFER_API_URL, json={"query": org_query}, headers=headers, timeout=12)
+        if r.status_code != 200 or "errors" in r.json():
+            return {
+                "configured": True,
+                "connected": False,
+                "error": f"Buffer yetkilendirme hatası: {r.text}"
+            }
+        
+        orgs = r.json().get("data", {}).get("account", {}).get("organizations", [])
+        if not orgs:
+            return {"configured": True, "connected": False, "error": "Buffer üzerinde organizasyon bulunamadı."}
+
+        org_id = orgs[0]["id"]
+
+        channels_query = f"""
+        query {{
+          channels(input: {{ organizationId: "{org_id}" }}) {{
+            id
+            name
+            service
+            isDisconnected
+            isLocked
+          }}
+        }}
+        """
+        r_ch = requests.post(BUFFER_API_URL, json={"query": channels_query}, headers=headers, timeout=12)
+        channels = r_ch.json().get("data", {}).get("channels", [])
+
+        ig_ch = next((c for c in channels if c.get("service") == "instagram" and not c.get("isDisconnected") and not c.get("isLocked")), None)
+        if not ig_ch:
+            ig_ch = next((c for c in channels if c.get("service") == "instagram"), None)
+
+        if not ig_ch:
+            return {
+                "configured": True,
+                "connected": False,
+                "error": "Buffer hesabında bağlı Instagram kanalı bulunamadı. Lütfen Buffer'a Instagram hesabınızı ekleyin."
+            }
+
+        return {
+            "configured": True,
+            "connected": True,
+            "channel_id": ig_ch["id"],
+            "channel_name": ig_ch["name"],
+            "organization_id": org_id,
+            "message": f"Buffer Instagram kanalı hazır: {ig_ch['name']}"
+        }
+    except Exception as e:
+        return {"configured": True, "connected": False, "error": str(e)}
+
 def check_instagram_credentials() -> dict:
     """Instagram oturum veya API kimlik durumunu kontrol eder."""
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    # 1. instagrapi Bilgileri Kontrolü (Öncelikli)
+    # 1. Buffer API Kontrolü (1. Öncelikli - Resmi, Bulut Uyumlu ve Güvenli)
+    buf_cred = check_instagram_buffer_credentials()
+    if buf_cred.get("connected"):
+        return {
+            "configured": True,
+            "mode": "buffer",
+            "channel_id": buf_cred["channel_id"],
+            "channel_name": buf_cred["channel_name"],
+            "message": buf_cred["message"]
+        }
+
+    # 2. instagrapi Bilgileri Kontrolü (İkincil / Yerel)
     if INSTAGRAM_USERNAME and INSTAGRAM_PASSWORD:
         has_session = os.path.exists(SESSION_FILE)
         return {
@@ -35,7 +131,7 @@ def check_instagram_credentials() -> dict:
             "message": f"instagrapi hazır (Kullanıcı: @{INSTAGRAM_USERNAME})"
         }
 
-    # 2. Meta Graph API Bilgileri Kontrolü
+    # 3. Meta Graph API Bilgileri Kontrolü
     if INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID:
         return {
             "configured": True,
@@ -46,7 +142,7 @@ def check_instagram_credentials() -> dict:
     return {
         "configured": False,
         "mode": "none",
-        "error": "Instagram bilgileri eksik. Lütfen .env dosyasına INSTAGRAM_USERNAME ve INSTAGRAM_PASSWORD ekleyin."
+        "error": "Instagram bilgileri eksik. Buffer hesabına Instagram bağlayın veya .env dosyasına BUFFER_ACCESS_TOKEN ekleyin."
     }
 
 _CACHED_INSTAGRAPI_CLIENT = None
@@ -191,14 +287,148 @@ def post_reel_first_comment(media_id: str, comment_text: str) -> bool:
         print(f"[Instagram Publisher] İlk yorum ekleme hatası: {e}")
         return False
 
+def publish_reel_via_buffer(video_path: str, caption: str, first_comment: str = None, mode: str = "shareNow") -> dict:
+    """
+    Verilen MP4 videosunu Buffer GraphQL API üzerinden Instagram kanalına
+    resmi Instagram Reels formatında ('type': 'reel', 'shouldShareToFeed': True)
+    tam otomatik yükler. Opsiyonel olarak otomatik ilk yorumu (firstComment) ekler.
+    """
+    cred = check_instagram_buffer_credentials()
+    if not cred.get("connected"):
+        return {"success": False, "error": cred.get("error") or cred.get("message")}
+
+    channel_id = cred["channel_id"]
+    token = get_buffer_token()
+
+    print(f"[Instagram Publisher] 🚀 Buffer üzerinden Instagram Reels yüklemesi hazırlanıyor: @{cred['channel_name']}")
+
+    from tiktok_publisher import ensure_video_hosted_publicly
+    public_video_url = ensure_video_hosted_publicly(video_path)
+    print(f"[Instagram Publisher] 🌐 Video URL hazır: {public_video_url}")
+
+    mutation = """
+    mutation CreatePost($input: CreatePostInput!) {
+      createPost(input: $input) {
+        ... on PostActionSuccess {
+          post {
+            id
+            status
+          }
+        }
+        ... on LimitReachedError {
+          message
+        }
+        ... on InvalidInputError {
+          message
+        }
+        ... on UnexpectedError {
+          message
+        }
+        ... on UnauthorizedError {
+          message
+        }
+      }
+    }
+    """
+
+    ig_meta = {
+        "type": "reel",
+        "shouldShareToFeed": True
+    }
+    if first_comment and str(first_comment).strip():
+        ig_meta["firstComment"] = str(first_comment).strip()
+
+    variables = {
+        "input": {
+            "channelId": channel_id,
+            "text": caption,
+            "mode": mode,
+            "schedulingType": "automatic",
+            "needsApproval": False,
+            "assets": [
+                {
+                    "video": {
+                        "url": public_video_url
+                    }
+                }
+            ],
+            "metadata": {
+                "instagram": ig_meta
+            }
+        }
+    }
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        r = requests.post(BUFFER_API_URL, json={"query": mutation, "variables": variables}, headers=headers, timeout=30)
+        res_json = r.json()
+        create_res = res_json.get("data", {}).get("createPost", {})
+
+        if "post" in create_res:
+            p_data = create_res["post"]
+            print(f"🎉 [Instagram Publisher] Reels Buffer üzerinden Instagram'a başarıyla gönderildi! Post ID: {p_data.get('id')}")
+            return {
+                "success": True,
+                "post_id": p_data.get("id"),
+                "status": p_data.get("status"),
+                "channel": cred["channel_name"]
+            }
+        else:
+            err_msg = create_res.get("message") or str(res_json.get("errors") or res_json)
+            print(f"❌ [Instagram Publisher] Buffer Instagram hatası: {err_msg}")
+            return {
+                "success": False,
+                "error": err_msg
+            }
+    except Exception as e:
+        print(f"❌ [Instagram Publisher] Buffer istek istisnası: {e}")
+        return {"success": False, "error": str(e)}
+
 def publish_reel_to_instagram(video_source: str, caption: str, share_to_feed: bool = True, first_comment: str = None) -> dict:
     """
     Instagram'da Reels paylaşımı için ana fonksiyon.
-    .env'de INSTAGRAM_USERNAME ve INSTAGRAM_PASSWORD varsa instagrapi ile doğrudan yükler.
+    Öncelikle resmi ve güvenli Buffer API'yi kullanır;
+    Buffer yoksa instagrapi veya Meta Graph API fallback olarak devreye girer.
     """
     status = check_instagram_credentials()
 
-    if status.get("mode") == "instagrapi":
+    # 1. Öncelik: Buffer API (Bulut ve Resmi Entegrasyon)
+    if status.get("mode") == "buffer":
+        local_path = video_source
+        is_temp_file = False
+        if video_source.startswith("http://") or video_source.startswith("https://"):
+            temp_dl = os.path.join(DATA_DIR, f"temp_ig_{int(time.time())}.mp4")
+            try:
+                print(f"[Instagram Publisher] 📥 Video uzak sunucudan indiriliyor: {video_source[:60]}...")
+                r = requests.get(video_source, stream=True, timeout=60)
+                if r.status_code == 200:
+                    with open(temp_dl, "wb") as f:
+                        for chunk in r.iter_content(chunk_size=65536):
+                            f.write(chunk)
+                    local_path = temp_dl
+                    is_temp_file = True
+                else:
+                    return {"success": False, "error": f"Video indirilemedi (HTTP {r.status_code}): {video_source}"}
+            except Exception as e:
+                return {"success": False, "error": f"Video indirme hatası: {e}"}
+
+        if os.path.exists(local_path):
+            try:
+                return publish_reel_via_buffer(local_path, caption=caption, first_comment=first_comment)
+            finally:
+                if is_temp_file and os.path.exists(local_path):
+                    try:
+                        os.remove(local_path)
+                    except Exception:
+                        pass
+        else:
+            return {"success": False, "error": f"Yerel video dosyası bulunamadı: {video_source}"}
+
+    elif status.get("mode") == "instagrapi":
         # Yerel dosya yolu veya web/Telegram indirme URL'si
         local_path = video_source
         is_temp_file = False

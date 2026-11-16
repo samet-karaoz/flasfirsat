@@ -97,6 +97,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         utc_h = utc_dt.hour
         if "tiktok" in s_low or (utc_h == 11 and utc_dt.minute < 20) or utc_h in (16, 20):  # TSİ 14:00, 19:00, 23:00 (Günde 3 TikTok Kuşağı)
             t_plat = "tiktok"
+        elif "instagram" in s_low:
+            t_plat = "instagram"
         else:
             t_plat = "youtube"
     target_platform = t_plat
@@ -165,7 +167,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
         history = load_history()
         recent_subs = get_recent_subtypes_from_history(limit=4, target_platform=None)
         recent_brands = get_recent_brands_from_history(limit=4, target_platform=None)
-        hunt_cat = "tech" if target_platform in ("youtube", "tiktok") else "all"
+        hunt_cat = "tech" if target_platform in ("youtube", "tiktok", "instagram") else "all"
 
         if custom_deal:
             print(f"\n[Adım 1/4] 🎯 Özel Fırsat Belirtildi: {custom_deal.get('title')}")
@@ -241,10 +243,10 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             print(f"\n[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] %15 üzeri indirimli ürün kalmadı. Kuşağın boş geçmemesi için {hunt_cat.upper()} kategorisinde Amazon #1 ÇOK SATAN ürün devreye alınıyor...")
             from deal_hunter import hunt_bestseller_deals
             candidates = hunt_bestseller_deals(limit=5, category=hunt_cat, exclude_urls=history)
-            if target_platform in ("youtube", "tiktok"):
+            if target_platform in ("youtube", "tiktok", "instagram"):
                 candidates = [c for c in candidates if is_youtube_approved_product(c.get("title", "")) and not is_beauty_product(c.get("title", ""))]
 
-        if not candidates and target_platform in ("youtube", "tiktok", "all", "auto"):
+        if not candidates and target_platform in ("youtube", "tiktok", "instagram", "all", "auto"):
             print("[Autopilot Engine] 🏆 [BESTSELLER FALLBACK] Sneaker & Spor Ayakkabı Çok Satanlar taranıyor...")
             from deal_hunter import hunt_bestseller_deals
             candidates = hunt_bestseller_deals(limit=5, category="fashion", exclude_urls=history)
@@ -258,8 +260,8 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             record_autopilot_run(result)
             return result
 
-        # 🛡️ YOUTUBE & TİKTOK PLATFORM GÜVENLİK FİLTRESİ:
-        # Gerçek izleyici verisine göre YouTube (%70 Erkek) ve TikTok (%84 Erkek) kanalları
+        # 🛡️ YOUTUBE, TİKTOK & INSTAGRAM PLATFORM GÜVENLİK FİLTRESİ:
+        # Gerçek izleyici verisine göre YouTube (%70 Erkek), TikTok (%84 Erkek) ve Instagram kanalları
         # %100 F/P Teknoloji, Gaming, Sneaker ve LEGO odaklıdır!
         from deal_hunter import (
             is_beauty_product,
@@ -269,7 +271,7 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
             get_deal_discount_pct,
             get_deal_savings_tl,
         )
-        if target_platform in ("youtube", "tiktok") and not custom_deal:
+        if target_platform in ("youtube", "tiktok", "instagram") and not custom_deal:
             approved_only = [
                 c for c in candidates
                 if is_youtube_approved_product(c.get("title", ""))
@@ -487,21 +489,47 @@ def run_autopilot_deal_cycle(dry_run: bool = False, slot_name: str = "Manuel", f
                     result["platforms"]["youtube"] = {"status": "error", "error": str(ey)}
                     print(f"❌ YouTube Shorts İstisna: {ey}")
 
-        # B) Instagram Reels (İsteğe bağlı veya hepsi modunda)
-        if target_platform in ("instagram", "all"):
+        # B) Instagram Reels (Hedef platform instagram/all olduğunda veya TikTok ile çapraz paylaşım aktifse)
+        crosspost_ig = os.getenv("CROSSPOST_TO_INSTAGRAM", "true").strip().lower() in ("true", "1", "yes")
+        should_publish_ig = (target_platform in ("instagram", "all")) or (target_platform == "tiktok" and crosspost_ig)
+
+        if should_publish_ig:
             print("\n--- 2. Instagram Reels ---")
-            try:
-                from instagram_publisher import publish_reel_to_instagram
-                ig_res = publish_reel_to_instagram(video_path, caption_text)
-                if ig_res.get("success"):
-                    result["platforms"]["instagram"] = {"status": "ok", "media_id": ig_res.get("media_id")}
-                    print(f"✅ Instagram Reels Başarılı: Media ID {ig_res.get('media_id')}")
-                else:
-                    result["platforms"]["instagram"] = {"status": "error", "error": ig_res.get("error")}
-                    print(f"❌ Instagram Reels Hatası: {ig_res.get('error')}")
-            except Exception as ei:
-                result["platforms"]["instagram"] = {"status": "error", "error": str(ei)}
-                print(f"❌ Instagram Reels İstisna: {ei}")
+            if is_beauty_product(title) or not is_youtube_approved_product(title):
+                print(f"🛑 [INSTAGRAM GÜVENLİK FİLTRESİ] '{title}' Instagram F/P Teknoloji & Sneaker standartlarına uygun olmadığı için KESİNLİKLE ENGELLENDİ!")
+                result["platforms"]["instagram"] = {"status": "skipped", "reason": "not_approved_for_instagram"}
+            else:
+                try:
+                    from instagram_publisher import publish_reel_to_instagram
+                    # Samimi ve cana yakın ilk topluluk yorumu üret (Buffer üzerinden otomatik eklenir)
+                    from youtube_publisher import generate_friendly_youtube_comment
+                    ig_first_comment = generate_friendly_youtube_comment(
+                        title=title,
+                        new_price=deal.get("new_price", ""),
+                        discount_pct=deal.get("discount_pct", ""),
+                        deal_code=deal.get("deal_code", ""),
+                        description=caption_text
+                    )
+                    ig_res = publish_reel_to_instagram(
+                        video_path,
+                        caption=caption_text,
+                        share_to_feed=True,
+                        first_comment=ig_first_comment
+                    )
+                    if ig_res.get("success"):
+                        p_id = ig_res.get("post_id") or ig_res.get("media_id")
+                        result["platforms"]["instagram"] = {
+                            "status": "ok",
+                            "post_id": p_id,
+                            "channel": ig_res.get("channel", "flasfirsat.tr")
+                        }
+                        print(f"✅ Instagram Reels Başarılı: Post ID {p_id} ({ig_res.get('channel', 'flasfirsat.tr')})")
+                    else:
+                        result["platforms"]["instagram"] = {"status": "error", "error": ig_res.get("error")}
+                        print(f"❌ Instagram Reels Hatası: {ig_res.get('error')}")
+                except Exception as ei:
+                    result["platforms"]["instagram"] = {"status": "error", "error": str(ei)}
+                    print(f"❌ Instagram Reels İstisna: {ei}")
     
             # B2) Instagram Story (Tıklanabilir Link Çıkartması ile)
             print("\n--- 2b. Instagram Story (Tıklanabilir Link Çıkartması) ---")
@@ -868,7 +896,7 @@ if __name__ == "__main__":
     parser.add_argument("--new", default="", help="Özel ürün yeni fiyatı")
     parser.add_argument("--discount", default="", help="Özel ürün indirim yüzdesi")
     parser.add_argument("--meme", default="", help="Özel meme seçimi (örn: piyano_davul.mp4)")
-    parser.add_argument("--platform", default="auto", choices=["auto", "youtube", "tiktok", "all"], help="Hedef platform (youtube, tiktok, all)")
+    parser.add_argument("--platform", default="auto", choices=["auto", "youtube", "tiktok", "instagram", "all"], help="Hedef platform (youtube, tiktok, instagram, all)")
     parser.add_argument("--auto-publish", action="store_true", help="Yönetici onayı beklemeden doğrudan yayınla (Bulut/Cron Modu)")
     args = parser.parse_args()
 

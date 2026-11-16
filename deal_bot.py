@@ -262,7 +262,7 @@ def process_deal_to_reel(
 
         # 1. YouTube Shorts & TikTok Kademeli Hareketli Viral Video Derle (Tek Render - %50 Daha Hızlı)
         print("[1/2] 🎥 Kademeli Hareketli Viral Video (YouTube Shorts & TikTok) derleniyor...")
-        _cta_plat = "tiktok" if str(deal.get("target_platform", "")).lower() == "tiktok" else "youtube"
+        _cta_plat = "youtube" if str(deal.get("target_platform", "")).lower() == "youtube" else "instagram"
         ok_vid = build_motion_deal_video(
             deal=deal,
             meme_name=chosen_meme,

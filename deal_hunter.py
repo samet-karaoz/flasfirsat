@@ -670,9 +670,9 @@ def calculate_deal_viral_score(deal: dict, target_platform: str = 'auto') -> flo
     title = str(deal.get("title") or "").lower()
     plat = (target_platform or deal.get("target_platform") or "auto").lower()
 
-    # 🛑 YOUTUBE & TİKTOK KESİN GÜVENLİK FİLTRESİ:
-    # Hem YouTube Shorts (%70 Erkek) hem TikTok (%84 Erkek) için F/P Teknoloji, Gaming, Sneaker ve LEGO zorunludur!
-    if plat in ("youtube", "tiktok", "auto", "all"):
+    # 🛑 YOUTUBE, TİKTOK & INSTAGRAM KESİN GÜVENLİK FİLTRESİ:
+    # YouTube Shorts (%70 Erkek), TikTok (%84 Erkek) ve Instagram için F/P Teknoloji, Gaming, Sneaker ve LEGO zorunludur!
+    if plat in ("youtube", "tiktok", "instagram", "auto", "all"):
         if is_beauty_product(title) or not is_youtube_approved_product(title):
             return -999.0
 

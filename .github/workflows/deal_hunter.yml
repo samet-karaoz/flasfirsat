@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       target_platform:
-        description: 'Hedef Platform (auto: saate göre, youtube, tiktok, all)'
+        description: 'Hedef Platform (auto: saate göre, youtube, tiktok, instagram, all)'
         required: false
         default: 'auto'
         type: choice
@@ -17,6 +17,7 @@ on:
           - 'auto'
           - 'youtube'
           - 'tiktok'
+          - 'instagram'
           - 'all'
       slot_name:
         description: 'Kuşak Adı (Örn: Manuel Bulut Tetikleme)'
@@ -112,12 +113,21 @@ jobs:
                 SLOT="14:30 YouTube Öğleden Sonra F/P"
                 PLATFORM="youtube"
               fi
+            elif [ "$UTC_H" = "09" ]; then
+              SLOT="12:00 Instagram Reels Öğle F/P"
+              PLATFORM="instagram"
+            elif [ "$UTC_H" = "14" ] && [ "$UTC_M" -ge 20 ]; then
+              SLOT="17:30 Instagram Reels Akşamüstü F/P"
+              PLATFORM="instagram"
             elif [ "$UTC_H" = "15" ]; then
               SLOT="18:00 YouTube Akşam Gaming & Donanım"
               PLATFORM="youtube"
             elif [ "$UTC_H" = "16" ]; then
               SLOT="19:00 TikTok Akşam Gaming & Sneaker"
               PLATFORM="tiktok"
+            elif [ "$UTC_H" = "17" ] && [ "$UTC_M" -ge 20 ]; then
+              SLOT="20:30 Instagram Reels Prime Time"
+              PLATFORM="instagram"
             elif [ "$UTC_H" = "18" ]; then
               SLOT="21:00 YouTube Prime Time F/P"
               PLATFORM="youtube"

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794841616_95",
+    "deal_code": "#204",
+    "title": "Aula N-108 1+1 USB/Aux",
+    "old_price": "",
+    "new_price": "1.158,72 TL",
+    "discount_pct": "-68%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B082QPP67G?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 386 TL",
+    "coupon_info": "2500 TL Kupon İndirimi",
+    "category": "hardware",
+    "image_url": "assets/products/aula_n_108_1_1_usb_aux_c1850fe1.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "16.11.2026 15:06"
+  },
+  {
     "id": "deal_1794828921_94",
     "deal_code": "#203",
     "title": "Klasse Classic Mouse Pad 90x40 cm",

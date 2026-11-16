@@ -1231,8 +1231,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/ps5_dualsense_kolu_8c46e714.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "18.10.2026 18:17",
     "is_reel": true
   },

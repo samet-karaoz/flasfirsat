@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794928187_100",
+    "deal_code": "#210",
+    "title": "Anker Soundcore P20i Kulak",
+    "old_price": "1.449 TL",
+    "new_price": "1.198 TL",
+    "discount_pct": "-17%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BTYCRJSS?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 399 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/anker_soundcore_p20i_kula_a05bfb9e.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "17.11.2026 15:09"
+  },
+  {
     "id": "deal_1794915545_100",
     "deal_code": "#209",
     "title": "Klasse Pro Black Edition - Dikişli",
@@ -1865,23 +1884,5 @@
     "deal_code": "#103",
     "is_expired": true,
     "expired_reason": "Stok Tükendi"
-  },
-  {
-    "id": "deal_razer_viper_v3",
-    "title": "Razer Viper V3 Pro Ultralight Kablosuz Espor Faresi",
-    "old_price": "6.999 TL",
-    "new_price": "4.857 TL",
-    "discount_pct": "-31%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0CSPN2G5Z?tag=flasfirsat04-21",
-    "image_url": "assets/products/razer_viper_v3_pro.webp",
-    "date_added": "12.10.2026 17:48",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 1.619 TL",
-    "category": "gaming",
-    "deal_code": "#102",
-    "is_expired": false,
-    "expired_reason": ""
   }
 ]

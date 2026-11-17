@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794938815_100",
+    "deal_code": "#212",
+    "title": "HyperX Cloud 3, Cloud 2, Cloud 1,",
+    "old_price": "",
+    "new_price": "490,15 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0H3LZYYKB?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/hyperx_cloud_3__cloud_2___705838b8.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "17.11.2026 18:06"
+  },
+  {
     "id": "deal_1794931502_100",
     "deal_code": "#211",
     "title": "Philips TAUE101BK Mikrofonlu Kulak",
@@ -1867,23 +1886,5 @@
     "deal_code": "#105",
     "is_expired": false,
     "expired_reason": ""
-  },
-  {
-    "id": "deal_1791839926_3",
-    "title": "HyperX Cloud III Oyuncu Kulaklık",
-    "old_price": "4.999,00 TL",
-    "new_price": "3.499,00 TL",
-    "discount_pct": "-30%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0C3BSZ56D?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 1.166 TL",
-    "image_url": "assets/products/hyperx_cloud_iii_oyuncu_k_bed2c258.webp",
-    "date_added": "12.10.2026 21:18",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "category": "gaming",
-    "deal_code": "#104"
   }
 ]

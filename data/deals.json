@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1794915545_100",
+    "deal_code": "#209",
+    "title": "Klasse Pro Black Edition - Dikişli",
+    "old_price": "",
+    "new_price": "599,90 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B09TG4YDV2?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/klasse_pro_black_edition__0e8bdef1.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "17.11.2026 11:39"
+  },
+  {
     "id": "deal_1794913654_99",
     "deal_code": "#208",
     "title": "Xbox Wireless Controller Beyaz, 9.",
@@ -1864,23 +1883,5 @@
     "deal_code": "#102",
     "is_expired": false,
     "expired_reason": ""
-  },
-  {
-    "id": "deal_logitech_g305",
-    "title": "Logitech G305 Lightspeed 12.000 DPI Kablosuz Gaming Mouse",
-    "old_price": "1.599 TL",
-    "new_price": "899 TL",
-    "discount_pct": "-44%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07CGPZ3ZQ?tag=flasfirsat04-21",
-    "image_url": "assets/products/logitech_g305.webp",
-    "date_added": "12.10.2026 16:12",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "category": "gaming",
-    "deal_code": "#101"
   }
 ]

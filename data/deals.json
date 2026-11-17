@@ -1078,8 +1078,8 @@
     "coupon_info": "",
     "category": "hardware",
     "image_url": "assets/products/tecno_megabook_t14_air__i_f21d48ea.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "03.11.2026 20:26"
   },
   {

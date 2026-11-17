@@ -338,35 +338,48 @@ def publish_reel_via_buffer(video_path: str, caption: str, first_comment: str = 
     if first_comment and str(first_comment).strip():
         ig_meta["firstComment"] = str(first_comment).strip()
 
-    variables = {
-        "input": {
-            "channelId": channel_id,
-            "text": caption,
-            "mode": mode,
-            "schedulingType": "automatic",
-            "needsApproval": False,
-            "assets": [
-                {
-                    "video": {
-                        "url": public_video_url
-                    }
-                }
-            ],
-            "metadata": {
-                "instagram": ig_meta
-            }
-        }
-    }
-
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
 
+    def _do_buffer_create_post(meta_data):
+        variables = {
+            "input": {
+                "channelId": channel_id,
+                "text": caption,
+                "mode": mode,
+                "schedulingType": "automatic",
+                "needsApproval": False,
+                "assets": [
+                    {
+                        "video": {
+                            "url": public_video_url
+                        }
+                    }
+                ],
+                "metadata": {
+                    "instagram": meta_data
+                }
+            }
+        }
+        r = requests.post(BUFFER_API_URL, json={"query": mutation, "variables": variables}, headers=headers, timeout=45)
+        r_json = r.json()
+        c_res = r_json.get("data", {}).get("createPost", {})
+        return c_res, r_json
+
     try:
-        r = requests.post(BUFFER_API_URL, json={"query": mutation, "variables": variables}, headers=headers, timeout=30)
-        res_json = r.json()
-        create_res = res_json.get("data", {}).get("createPost", {})
+        create_res, res_json = _do_buffer_create_post(ig_meta)
+
+        # 🛡️ Buffer Free Plan Kalkanı:
+        # Buffer Free planında 'firstComment' (ilk yorum) özelliği ücretli plan ister.
+        # Eğer ilk yorum sebebiyle Buffer 'First comment requires a paid plan' hatası verirse,
+        # postun başarısız olmasını engellemek için firstComment alanını temizleyip anında yeniden dener!
+        err_check = str(create_res.get("message") or res_json.get("errors") or "")
+        if "first comment requires a paid plan" in err_check.lower() or "firstcomment" in err_check.lower():
+            print(f"[Instagram Publisher] ⚠️ Buffer Free planı ilk yorumu desteklemiyor ({err_check}). İlk yorum kaldırılıp anında yeniden gönderiliyor...")
+            ig_meta.pop("firstComment", None)
+            create_res, res_json = _do_buffer_create_post(ig_meta)
 
         if "post" in create_res:
             p_data = create_res["post"]

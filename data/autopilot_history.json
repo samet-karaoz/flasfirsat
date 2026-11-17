@@ -3232,8 +3232,9 @@
         "channel": "flasfirsat.tr"
       },
       "instagram": {
-        "status": "error",
-        "error": "Invalid post: First comment requires a paid plan. Please upgrade to use this feature."
+        "status": "ok",
+        "post_id": "6afc4acd5fd9736b3cb1b0e3",
+        "channel": "flasfirsat.tr"
       },
       "telegram": {
         "status": "ok",

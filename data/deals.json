@@ -71,8 +71,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/anker_soundcore_p20i_kula_a05bfb9e.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "17.11.2026 15:09"
   },
   {

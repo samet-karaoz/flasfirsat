@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795000095_100",
+    "deal_code": "#214",
+    "title": "JBL C100SI, Kulaklık, CT, IE, Beya",
+    "old_price": "",
+    "new_price": "429 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B01DF29XFW?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "Sepette %10 Ek İndirim",
+    "category": "gaming",
+    "image_url": "assets/products/jbl_c100si__kulakl_k__ct__482c2eb4.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.11.2026 11:08"
+  },
+  {
     "id": "deal_1794945959_100",
     "deal_code": "#213",
     "title": "Lenovo N260 Sessiz Kablosuz Mouse,",
@@ -1869,23 +1888,5 @@
     "deal_code": "#107",
     "is_expired": false,
     "expired_reason": ""
-  },
-  {
-    "id": "deal_1791910189_6",
-    "title": "Razer BlackShark V2 X",
-    "old_price": "2.699,00 TL",
-    "new_price": "1.799,00 TL",
-    "discount_pct": "-33%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B09BD75Y21?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 600 TL",
-    "image_url": "assets/products/razer_blackshark_v2_x_25493bcb.webp",
-    "date_added": "13.10.2026 19:49",
-    "category": "general",
-    "deal_code": "#106",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
   }
 ]

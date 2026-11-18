@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795014467_100",
+    "deal_code": "#216",
+    "title": "EWEC SteelSeries Arctis 1/3/5/7/7+",
+    "old_price": "",
+    "new_price": "493,80 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0H3CFCKNC?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/ewec_steelseries_arctis_1_91bc5c0a.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.11.2026 15:07"
+  },
+  {
     "id": "deal_1795002664_100",
     "deal_code": "#215",
     "title": "JBL Tune 720BT Wireless Kulaklık,",
@@ -1871,23 +1890,5 @@
     "deal_code": "#109",
     "is_expired": false,
     "expired_reason": ""
-  },
-  {
-    "id": "deal_1791918693_7",
-    "title": "SteelSeries Rival 3 Wireless Gen 2 Mouse",
-    "old_price": "2.999,00 TL",
-    "new_price": "1.949,00 TL",
-    "discount_pct": "-35%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0F5QF2JQQ?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 650 TL",
-    "image_url": "assets/products/steelseries_rival_3_wirel_6f1c7c69.webp",
-    "date_added": "13.10.2026 22:11",
-    "category": "gaming",
-    "deal_code": "#108",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi"
   }
 ]

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795017827_100",
+    "deal_code": "#217",
+    "title": "McStorey 90x40 cm Mouse Pad",
+    "old_price": "397 TL",
+    "new_price": "329 TL",
+    "discount_pct": "-17%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FWGYBSQN?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/mcstorey_90x40_cm_mouse_p_562774d2.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.11.2026 16:03"
+  },
+  {
     "id": "deal_1795014467_100",
     "deal_code": "#216",
     "title": "EWEC SteelSeries Arctis 1/3/5/7/7+",
@@ -1872,23 +1891,5 @@
     "is_expired": false,
     "expired_reason": "",
     "deal_code": "#110"
-  },
-  {
-    "id": "deal_1791923021_8",
-    "title": "JBL C100SI Kulaklık",
-    "old_price": "749,00 TL",
-    "new_price": "499,00 TL",
-    "discount_pct": "-33%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B01DEWVZ2C?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "image_url": "assets/products/jbl_c100si_kulakl_k_1e3b79e4.webp",
-    "date_added": "13.10.2026 20:23",
-    "category": "gaming",
-    "deal_code": "#109",
-    "is_expired": false,
-    "expired_reason": ""
   }
 ]

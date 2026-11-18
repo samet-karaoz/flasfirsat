@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795002664_100",
+    "deal_code": "#215",
+    "title": "JBL Tune 720BT Wireless Kulaklık,",
+    "old_price": "",
+    "new_price": "2.499,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BYWL962Q?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 833 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/jbl_tune_720bt_wireless_k_8c390778.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.11.2026 11:51"
+  },
+  {
     "id": "deal_1795000095_100",
     "deal_code": "#214",
     "title": "JBL C100SI, Kulaklık, CT, IE, Beya",
@@ -1870,23 +1889,5 @@
     "deal_code": "#108",
     "is_expired": true,
     "expired_reason": "Stok Tükendi"
-  },
-  {
-    "id": "deal_1791917454_7",
-    "title": "Sony PS5 DualSense v2 Kol",
-    "old_price": "6.799,00 TL",
-    "new_price": "4.799,00 TL",
-    "discount_pct": "-29%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0GGB35CR8?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 1.600 TL",
-    "image_url": "assets/products/sony_ps5_dualsense_v2_kol_9195e4ee.webp",
-    "date_added": "13.10.2026 21:50",
-    "category": "gaming",
-    "deal_code": "#107",
-    "is_expired": false,
-    "expired_reason": ""
   }
 ]

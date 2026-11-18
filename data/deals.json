@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795032387_100",
+    "deal_code": "#219",
+    "title": "Logitech MK345 920-006514 Kablosuz",
+    "old_price": "",
+    "new_price": "1.421,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B01LQTCP2E?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 474 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/logitech_mk345_920_006514_0a4777df.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "18.11.2026 20:06"
+  },
+  {
     "id": "deal_1795025328_100",
     "deal_code": "#218",
     "title": "SteelSeries Arctis Nova 1P",
@@ -1872,24 +1891,6 @@
     "date_added": "14.10.2026 08:13",
     "category": "lifestyle",
     "deal_code": "#112",
-    "is_expired": false,
-    "expired_reason": ""
-  },
-  {
-    "id": "deal_1791954453_10",
-    "title": "North Bayou F80 Monitör Kolu",
-    "old_price": "",
-    "new_price": "1.053,00 TL",
-    "discount_pct": "-%36",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B01AI2YGK4?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 351 TL",
-    "image_url": "assets/products/north_bayou_f80_monit_r_k_a6d288ef.webp",
-    "date_added": "14.10.2026 08:07",
-    "category": "monitor",
-    "deal_code": "#111",
     "is_expired": false,
     "expired_reason": ""
   }

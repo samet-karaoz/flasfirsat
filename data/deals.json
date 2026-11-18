@@ -1518,8 +1518,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_aerolight_0_35l_b6e4f4fc.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.10.2026 16:46"
   },
   {

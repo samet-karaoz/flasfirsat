@@ -375,8 +375,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/razer_huntsman_v3_pro_329082af.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.11.2026 18:02"
   },
   {

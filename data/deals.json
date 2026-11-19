@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795111847_100",
+    "deal_code": "#224",
+    "title": "Adidas Terrex Hikster LT",
+    "old_price": "4500 TL",
+    "new_price": "3001 TL",
+    "discount_pct": "-33%",
+    "store_name": "Amazon TR",
+    "store_url": "https://fenom.io/amzn-r3tq1?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.000 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/adidas_terrex_hikster_lt_2376fa86.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "19.11.2026 18:10"
+  },
+  {
     "id": "deal_1795104382_100",
     "deal_code": "#223",
     "title": "SteelSeries Qck Mini Gaming Mousep",
@@ -1879,23 +1898,5 @@
     "date_added": "15.10.2026 21:17",
     "category": "hardware",
     "deal_code": "#118"
-  },
-  {
-    "id": "deal_1792056993_18",
-    "title": "PlayStation 5 Pro",
-    "old_price": "76.399 TL",
-    "new_price": "72.999 TL",
-    "discount_pct": "-4%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0DJH2NS6R?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 24.333 TL",
-    "image_url": "assets/products/playstation_5_pro_2efbc8f3.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "15.10.2026 12:36",
-    "category": "hardware",
-    "deal_code": "#117"
   }
 ]

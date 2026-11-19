@@ -394,8 +394,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/adidas_unisex_ownthegame__429ce442.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.11.2026 20:07"
   },
   {
@@ -641,8 +641,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/stevig_4_camp_klasik_vaku_2fd09716.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "13.11.2026 15:38"
   },
   {
@@ -660,8 +660,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/l_oreal_paris_infaillible_4882bd80.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "13.11.2026 10:07"
   },
   {
@@ -1325,8 +1325,8 @@
     "coupon_info": "",
     "category": "hardware",
     "image_url": "assets/products/huawei_matebook_d16__i5_1_9cddaebe.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "03.11.2026 20:26"
   },
   {

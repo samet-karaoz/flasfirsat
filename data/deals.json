@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795086525_100",
+    "deal_code": "#220",
+    "title": "Klasse Pro - 10 Farklı Model Dikiş",
+    "old_price": "",
+    "new_price": "749,90 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CXVBWD9P?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/klasse_pro___10_farkl__mo_a38b3609.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "19.11.2026 11:08"
+  },
+  {
     "id": "deal_1795032387_100",
     "deal_code": "#219",
     "title": "Logitech MK345 920-006514 Kablosuz",
@@ -1875,23 +1894,5 @@
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
     "deal_code": "#113"
-  },
-  {
-    "id": "deal_1791954802_11",
-    "title": "Stanley Quencher 1.18 L",
-    "old_price": "",
-    "new_price": "1.694,90 TL",
-    "discount_pct": "-39%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0F8C5XZLK?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 565 TL",
-    "image_url": "assets/products/stanley_quencher_1_18_l_2df7cbbd.webp",
-    "date_added": "14.10.2026 08:13",
-    "category": "lifestyle",
-    "deal_code": "#112",
-    "is_expired": false,
-    "expired_reason": ""
   }
 ]

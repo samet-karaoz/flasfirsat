@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795088446_100",
+    "deal_code": "#221",
+    "title": "JBL Go5, Bluetooth Hoparlör, IP68,",
+    "old_price": "",
+    "new_price": "2.459,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0GPPRPRM5?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 820 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/jbl_go5__bluetooth_hoparl_9c1dfcc6.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "19.11.2026 11:40"
+  },
+  {
     "id": "deal_1795086525_100",
     "deal_code": "#220",
     "title": "Klasse Pro - 10 Farklı Model Dikiş",
@@ -1876,23 +1895,5 @@
     "deal_code": "#114",
     "is_expired": false,
     "expired_reason": ""
-  },
-  {
-    "id": "deal_1791955175_12",
-    "title": "Stanley Transit Termos",
-    "old_price": "1.979 TL",
-    "new_price": "1.568,99 TL",
-    "discount_pct": "-21%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0FZVSKD5C?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 523 TL",
-    "image_url": "assets/products/stanley_transit_termos_88819170.webp",
-    "date_added": "14.10.2026 08:19",
-    "category": "lifestyle",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
-    "deal_code": "#113"
   }
 ]

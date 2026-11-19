@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795100827_100",
+    "deal_code": "#222",
+    "title": "Under Armour UA Undeniable",
+    "old_price": "4.623 TL",
+    "new_price": "1.623 TL",
+    "discount_pct": "-65%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B093LPZTRV?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 541 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/under_armour_ua_undeniabl_3ff646ee.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "19.11.2026 15:07"
+  },
+  {
     "id": "deal_1795088446_100",
     "deal_code": "#221",
     "title": "JBL Go5, Bluetooth Hoparlör, IP68,",
@@ -1877,23 +1896,5 @@
     "date_added": "15.10.2026 11:29",
     "category": "hardware",
     "deal_code": "#116"
-  },
-  {
-    "id": "deal_1791956154_13",
-    "title": "Asus TUF 240Hz Gaming Monitör",
-    "old_price": "10.499 TL",
-    "new_price": "7.897,82 TL",
-    "discount_pct": "-25%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0DQ8PFWNR?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 2.633 TL",
-    "image_url": "assets/products/asus_tuf_240hz_gaming_mon_56a23024.webp",
-    "date_added": "14.10.2026 08:35",
-    "category": "monitor",
-    "deal_code": "#114",
-    "is_expired": false,
-    "expired_reason": ""
   }
 ]

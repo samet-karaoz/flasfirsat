@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795187328_100",
+    "deal_code": "#228",
+    "title": "MageGee%60 Rapid Trigger Oyuncu Kl",
+    "old_price": "",
+    "new_price": "1.349,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DZCH1XSK?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 450 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/magegee_60_rapid_trigger__d47d9e78.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "20.11.2026 15:08"
+  },
+  {
     "id": "deal_1795174825_100",
     "deal_code": "#227",
     "title": "Logitech G G213 RGB Kablolu Oyuncu",
@@ -1882,24 +1901,5 @@
     "expired_reason": "",
     "date_added": "17.10.2026 19:59",
     "deal_code": "#123"
-  },
-  {
-    "id": "deal_1792187902_21",
-    "title": "Tapo C211 2K Güvenlik Kamerası",
-    "old_price": "1.199 TL",
-    "new_price": "999 TL",
-    "discount_pct": "-17%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0CHFG8XBZ?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 333 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/tapo_c211_2k_g_venlik_kam_251e612b.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "17.10.2026 00:58",
-    "deal_code": "#122"
   }
 ]

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795174825_100",
+    "deal_code": "#227",
+    "title": "Logitech G G213 RGB Kablolu Oyuncu",
+    "old_price": "",
+    "new_price": "1.299,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B01MXJVMGX?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 433 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/logitech_g_g213_rgb_kablo_2189454b.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "20.11.2026 11:40"
+  },
+  {
     "id": "deal_1795172942_100",
     "deal_code": "#226",
     "title": "Polislime AirPods Pro & AirPods Pr",
@@ -1882,23 +1901,5 @@
     "expired_reason": "",
     "date_added": "17.10.2026 00:58",
     "deal_code": "#122"
-  },
-  {
-    "id": "deal_1792095414_20",
-    "title": "Asus TUF 27\" 165Hz Monitör",
-    "old_price": "11.499 TL",
-    "new_price": "7.733,01 TL",
-    "discount_pct": "-33%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B09BNHFDW5?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "3 Taksit x 2.578 TL",
-    "image_url": "assets/products/asus_tuf_27__165hz_monit__543719e7.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "15.10.2026 20:16",
-    "category": "monitor",
-    "deal_code": "#120"
   }
 ]

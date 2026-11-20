@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795172942_100",
+    "deal_code": "#226",
+    "title": "Polislime AirPods Pro & AirPods Pr",
+    "old_price": "",
+    "new_price": "300,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CLY2HKW5?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/polislime_airpods_pro___a_7529327f.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "20.11.2026 11:09"
+  },
+  {
     "id": "deal_1795119887_100",
     "deal_code": "#225",
     "title": "Klasse Pro - 6 Farklı Model Dikişl",
@@ -1881,23 +1900,5 @@
     "date_added": "15.10.2026 20:16",
     "category": "monitor",
     "deal_code": "#120"
-  },
-  {
-    "id": "deal_1792089571_20",
-    "title": "Lenovo Legion 240Hz Gaming Monitör",
-    "old_price": "8.998 TL",
-    "new_price": "5.879,02 TL",
-    "discount_pct": "-35%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0GRWGJS54?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 1.959 TL",
-    "image_url": "assets/products/lenovo_legion_240hz_gamin_a4fecd19.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "15.10.2026 21:39",
-    "category": "monitor",
-    "deal_code": "#119"
   }
 ]

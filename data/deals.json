@@ -717,8 +717,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/stevig_4_camp_klasik_vaku_2fd09716.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "13.11.2026 15:38"
   },
   {
@@ -1496,8 +1496,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/logitech_g305_lightspeed__0ef2e425.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "01.11.2026 15:02"
   },
   {
@@ -1803,8 +1803,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/north_bayou_nb_f80_kol_bd01326e.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.10.2026 08:11"
   },
   {

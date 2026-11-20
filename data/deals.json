@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795190759_100",
+    "deal_code": "#229",
+    "title": "UGREEN Kablosuz Ultra İnce",
+    "old_price": "1.679 TL",
+    "new_price": "999 TL",
+    "discount_pct": "-41%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0GK2588PN?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 333 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/ugreen_kablosuz_ultra__nc_85c2777f.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "20.11.2026 16:05"
+  },
+  {
     "id": "deal_1795187328_100",
     "deal_code": "#228",
     "title": "MageGee%60 Rapid Trigger Oyuncu Kl",
@@ -1882,24 +1901,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "18.10.2026 08:11"
-  },
-  {
-    "id": "deal_1792256384_23",
-    "title": "Dell 24\" 200Hz 1ms IPS Gaming Monitör",
-    "old_price": "5.999 TL",
-    "new_price": "4.449 TL",
-    "discount_pct": "-26%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0FHHVD75B?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 1.483 TL",
-    "coupon_info": "",
-    "category": "monitor",
-    "image_url": "assets/products/dell_24__200hz_1ms_ips_ga_72d28263.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "17.10.2026 19:59",
-    "deal_code": "#123"
   }
 ]

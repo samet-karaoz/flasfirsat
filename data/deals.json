@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795277262_100",
+    "deal_code": "#235",
+    "title": "adidas Breaknet 2.0 Erkek Günlük A",
+    "old_price": "",
+    "new_price": "1.774,44 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BPF172KQ?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 591 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/adidas_breaknet_2_0_erkek_dc40a0d2.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "21.11.2026 16:07"
+  },
+  {
     "id": "deal_1795273812_100",
     "deal_code": "#234",
     "title": "adidas OZELLE Spor",
@@ -1882,24 +1901,5 @@
     "expired_reason": "",
     "date_added": "18.10.2026 18:17",
     "is_reel": true
-  },
-  {
-    "id": "deal_1792342005_31",
-    "deal_code": "#132",
-    "title": "James Donkey 27\" 2K Monitör",
-    "old_price": "7.999 TL",
-    "new_price": "5.999 TL",
-    "discount_pct": "-25%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0HN5BWWMW?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 2.000 TL",
-    "coupon_info": "",
-    "category": "monitor",
-    "image_url": "assets/products/james_donkey_27__2k_monit_1f53f742.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
-    "date_added": "18.10.2026 16:46"
   }
 ]

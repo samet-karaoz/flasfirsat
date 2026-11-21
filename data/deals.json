@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795273812_100",
+    "deal_code": "#234",
+    "title": "adidas OZELLE Spor",
+    "old_price": "4.005 TL",
+    "new_price": "2.312,70 TL",
+    "discount_pct": "-42%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0B31L62R3?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 771 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/adidas_ozelle_spor_125dd8c2.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "21.11.2026 15:10"
+  },
+  {
     "id": "deal_1795261034_100",
     "deal_code": "#233",
     "title": "Baseus Encok HZ11 3.5mm Mikrofonlu",
@@ -1881,25 +1900,6 @@
     "image_url": "assets/products/james_donkey_27__2k_monit_1f53f742.webp",
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
-    "date_added": "18.10.2026 16:46"
-  },
-  {
-    "id": "deal_1792342004_30",
-    "deal_code": "#131",
-    "title": "Stanley Aerolight 0.35L",
-    "old_price": "2.499 TL",
-    "new_price": "1.599,00 TL",
-    "discount_pct": "-36%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0FBWS67J1?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 533 TL",
-    "coupon_info": "",
-    "category": "lifestyle",
-    "image_url": "assets/products/stanley_aerolight_0_35l_b6e4f4fc.webp",
-    "is_expired": false,
-    "expired_reason": "",
     "date_added": "18.10.2026 16:46"
   }
 ]

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795261034_100",
+    "deal_code": "#233",
+    "title": "Baseus Encok HZ11 3.5mm Mikrofonlu",
+    "old_price": "",
+    "new_price": "300,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CN75FCLJ?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/baseus_encok_hz11_3_5mm_m_db443a38.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "21.11.2026 11:37"
+  },
+  {
     "id": "deal_1795259232_100",
     "deal_code": "#232",
     "title": "Logitech MX Master 4 Dokunsal Geri",
@@ -1881,25 +1900,6 @@
     "image_url": "assets/products/stanley_aerolight_0_35l_b6e4f4fc.webp",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "18.10.2026 16:46"
-  },
-  {
-    "id": "deal_1792342004_29",
-    "deal_code": "#130",
-    "title": "Logitech G502 HERO Mouse",
-    "old_price": "2.499 TL",
-    "new_price": "1.580 TL",
-    "discount_pct": "-37%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07GS6ZB7T?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 527 TL",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/logitech_g502_hero_mouse_ff932a6b.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
     "date_added": "18.10.2026 16:46"
   }
 ]

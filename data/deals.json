@@ -660,8 +660,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/head___shoulders_klasik_0d92d488.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.11.2026 10:06"
   },
   {
@@ -793,8 +793,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_quencher_pipetli_089098bd.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "14.11.2026 08:08"
   },
   {

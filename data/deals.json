@@ -432,8 +432,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/logitech_mk345_920_006514_0a4777df.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.11.2026 20:06"
   },
   {
@@ -1668,7 +1668,7 @@
     "category": "lifestyle",
     "image_url": "assets/products/stanley_iceflow_pipetli_t_87432ec4.webp",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "expired_reason": "Stok Tükendi",
     "date_added": "06.11.2026 17:30"
   },
   {

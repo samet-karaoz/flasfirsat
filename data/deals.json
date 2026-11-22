@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795363782_100",
+    "deal_code": "#241",
+    "title": "Aula AU75 3 Modlu RGB Hot",
+    "old_price": "2.960 TL",
+    "new_price": "2.499 TL",
+    "discount_pct": "-16%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FV3G9JZR?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 833 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/aula_au75_3_modlu_rgb_hot_64c207a5.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "22.11.2026 16:09"
+  },
+  {
     "id": "deal_1795359927_100",
     "deal_code": "#240",
     "title": "MSI FORGE GM300 Siyah Kablolu Gami",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "21.10.2026 12:40"
-  },
-  {
-    "id": "deal_1792523974_34",
-    "deal_code": "#138",
-    "title": "Logitech G102 Lightsync RGB Oyuncu Mouse",
-    "old_price": "990 TL",
-    "new_price": "699 TL",
-    "discount_pct": "-29%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07W5JKFQC?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/logitech_g102_lightsync_r_153d0bcc.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
-    "date_added": "20.10.2026 22:19"
   }
 ]

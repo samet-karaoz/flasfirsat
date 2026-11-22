@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795359927_100",
+    "deal_code": "#240",
+    "title": "MSI FORGE GM300 Siyah Kablolu Gami",
+    "old_price": "",
+    "new_price": "624,60 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0D3QLNYQ6?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/msi_forge_gm300_siyah_kab_c8803148.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "22.11.2026 15:05"
+  },
+  {
     "id": "deal_1795347784_100",
     "deal_code": "#239",
     "title": "adidas VS PACE 2.0 Ayakkabı Düşük",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
     "date_added": "20.10.2026 22:19"
-  },
-  {
-    "id": "deal_1792490797_34",
-    "deal_code": "#136",
-    "title": "Razer Kraken X Lite Kulaklık",
-    "old_price": "2.199 TL",
-    "new_price": "1.399 TL",
-    "discount_pct": "-36%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07XC936P8?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 466 TL",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/razer_kraken_x_lite_kulak_c4e3787a.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "20.10.2026 13:06"
   }
 ]

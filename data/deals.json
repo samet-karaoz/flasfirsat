@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795345436_100",
+    "deal_code": "#238",
+    "title": "NovStrap JBL Kulaklık Pedi Süngeri",
+    "old_price": "",
+    "new_price": "313,40 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0D3XZRVBN?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/novstrap_jbl_kulakl_k_ped_88dcf311.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "22.11.2026 11:03"
+  },
+  {
     "id": "deal_1795291653_100",
     "deal_code": "#237",
     "title": "Crocs Crocband Moda Ayakkabı Unise",
@@ -1879,25 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "19.10.2026 22:15"
-  },
-  {
-    "id": "deal_1792336675_28",
-    "deal_code": "#129",
-    "title": "Razer Basilisk Mouse",
-    "old_price": "2.999 TL",
-    "new_price": "1.919,63 TL",
-    "discount_pct": "-36%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0BT4VRZGV?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 640 TL",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/razer_basilisk_mouse_d13f68a9.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "18.10.2026 18:17",
-    "is_reel": true
   }
 ]

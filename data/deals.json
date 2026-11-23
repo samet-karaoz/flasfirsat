@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795446372_100",
+    "deal_code": "#246",
+    "title": "MSI 23.8 PRO MP245 E14VL",
+    "old_price": "6.120 TL",
+    "new_price": "4.399 TL",
+    "discount_pct": "-28%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0H1HW9R52?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.466 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/msi_23_8_pro_mp245_e14vl_364a79cf.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "23.11.2026 15:06"
+  },
+  {
     "id": "deal_1795433688_100",
     "deal_code": "#245",
     "title": "Klasse Longteng Huoyun",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "Stok Tükendi",
     "date_added": "01.11.2026 15:02"
-  },
-  {
-    "id": "deal_1793009792_37",
-    "deal_code": "#144",
-    "title": "Soundcore by Anker K20i Bluetooth Kulaklık",
-    "old_price": "1.499 TL",
-    "new_price": "999 TL",
-    "discount_pct": "-%33",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0DCZQJT4L?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 333 TL",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/soundcore_by_anker_k20i_b_6a6c410e.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "26.10.2026 13:16"
   }
 ]

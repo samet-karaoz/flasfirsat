@@ -299,8 +299,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/magegee_60_rapid_trigger__d47d9e78.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "20.11.2026 15:08"
   },
   {

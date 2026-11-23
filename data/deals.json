@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795464351_100",
+    "deal_code": "#249",
+    "title": "Under Armour SPORTSTYLE TRICOT JOG",
+    "old_price": "",
+    "new_price": "2.422,99 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B01M2ZRGN4?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 808 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/under_armour_sportstyle_t_66d0cbdd.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "23.11.2026 20:05"
+  },
+  {
     "id": "deal_1795457713_100",
     "deal_code": "#248",
     "title": "Logitech G G402 Hyperion Fury Kabl",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 20:26"
-  },
-  {
-    "id": "deal_1793705670_40",
-    "deal_code": "#148",
-    "title": "LEGO Speed Champions Ferrari SF-24 F1 Yarış Arabası",
-    "old_price": "",
-    "new_price": "959 TL",
-    "discount_pct": "ÇOK SATAN #2",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0DHSBBV6R?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 320 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/lego_speed_champions_ferr_cde1bef3.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
-    "date_added": "03.11.2026 14:34"
   }
 ]

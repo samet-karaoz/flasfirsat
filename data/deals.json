@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795457713_100",
+    "deal_code": "#248",
+    "title": "Logitech G G402 Hyperion Fury Kabl",
+    "old_price": "",
+    "new_price": "1.099,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B00LFBEOUA?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 366 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/logitech_g_g402_hyperion__441cb705.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "23.11.2026 18:15"
+  },
+  {
     "id": "deal_1795450009_100",
     "deal_code": "#247",
     "title": "adidas Tensaur Sport 2.0 K Ayakkab",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
     "date_added": "03.11.2026 14:34"
-  },
-  {
-    "id": "deal_1793704533_39",
-    "deal_code": "#147",
-    "title": "LEGO Speed Champions Zamana Dönüş DeLorean",
-    "old_price": "1.166 TL",
-    "new_price": "989 TL",
-    "discount_pct": "-15%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0FPXDXXYR?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 330 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/lego_speed_champions_delo_fbdfae13.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "03.11.2026 14:15"
   }
 ]

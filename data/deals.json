@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795432025_100",
+    "deal_code": "#244",
+    "title": "Logitech M170 Kablosuz Mouse Siyah",
+    "old_price": "",
+    "new_price": "396,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B01A9GXMW2?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/logitech_m170_kablosuz_mo_75690f93.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "23.11.2026 11:07"
+  },
+  {
     "id": "deal_1795377970_100",
     "deal_code": "#243",
     "title": "Sony PlayStation Kılıflı Pulse Eli",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
     "date_added": "24.10.2026 22:17"
-  },
-  {
-    "id": "deal_1792689847_37",
-    "deal_code": "#142",
-    "title": "adidas Response 2.0 W Spor Ayakkabı",
-    "old_price": "2.499 TL",
-    "new_price": "1.433 TL",
-    "discount_pct": "-%43",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0F1X951XR?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 478 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/adidas_response_2_0_w_spo_f3eb5be5.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
-    "date_added": "22.10.2026 20:24"
   }
 ]

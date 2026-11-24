@@ -262,7 +262,7 @@
     "category": "general",
     "image_url": "assets/products/crocs_crocband_moda_ayakk_cb0d6bc7.webp",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "21.11.2026 20:07"
   },
   {
@@ -451,8 +451,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/logitech_g_g213_rgb_kablo_2189454b.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "20.11.2026 11:40"
   },
   {
@@ -565,8 +565,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/jbl_go5__bluetooth_hoparl_9c1dfcc6.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "19.11.2026 11:40"
   },
   {
@@ -1895,8 +1895,8 @@
     "coupon_info": "",
     "category": "hardware",
     "image_url": "assets/products/tecno_megabook_t14_air__i_f21d48ea.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 20:26"
   }
 ]

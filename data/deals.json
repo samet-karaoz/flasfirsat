@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795536336_100",
+    "deal_code": "#252",
+    "title": "PUMA Anzarun Lite Spor AyakkabıUni",
+    "old_price": "",
+    "new_price": "1.530,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07S7QX84W?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 510 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/puma_anzarun_lite_spor_ay_d48d1717.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "24.11.2026 16:05"
+  },
+  {
     "id": "deal_1795532716_100",
     "deal_code": "#251",
     "title": "JBL Charge6, Bluetooth Hoparlör, I",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "Stok Tükendi",
     "date_added": "04.11.2026 21:10"
-  },
-  {
-    "id": "deal_1793726816_43",
-    "deal_code": "#151",
-    "title": "Huawei MateBook D16 (i5-13420H • 16GB RAM • 1TB SSD • 16\" IPS • Windows 11 Pro)",
-    "old_price": "",
-    "new_price": "40.999,00 TL",
-    "discount_pct": "",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0HBCPFJVR?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "hardware",
-    "image_url": "assets/products/huawei_matebook_d16__i5_1_9cddaebe.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "03.11.2026 20:26"
   }
 ]

@@ -90,8 +90,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/logitech_g_g402_hyperion__441cb705.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "23.11.2026 18:15"
   },
   {
@@ -641,8 +641,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/logitech_mk345_920_006514_0a4777df.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.11.2026 20:06"
   },
   {
@@ -660,8 +660,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/steelseries_arctis_nova_1_ed2f8264.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.11.2026 18:08"
   },
   {
@@ -679,8 +679,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/mcstorey_90x40_cm_mouse_p_562774d2.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.11.2026 16:03"
   },
   {
@@ -964,8 +964,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/anker_soundcore_liberty_5_de2fd9e7.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "16.11.2026 11:04"
   },
   {
@@ -983,8 +983,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/adidas_unisex_ownthegame__429ce442.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "15.11.2026 20:07"
   },
   {
@@ -1002,8 +1002,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/razer_huntsman_v3_pro_329082af.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.11.2026 18:02"
   },
   {
@@ -1192,8 +1192,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_quencher_pipetli_089098bd.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "14.11.2026 08:08"
   },
   {
@@ -1211,8 +1211,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/anker_soundcore_select_4__b9c78c50.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "13.11.2026 18:39"
   },
   {
@@ -1420,8 +1420,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/vichy_dercos_sa__serumu_7046604e.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "11.11.2026 17:07"
   },
   {
@@ -1496,8 +1496,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/razer_ornata_v3_tenkeyles_69f839b0.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "10.11.2026 18:37"
   },
   {
@@ -1592,7 +1592,7 @@
     "category": "general",
     "image_url": "assets/products/logitech_z150_1_1_speaker_6cc20ab5.webp",
     "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "expired_reason": "İndirim Bitti",
     "date_added": "10.11.2026 08:09"
   },
   {
@@ -1743,8 +1743,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/gamesir_nova_lite_2_gamep_06eb9caf.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "08.11.2026 16:35"
   },
   {

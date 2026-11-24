@@ -4730,5 +4730,40 @@
     "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261124_150502_jbl_charge6_bluetooth_hoparlor.mp4",
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261124_150502_jbl_charge6_bluetooth_hoparlor.mp4",
     "caption_text": "⚡ JBL Charge6, Bluetooth Hoparlör, I - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n✅ Satış Fiyatı: 6.164,55 TL (🔥  ÇOK SATAN İndirim)\n\n🔢 Fırsat Kodu: 251 (Sitede arama kutusuna 251 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n#indirim #fırsat #keşfet"
+  },
+  {
+    "timestamp": "2026-11-24 16:01:34",
+    "slot": "19:00 TikTok Akşam Gaming & Sneaker",
+    "target_platform": "tiktok",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "tiktok": {
+        "status": "error",
+        "error": "Buffer hesabında TikTok kanalı bağlı değil. Lütfen Buffer'a TikTok'u ekleyin."
+      },
+      "instagram": {
+        "status": "error",
+        "error": "'NoneType' object has no attribute 'get'"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "PUMA Anzarun Lite Spor AyakkabıUni",
+      "new_price": "1.530,00 TL",
+      "old_price": "",
+      "discount_pct": "🔥 #1 ÇOK SATAN",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B07S7QX84W?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261124_160512_puma_anzarun_lite_spor_ayakkab.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261124_160512_puma_anzarun_lite_spor_ayakkab.mp4",
+    "caption_text": "⚡ PUMA Anzarun Lite Spor AyakkabıUni - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n✅ Satış Fiyatı: 1.530,00 TL (🔥  ÇOK SATAN İndirim)\n\n🔢 Fırsat Kodu: 252 (Sitede arama kutusuna 252 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n#indirim #fırsat #keşfet"
   }
 ]

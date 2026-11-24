@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795518342_100",
+    "deal_code": "#250",
+    "title": "Apple Magic Mouse: Bluetooth, şarj",
+    "old_price": "",
+    "new_price": "4.334,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DL74MVMW?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.445 TL",
+    "coupon_info": "",
+    "category": "gaming",
+    "image_url": "assets/products/apple_magic_mouse__blueto_2aa4ad38.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "24.11.2026 11:05"
+  },
+  {
     "id": "deal_1795464351_100",
     "deal_code": "#249",
     "title": "Under Armour SPORTSTYLE TRICOT JOG",
@@ -1878,25 +1897,6 @@
     "image_url": "assets/products/tecno_megabook_t14_air__i_f21d48ea.webp",
     "is_expired": false,
     "expired_reason": "",
-    "date_added": "03.11.2026 20:26"
-  },
-  {
-    "id": "deal_1793726801_41",
-    "deal_code": "#149",
-    "title": "Acer Aspire Go 15 (Ryzen 7 5825U • 16GB RAM • 1TB SSD • 15.6\" FHD • Windows 11)",
-    "old_price": "",
-    "new_price": "36.999,00 TL",
-    "discount_pct": "",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0GZJ6PH18?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "hardware",
-    "image_url": "assets/products/acer_aspire_go_15__ryzen__72f5cf9e.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
     "date_added": "03.11.2026 20:26"
   }
 ]

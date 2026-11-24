@@ -1496,8 +1496,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/jbl_tune_520bt_multi_conn_bf836c9b.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "10.11.2026 12:06"
   },
   {
@@ -1705,8 +1705,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/steelseries_qck_medium_c977bfea.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "08.11.2026 18:43"
   },
   {

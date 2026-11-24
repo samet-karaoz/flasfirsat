@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795543553_100",
+    "deal_code": "#253",
+    "title": "PUMA Puma Smash 3.0 Buck Spor Ayak",
+    "old_price": "",
+    "new_price": "1.967,18 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0BLCZ8X55?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 656 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/puma_puma_smash_3_0_buck__1e80327d.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "24.11.2026 18:05"
+  },
+  {
     "id": "deal_1795536336_100",
     "deal_code": "#252",
     "title": "PUMA Anzarun Lite Spor AyakkabıUni",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
     "date_added": "06.11.2026 17:30"
-  },
-  {
-    "id": "deal_1793815815_45",
-    "deal_code": "#152",
-    "title": "Puma Smash 3.0 L Unisex Orijinal Deri Spor Ayakkabı",
-    "old_price": "2.511,74 TL",
-    "new_price": "1.935,90 TL",
-    "discount_pct": "-%23",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0BNNFYSYP?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı ve Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/puma_smash_3_0_l_unisex_o_b55410ee.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "04.11.2026 21:10"
   }
 ]

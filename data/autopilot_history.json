@@ -4890,5 +4890,13 @@
     "success": false,
     "platforms": {},
     "error": "Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi (0 aday test edildi)."
+  },
+  {
+    "timestamp": "2026-11-25 18:01:26",
+    "slot": "21:00 YouTube Prime Time F/P",
+    "target_platform": "youtube",
+    "success": false,
+    "platforms": {},
+    "error": "Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi (0 aday test edildi)."
   }
 ]

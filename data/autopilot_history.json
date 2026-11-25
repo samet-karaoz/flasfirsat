@@ -4898,5 +4898,13 @@
     "success": false,
     "platforms": {},
     "error": "Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi (0 aday test edildi)."
+  },
+  {
+    "timestamp": "2026-11-25 20:01:30",
+    "slot": "23:00 TikTok Gece F/P & Gaming",
+    "target_platform": "tiktok",
+    "success": false,
+    "platforms": {},
+    "error": "Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi (0 aday test edildi)."
   }
 ]

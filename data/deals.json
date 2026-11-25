@@ -1515,8 +1515,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/ua_charged_pursuit_3_7283f367.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "11.11.2026 10:07"
   },
   {

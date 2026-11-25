@@ -1211,8 +1211,8 @@
     "coupon_info": "",
     "category": "lifestyle",
     "image_url": "assets/products/stanley_quencher_pipetli_089098bd.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "14.11.2026 08:08"
   },
   {

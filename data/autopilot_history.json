@@ -4882,5 +4882,13 @@
     "success": false,
     "platforms": {},
     "error": "Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi (0 aday test edildi)."
+  },
+  {
+    "timestamp": "2026-11-25 16:01:31",
+    "slot": "19:00 TikTok Akşam Gaming & Sneaker",
+    "target_platform": "tiktok",
+    "success": false,
+    "platforms": {},
+    "error": "Aday fırsatların hiçbiri doğrulanamadı veya video üretilemedi (0 aday test edildi)."
   }
 ]

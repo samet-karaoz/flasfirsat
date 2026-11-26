@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795691152_100",
+    "deal_code": "#256",
+    "title": "Razer Pro Glide - Ofis konforu ve",
+    "old_price": "",
+    "new_price": "469,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B08G55CMF7?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/razer_pro_glide___ofis_ko_2354427d.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "26.11.2026 11:05"
+  },
+  {
     "id": "deal_1795606516_100",
     "deal_code": "#255",
     "title": "Spigen Audio Kulak Üstü P10 Blueto",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "07.11.2026 21:42"
-  },
-  {
-    "id": "deal_1794076273_48",
-    "deal_code": "155",
-    "title": "The Purest Solutions Yoğun Nem & Bariyer Şampuanı (300 ml)",
-    "old_price": "599,94 TL",
-    "new_price": "279,90 TL",
-    "discount_pct": "-%53",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0HDD96Q24?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/the_purest_solutions_yo_u_0416f9c2.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "07.11.2026 21:31"
   }
 ]

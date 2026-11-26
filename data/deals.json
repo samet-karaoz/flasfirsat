@@ -774,8 +774,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/logitech_mk345_920_006514_0a4777df.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "18.11.2026 20:06"
   },
   {
@@ -1192,8 +1192,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/head___shoulders_klasik_0d92d488.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "15.11.2026 10:06"
   },
   {

@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795705623_100",
+    "deal_code": "#258",
+    "title": "Under Armour 1373362 Ua Armour Fle",
+    "old_price": "",
+    "new_price": "1.492,93 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B09JKYJKQD?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 498 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/under_armour_1373362_ua_a_f306ec25.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "26.11.2026 15:07"
+  },
+  {
     "id": "deal_1795693032_100",
     "deal_code": "#257",
     "title": "Razer BlackWidow V4 (Yeşil Anahtar",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "08.11.2026 10:34"
-  },
-  {
-    "id": "deal_1794131923_49",
-    "deal_code": "#157",
-    "title": "SteelSeries Aerox 5 Mouse",
-    "old_price": "5.999 TL",
-    "new_price": "4.459,00 TL",
-    "discount_pct": "-26%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B09W1B5S5W?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 1.486 TL",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/steelseries_aerox_5_mouse_97b04ceb.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "08.11.2026 09:58"
   }
 ]

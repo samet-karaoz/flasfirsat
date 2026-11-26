@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795693032_100",
+    "deal_code": "#257",
+    "title": "Razer BlackWidow V4 (Yeşil Anahtar",
+    "old_price": "",
+    "new_price": "3.690,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CCYXLPCJ?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.230 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/razer_blackwidow_v4__ye_i_7fffa354.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "26.11.2026 11:37"
+  },
+  {
     "id": "deal_1795691152_100",
     "deal_code": "#256",
     "title": "Razer Pro Glide - Ofis konforu ve",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "08.11.2026 09:58"
-  },
-  {
-    "id": "deal_1794076940_48",
-    "deal_code": "156",
-    "title": "Klasse Pro 90x40 cm Dikişli Kenar Oyuncu Gaming Mouse Pad",
-    "old_price": "",
-    "new_price": "659,90 TL",
-    "discount_pct": "🔥 ÇOK SATAN",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B09TTZXWFB?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/klasse_pro_90x40_cm_diki__c675798c.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "07.11.2026 21:42"
   }
 ]

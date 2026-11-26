@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795716371_100",
+    "deal_code": "#260",
+    "title": "Logitech G502 X LIGHTSPEED",
+    "old_price": "",
+    "new_price": "5.999,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07W7L4RBX?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 2.000 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/logitech_g502_x_lightspee_6a2ba736.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "26.11.2026 18:06"
+  },
+  {
     "id": "deal_1795709235_100",
     "deal_code": "#259",
     "title": "CORSAIR HS80 MAX Kablosuz Gaming K",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "İndirim Bitti",
     "date_added": "08.11.2026 16:35"
-  },
-  {
-    "id": "deal_1794152636_51",
-    "deal_code": "#159",
-    "title": "SteelSeries QcK Medium",
-    "old_price": "999 TL",
-    "new_price": "649 TL",
-    "discount_pct": "-35%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B000UEZ36W?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/steelseries_qck_medium_c977bfea.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "08.11.2026 18:43"
   }
 ]

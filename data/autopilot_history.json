@@ -5007,5 +5007,40 @@
     "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261126_150650_under_armour_1373362_ua_armour.mp4",
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261126_150650_under_armour_1373362_ua_armour.mp4",
     "caption_text": "⚡ Under Armour 1373362 Ua Armour Fle - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n✅ Satış Fiyatı: 1.492,93 TL (🔥  ÇOK SATAN İndirim)\n\n🔢 Fırsat Kodu: 258 (Sitede arama kutusuna 258 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n#indirim #fırsat #keşfet"
+  },
+  {
+    "timestamp": "2026-11-26 16:01:31",
+    "slot": "19:00 TikTok Akşam Gaming & Sneaker",
+    "target_platform": "tiktok",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "tiktok": {
+        "status": "error",
+        "error": "Buffer hesabında TikTok kanalı bağlı değil. Lütfen Buffer'a TikTok'u ekleyin."
+      },
+      "instagram": {
+        "status": "error",
+        "error": "'NoneType' object has no attribute 'get'"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "CORSAIR HS80 MAX Kablosuz Gaming K",
+      "new_price": "7.699,00 TL",
+      "old_price": "",
+      "discount_pct": "🔥 #1 ÇOK SATAN",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0CBQFDZM8?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261126_160655_corsair_hs80_max_kablosuz_gami.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261126_160655_corsair_hs80_max_kablosuz_gami.mp4",
+    "caption_text": "⚡ CORSAIR HS80 MAX Kablosuz Gaming K - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n✅ Satış Fiyatı: 7.699,00 TL (🔥  ÇOK SATAN İndirim)\n\n🔢 Fırsat Kodu: 259 (Sitede arama kutusuna 259 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n#indirim #fırsat #keşfet"
   }
 ]

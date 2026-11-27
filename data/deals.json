@@ -223,8 +223,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/puma_puma_smash_3_0_buck__1e80327d.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "24.11.2026 18:05"
   },
   {
@@ -565,8 +565,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/adidas_breaknet_2_0_erkek_dc40a0d2.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "21.11.2026 16:07"
   },
   {

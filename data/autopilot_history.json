@@ -5184,5 +5184,40 @@
     "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261127_150449_steelseries_qck_performans_xl_.mp4",
     "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261127_150449_steelseries_qck_performans_xl_.mp4",
     "caption_text": "⚡ Steelseries QcK Performans XL Gami - Son Zamanların En Dip Fiyatında!\n#işbirliği #reklam\n\nOrijinal kalitede beklenen büyük indirim nihayet geldi, stoklar erimeden mutlaka değerlendirin!\n\n✅ Satış Fiyatı: 2.618,03 TL (🔥  ÇOK SATAN İndirim)\n\n🔢 Fırsat Kodu: 263 (Sitede arama kutusuna 263 yazarak anında bulabilirsiniz)\n\n💬 Sizce bu fiyata değer mi, alınır mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı şu an kanal/profil açıklamamızdaki bağlantıda (BİO) aktif! ⚡\n\n📌 Fiyatı tekrar kontrol etmek için videoyu KAYDET, arkadaşına GÖNDER! ✈️\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n#indirim #fırsat #keşfet"
+  },
+  {
+    "timestamp": "2026-11-27 16:01:36",
+    "slot": "19:00 TikTok Akşam Gaming & Sneaker",
+    "target_platform": "tiktok",
+    "success": true,
+    "platforms": {
+      "web": {
+        "status": "ok",
+        "url": "https://flasfirsat.com.tr"
+      },
+      "tiktok": {
+        "status": "error",
+        "error": "Buffer hesabında TikTok kanalı bağlı değil. Lütfen Buffer'a TikTok'u ekleyin."
+      },
+      "instagram": {
+        "status": "error",
+        "error": "'NoneType' object has no attribute 'get'"
+      },
+      "telegram": {
+        "status": "ok",
+        "channel": "-1004415003185"
+      }
+    },
+    "error": null,
+    "deal": {
+      "title": "Xiaomi Outdoor 30 W",
+      "new_price": "1.988,00 TL",
+      "old_price": "",
+      "discount_pct": "🔥 #1 ÇOK SATAN",
+      "affiliate_url": "https://www.amazon.com.tr/dp/B0CZRMRQ3Y?tag=flasfirsat04-21"
+    },
+    "video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261127_160544_xiaomi_outdoor_30_w.mp4",
+    "youtube_video_path": "/home/runner/work/flasfirsat/flasfirsat/output/20261127_160544_xiaomi_outdoor_30_w.mp4",
+    "caption_text": "Son zamanların en dip fiyatına indi, bu fiyata orijinal ürün bir daha zor gelir, stoklar tükenmeden değerlendirin 👇\n#işbirliği #reklam\n\nKankalar, kampçısıydı, bahçesiydi, havuz başıydı derken herkesin aradığı o efsane ses canavarı sonunda dip fiyata çakıldı! 🔊 Xiaomi Outdoor 30W gümbür gümbür ses kalitesi ve suya dayanıklı yapısıyla resmen olay yaratıyor.\n\nPiyasayı alt üst eden güncel fiyatı: 1.988,00 TL! 🔥 Amazon’da şu an listelerin başında patır patır satılıyor, kullanan herkes öve öve bitiremiyor.\n\n🎟️ Profilimizdeki sitemize girdiğinde arama kutusuna **264** yazarak bu canavara saniyeler içinde ulaşabilirsin, benden söylemesi!\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET!\n\n📌 Fiyat tekrar uçmadan videoyu KAYDET, lazım olur diye arkadaşına GÖNDER! ✈️\n\n💬 Sizce bu fiyata değer mi, kullanan var mı? Yorumlarda buluşalım 👇\n\n🔗 Ürün bağlantısı profilimizdeki (BİO) internet sitemizde aktif, 264 kodunu aratman yeterli!\n\n🔔 Her gün en dip F/P fırsatları kaçırmamak için TAKİP ET / ABONE OL!\n\n#indirim #fırsatsongu #xiaomi"
   }
 ]

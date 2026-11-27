@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795779334_100",
+    "deal_code": "#262",
+    "title": "Logitech G502 X",
+    "old_price": "",
+    "new_price": "2.592,55 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B07W6HSTNR?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 864 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/logitech_g502_x_f46e225e.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "27.11.2026 11:35"
+  },
+  {
     "id": "deal_1795777366_100",
     "deal_code": "#261",
     "title": "STANLEY The IceFlow™ Twist &",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "08.11.2026 19:57"
-  },
-  {
-    "id": "deal_1794159883_53",
-    "deal_code": "#161",
-    "title": "Bioderma Atoderm 500 ml",
-    "old_price": "1.750 TL",
-    "new_price": "1.104,15 TL",
-    "discount_pct": "-37%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B079XX76RM?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 368 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/bioderma_atoderm_500_ml_f85f42f9.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "08.11.2026 17:44"
   }
 ]

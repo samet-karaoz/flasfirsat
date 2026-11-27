@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795802705_100",
+    "deal_code": "#265",
+    "title": "adidas GRAND COURT 2.0 Tenis ayakk",
+    "old_price": "",
+    "new_price": "2.035,63 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B09VSY2BDY?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 679 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/adidas_grand_court_2_0_te_22dc9a82.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "27.11.2026 18:05"
+  },
+  {
     "id": "deal_1795795568_100",
     "deal_code": "#264",
     "title": "Xiaomi Outdoor 30 W",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "09.11.2026 15:37"
-  },
-  {
-    "id": "deal_1794237153_56",
-    "deal_code": "#164",
-    "title": "adidas Advantage Base Erkek Spor Ayakkabı",
-    "old_price": "3.329 TL",
-    "new_price": "2.100 TL",
-    "discount_pct": "-37%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B09VT1NQBW?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 700 TL",
-    "coupon_info": "Sepette %5 Ek İndirim",
-    "category": "general",
-    "image_url": "assets/products/adidas_advantage_base_erk_f7047113.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "09.11.2026 18:12"
   }
 ]

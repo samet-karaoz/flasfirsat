@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795795568_100",
+    "deal_code": "#264",
+    "title": "Xiaomi Outdoor 30 W",
+    "old_price": "",
+    "new_price": "1.988,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0CZRMRQ3Y?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 663 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/xiaomi_outdoor_30_w_4fdbd3a7.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "27.11.2026 16:06"
+  },
+  {
     "id": "deal_1795791905_100",
     "deal_code": "#263",
     "title": "Steelseries QcK Performans XL Gami",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "Stok Tükendi",
     "date_added": "09.11.2026 18:12"
-  },
-  {
-    "id": "deal_1794172518_55",
-    "deal_code": "#163",
-    "title": "Stanley Legendary 2.3L Termos",
-    "old_price": "3.800 TL",
-    "new_price": "2.975,00 TL",
-    "discount_pct": "-22%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0BKLPF6FX?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 992 TL",
-    "coupon_info": "",
-    "category": "lifestyle",
-    "image_url": "assets/products/stanley_legendary_2_3l_te_09456df5.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "08.11.2026 21:15"
   }
 ]

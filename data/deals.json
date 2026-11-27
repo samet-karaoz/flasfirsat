@@ -679,8 +679,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/logitech_g_g213_rgb_kablo_2189454b.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "20.11.2026 11:40"
   },
   {

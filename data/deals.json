@@ -774,8 +774,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/klasse_pro___6_farkl__mod_09d4ff71.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "İndirim Bitti",
     "date_added": "19.11.2026 20:24"
   },
   {
@@ -1116,8 +1116,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/huawei_freebuds_6i_tws_bl_92effd1a.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "16.11.2026 20:09"
   },
   {
@@ -1154,8 +1154,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/aula_n_69_2___3w_rgb_led_d743df6b.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "16.11.2026 16:05"
   },
   {
@@ -1591,8 +1591,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/golden_rose_lipliner_no___e56555f7.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "12.11.2026 12:09"
   },
   {

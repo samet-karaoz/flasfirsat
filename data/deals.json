@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795777366_100",
+    "deal_code": "#261",
+    "title": "STANLEY The IceFlow™ Twist &",
+    "old_price": "1.899 TL",
+    "new_price": "1.315,89 TL",
+    "discount_pct": "-31%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FZVMZMB9?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 438 TL",
+    "coupon_info": "",
+    "category": "lifestyle",
+    "image_url": "assets/products/stanley_the_iceflow__twis_9e8271c5.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "27.11.2026 11:02"
+  },
+  {
     "id": "deal_1795716371_100",
     "deal_code": "#260",
     "title": "Logitech G502 X LIGHTSPEED",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "08.11.2026 17:44"
-  },
-  {
-    "id": "deal_1794155708_52",
-    "deal_code": "#160",
-    "title": "GameSir Nova Lite 2 Gamepad",
-    "old_price": "2.899 TL",
-    "new_price": "2.209,76 TL",
-    "discount_pct": "-24%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0F3CZJGSF?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 737 TL",
-    "coupon_info": "",
-    "category": "gaming",
-    "image_url": "assets/products/gamesir_nova_lite_2_gamep_06eb9caf.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "08.11.2026 16:35"
   }
 ]

@@ -755,8 +755,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/jbl_go5__bluetooth_hoparl_9c1dfcc6.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "19.11.2026 11:40"
   },
   {
@@ -793,8 +793,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/logitech_mk345_920_006514_0a4777df.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "18.11.2026 20:06"
   },
   {
@@ -1021,8 +1021,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/huawei_freebuds_6i_tws_bl_92effd1a.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "16.11.2026 20:09"
   },
   {
@@ -1326,7 +1326,7 @@
     "category": "general",
     "image_url": "assets/products/kiko_milano_ruj_e3d21aad.webp",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "expired_reason": "Stok Tükendi",
     "date_added": "14.11.2026 10:07"
   },
   {
@@ -1895,8 +1895,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/gamesir_nova_lite_2_gamep_06eb9caf.webp",
-    "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "08.11.2026 16:35"
   }
 ]

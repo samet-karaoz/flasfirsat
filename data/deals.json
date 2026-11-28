@@ -547,7 +547,7 @@
     "category": "general",
     "image_url": "assets/products/crocs_crocband_moda_ayakk_cb0d6bc7.webp",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "expired_reason": "Stok Tükendi",
     "date_added": "21.11.2026 20:07"
   },
   {
@@ -622,8 +622,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/baseus_encok_hz11_3_5mm_m_db443a38.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "21.11.2026 11:37"
   },
   {

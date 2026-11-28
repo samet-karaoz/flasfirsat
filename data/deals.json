@@ -337,8 +337,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/logitech_g_g402_hyperion__441cb705.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
+    "is_expired": false,
+    "expired_reason": "",
     "date_added": "23.11.2026 18:15"
   },
   {
@@ -1002,8 +1002,8 @@
     "coupon_info": "",
     "category": "gaming",
     "image_url": "assets/products/lenovo_n260_sessiz_kablos_52af592e.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "17.11.2026 20:05"
   },
   {

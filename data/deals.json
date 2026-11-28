@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795881907_100",
+    "deal_code": "#269",
+    "title": "Razer Viper V4 Pro - Kablosuz sime",
+    "old_price": "",
+    "new_price": "6.559,03 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0G5PVG6HT?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 2.186 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/razer_viper_v4_pro___kabl_497c6392.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "28.11.2026 16:05"
+  },
+  {
     "id": "deal_1795878339_100",
     "deal_code": "#268",
     "title": "JBL Tune 530BT",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "10.11.2026 10:07"
-  },
-  {
-    "id": "deal_1794298191_60",
-    "deal_code": "#168",
-    "title": "Logitech Z150 1+1 Speaker 6W",
-    "old_price": "2.469 TL",
-    "new_price": "1.754 TL",
-    "discount_pct": "-29%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B00EUUXFFS?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit x 585 TL",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/logitech_z150_1_1_speaker_6cc20ab5.webp",
-    "is_expired": true,
-    "expired_reason": "Stok Tükendi",
-    "date_added": "10.11.2026 08:09"
   }
 ]

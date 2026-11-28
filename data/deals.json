@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795865693_100",
+    "deal_code": "#267",
+    "title": "Salomon Erkek Xa Pro 3D",
+    "old_price": "5.011 TL",
+    "new_price": "4.211 TL",
+    "discount_pct": "-16%",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0DYDSPTVG?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 1.404 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/salomon_erkek_xa_pro_3d_0600dc65.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "28.11.2026 11:34"
+  },
+  {
     "id": "deal_1795863966_100",
     "deal_code": "#266",
     "title": "Aula F75 Mekanik RGB TKL GrayWood",
@@ -1879,24 +1898,5 @@
     "is_expired": false,
     "expired_reason": "",
     "date_added": "09.11.2026 18:36"
-  },
-  {
-    "id": "deal_1794244027_58",
-    "deal_code": "#166",
-    "title": "CeraVe Nemlendirici Krem 340g",
-    "old_price": "1.250 TL",
-    "new_price": "799,00 TL",
-    "discount_pct": "-36%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B07CH9XWHR?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/cerave_nemlendirici_krem__11dca823.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "09.11.2026 17:07"
   }
 ]

@@ -261,8 +261,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/puma_anzarun_lite_spor_ay_d48d1717.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "24.11.2026 16:05"
   },
   {
@@ -489,8 +489,8 @@
     "coupon_info": "",
     "category": "general",
     "image_url": "assets/products/msi_forge_gm300_siyah_kab_c8803148.webp",
-    "is_expired": false,
-    "expired_reason": "",
+    "is_expired": true,
+    "expired_reason": "Stok Tükendi",
     "date_added": "22.11.2026 15:05"
   },
   {
@@ -1839,7 +1839,7 @@
     "category": "general",
     "image_url": "assets/products/logitech_z150_1_1_speaker_6cc20ab5.webp",
     "is_expired": true,
-    "expired_reason": "İndirim Bitti",
+    "expired_reason": "Stok Tükendi",
     "date_added": "10.11.2026 08:09"
   },
   {

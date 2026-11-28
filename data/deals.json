@@ -1,5 +1,24 @@
 [
   {
+    "id": "deal_1795878339_100",
+    "deal_code": "#268",
+    "title": "JBL Tune 530BT",
+    "old_price": "",
+    "new_price": "1.372,00 TL",
+    "discount_pct": "🔥 #1 ÇOK SATAN",
+    "store_name": "Amazon TR",
+    "store_url": "https://www.amazon.com.tr/dp/B0FSHKZ2XT?tag=flasfirsat04-21",
+    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
+    "net_cost": "",
+    "installment": "Peşin Fiyatına 3 Taksit x 457 TL",
+    "coupon_info": "",
+    "category": "general",
+    "image_url": "assets/products/jbl_tune_530bt_e1df5181.webp",
+    "is_expired": false,
+    "expired_reason": "",
+    "date_added": "28.11.2026 15:05"
+  },
+  {
     "id": "deal_1795865693_100",
     "deal_code": "#267",
     "title": "Salomon Erkek Xa Pro 3D",
@@ -1879,24 +1898,5 @@
     "is_expired": true,
     "expired_reason": "Stok Tükendi",
     "date_added": "10.11.2026 08:09"
-  },
-  {
-    "id": "deal_1794249417_59",
-    "deal_code": "#167",
-    "title": "Philips SPK7448 Kablosuz",
-    "old_price": "699 TL",
-    "new_price": "499 TL",
-    "discount_pct": "-29%",
-    "store_name": "Amazon TR",
-    "store_url": "https://www.amazon.com.tr/dp/B0G2M3Z38D?tag=flasfirsat04-21",
-    "bank_campaign": "Prime ile Hızlı & Ücretsiz Kargo",
-    "net_cost": "",
-    "installment": "Peşin Fiyatına 3 Taksit",
-    "coupon_info": "",
-    "category": "general",
-    "image_url": "assets/products/philips_spk7448_kablosuz_bd39b673.webp",
-    "is_expired": false,
-    "expired_reason": "",
-    "date_added": "09.11.2026 18:36"
   }
 ]
